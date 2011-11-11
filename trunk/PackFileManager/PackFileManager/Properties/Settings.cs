@@ -32,6 +32,19 @@
             }
         }
 
+        [DebuggerNonUserCode, DefaultSettingValue("False"), UserScopedSetting]
+        public bool UpdateOnStartup
+        {
+            get
+            {
+                return (bool)this["updateOnStartup"];
+            }
+            set
+            {
+                this["updateOnStartup"] = value;
+            }
+        }
+
         [DebuggerNonUserCode, DefaultSettingValue("10595000"), UserScopedSetting]
         public string TwcThreadId
         {
