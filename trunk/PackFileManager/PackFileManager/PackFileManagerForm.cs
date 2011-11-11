@@ -93,6 +93,7 @@
         private ToolStripMenuItem updateToolStripMenuItem;
         private ToolStripMenuItem searchForUpdateToolStripMenuItem;
         private ToolStripMenuItem fromXsdFileToolStripMenuItem;
+        private ToolStripMenuItem reloadToolStripMenuItem;
         private UnitVariantFileEditorControl unitVariantFileEditorControl;
 
         public PackFileManagerForm(string[] args)
@@ -211,7 +212,7 @@
                         }
                     }
                     PackedFile file2 = this.currentPackFile.Add(str);
-                    this.addTreeViewNodeByPath(this.packTreeView.Nodes[0].Nodes, file2.Filepath.Replace('\\', '/')).Tag = file2;
+                    TreeNode node = this.addTreeViewNodeByPath(this.packTreeView.Nodes[0], file2);
                 Label_0153:;
                 }
             }
@@ -226,6 +227,25 @@
                 this.nodeRenamed = true;
                 this.Refresh();
             }
+        }
+
+        /*
+         * Adds a tree node for the given pack file.
+         * If we don't have a description for that file, shows the entry in red.
+         */
+        private TreeNode addTreeViewNodeByPath(TreeNode parent, PackedFile file2) {
+            string path = file2.Filepath.Replace('\\', '/');
+            TreeNode node = addTreeViewNodeByPath(parent.Nodes, path);
+            node.Tag = file2;
+            string mouseover = "";
+            if (!canShow(file2, out mouseover))
+            {
+                node.Parent.ToolTipText = mouseover;
+                node.Parent.ForeColor = Color.Red;
+                node.ForeColor = Color.Red;
+            }
+            node.ToolTipText = mouseover;
+            return node;
         }
 
         private TreeNode addTreeViewNodeByPath(TreeNodeCollection trunk, string path)
@@ -629,6 +649,7 @@
             this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchForUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fromXsdFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.packStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.packActionProgressBar = new System.Windows.Forms.ToolStripProgressBar();
@@ -638,7 +659,7 @@
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.addDirectoryFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.openDBFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.fromXsdFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packActionMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -1126,7 +1147,8 @@
             // 
             this.updateToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.searchForUpdateToolStripMenuItem,
-            this.fromXsdFileToolStripMenuItem});
+            this.fromXsdFileToolStripMenuItem,
+            this.reloadToolStripMenuItem});
             this.updateToolStripMenuItem.Name = "updateToolStripMenuItem";
             this.updateToolStripMenuItem.Size = new System.Drawing.Size(102, 20);
             this.updateToolStripMenuItem.Text = "DB Descriptions";
@@ -1134,9 +1156,16 @@
             // searchForUpdateToolStripMenuItem
             // 
             this.searchForUpdateToolStripMenuItem.Name = "searchForUpdateToolStripMenuItem";
-            this.searchForUpdateToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.searchForUpdateToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.searchForUpdateToolStripMenuItem.Text = "Search for Update";
             this.searchForUpdateToolStripMenuItem.Click += new System.EventHandler(this.updateToolStripMenuItem_Click);
+            // 
+            // fromXsdFileToolStripMenuItem
+            // 
+            this.fromXsdFileToolStripMenuItem.Name = "fromXsdFileToolStripMenuItem";
+            this.fromXsdFileToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.fromXsdFileToolStripMenuItem.Text = "Load from xsd File";
+            this.fromXsdFileToolStripMenuItem.Click += new System.EventHandler(this.fromXsdFileToolStripMenuItem_Click);
             // 
             // statusStrip
             // 
@@ -1178,12 +1207,11 @@
             // 
             this.openDBFileDialog.Filter = "Text CSV|*.txt|Any File|*.*";
             // 
-            // fromXsdFileToolStripMenuItem
+            // reloadToolStripMenuItem
             // 
-            this.fromXsdFileToolStripMenuItem.Name = "fromXsdFileToolStripMenuItem";
-            this.fromXsdFileToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.fromXsdFileToolStripMenuItem.Text = "From xsd File";
-            this.fromXsdFileToolStripMenuItem.Click += new System.EventHandler(this.fromXsdFileToolStripMenuItem_Click);
+            this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
+            this.reloadToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.reloadToolStripMenuItem.Text = "Reload from Local Directory";
             // 
             // PackFileManagerForm
             // 
@@ -1658,7 +1686,7 @@
             node2.Expand();
             foreach (PackedFile file in this.currentPackFile.FileList)
             {
-                this.addTreeViewNodeByPath(node2.Nodes, file.Filepath.Replace('\\', '/')).Tag = file;
+                this.addTreeViewNodeByPath(node2, file);
             }
             foreach (TreeNode node in this.getTreeViewBranch(this.packTreeView.Nodes))
             {
@@ -1886,6 +1914,48 @@
             {
                 DBTypeMap.Instance.loadFromXsd(open.FileName);
             }
+        }
+
+        private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DBTypeMap.Instance.initializeTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
+            MessageBox.Show("DB File Definitions reloaded.");
+        }
+
+        bool canShow(PackedFile packedFile, out string display)
+        {
+            bool result = true;
+            string key = Path.GetFileName(Path.GetDirectoryName(packedFile.Filepath));
+            if (key.Contains("_tables"))
+            {
+                key = key.Remove(key.LastIndexOf('_'), 7);
+            }
+            List<TypeInfo> type = DBTypeMap.Instance[key];
+            if (type != null)
+            {
+                try
+                {
+                    DBFile currentDBFile = new DBFile(packedFile, type.ToArray(), false);
+                    if (currentDBFile.TotalwarHeaderVersion > type.Count - 1)
+                    {
+                        display = string.Format("{0}: needs {1}, has {2}", key, currentDBFile.TotalwarHeaderVersion, type.Count - 1);
+                        result = false;
+                    }
+                    else
+                    {
+                        display = string.Format("Version: {0}", currentDBFile.TotalwarHeaderVersion);
+                    }
+                }
+                catch (Exception x)
+                {
+                    display = string.Format("{0}: {1}", key, x.Message);
+                }
+            }
+            else
+            {
+                display = string.Format("{0}: no definition available", key);
+            }
+            return result;
         }
     }
 }
