@@ -5,14 +5,20 @@ using System.Runtime.InteropServices;
 namespace Common
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct TypeInfo
+    public class TypeInfo
     {
         public string name;
-        public List<FieldInfo> fields;
+        public List<FieldInfo> fields = new List<FieldInfo>();
+        public TypeInfo()
+        {
+        }
+        public TypeInfo(string n)
+        {
+            name = n;
+        }
         public TypeInfo(string name, string fields)
         {
             this.name = name;
-            this.fields = new List<FieldInfo>();
             string[] strArray = fields.Split(";".ToCharArray());
             foreach (string str in strArray)
             {
