@@ -1,15 +1,15 @@
-﻿namespace PackFileManager
-{
-    using Common;
-    using DataGridViewAutoFilter;
-    using System;
-    using System.ComponentModel;
-    using System.Data;
-    using System.Drawing;
-    using System.IO;
-    using System.Windows.Forms;
-    using System.Xml;
+﻿using Common;
+using DataGridViewAutoFilter;
+using System;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using System.Xml;
 
+namespace PackFileManager
+{
     public class LocFileEditorControl : UserControl
     {
         private ToolStripButton addNewRowButton;
@@ -197,7 +197,6 @@
 
         private void InitializeComponent()
         {
-            ComponentResourceManager manager = new ComponentResourceManager(typeof(LocFileEditorControl));
             this.dataGridView = new DataGridView();
             this.toolStrip = new ToolStrip();
             this.addNewRowButton = new ToolStripButton();
@@ -207,83 +206,118 @@
             this.exportButton = new ToolStripButton();
             this.importButton = new ToolStripButton();
             this.openLocFileDialog = new OpenFileDialog();
-            ((ISupportInitialize) this.dataGridView).BeginInit();
+            ((ISupportInitialize)(this.dataGridView)).BeginInit();
             this.toolStrip.SuspendLayout();
-            base.SuspendLayout();
-            this.dataGridView.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Top;
+            this.SuspendLayout();
+            // 
+            // dataGridView
+            // 
+            this.dataGridView.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom) 
+            | AnchorStyles.Left) 
+            | AnchorStyles.Right)));
             this.dataGridView.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
             this.dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView.Location = new Point(0, 0x1c);
+            this.dataGridView.Location = new System.Drawing.Point(0, 28);
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.RowHeadersWidth = 100;
             this.dataGridView.ShowCellErrors = false;
             this.dataGridView.ShowEditingIcon = false;
             this.dataGridView.ShowRowErrors = false;
-            this.dataGridView.Size = new Size(0x36c, 0x281);
+            this.dataGridView.Size = new System.Drawing.Size(876, 641);
             this.dataGridView.TabIndex = 1;
             this.dataGridView.VirtualMode = true;
-            this.dataGridView.UserDeletingRow += new DataGridViewRowCancelEventHandler(this.dataGridView_UserDeletingRow);
             this.dataGridView.CellEndEdit += new DataGridViewCellEventHandler(this.dataGridView_CellEndEdit);
-            this.dataGridView.SelectionChanged += new EventHandler(this.dataGridView_SelectionChanged);
-            this.toolStrip.Items.AddRange(new ToolStripItem[] { this.addNewRowButton, this.cloneCurrentRow, this.deleteCurrentRow, this.toolStripSeparator1, this.exportButton, this.importButton });
-            this.toolStrip.Location = new Point(0, 0);
+            this.dataGridView.SelectionChanged += new System.EventHandler(this.dataGridView_SelectionChanged);
+            this.dataGridView.UserDeletingRow += new DataGridViewRowCancelEventHandler(this.dataGridView_UserDeletingRow);
+            // 
+            // toolStrip
+            // 
+            this.toolStrip.Items.AddRange(new ToolStripItem[] {
+            this.addNewRowButton,
+            this.cloneCurrentRow,
+            this.deleteCurrentRow,
+            this.toolStripSeparator1,
+            this.exportButton,
+            this.importButton});
+            this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new Size(0x36c, 0x19);
+            this.toolStrip.Size = new System.Drawing.Size(876, 25);
             this.toolStrip.TabIndex = 2;
             this.toolStrip.Text = "toolStrip";
+            // 
+            // addNewRowButton
+            // 
             this.addNewRowButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            this.addNewRowButton.Image = (Image) manager.GetObject("addNewRowButton.Image");
-            this.addNewRowButton.ImageTransparentColor = Color.Magenta;
+            this.addNewRowButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.addNewRowButton.Name = "addNewRowButton";
-            this.addNewRowButton.Size = new Size(0x56, 0x16);
+            this.addNewRowButton.Size = new System.Drawing.Size(86, 22);
             this.addNewRowButton.Text = "Add New Row";
-            this.addNewRowButton.Click += new EventHandler(this.addNewRowButton_Click);
+            this.addNewRowButton.Click += new System.EventHandler(this.addNewRowButton_Click);
+            // 
+            // cloneCurrentRow
+            // 
             this.cloneCurrentRow.DisplayStyle = ToolStripItemDisplayStyle.Text;
             this.cloneCurrentRow.Enabled = false;
-            this.cloneCurrentRow.Image = (Image) manager.GetObject("cloneCurrentRow.Image");
-            this.cloneCurrentRow.ImageTransparentColor = Color.Magenta;
+            this.cloneCurrentRow.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.cloneCurrentRow.Name = "cloneCurrentRow";
-            this.cloneCurrentRow.Size = new Size(0x6f, 0x16);
+            this.cloneCurrentRow.Size = new System.Drawing.Size(111, 22);
             this.cloneCurrentRow.Text = "Clone Current Row";
             this.cloneCurrentRow.ToolTipText = "Clone Current Row";
-            this.cloneCurrentRow.Click += new EventHandler(this.cloneCurrentRow_Click);
+            this.cloneCurrentRow.Click += new System.EventHandler(this.cloneCurrentRow_Click);
+            // 
+            // deleteCurrentRow
+            // 
             this.deleteCurrentRow.DisplayStyle = ToolStripItemDisplayStyle.Text;
             this.deleteCurrentRow.Enabled = false;
-            this.deleteCurrentRow.ImageTransparentColor = Color.Magenta;
+            this.deleteCurrentRow.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.deleteCurrentRow.Name = "deleteCurrentRow";
-            this.deleteCurrentRow.Size = new Size(0x71, 0x16);
+            this.deleteCurrentRow.Size = new System.Drawing.Size(113, 22);
             this.deleteCurrentRow.Text = "Delete Current Row";
-            this.deleteCurrentRow.Click += new EventHandler(this.deleteCurrentRow_Click);
+            this.deleteCurrentRow.Click += new System.EventHandler(this.deleteCurrentRow_Click);
+            // 
+            // toolStripSeparator1
+            // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new Size(6, 0x19);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // exportButton
+            // 
             this.exportButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            this.exportButton.Image = (Image) manager.GetObject("exportButton.Image");
-            this.exportButton.ImageTransparentColor = Color.Magenta;
+            this.exportButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.exportButton.Name = "exportButton";
-            this.exportButton.Size = new Size(0x43, 0x16);
+            this.exportButton.Size = new System.Drawing.Size(67, 22);
             this.exportButton.Text = "Export TSV";
             this.exportButton.ToolTipText = "Export to tab-separated values";
-            this.exportButton.Click += new EventHandler(this.exportButton_Click);
+            this.exportButton.Click += new System.EventHandler(this.exportButton_Click);
+            // 
+            // importButton
+            // 
             this.importButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            this.importButton.Image = (Image) manager.GetObject("importButton.Image");
-            this.importButton.ImageTransparentColor = Color.Magenta;
+            this.importButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.importButton.Name = "importButton";
-            this.importButton.Size = new Size(70, 0x16);
+            this.importButton.Size = new System.Drawing.Size(70, 22);
             this.importButton.Text = "Import TSV";
             this.importButton.ToolTipText = "Import from tab-separated values";
-            this.importButton.Click += new EventHandler(this.importButton_Click);
+            this.importButton.Click += new System.EventHandler(this.importButton_Click);
+            // 
+            // openLocFileDialog
+            // 
             this.openLocFileDialog.Filter = "Text TSV|*.tsv|Any File|*.*";
-            base.AutoScaleDimensions = new SizeF(6f, 13f);
-            base.AutoScaleMode = AutoScaleMode.Font;
-            base.Controls.Add(this.toolStrip);
-            base.Controls.Add(this.dataGridView);
-            base.Name = "LocFileEditorControl";
-            base.Size = new Size(0x36c, 0x29d);
-            ((ISupportInitialize) this.dataGridView).EndInit();
+            // 
+            // LocFileEditorControl
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = AutoScaleMode.Font;
+            this.Controls.Add(this.toolStrip);
+            this.Controls.Add(this.dataGridView);
+            this.Name = "LocFileEditorControl";
+            this.Size = new System.Drawing.Size(876, 669);
+            ((ISupportInitialize)(this.dataGridView)).EndInit();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
-            base.ResumeLayout(false);
-            base.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         private void setData()
