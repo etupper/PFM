@@ -21,10 +21,37 @@ namespace Common
         private Int16 GUIDLength;
         private byte[] GUID;
 
-        public DBFile(PackedFile packedFile, TypeInfo[] type)
+        public DBFile(PackedFile packedFile, TypeInfo[] type, bool readData = true)
+        {
+            BinaryReader reader = readHeader(packedFile);
+
+            if (readData)
+            {
+                this.type = type;
+                try
+                {
+                    this.typeInfo = type[TotalwarHeaderVersion];
+                    //this.typeInfo = type[0]; // temporarily overwrite with 0 for db testing
+                    int num3 = reader.ReadInt32();
+                    this.entries = new List<List<FieldInstance>>();
+                    for (int i = 0; i < num3; i++)
+                    {
+                        List<FieldInstance> entry = new List<FieldInstance>();
+                        this.addFields(reader, entry, 0, this.typeInfo.fields.Count);
+                        this.entries.Add(entry);
+                    }
+                }
+                catch (Exception)
+                {
+                    throw new DBFileNotSupportedException(
+                        string.Format("This table has an unexpected format. DB file version is {0}, we can handle up to version {1}.",
+                        TotalwarHeaderVersion, type.Length - 1));
+                }
+            }
+        }
+        private BinaryReader readHeader(PackedFile packedFile)
         {
             this.packedFile = packedFile;
-            this.type = type;
             var reader = new BinaryReader(new MemoryStream(packedFile.Data, false));
             byte num = reader.ReadByte();
             int index = 0;
@@ -68,26 +95,7 @@ namespace Common
                 }
             }
             this.TotalwarHeaderVersion = index;
-            
-            try
-            {
-                this.typeInfo = type[index];
-                //this.typeInfo = type[0]; // temporarily overwrite with 0 for db testing
-                int num3 = reader.ReadInt32();
-                this.entries = new List<List<FieldInstance>>();
-                for (int i = 0; i < num3; i++)
-                {
-                    List<FieldInstance> entry = new List<FieldInstance>();
-                    this.addFields(reader, entry, 0, this.typeInfo.fields.Count);
-                    this.entries.Add(entry);
-                }
-            }
-            catch (Exception)
-            {
-                throw new DBFileNotSupportedException(
-                    string.Format("This table has an unexpected format. DB file version is {0}, we can handle up to {1}.",
-                    TotalwarHeaderVersion, type.Length));
-            }
+            return reader;
         }
 
         private TypeInfo GetTypeInfo(string dbName)
