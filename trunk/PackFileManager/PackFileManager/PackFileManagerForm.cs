@@ -611,6 +611,7 @@ namespace PackFileManager
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            PackFileManager.Properties.Settings settings1 = new PackFileManager.Properties.Settings();
             this.packTreeView = new System.Windows.Forms.TreeView();
             this.packActionMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exportFileListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -1181,8 +1182,13 @@ namespace PackFileManager
             // 
             // updateOnStartupToolStripMenuItem
             // 
+            settings1.SettingsKey = "";
+            settings1.TwcThreadId = "10595000";
+            settings1.UpdateOnStartup = false;
+            settings1.UseFirstColumnAsRowHeader = false;
+            settings1.UseOnlineDefinitions = false;
+            this.updateOnStartupToolStripMenuItem.Checked = settings1.UpdateOnStartup;
             this.updateOnStartupToolStripMenuItem.CheckOnClick = true;
-            this.updateOnStartupToolStripMenuItem.Checked = Settings.Default.UpdateOnStartup;
             this.updateOnStartupToolStripMenuItem.Name = "updateOnStartupToolStripMenuItem";
             this.updateOnStartupToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.updateOnStartupToolStripMenuItem.Text = "Update on Startup";
@@ -1193,6 +1199,7 @@ namespace PackFileManager
             this.fromXsdFileToolStripMenuItem.Name = "fromXsdFileToolStripMenuItem";
             this.fromXsdFileToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.fromXsdFileToolStripMenuItem.Text = "Load from xsd File";
+            this.fromXsdFileToolStripMenuItem.Visible = false;
             this.fromXsdFileToolStripMenuItem.Click += new System.EventHandler(this.fromXsdFileToolStripMenuItem_Click);
             // 
             // reloadToolStripMenuItem
@@ -1200,6 +1207,7 @@ namespace PackFileManager
             this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
             this.reloadToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.reloadToolStripMenuItem.Text = "Reload from Local Directory";
+            this.reloadToolStripMenuItem.Visible = false;
             // 
             // statusStrip
             // 
