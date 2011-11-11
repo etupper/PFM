@@ -35,6 +35,7 @@
                     this.type = PackTypeCode.Byte;
                     break;
 
+                case "short":
                 case "uint16":
                     this.type = PackTypeCode.UInt16;
                     break;
@@ -64,6 +65,7 @@
                     this.type = PackTypeCode.Int64;
                     break;
 
+                case "float":
                 case "single":
                     this.type = PackTypeCode.Single;
                     break;
