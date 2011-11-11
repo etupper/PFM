@@ -1,0 +1,6 @@
+<Modules>
+  <Module PersistentId="6D23F5FB-04D4-4D7E-BDFF-FCA718309298" ModuleId="Common" />
+  <Module PersistentId="BED0F2F6-BD7B-4D6D-8959-98A6E9B6F88A" ModuleId="PackFileManager" />
+  <Module PersistentId="d:Miscellaneous Files" ModuleId="System.Windows.Forms" />
+  <Module PersistentId="6598A7CD-8F27-4D3F-A675-5AE63113A7C3" ModuleId="Library" />
+</Modules>
