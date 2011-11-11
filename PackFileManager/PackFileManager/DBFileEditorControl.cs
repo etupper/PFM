@@ -1,15 +1,16 @@
-﻿namespace PackFileManager
+﻿using Common;
+using DataGridViewAutoFilter;
+using PackFileManager.Properties;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+
+namespace PackFileManager
 {
-    using Common;
-    using DataGridViewAutoFilter;
-    using PackFileManager.Properties;
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Data;
-    using System.Drawing;
-    using System.IO;
-    using System.Windows.Forms;
 
     public class DBFileEditorControl : UserControl
     {
@@ -302,7 +303,7 @@
 
         private void InitializeComponent()
         {
-            ComponentResourceManager manager = new ComponentResourceManager(typeof(DBFileEditorControl));
+            Settings settings1 = new Settings();
             this.dataGridView = new DataGridView();
             this.toolStrip = new ToolStrip();
             this.addNewRowButton = new ToolStripButton();
@@ -317,150 +318,193 @@
             this.openDBFileDialog = new OpenFileDialog();
             this.unsupportedDBErrorTextBox = new TextBox();
             this.checkBox1 = new CheckBox();
-            ((ISupportInitialize) this.dataGridView).BeginInit();
+            ((ISupportInitialize)(this.dataGridView)).BeginInit();
             this.toolStrip.SuspendLayout();
-            base.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // dataGridView
+            // 
             this.dataGridView.AllowUserToAddRows = false;
-            this.dataGridView.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Top;
+            this.dataGridView.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom) 
+            | AnchorStyles.Left) 
+            | AnchorStyles.Right)));
             this.dataGridView.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView.Location = new Point(0, 0x1c);
+            this.dataGridView.Location = new Point(0, 28);
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.RowHeadersWidth = 100;
             this.dataGridView.ShowCellErrors = false;
             this.dataGridView.ShowEditingIcon = false;
             this.dataGridView.ShowRowErrors = false;
-            this.dataGridView.Size = new Size(0x36c, 0x281);
+            this.dataGridView.Size = new Size(876, 641);
             this.dataGridView.TabIndex = 1;
             this.dataGridView.VirtualMode = true;
             this.dataGridView.CellPainting += new DataGridViewCellPaintingEventHandler(this.dataGridView_CellPainting);
-            this.dataGridView.KeyPress += new KeyPressEventHandler(this.dataGridView_KeyPress);
             this.dataGridView.DataBindingComplete += new DataGridViewBindingCompleteEventHandler(this.dataGridView_DataBindingComplete);
-            this.dataGridView.SelectionChanged += new EventHandler(this.dataGridView_SelectionChanged);
-            this.toolStrip.Items.AddRange(new ToolStripItem[] { this.addNewRowButton, this.cloneCurrentRow, this.copyToolStripButton, this.pasteToolStripButton, this.toolStripSeparator1, this.exportButton, this.importButton, this.toolStripSeparator2 });
+            this.dataGridView.SelectionChanged += new System.EventHandler(this.dataGridView_SelectionChanged);
+            this.dataGridView.KeyPress += new KeyPressEventHandler(this.dataGridView_KeyPress);
+            // 
+            // toolStrip
+            // 
+            this.toolStrip.Items.AddRange(new ToolStripItem[] {
+            this.addNewRowButton,
+            this.cloneCurrentRow,
+            this.copyToolStripButton,
+            this.pasteToolStripButton,
+            this.toolStripSeparator1,
+            this.exportButton,
+            this.importButton,
+            this.toolStripSeparator2});
             this.toolStrip.Location = new Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new Size(0x36c, 0x19);
+            this.toolStrip.Size = new Size(876, 25);
             this.toolStrip.TabIndex = 2;
             this.toolStrip.Text = "toolStrip";
+            // 
+            // addNewRowButton
+            // 
             this.addNewRowButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
             this.addNewRowButton.Enabled = false;
-            this.addNewRowButton.Image = (Image) manager.GetObject("addNewRowButton.Image");
             this.addNewRowButton.ImageTransparentColor = Color.Magenta;
             this.addNewRowButton.Name = "addNewRowButton";
-            this.addNewRowButton.Size = new Size(0x3b, 0x16);
+            this.addNewRowButton.Size = new Size(59, 22);
             this.addNewRowButton.Text = "Add Row";
             this.addNewRowButton.ToolTipText = "Add New Row";
-            this.addNewRowButton.Click += new EventHandler(this.addNewRowButton_Click);
+            this.addNewRowButton.Click += new System.EventHandler(this.addNewRowButton_Click);
+            // 
+            // cloneCurrentRow
+            // 
             this.cloneCurrentRow.DisplayStyle = ToolStripItemDisplayStyle.Text;
             this.cloneCurrentRow.Enabled = false;
-            this.cloneCurrentRow.Image = (Image) manager.GetObject("cloneCurrentRow.Image");
             this.cloneCurrentRow.ImageTransparentColor = Color.Magenta;
             this.cloneCurrentRow.Name = "cloneCurrentRow";
-            this.cloneCurrentRow.Size = new Size(0x44, 0x16);
+            this.cloneCurrentRow.Size = new Size(68, 22);
             this.cloneCurrentRow.Text = "Clone Row";
             this.cloneCurrentRow.ToolTipText = "Clone Current Row";
-            this.cloneCurrentRow.Click += new EventHandler(this.cloneCurrentRow_Click);
+            this.cloneCurrentRow.Click += new System.EventHandler(this.cloneCurrentRow_Click);
+            // 
+            // copyToolStripButton
+            // 
             this.copyToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
             this.copyToolStripButton.Enabled = false;
-            this.copyToolStripButton.Image = (Image) manager.GetObject("copyToolStripButton.Image");
             this.copyToolStripButton.ImageTransparentColor = Color.Magenta;
             this.copyToolStripButton.Name = "copyToolStripButton";
-            this.copyToolStripButton.Size = new Size(0x41, 0x16);
+            this.copyToolStripButton.Size = new Size(65, 22);
             this.copyToolStripButton.Text = "&Copy Row";
             this.copyToolStripButton.ToolTipText = "Copy Current Row";
-            this.copyToolStripButton.Click += new EventHandler(this.copyToolStripButton_Click);
+            this.copyToolStripButton.Click += new System.EventHandler(this.copyToolStripButton_Click);
+            // 
+            // pasteToolStripButton
+            // 
             this.pasteToolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
             this.pasteToolStripButton.Enabled = false;
-            this.pasteToolStripButton.Image = (Image) manager.GetObject("pasteToolStripButton.Image");
             this.pasteToolStripButton.ImageTransparentColor = Color.Magenta;
             this.pasteToolStripButton.Name = "pasteToolStripButton";
-            this.pasteToolStripButton.Size = new Size(0x41, 0x16);
+            this.pasteToolStripButton.Size = new Size(65, 22);
             this.pasteToolStripButton.Text = "&Paste Row";
             this.pasteToolStripButton.ToolTipText = "Paste Row from Clipboard";
-            this.pasteToolStripButton.Click += new EventHandler(this.pasteToolStripButton_Click);
+            this.pasteToolStripButton.Click += new System.EventHandler(this.pasteToolStripButton_Click);
+            // 
+            // toolStripSeparator1
+            // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new Size(6, 0x19);
+            this.toolStripSeparator1.Size = new Size(6, 25);
+            // 
+            // exportButton
+            // 
             this.exportButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
             this.exportButton.Enabled = false;
-            this.exportButton.Image = (Image) manager.GetObject("exportButton.Image");
             this.exportButton.ImageTransparentColor = Color.Magenta;
             this.exportButton.Name = "exportButton";
-            this.exportButton.Size = new Size(0x43, 0x16);
+            this.exportButton.Size = new Size(67, 22);
             this.exportButton.Text = "Export TSV";
             this.exportButton.ToolTipText = "Export to tab-separated values";
-            this.exportButton.Click += new EventHandler(this.exportButton_Click);
+            this.exportButton.Click += new System.EventHandler(this.exportButton_Click);
+            // 
+            // importButton
+            // 
             this.importButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
             this.importButton.Enabled = false;
-            this.importButton.Image = (Image) manager.GetObject("importButton.Image");
             this.importButton.ImageTransparentColor = Color.Magenta;
             this.importButton.Name = "importButton";
-            this.importButton.Size = new Size(70, 0x16);
+            this.importButton.Size = new Size(70, 22);
             this.importButton.Text = "Import TSV";
             this.importButton.ToolTipText = "Import from tab-separated values";
-            this.importButton.Click += new EventHandler(this.importButton_Click);
+            this.importButton.Click += new System.EventHandler(this.importButton_Click);
+            // 
+            // toolStripSeparator2
+            // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new Size(6, 0x19);
-            this.useOnlineDefinitionsToolStripMenuItem.Checked = Settings.Default.UseOnlineDefinitions;
+            this.toolStripSeparator2.Size = new Size(6, 25);
+            // 
+            // useOnlineDefinitionsToolStripMenuItem
+            // 
+            settings1.SettingsKey = "";
+            settings1.TwcThreadId = "10595000";
+            settings1.UseFirstColumnAsRowHeader = false;
+            settings1.UseOnlineDefinitions = false;
+            this.useOnlineDefinitionsToolStripMenuItem.Checked = settings1.UseOnlineDefinitions;
             this.useOnlineDefinitionsToolStripMenuItem.CheckOnClick = true;
             this.useOnlineDefinitionsToolStripMenuItem.Enabled = false;
             this.useOnlineDefinitionsToolStripMenuItem.Name = "useOnlineDefinitionsToolStripMenuItem";
-            this.useOnlineDefinitionsToolStripMenuItem.Size = new Size(0xdb, 0x16);
+            this.useOnlineDefinitionsToolStripMenuItem.Size = new Size(219, 22);
             this.useOnlineDefinitionsToolStripMenuItem.Text = "Use online definitions";
-            this.useOnlineDefinitionsToolStripMenuItem.CheckedChanged += new EventHandler(this.useOnlineDefinitionsToolStripMenuItem_CheckedChanged);
+            this.useOnlineDefinitionsToolStripMenuItem.CheckedChanged += new System.EventHandler(this.useOnlineDefinitionsToolStripMenuItem_CheckedChanged);
+            // 
+            // openDBFileDialog
+            // 
             this.openDBFileDialog.Filter = "Tab separated values (TSV)|*.tsv|Any File|*.*";
-            this.unsupportedDBErrorTextBox.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Top;
-            this.unsupportedDBErrorTextBox.Location = new Point(0, 0x1c);
+            // 
+            // unsupportedDBErrorTextBox
+            // 
+            this.unsupportedDBErrorTextBox.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom) 
+            | AnchorStyles.Left) 
+            | AnchorStyles.Right)));
+            this.unsupportedDBErrorTextBox.Location = new Point(0, 28);
             this.unsupportedDBErrorTextBox.Multiline = true;
             this.unsupportedDBErrorTextBox.Name = "unsupportedDBErrorTextBox";
             this.unsupportedDBErrorTextBox.ReadOnly = true;
             this.unsupportedDBErrorTextBox.ScrollBars = ScrollBars.Vertical;
-            this.unsupportedDBErrorTextBox.Size = new Size(0x36c, 0x281);
+            this.unsupportedDBErrorTextBox.Size = new Size(876, 641);
             this.unsupportedDBErrorTextBox.TabIndex = 3;
             this.unsupportedDBErrorTextBox.Visible = false;
+            // 
+            // checkBox1
+            // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new Point(0x1a6, 4);
+            this.checkBox1.Location = new Point(422, 4);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new Size(0xb7, 0x11);
+            this.checkBox1.Size = new Size(183, 17);
             this.checkBox1.TabIndex = 4;
             this.checkBox1.Text = "Use First Column As Row Header";
             this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new EventHandler(this.checkBox_CheckedChanged);
-            base.AutoScaleDimensions = new SizeF(6f, 13f);
-            base.AutoScaleMode = AutoScaleMode.Font;
-            base.Controls.Add(this.checkBox1);
-            base.Controls.Add(this.toolStrip);
-            base.Controls.Add(this.dataGridView);
-            base.Controls.Add(this.unsupportedDBErrorTextBox);
-            base.Name = "DBFileEditorControl";
-            base.Size = new Size(0x36c, 0x29d);
-            base.Enter += new EventHandler(this.DBFileEditorControl_Enter);
-            ((ISupportInitialize) this.dataGridView).EndInit();
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
+            // 
+            // DBFileEditorControl
+            // 
+            this.AutoScaleDimensions = new SizeF(6F, 13F);
+            this.AutoScaleMode = AutoScaleMode.Font;
+            this.Controls.Add(this.checkBox1);
+            this.Controls.Add(this.toolStrip);
+            this.Controls.Add(this.dataGridView);
+            this.Controls.Add(this.unsupportedDBErrorTextBox);
+            this.Name = "DBFileEditorControl";
+            this.Size = new Size(876, 669);
+            this.Enter += new System.EventHandler(this.DBFileEditorControl_Enter);
+            ((ISupportInitialize)(this.dataGridView)).EndInit();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
-            base.ResumeLayout(false);
-            base.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
         }
 
         public void Open(PackedFile packedFile)
         {
             int num;
-            TypeInfo[] type = new TypeInfo[DBTypeMap.Instance.HighestHeaderVersion];
-            string[] strArray = Path.GetDirectoryName(packedFile.Filepath).Split(new char[] { '\\' });
-            string key = strArray[strArray.Length - 1].Remove(strArray[strArray.Length - 1].Length - 7);
-            bool flag = false;
-            for (num = 0; num < type.Length; num++)
-            {
-                type[num] = new TypeInfo();
-                if (DBTypeMap.Instance[num] != null)
-                {
-                    if (DBTypeMap.Instance[num].TryGetValue(key, out type[num]))
-                    {
-                        flag = true;
-                    }
-                }
-            }
-            if (!flag)
+            string key = Path.GetFileName(Path.GetDirectoryName(packedFile.Filepath));
+            key = key.Remove(key.LastIndexOf('_'), 7);
+            List<TypeInfo> type = DBTypeMap.Instance[key];
+            if (type == null)
             {
                 this.showDBFileNotSupportedMessage("Sorry, this db file isn't supported yet.\r\n\r\nCurrently supported files:\r\n");
             }
@@ -468,7 +512,7 @@
             {
                 this.dataGridView.DataSource = null;
                 this.currentPackedFile = packedFile;
-                this.currentDBFile = new DBFile(packedFile, type);
+                this.currentDBFile = new DBFile(packedFile, type.ToArray());
                 TypeInfo info = type[this.currentDBFile.TotalwarHeaderVersion];
                 this.currentDataSet = new DataSet(info.name + "_DataSet");
                 this.currentDataTable = new DataTable(info.name + "_DataTable");
@@ -555,17 +599,7 @@
             this.dataGridView.Visible = false;
             this.unsupportedDBErrorTextBox.Visible = true;
             this.unsupportedDBErrorTextBox.Text = message;
-            /*for (int i = 0; i < Settings.Default.totalwarHeaderVersions; i++)
-            {
-                if (this.typeMap[i] != null)
-                {
-                    foreach (string str in this.typeMap[i].Keys)
-                    {
-                        this.unsupportedDBErrorTextBox.Text = this.unsupportedDBErrorTextBox.Text + str + "\r\n";
-                    }
-                }
-            }*/
-            foreach (string str in DBTypeMap.Instance.dbFileTypes)
+            foreach (string str in DBTypeMap.Instance.DBFileTypes)
             {
                 this.unsupportedDBErrorTextBox.Text = this.unsupportedDBErrorTextBox.Text + str + "\r\n";
             }
