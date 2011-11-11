@@ -69,28 +69,6 @@ namespace Common
             }
             this.TotalwarHeaderVersion = index;
             
-            /*try // Use only with DB.xsd file
-            {
-                var dbName = packedFile.Filepath.Replace(@"\", ":").Split(':')[1];
-
-                typeInfo = GetTypeInfo(dbName);
-                //TypeInfo info = type[index];
-                int num3 = reader.ReadInt32();
-                this.entries = new List<List<FieldInstance>>();
-                for (int i = 0; i < num3; i++)
-                {
-                    List<FieldInstance> entry = new List<FieldInstance>();
-                    this.addFields(reader, entry, 0, typeInfo.fields.Count);
-                    this.entries.Add(entry);
-                    Debug.WriteLine(string.Format("entry {0} read", entries.Count));
-
-                }
-                Debug.WriteLine(string.Format("Number of entries read: {0}", entries.Count));
-            }
-            catch (Exception)
-            {
-                throw new DBFileNotSupportedException("This table has an unexpected format.  It may have changed in the most recent update.");
-            }*/
             try
             {
                 this.typeInfo = type[index];
@@ -106,7 +84,9 @@ namespace Common
             }
             catch (Exception)
             {
-                throw new DBFileNotSupportedException("This table has an unexpected format.  It may have changed in the most recent update.");
+                throw new DBFileNotSupportedException(
+                    string.Format("This table has an unexpected format. DB file version is {0}, we can handle up to {1}.",
+                    TotalwarHeaderVersion, type.Length));
             }
         }
 
@@ -297,7 +277,7 @@ namespace Common
         public List<FieldInstance> GetNewEntry()
         {
             List<FieldInstance> list = new List<FieldInstance>();
-            foreach (FieldInfo info in this.type[this.TotalwarHeaderVersion].fields)
+            foreach (FieldInfo info in typeInfo.fields)
             {
                 List<string> list2;
                 int num;
