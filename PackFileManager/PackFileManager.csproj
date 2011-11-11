@@ -50,6 +50,12 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <EmbeddedResource Include="PackFileManager\DBFileEditorControl.resx">
+      <DependentUpon>DBFileEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PackFileManager\LocFileEditorControl.resx">
+      <DependentUpon>LocFileEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PackFileManager\PackFileManagerForm.resx">
       <DependentUpon>PackFileManagerForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -105,16 +111,13 @@
       <SubType>UserControl</SubType>
     </Compile>
     <EmbeddedResource Include="PackFileManager.AtlasFileEditorControl.resources" />
-    <EmbeddedResource Include="PackFileManager.LocFileEditorControl.resources" />
     <EmbeddedResource Include="PackFileManager.UnitVariantFileEditorControl.resources" />
     <EmbeddedResource Include="PackFileManager.TextFileEditorControl.resources" />
     <EmbeddedResource Include="PackFileManager.FileAlreadyExistsDialog.resources" />
     <EmbeddedResource Include="PackFileManager.ImageViewerControl.resources" />
     <EmbeddedResource Include="PackFileManager.Properties.Resources.resources" />
     <EmbeddedResource Include="PackFileManager.customMessageBox.resources" />
-    <EmbeddedResource Include="PackFileManager.DBFileEditorControl.resources" />
     <EmbeddedResource Include="PackFileManager.caFileEditAdvisory.resources" />
-    <None Include="PackFileManager.PackFileManagerForm.resources.old" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
