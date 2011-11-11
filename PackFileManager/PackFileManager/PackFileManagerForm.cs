@@ -171,7 +171,13 @@ namespace PackFileManager
             Label label = new Label {
                 Dock = DockStyle.Fill,
                 TextAlign = ContentAlignment.MiddleLeft,
-                Text = string.Format("v{0} Copyright 2009-2011 Distributed under the Simple Public License 2.0\r\n\r\nPack File Manager by Matt Chambers\r\n\r\nPack File Manager Update for NTW by erasmus777\r\n\r\nPack File Manager Update for TWS2 by Lord Maximus and Porphyr\r\n\r\nThanks to the hard work of the people at twcenter.net.\r\n\r\nSpecial thanks to alpaca, just, ancientxx, Delphy, Scanian, iznagi11, barvaz, Mechanic, mac89, badger1815, husserlTW, The Vicar, and many others!", Application.ProductVersion)
+                Text = string.Format("v{0} Copyright 2009-2011 Distributed under the Simple Public License 2.0\r\n" +
+                    "\r\nPack File Manager by Matt Chambers\r\n"+
+                    "\r\nPack File Manager Update for NTW by erasmus777\r\n"+
+                    "\r\nPack File Manager Update for TWS2 by Lord Maximus and Porphyr\r\n"+
+                    "\r\nPack File Manager Update 1.7 for TWS2 by daniu\r\n" +
+                    "\r\nThanks to the hard work of the people at twcenter.net.\r\n" +
+                    "\r\nSpecial thanks to alpaca, just, ancientxx, Delphy, Scanian, iznagi11, barvaz, Mechanic, mac89, badger1815, husserlTW, The Vicar, and many others!", Application.ProductVersion)
             };
             form.Controls.Add(label);
             form.ShowDialog(this);
@@ -611,7 +617,6 @@ namespace PackFileManager
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            PackFileManager.Properties.Settings settings1 = new PackFileManager.Properties.Settings();
             this.packTreeView = new System.Windows.Forms.TreeView();
             this.packActionMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exportFileListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -942,9 +947,9 @@ namespace PackFileManager
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.helpToolStripMenuItem,
             this.editToolStripMenuItem,
-            this.updateToolStripMenuItem});
+            this.updateToolStripMenuItem,
+            this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(906, 24);
@@ -1061,34 +1066,34 @@ namespace PackFileManager
             // contentsToolStripMenuItem
             // 
             this.contentsToolStripMenuItem.Name = "contentsToolStripMenuItem";
-            this.contentsToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.contentsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.contentsToolStripMenuItem.Text = "&Contents";
             this.contentsToolStripMenuItem.Visible = false;
             // 
             // indexToolStripMenuItem
             // 
             this.indexToolStripMenuItem.Name = "indexToolStripMenuItem";
-            this.indexToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.indexToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.indexToolStripMenuItem.Text = "&Index";
             this.indexToolStripMenuItem.Visible = false;
             // 
             // searchToolStripMenuItem
             // 
             this.searchToolStripMenuItem.Name = "searchToolStripMenuItem";
-            this.searchToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.searchToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.searchToolStripMenuItem.Text = "&Search";
             this.searchToolStripMenuItem.Visible = false;
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(119, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(149, 6);
             this.toolStripSeparator5.Visible = false;
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.aboutToolStripMenuItem.Text = "&About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -1182,12 +1187,6 @@ namespace PackFileManager
             // 
             // updateOnStartupToolStripMenuItem
             // 
-            settings1.SettingsKey = "";
-            settings1.TwcThreadId = "10595000";
-            settings1.UpdateOnStartup = false;
-            settings1.UseFirstColumnAsRowHeader = false;
-            settings1.UseOnlineDefinitions = false;
-            this.updateOnStartupToolStripMenuItem.Checked = settings1.UpdateOnStartup;
             this.updateOnStartupToolStripMenuItem.CheckOnClick = true;
             this.updateOnStartupToolStripMenuItem.Name = "updateOnStartupToolStripMenuItem";
             this.updateOnStartupToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
