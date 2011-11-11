@@ -92,6 +92,7 @@
         private ToolStripMenuItem undoToolStripMenuItem;
         private ToolStripMenuItem updateToolStripMenuItem;
         private ToolStripMenuItem searchForUpdateToolStripMenuItem;
+        private ToolStripMenuItem fromXsdFileToolStripMenuItem;
         private UnitVariantFileEditorControl unitVariantFileEditorControl;
 
         public PackFileManagerForm(string[] args)
@@ -637,6 +638,7 @@
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.addDirectoryFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.openDBFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.fromXsdFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packActionMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -1123,7 +1125,8 @@
             // updateToolStripMenuItem
             // 
             this.updateToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.searchForUpdateToolStripMenuItem});
+            this.searchForUpdateToolStripMenuItem,
+            this.fromXsdFileToolStripMenuItem});
             this.updateToolStripMenuItem.Name = "updateToolStripMenuItem";
             this.updateToolStripMenuItem.Size = new System.Drawing.Size(102, 20);
             this.updateToolStripMenuItem.Text = "DB Descriptions";
@@ -1174,6 +1177,13 @@
             // openDBFileDialog
             // 
             this.openDBFileDialog.Filter = "Text CSV|*.txt|Any File|*.*";
+            // 
+            // fromXsdFileToolStripMenuItem
+            // 
+            this.fromXsdFileToolStripMenuItem.Name = "fromXsdFileToolStripMenuItem";
+            this.fromXsdFileToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.fromXsdFileToolStripMenuItem.Text = "From xsd File";
+            this.fromXsdFileToolStripMenuItem.Click += new System.EventHandler(this.fromXsdFileToolStripMenuItem_Click);
             // 
             // PackFileManagerForm
             // 
@@ -1865,6 +1875,16 @@
             {
                 MessageBox.Show(
                     string.Format("Update failed: \n{0}\n{1}", e.Message, e.StackTrace), "Problem, sir!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void fromXsdFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog open = new OpenFileDialog();
+            open.InitialDirectory = Path.GetDirectoryName(Application.ExecutablePath);
+            if (open.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                DBTypeMap.Instance.loadFromXsd(open.FileName);
             }
         }
     }
