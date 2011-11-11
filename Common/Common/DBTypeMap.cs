@@ -165,7 +165,7 @@ namespace Common
         }
         public SortedDictionary<string, List<TypeInfo>> loadXsd()
         {
-            DisplayObjects(schema, "");
+            handleObject(schema);
             return allInfos;
         }
         private void startNewDbFile(XmlSchemaComplexType type)
@@ -209,7 +209,7 @@ namespace Common
             currentInfo.fields.Add(fieldType);
         }
 
-        private void DisplayObjects(XmlSchemaObject o, string indent)
+        private void handleObject(XmlSchemaObject o)
         {
             string str = "unknown";
             XmlSchemaObjectCollection children = new XmlSchemaObjectCollection();
@@ -238,11 +238,10 @@ namespace Common
                 new List<XmlAttribute>(((XmlSchemaAnnotated)o).UnhandledAttributes).ForEach(uh => attlist += " " + uh);
                 str = string.Format("{0} (unhandled: {1})", str, attlist);
             }
-            // Console.WriteLine("{0}{1}", indent, str);
 
             foreach (XmlSchemaObject child in children)
             {
-                DisplayObjects(child, indent + "\t");
+                handleObject(child);
             }
         }
         private void addCurrentInfo()
