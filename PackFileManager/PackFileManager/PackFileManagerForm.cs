@@ -1,15 +1,17 @@
-﻿namespace PackFileManager
+﻿using Common;
+using PackFileManager.Properties;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Text;
+using System.Windows.Forms;
+
+namespace PackFileManager
 {
-    using Common;
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Data;
-    using System.Diagnostics;
-    using System.Drawing;
-    using System.IO;
-    using System.Text;
-    using System.Windows.Forms;
 
     public class PackFileManagerForm : Form
     {
@@ -94,11 +96,26 @@
         private ToolStripMenuItem searchForUpdateToolStripMenuItem;
         private ToolStripMenuItem fromXsdFileToolStripMenuItem;
         private ToolStripMenuItem reloadToolStripMenuItem;
+        private ToolStripMenuItem updateOnStartupToolStripMenuItem;
         private UnitVariantFileEditorControl unitVariantFileEditorControl;
 
         public PackFileManagerForm(string[] args)
         {
             this.InitializeComponent();
+
+            if (Settings.Default.UpdateOnStartup)
+            {
+                try
+                {
+                    DBFileTypesUpdater.checkVersion(Path.GetDirectoryName(Application.ExecutablePath));
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(string.Format("Failed to update DBTypeFiles: {0}", e.Message), "Automatic Update Failed", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
             string ShogunTotalWarDirectory = IOFunctions.GetShogunTotalWarDirectory();
             if (string.IsNullOrEmpty(ShogunTotalWarDirectory))
             {
@@ -649,7 +666,9 @@
             this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchForUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.updateOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fromXsdFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.packStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.packActionProgressBar = new System.Windows.Forms.ToolStripProgressBar();
@@ -659,7 +678,6 @@
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.addDirectoryFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.openDBFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.reloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packActionMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -1147,6 +1165,7 @@
             // 
             this.updateToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.searchForUpdateToolStripMenuItem,
+            this.updateOnStartupToolStripMenuItem,
             this.fromXsdFileToolStripMenuItem,
             this.reloadToolStripMenuItem});
             this.updateToolStripMenuItem.Name = "updateToolStripMenuItem";
@@ -1160,12 +1179,27 @@
             this.searchForUpdateToolStripMenuItem.Text = "Search for Update";
             this.searchForUpdateToolStripMenuItem.Click += new System.EventHandler(this.updateToolStripMenuItem_Click);
             // 
+            // updateOnStartupToolStripMenuItem
+            // 
+            this.updateOnStartupToolStripMenuItem.CheckOnClick = true;
+            this.updateOnStartupToolStripMenuItem.Checked = Settings.Default.UpdateOnStartup;
+            this.updateOnStartupToolStripMenuItem.Name = "updateOnStartupToolStripMenuItem";
+            this.updateOnStartupToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.updateOnStartupToolStripMenuItem.Text = "Update on Startup";
+            this.updateOnStartupToolStripMenuItem.Click += new System.EventHandler(this.updateOnStartupToolStripMenuItem_Click);
+            // 
             // fromXsdFileToolStripMenuItem
             // 
             this.fromXsdFileToolStripMenuItem.Name = "fromXsdFileToolStripMenuItem";
             this.fromXsdFileToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.fromXsdFileToolStripMenuItem.Text = "Load from xsd File";
             this.fromXsdFileToolStripMenuItem.Click += new System.EventHandler(this.fromXsdFileToolStripMenuItem_Click);
+            // 
+            // reloadToolStripMenuItem
+            // 
+            this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
+            this.reloadToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.reloadToolStripMenuItem.Text = "Reload from Local Directory";
             // 
             // statusStrip
             // 
@@ -1206,12 +1240,6 @@
             // openDBFileDialog
             // 
             this.openDBFileDialog.Filter = "Text CSV|*.txt|Any File|*.*";
-            // 
-            // reloadToolStripMenuItem
-            // 
-            this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
-            this.reloadToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
-            this.reloadToolStripMenuItem.Text = "Reload from Local Directory";
             // 
             // PackFileManagerForm
             // 
@@ -1956,6 +1984,12 @@
                 display = string.Format("{0}: no definition available", key);
             }
             return result;
+        }
+
+        private void updateOnStartupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Settings.Default.UpdateOnStartup = this.updateOnStartupToolStripMenuItem.Checked;
+            Settings.Default.Save();
         }
     }
 }
