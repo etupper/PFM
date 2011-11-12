@@ -262,16 +262,22 @@ namespace PackFileManager
             TreeNode node = addTreeViewNodeByPath(parent.Nodes, path);
             node.Tag = file2;
             string mouseover = "";
-            if (!canShow(file2, out mouseover))
+            try
             {
-                node.Parent.ToolTipText = mouseover;
-                node.Parent.ForeColor = Color.Red;
-                node.ForeColor = Color.Red;
+                if (!canShow(file2, out mouseover))
+                {
+                    node.Parent.ToolTipText = mouseover;
+                    node.Parent.ForeColor = Color.Red;
+                    node.ForeColor = Color.Red;
+                }
+                else if (headerVersionObsolete(file2))
+                {
+                    node.Parent.BackColor = Color.Yellow;
+                    node.BackColor = Color.Yellow;
+                }
             }
-            else if (headerVersionObsolete(file2))
-            {
-                node.Parent.BackColor = Color.Yellow;
-                node.BackColor = Color.Yellow;
+            catch (Exception) {
+//                Console.WriteLine(x);
             }
             node.ToolTipText = mouseover;
             return node;
@@ -2022,7 +2028,9 @@ namespace PackFileManager
                 DBFile currentDBFile = new DBFile(packedFile, type.ToArray(), false);
                 version = currentDBFile.TotalwarHeaderVersion;
             }
-            catch (Exception) {}
+            catch (Exception) {
+//                Console.WriteLine(x);
+            }
             return version != -1 && version < type.Count-1;
         }
 
