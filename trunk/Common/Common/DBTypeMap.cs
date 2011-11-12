@@ -127,6 +127,20 @@ namespace Common
         }
 
 	}
+    public class TableConstraint
+    {
+        public string Name { get; set; }
+        public string Table { get; set; }
+        public List<string> Fields { get; set; }
+    }
+    class TableReferenceEntry
+    {
+        public string Name { get; set; }
+        public string fromTable { get; set; }
+        public int fromTableIndex { get; set; }
+        public string toTable { get; set; }
+        public int toTableIndex { get; set; }
+    }
     public class XsdParser
     {
         public static Regex TABLES_SUFFIX = new Regex("_tables");
@@ -134,11 +148,71 @@ namespace Common
         int lastVersion = 0;
         SortedDictionary<string, List<TypeInfo>> allInfos = new SortedDictionary<string, List<TypeInfo>>();
         XmlSchema schema;
+        List<TableConstraint> constraints = new List<TableConstraint>();
 
         // temporaries during parsing
         string currentDbFileName;
         TypeInfo currentInfo;
         List<TypeInfo> infos;
+
+        TableReferenceEntry resolveReference(string referenceName, string fromTable, string fromRow, string uniqueName)
+        {
+            int index = findTableRowIndex(fromTable, fromRow);
+            if (index == -1)
+            {
+                return null;
+            }
+            string toTable = null;
+            int toIndex = -1;
+            foreach (TableConstraint constraint in constraints)
+            {
+                if (constraint.Name == uniqueName)
+                {
+                    if (constraint.Fields.Count != 1)
+                    {
+                        return null;
+                    }
+                    toTable = constraint.Table.Substring(3).Replace("_tables", "");
+                    toIndex = findTableRowIndex(toTable, constraint.Fields[0].Substring(1));
+                }
+            }
+            if (toIndex == -1)
+            {
+                return null;
+            }
+            return new TableReferenceEntry { Name = referenceName,
+                fromTable = fromTable, fromTableIndex = index,
+                toTable = toTable, toTableIndex = toIndex };
+        }
+        int findTableRowIndex(string tableName, string rowName)
+        {
+            List<TypeInfo> fromInfos = null;
+            if (!allInfos.TryGetValue(tableName, out fromInfos)) {
+                return -1;
+            }
+            TypeInfo firstInfo = null;
+            foreach (TypeInfo ti in fromInfos)
+            {
+                if (ti != null)
+                {
+                    firstInfo = ti;
+                    break;
+                }
+            }
+            if (firstInfo == null)
+            {
+                return -1;
+            }
+            int index = 0;
+            for (; index < firstInfo.fields.Count; index++)
+            {
+                if (firstInfo.fields[index].name == rowName)
+                {
+                    break;
+                }
+            }
+            return (index == firstInfo.fields.Count) ? -1 : index;
+        }
 
         public XsdParser(string file)
         {
@@ -153,6 +227,7 @@ namespace Common
 
                 set.Compile();
 
+                Console.WriteLine("reading finished");
                 //loadXsd();
             }
             catch (XmlSchemaException e)
@@ -232,6 +307,58 @@ namespace Common
                 addDbAttribute(attribute);
                 str = string.Format("{0} ({1})", attribute.Name, attribute.AttributeSchemaType.TypeCode);
             }
+            else if (o is XmlSchemaElement) 
+            {
+                // children = ((XmlSchemaElement)o).
+                XmlSchemaElement element = (XmlSchemaElement)o;
+                foreach (XmlSchemaObject constraint in element.Constraints)
+                {
+                    if (constraint is XmlSchemaUnique)
+                    {
+                        XmlSchemaUnique unique = (XmlSchemaUnique)constraint;
+                        List<string> fields = new List<string>(unique.Fields.Count);
+                        foreach (XmlSchemaObject field in unique.Fields)
+                        {
+                            if (field is XmlSchemaXPath)
+                            {
+                                fields.Add(((XmlSchemaXPath)field).XPath);
+                            }
+                        }
+                        constraints.Add(new TableConstraint
+                        {
+                            Name = unique.Name,
+                            Table = unique.Selector.XPath,
+                            Fields = fields
+                        });
+                    }
+                    else if (constraint is XmlSchemaKeyref)
+                    {
+                        XmlSchemaKeyref reference = (XmlSchemaKeyref) constraint;
+                        string fromTable = reference.Selector.XPath.Substring(3).Replace("_tables", "");
+                        string fromRow = ((XmlSchemaXPath)reference.Fields[0]).XPath.Substring(1);
+                        try
+                        {
+                            TableReferenceEntry tableRef = resolveReference(reference.Name, fromTable, fromRow, reference.Refer.Name);
+                            if (tableRef != null)
+                            {
+                                Console.WriteLine("{0}#{1} - {2}#{3}", tableRef.fromTable, tableRef.fromTableIndex, tableRef.toTable, tableRef.toTableIndex);
+                            }
+                            else
+                            {
+                                Console.WriteLine("could not resolve reference");
+                            }
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                }
+            } 
+            else
+            {
+                Console.WriteLine("unknown type: {0}", o);
+            }
+
             if (o is XmlSchemaAnnotated && ((XmlSchemaAnnotated)o).UnhandledAttributes != null)
             {
                 string attlist = "";
