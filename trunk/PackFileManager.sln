@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackFileManager", "PackFileManager.csproj", "{BED0F2F6-BD7B-4D6D-8959-98A6E9B6F88A}"
+# Visual C# Express 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackFileManager", "PackFileManager\PackFileManager.csproj", "{BED0F2F6-BD7B-4D6D-8959-98A6E9B6F88A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\Common\Common.csproj", "{6D23F5FB-04D4-4D7E-BDFF-FCA718309298}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{6D23F5FB-04D4-4D7E-BDFF-FCA718309298}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library", "..\Library\Library.csproj", "{6598A7CD-8F27-4D3F-A675-5AE63113A7C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library", "Library\Library.csproj", "{6598A7CD-8F27-4D3F-A675-5AE63113A7C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
