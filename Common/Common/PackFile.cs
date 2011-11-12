@@ -286,7 +286,7 @@ namespace Common
 
                 // File Time
                 Int64 fileTime = DateTime.Now.ToFileTimeUtc();
-                if (this.PackIdentifier == "PFH2")
+                if (this.PackIdentifier == "PFH2" || this.PackIdentifier == "PFH3")
                 {
                     writer.Write(fileTime);
                 }
