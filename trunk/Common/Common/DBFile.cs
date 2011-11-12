@@ -16,7 +16,19 @@ namespace Common
         private List<List<FieldInstance>> entries;
         private TypeInfo typeInfo;
         private PackedFile packedFile;
-        public int TotalwarHeaderVersion { get; set; }
+        private int headerVersion;
+        public int TotalwarHeaderVersion
+        {
+            get
+            {
+                return headerVersion;
+            }
+            set
+            {
+                headerVersion = value;
+                typeInfo = type[value];
+            }
+        }
         private readonly TypeInfo[] type = new TypeInfo[Settings.Default.totalwarHeaderVersions];
         private Int16 GUIDLength;
         private byte[] GUID;
@@ -48,6 +60,15 @@ namespace Common
                         TotalwarHeaderVersion, type.Length - 1));
                 }
             }
+        }
+        public DBFile(DBFile toCopy)
+        {
+            typeInfo = toCopy.typeInfo;
+            TotalwarHeaderVersion = toCopy.TotalwarHeaderVersion;
+            type = toCopy.type;
+            GUIDLength = toCopy.GUIDLength;
+            GUID = toCopy.GUID;
+            toCopy.entries.ForEach(entry => entries.Add(new List<FieldInstance>(entry)));
         }
         private BinaryReader readHeader(PackedFile packedFile)
         {
