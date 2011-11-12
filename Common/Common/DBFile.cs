@@ -115,7 +115,7 @@ namespace Common
                     }
                 }
             }
-            this.TotalwarHeaderVersion = index;
+            headerVersion = index;
             return reader;
         }
 
