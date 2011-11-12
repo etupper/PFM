@@ -32,6 +32,7 @@ namespace PackFileManager
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripSeparator toolStripSeparator2;
         private TextBox unsupportedDBErrorTextBox;
+        private CheckBox useComboBoxCells;
         private ToolStripMenuItem useOnlineDefinitionsToolStripMenuItem;
 
         public DBFileEditorControl()
@@ -40,20 +41,6 @@ namespace PackFileManager
             this.InitializeComponent();
             initTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
             this.dataGridView.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-        }
-
-        public DBFileEditorControl(PackedFile packedFile)
-        {
-            this.components = null;
-            this.InitializeComponent();
-            initTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
-            this.Open(packedFile);
-            if (this.dataGridView.Columns.Count > 0)
-            {
-                this.dataGridView.Columns[0].Width = 40;
-                this.dataGridView.Columns[0].CellTemplate.Value = "";
-            }
-            this.toggleFirstColumnAsRowHeader(this.checkBox1.Checked);
         }
 
         private void addNewRowButton_Click(object sender, EventArgs e)
@@ -117,6 +104,7 @@ namespace PackFileManager
             try
             {
                 DBTypeMap.Instance.initializeTypeMap(path);
+                DBReferenceMap.Instance.load(path);
             }
             catch (Exception e)
             {
@@ -317,6 +305,7 @@ namespace PackFileManager
             this.openDBFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.unsupportedDBErrorTextBox = new System.Windows.Forms.TextBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.useComboBoxCells = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -474,10 +463,22 @@ namespace PackFileManager
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
             // 
+            // useComboBoxCells
+            // 
+            this.useComboBoxCells.AutoSize = true;
+            this.useComboBoxCells.Location = new System.Drawing.Point(611, 4);
+            this.useComboBoxCells.Name = "useComboBoxCells";
+            this.useComboBoxCells.Size = new System.Drawing.Size(124, 17);
+            this.useComboBoxCells.TabIndex = 5;
+            this.useComboBoxCells.Text = "Use ComboBox Cells";
+            this.useComboBoxCells.UseVisualStyleBackColor = true;
+            this.useComboBoxCells.CheckedChanged += new System.EventHandler(this.useComboBoxCells_CheckedChanged);
+            // 
             // DBFileEditorControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.useComboBoxCells);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.dataGridView);
@@ -490,9 +491,49 @@ namespace PackFileManager
             this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
-        public void Open(PackedFile packedFile)
+        DataGridViewColumn createColumn(string columnName, List<FieldInfo> fields, int num, PackFile packFile)
+        {
+            DataGridViewColumn column = null;
+            if (useComboBoxCells.Checked && packFile != null)
+            {
+                string key = Path.GetFileName(currentPackedFile.Filepath).Replace("_tables", "");
+                try
+                {
+                    SortedSet<string> items = DBReferenceMap.Instance.resolveFromPackFile(key, num, packFile);
+                    if (items != null)
+                    {
+                        column = new DataGridViewComboBoxColumn
+                        {
+                            DataPropertyName = columnName,
+                            HeaderText = fields[num].name + "_" + num
+                        };
+                        DataGridViewComboBoxColumn cb = (DataGridViewComboBoxColumn)column;
+                        cb.Items.Add(string.Empty);
+                        foreach (string item in items)
+                        {
+                            cb.Items.Add(item);
+                        }
+                    }
+                }
+                catch (Exception x)
+                {
+                    Console.WriteLine(x);
+                }
+            }
+            if (column == null)
+            {
+                column = new DataGridViewAutoFilterTextBoxColumn {
+                    DataPropertyName = columnName,
+                    HeaderText = fields[num].name + "_" + num
+                };
+            }
+            return column;
+        }
+
+        public void Open(PackedFile packedFile, PackFile packFile = null)
         {
             int num;
             string key = Path.GetFileName(Path.GetDirectoryName(packedFile.Filepath));
@@ -532,11 +573,7 @@ namespace PackFileManager
                         }
                         this.currentDataTable.Columns.Add(column);
                         PackTypeCode code1 = info.fields[num].type;
-                        DataGridViewColumn column3 = new DataGridViewAutoFilterTextBoxColumn {
-                            DataPropertyName = columnName,
-                            HeaderText = info.fields[num].name
-                        };
-                        this.dataGridView.Columns.Add(column3);
+                        this.dataGridView.Columns.Add(createColumn(columnName, info.fields, num, packFile));
                     }
                 }
                 this.currentDataSet.Tables.Add(this.currentDataTable);
@@ -554,6 +591,7 @@ namespace PackFileManager
                     }
                     this.currentDataTable.Rows.Add(row);
                 }
+
                 this.dataGridView.DataSource = new BindingSource(this.currentDataSet, info.name + "_DataTable");
                 this.addNewRowButton.Enabled = true;
                 this.importButton.Enabled = true;
@@ -628,6 +666,11 @@ namespace PackFileManager
 
         private void writeTypeMapSchema()
         {
+        }
+
+        private void useComboBoxCells_CheckedChanged(object sender, EventArgs e)
+        {
+            Refresh();
         }
     }
 }
