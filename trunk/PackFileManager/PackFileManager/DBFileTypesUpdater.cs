@@ -13,6 +13,7 @@ namespace PackFileManager
 	class DBFileTypesUpdater
 	{
         static Regex FileTypeRegex = new Regex("<a href=\".*(attachmentid=[^\"]*)\"[^>]*>DBFileTypes_([0-9]*).zip</a>.*</td>");
+        static Regex SwVersionRegex = new Regex(@"Pack File Manager ([0-9]*)\.([0-9]*)\.([0-9]*)");
         static string VERSION_FILE = "version";
 
         public static bool checkVersion(string basePath)
