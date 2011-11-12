@@ -641,6 +641,7 @@ namespace PackFileManager
             this.replaceFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.updateDBFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.changePackTypeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bootToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -696,7 +697,6 @@ namespace PackFileManager
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.addDirectoryFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.openDBFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.updateDBFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packActionMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -822,6 +822,13 @@ namespace PackFileManager
             this.renameToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.renameToolStripMenuItem.Text = "Rename";
             this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
+            // 
+            // updateDBFilesToolStripMenuItem
+            // 
+            this.updateDBFilesToolStripMenuItem.Name = "updateDBFilesToolStripMenuItem";
+            this.updateDBFilesToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.updateDBFilesToolStripMenuItem.Text = "Update DB Files";
+            this.updateDBFilesToolStripMenuItem.Click += new System.EventHandler(this.updateDBFilesToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
@@ -1085,27 +1092,27 @@ namespace PackFileManager
             // 
             this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
             this.undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.undoToolStripMenuItem.Text = "&Undo";
             // 
             // redoToolStripMenuItem
             // 
             this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
             this.redoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
-            this.redoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.redoToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.redoToolStripMenuItem.Text = "&Redo";
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(143, 6);
             // 
             // cutToolStripMenuItem
             // 
             this.cutToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
             this.cutToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-            this.cutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.cutToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.cutToolStripMenuItem.Text = "Cu&t";
             // 
             // copyToolStripMenuItem
@@ -1113,7 +1120,7 @@ namespace PackFileManager
             this.copyToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
             this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.copyToolStripMenuItem.Text = "&Copy";
             // 
             // pasteToolStripMenuItem
@@ -1121,18 +1128,18 @@ namespace PackFileManager
             this.pasteToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
             this.pasteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.pasteToolStripMenuItem.Text = "&Paste";
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(143, 6);
             // 
             // selectAllToolStripMenuItem
             // 
             this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
-            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.selectAllToolStripMenuItem.Text = "Select &All";
             // 
             // updateToolStripMenuItem
@@ -1262,13 +1269,6 @@ namespace PackFileManager
             // 
             this.openDBFileDialog.Filter = "Text CSV|*.txt|Any File|*.*";
             // 
-            // updateDBFilesToolStripMenuItem
-            // 
-            this.updateDBFilesToolStripMenuItem.Name = "updateDBFilesToolStripMenuItem";
-            this.updateDBFilesToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
-            this.updateDBFilesToolStripMenuItem.Text = "Update DB Files";
-            this.updateDBFilesToolStripMenuItem.Click += new System.EventHandler(this.updateDBFilesToolStripMenuItem_Click);
-            // 
             // PackFileManagerForm
             // 
             this.AutoScroll = true;
@@ -1329,6 +1329,7 @@ namespace PackFileManager
                 this.currentPackFile.PackedFileLoaded -= new EventHandler(this.currentPackFile_PackedFileLoaded);
                 this.Refresh();
                 this.currentPackFile.Modified += new EventHandler(this.currentPackFile_Modified);
+                // DBReferenceMap.Instance.validateReferences(Path.GetDirectoryName(Application.ExecutablePath), currentPackFile);
             }
             catch (Exception exception)
             {
@@ -1427,7 +1428,7 @@ namespace PackFileManager
             {
                 try
                 {
-                    this.dbFileEditorControl.Open(packedFile);
+                    this.dbFileEditorControl.Open(packedFile, currentPackFile);
                     this.splitContainer1.Panel2.Controls.Add(this.dbFileEditorControl);
                 }
                 catch (FileNotFoundException exception)
@@ -1953,6 +1954,7 @@ namespace PackFileManager
                 if (update)
                 {
                     DBTypeMap.Instance.initializeTypeMap(path);
+                    DBReferenceMap.Instance.load(path);
                 }
             }
             catch (Exception e)
@@ -1974,7 +1976,9 @@ namespace PackFileManager
 
         private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DBTypeMap.Instance.initializeTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
+            string path = Path.GetDirectoryName(Application.ExecutablePath);
+            DBTypeMap.Instance.initializeTypeMap(path);
+            DBReferenceMap.Instance.load(path);
             MessageBox.Show("DB File Definitions reloaded.");
         }
 
