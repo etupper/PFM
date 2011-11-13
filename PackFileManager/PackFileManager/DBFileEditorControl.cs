@@ -758,12 +758,14 @@ namespace PackFileManager
                 {
                     Settings.Default.ResetIgnores(currentPackedFile.Filepath);
                     Open(currentPackedFile, currentPackedFile.PackFile);
+                    Settings.Default.Save();
                 }));
                 menu.MenuItems.Add(item);
                 item = new MenuItem("Clear Hide list for all tables", new EventHandler(delegate(object s, EventArgs args)
                 {
                     Settings.Default.IgnoreColumns = "";
                     Open(currentPackedFile, currentPackedFile.PackFile);
+                    Settings.Default.Save();
                 }));
                 menu.MenuItems.Add(item);
                 menu.Show(dataGridView, e.Location);
