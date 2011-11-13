@@ -34,6 +34,8 @@ namespace PackFileManager
         private TextBox unsupportedDBErrorTextBox;
         private CheckBox useComboBoxCells;
         private ToolStripMenuItem useOnlineDefinitionsToolStripMenuItem;
+        private CheckBox showAllColumns;
+        private bool dataChanged = false;
 
         public DBFileEditorControl()
         {
@@ -41,8 +43,10 @@ namespace PackFileManager
             this.InitializeComponent();
             initTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
             this.dataGridView.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.dataGridView.ColumnHeaderMouseClick += dataGridView1_ColumnHeaderMouseClick;
             this.useComboBoxCells.Checked = Settings.Default.UseComboboxCells;
             this.useFirstColumnAsRowHeader.Checked = Settings.Default.UseFirstColumnAsRowHeader;
+            this.showAllColumns.Checked = Settings.Default.ShowAllColumns;
         }
 
         private void addNewRowButton_Click(object sender, EventArgs e)
@@ -308,6 +312,7 @@ namespace PackFileManager
             this.unsupportedDBErrorTextBox = new System.Windows.Forms.TextBox();
             this.useFirstColumnAsRowHeader = new System.Windows.Forms.CheckBox();
             this.useComboBoxCells = new System.Windows.Forms.CheckBox();
+            this.showAllColumns = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -333,8 +338,6 @@ namespace PackFileManager
             this.dataGridView.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dataGridView_DataBindingComplete);
             this.dataGridView.SelectionChanged += new System.EventHandler(this.dataGridView_SelectionChanged);
             this.dataGridView.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.dataGridView_KeyPress);
-            this.dataGridView.ColumnHeaderMouseClick += dataGridView1_ColumnHeaderMouseClick;
-
             // 
             // toolStrip
             // 
@@ -456,11 +459,11 @@ namespace PackFileManager
             this.unsupportedDBErrorTextBox.TabIndex = 3;
             this.unsupportedDBErrorTextBox.Visible = false;
             // 
-            // checkBox1
+            // useFirstColumnAsRowHeader
             // 
             this.useFirstColumnAsRowHeader.AutoSize = true;
             this.useFirstColumnAsRowHeader.Location = new System.Drawing.Point(422, 4);
-            this.useFirstColumnAsRowHeader.Name = "checkBox1";
+            this.useFirstColumnAsRowHeader.Name = "useFirstColumnAsRowHeader";
             this.useFirstColumnAsRowHeader.Size = new System.Drawing.Size(183, 17);
             this.useFirstColumnAsRowHeader.TabIndex = 4;
             this.useFirstColumnAsRowHeader.Text = "Use First Column As Row Header";
@@ -478,10 +481,22 @@ namespace PackFileManager
             this.useComboBoxCells.UseVisualStyleBackColor = true;
             this.useComboBoxCells.CheckedChanged += new System.EventHandler(this.useComboBoxCells_CheckedChanged);
             // 
+            // showAllColumns
+            // 
+            this.showAllColumns.AutoSize = true;
+            this.showAllColumns.Location = new System.Drawing.Point(741, 4);
+            this.showAllColumns.Name = "showAllColumns";
+            this.showAllColumns.Size = new System.Drawing.Size(108, 17);
+            this.showAllColumns.TabIndex = 6;
+            this.showAllColumns.Text = "Show all columns";
+            this.showAllColumns.UseVisualStyleBackColor = true;
+            this.showAllColumns.CheckedChanged += new System.EventHandler(this.showAllColumns_CheckedChanged);
+            // 
             // DBFileEditorControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.showAllColumns);
             this.Controls.Add(this.useComboBoxCells);
             this.Controls.Add(this.useFirstColumnAsRowHeader);
             this.Controls.Add(this.toolStrip);
@@ -511,8 +526,7 @@ namespace PackFileManager
                     {
                         column = new DataGridViewComboBoxColumn
                         {
-                            DataPropertyName = columnName,
-                            HeaderText = fields[num].name
+                            DataPropertyName = columnName
                         };
                         DataGridViewComboBoxColumn cb = (DataGridViewComboBoxColumn)column;
                         cb.Items.Add(string.Empty);
@@ -531,11 +545,11 @@ namespace PackFileManager
             {
                 column = new DataGridViewAutoFilterTextBoxColumn {
                     DataPropertyName = columnName,
-                    HeaderText = fields[num].name, // + "_" + num,
                     AutomaticSortingEnabled = false
                 };
             }
             column.SortMode = DataGridViewColumnSortMode.Programmatic;
+            column.HeaderText = fields[num].name + (Settings.Default.IsColumnIgnored(currentPackedFile.Filepath, fields[num].name) ? "*" : "");
             column.Tag = fields[num];
             return column;
         }
@@ -580,7 +594,11 @@ namespace PackFileManager
                         }
                         this.currentDataTable.Columns.Add(column);
                         PackTypeCode code1 = info.fields[num].type;
-                        this.dataGridView.Columns.Add(createColumn(columnName, info.fields, num, packFile));
+                        if (showAllColumns.Checked ||
+                        !Settings.Default.IsColumnIgnored(currentPackedFile.Filepath, info.fields[num].name))
+                        {
+                            this.dataGridView.Columns.Add(createColumn(columnName, info.fields, num, packFile));
+                        }
                     }
                 }
                 this.currentDataSet.Tables.Add(this.currentDataTable);
@@ -677,30 +695,73 @@ namespace PackFileManager
 
         private void useComboBoxCells_CheckedChanged(object sender, EventArgs e)
         {
+            Settings.Default.UseComboboxCells = useComboBoxCells.Checked;
+            Settings.Default.Save();
             if (currentPackedFile != null)
             {
                 // rebuild table
                 Open(currentPackedFile, currentPackedFile.PackFile);
             }
         }
+        private void promptHeaderDescription(DataGridViewColumn newColumn)
+        {
+            FieldInfo info = (FieldInfo)newColumn.Tag;
+            InputBox box = new InputBox { Text = "Enter new description", Input = info.name };
+            if (box.ShowDialog() == DialogResult.OK)
+            {
+                info.name = box.Input;
+                newColumn.HeaderText = info.name;
+
+                if (!dataChanged)
+                {
+                    dataChanged = true;
+                    MessageBox.Show("Don't forget to save your changes (DB Definitions->Save to Directory)");
+                }
+            }
+        }
         private void dataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             DataGridViewColumn newColumn = dataGridView.Columns[e.ColumnIndex];
-            DataGridViewColumn oldColumn = dataGridView.SortedColumn;
-            ListSortDirection direction;
 
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
-                FieldInfo info = (FieldInfo)newColumn.Tag;
-                InputBox box = new InputBox { Text = "Enter new description", Input = info.name };
-                if (box.ShowDialog() == DialogResult.OK)
+                ContextMenu menu = new ContextMenu();
+                MenuItem item = new MenuItem("Change Column Description", new EventHandler(delegate(object s, EventArgs args)
                 {
-                    info.name = box.Input;
-                    newColumn.HeaderText = info.name;
-                }
+                    promptHeaderDescription(newColumn);
+                }));
+                menu.MenuItems.Add(item);
+
+                string ignoreField = ((FieldInfo)newColumn.Tag).name;
+                bool ignored = Settings.Default.IsColumnIgnored(currentPackedFile.Filepath, ignoreField);
+                string itemText = ignored ? "Show Column" : "Hide Column";
+                item = new MenuItem(itemText, new EventHandler(delegate(object s, EventArgs args)
+                {
+                    if (ignored)
+                    {
+                        Settings.Default.UnignoreColumn(currentPackedFile.Filepath, ignoreField);
+                    }
+                    else
+                    {
+                        Settings.Default.IgnoreColumn(currentPackedFile.Filepath, ignoreField);
+                    }
+                    Open(currentPackedFile, currentPackedFile.PackFile);
+                    Settings.Default.Save();
+                }));
+                menu.MenuItems.Add(item);
+
+                item = new MenuItem("Clear ignore list", new EventHandler(delegate(object s, EventArgs args)
+                {
+                    Settings.Default.ResetIgnores(currentPackedFile.Filepath);
+                    Open(currentPackedFile, currentPackedFile.PackFile);
+                }));
+                menu.MenuItems.Add(item);
+                menu.Show(dataGridView, e.Location);
                 return;
             }
 
+            DataGridViewColumn oldColumn = dataGridView.SortedColumn;
+            ListSortDirection direction;
             // If oldColumn is null, then the DataGridView is not sorted.
             if (oldColumn != null)
             {
@@ -727,6 +788,16 @@ namespace PackFileManager
             newColumn.HeaderCell.SortGlyphDirection =
                 direction == ListSortDirection.Ascending ?
                 SortOrder.Ascending : SortOrder.Descending;
+        }
+
+        private void showAllColumns_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.Default.ShowAllColumns = showAllColumns.Checked;
+            Settings.Default.Save();
+            if (currentPackedFile != null)
+            {
+                Open(currentPackedFile, currentPackedFile.PackFile);
+            }
         }
     }
 }
