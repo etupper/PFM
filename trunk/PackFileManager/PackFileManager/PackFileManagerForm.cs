@@ -1444,6 +1444,9 @@ namespace PackFileManager
                 {
                     MessageBox.Show(exception.Message, "DB Type not found", MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 }
+                catch (Exception x) {
+                    MessageBox.Show(x.Message + "\n" + x.StackTrace, "Problem, sir!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
