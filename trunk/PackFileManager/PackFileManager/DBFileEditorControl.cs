@@ -597,7 +597,7 @@ namespace PackFileManager
                         }
                         this.currentDataTable.Columns.Add(column);
                         PackTypeCode code1 = info.fields[num].type;
-                        if (showAllColumns.Checked ||
+                        if (Settings.Default.ShowAllColumns ||
                         !Settings.Default.IsColumnIgnored(currentPackedFile.Filepath, info.fields[num].name))
                         {
                             this.dataGridView.Columns.Add(createColumn(columnName, info.fields, num, packFile));
@@ -754,9 +754,15 @@ namespace PackFileManager
                 }));
                 menu.MenuItems.Add(item);
 
-                item = new MenuItem("Clear ignore list", new EventHandler(delegate(object s, EventArgs args)
+                item = new MenuItem("Clear ignore list for this table", new EventHandler(delegate(object s, EventArgs args)
                 {
                     Settings.Default.ResetIgnores(currentPackedFile.Filepath);
+                    Open(currentPackedFile, currentPackedFile.PackFile);
+                }));
+                menu.MenuItems.Add(item);
+                item = new MenuItem("Clear ignore list for all tables", new EventHandler(delegate(object s, EventArgs args)
+                {
+                    Settings.Default.IgnoreColumns = "";
                     Open(currentPackedFile, currentPackedFile.PackFile);
                 }));
                 menu.MenuItems.Add(item);
