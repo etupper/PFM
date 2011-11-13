@@ -27,14 +27,16 @@ namespace Common
         {
             typeMap = new XsdParser(xsdFile).loadXsd();
         }
-
-        public void saveToFile(string directory)
+        // returns true if this is the first time the user saves his files
+        public bool saveToFile(string directory)
         {
             // never overwrite downloaded files, use another subdirectory
             string dir = Path.Combine(directory, DB_TYPE_USER_DIR_NAME);
+            bool result = false;
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
+                result = true;
             }
             try
             {
@@ -80,6 +82,7 @@ namespace Common
                 Directory.Move(dir, Path.Combine(directory, DB_TYPE_USER_DIR_NAME + ".save"));
                 throw x;
             }
+            return result;
         }
         string encodeField(FieldInfo info) {
             string result = string.Format("{0},{1}", info.name, info.type);
