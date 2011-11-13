@@ -32,6 +32,19 @@
             }
         }
 
+        [DebuggerNonUserCode, DefaultSettingValue("True"), UserScopedSetting]
+        public bool UseComboboxCells
+        {
+            get
+            {
+                return (bool)this["UseComboboxCells"];
+            }
+            set
+            {
+                this["UseComboboxCells"] = value;
+            }
+        }
+
         [DebuggerNonUserCode, DefaultSettingValue("False"), UserScopedSetting]
         public bool UpdateOnStartup
         {
