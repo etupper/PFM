@@ -65,9 +65,12 @@ namespace PackFileManager
 
         private void checkBox_CheckedChanged(object sender, EventArgs e)
         {
-            this.toggleFirstColumnAsRowHeader(this.useFirstColumnAsRowHeader.Checked);
-            Settings.Default.UseFirstColumnAsRowHeader = this.useFirstColumnAsRowHeader.Checked;
-            Settings.Default.Save();
+            if (dataGridView.Columns.Count > 0)
+            {
+                this.toggleFirstColumnAsRowHeader(this.useFirstColumnAsRowHeader.Checked);
+                Settings.Default.UseFirstColumnAsRowHeader = this.useFirstColumnAsRowHeader.Checked;
+                Settings.Default.Save();
+            }
         }
 
         private void checkClipboardForPaste()
