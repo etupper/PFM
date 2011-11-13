@@ -22,7 +22,7 @@ namespace PackFileManager
         private DataSet currentDataSet;
         private DataTable currentDataTable;
         private DBFile currentDBFile;
-        private PackedFile currentPackedFile;
+        public PackedFile currentPackedFile;
         private DataGridView dataGridView;
         private ToolStripButton exportButton;
         private ToolStripButton importButton;
