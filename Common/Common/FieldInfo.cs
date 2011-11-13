@@ -19,6 +19,9 @@
             this.modifier = Modifier.None;
             switch (type.ToLowerInvariant())
             {
+                case "empty":
+                    break;
+
                 case "string":
                     this.type = PackTypeCode.String;
                     break;
@@ -31,6 +34,7 @@
                     this.type = PackTypeCode.Boolean;
                     break;
 
+                case "byte":
                 case "uint8":
                     this.type = PackTypeCode.Byte;
                     break;
@@ -48,6 +52,7 @@
                     this.type = PackTypeCode.UInt64;
                     break;
 
+                case "sbyte":
                 case "int8":
                     this.type = PackTypeCode.SByte;
                     break;
