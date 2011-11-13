@@ -100,7 +100,7 @@
                 {
                     entry += (entry == "") ? e : ";" + e;
                 }
-                encoded += string.Format("{0}:{1}", key, entry);
+                encoded += string.Format("{0}:{1}\n", key, entry);
             }
             return encoded;
         }
