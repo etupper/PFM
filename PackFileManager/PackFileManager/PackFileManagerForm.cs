@@ -2136,7 +2136,7 @@ namespace PackFileManager
                     string message = "You just created a new directory for your own DB definitions.\n" +
                         "This means that these will be used instead of the ones received in updates from TWC.\n" +
                         "Once you have uploaded your changes and they have been integrated,\n" +
-                        "please delete the folder DBFileTypes_user";
+                        "please delete the folder DBFileTypes_user.";
                     MessageBox.Show(message, "New User DB Definitions created", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
