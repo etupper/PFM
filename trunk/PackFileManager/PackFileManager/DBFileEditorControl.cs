@@ -36,6 +36,7 @@ namespace PackFileManager
         private ToolStripMenuItem useOnlineDefinitionsToolStripMenuItem;
         private CheckBox showAllColumns;
         private bool dataChanged = false;
+        private List<List<FieldInstance>> copiedRows = new List<List<FieldInstance>>();
 
         public DBFileEditorControl()
         {
@@ -46,19 +47,51 @@ namespace PackFileManager
             this.dataGridView.ColumnHeaderMouseClick += dataGridView1_ColumnHeaderMouseClick;
             this.useFirstColumnAsRowHeader.Checked = Settings.Default.UseFirstColumnAsRowHeader;
             this.showAllColumns.Checked = Settings.Default.ShowAllColumns;
+            dataGridView.KeyUp += copyPaste;
+        }
+        private void copyPaste(object sender, KeyEventArgs arge)
+        {
+            if (currentPackedFile != null)
+            {
+                if (arge.Control)
+                if (arge.KeyCode == Keys.C)
+                {
+                    copyEvent();
+                    copiedRows = new List<List<FieldInstance>>();
+                    DataGridViewSelectedRowCollection selected = dataGridView.SelectedRows;
+                    foreach (DataGridViewRow row in selected)
+                    {
+                        List<FieldInstance> toCopy = currentDBFile.Entries[row.Index];
+                        List<FieldInstance> copy = new List<FieldInstance>(toCopy.Count);
+                        toCopy.ForEach(field => copy.Add(new FieldInstance(field.Info, field.Value)));
+                        copiedRows.Add(copy);
+                    }
+                } else if (arge.KeyCode == Keys.V) {
+                    int insertAt = dataGridView.CurrentCell.RowIndex;
+                    foreach (List<FieldInstance> copied in copiedRows)
+                    {
+                        createRow(copied, insertAt);
+                    }
+                }
+            }
         }
 
         private void addNewRowButton_Click(object sender, EventArgs e)
         {
-            DataRow row = this.currentDataTable.NewRow();
             List<FieldInstance> newEntry = this.currentDBFile.GetNewEntry();
+            createRow(newEntry, currentDataTable.Rows.Count-1);
+        }
+
+        private void createRow(List<FieldInstance> newEntry, int index)
+        {
+            DataRow row = this.currentDataTable.NewRow();
             for (int i = 1; i < this.currentDataTable.Columns.Count; i++)
             {
                 int num2 = Convert.ToInt32(this.currentDataTable.Columns[i].ColumnName);
                 row[i] = Convert.ChangeType(newEntry[num2].Value, this.currentDataTable.Columns[i].DataType);
             }
-            this.currentDBFile.Entries.Add(newEntry);
-            this.currentDataTable.Rows.Add(row);
+            this.currentDBFile.Entries.Insert(index, newEntry);
+            currentDataTable.Rows.InsertAt(row, index);
             this.dataGridView.FirstDisplayedScrollingRowIndex = this.dataGridView.RowCount - 1;
         }
 
