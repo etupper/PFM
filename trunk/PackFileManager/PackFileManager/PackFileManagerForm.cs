@@ -99,6 +99,8 @@ namespace PackFileManager
         private ToolStripMenuItem updateOnStartupToolStripMenuItem;
         private ToolStripMenuItem updateDBFilesToolStripMenuItem;
         private ToolStripMenuItem saveToDirectoryToolStripMenuItem;
+        private ToolStripMenuItem updateCurrentToolStripMenuItem;
+        private ToolStripMenuItem updateAllToolStripMenuItem;
         private UnitVariantFileEditorControl unitVariantFileEditorControl;
 
         public PackFileManagerForm(string[] args)
@@ -635,6 +637,8 @@ namespace PackFileManager
             this.deleteFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateDBFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.updateCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.updateAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.changePackTypeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bootToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -739,7 +743,7 @@ namespace PackFileManager
             this.changePackTypeToolStripMenuItem});
             this.packActionMenuStrip.Name = "packActionMenuStrip";
             this.packActionMenuStrip.OwnerItem = this.packActionDropDownButton;
-            this.packActionMenuStrip.Size = new System.Drawing.Size(211, 274);
+            this.packActionMenuStrip.Size = new System.Drawing.Size(211, 296);
             this.packActionMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.packActionMenuStrip_Opening);
             // 
             // exportFileListToolStripMenuItem
@@ -819,10 +823,26 @@ namespace PackFileManager
             // 
             // updateDBFilesToolStripMenuItem
             // 
+            this.updateDBFilesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.updateCurrentToolStripMenuItem,
+            this.updateAllToolStripMenuItem});
             this.updateDBFilesToolStripMenuItem.Name = "updateDBFilesToolStripMenuItem";
             this.updateDBFilesToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.updateDBFilesToolStripMenuItem.Text = "Update DB Files";
-            this.updateDBFilesToolStripMenuItem.Click += new System.EventHandler(this.updateDBFilesToolStripMenuItem_Click);
+            // 
+            // updateCurrentToolStripMenuItem
+            // 
+            this.updateCurrentToolStripMenuItem.Name = "updateCurrentToolStripMenuItem";
+            this.updateCurrentToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.updateCurrentToolStripMenuItem.Text = "Update Current";
+            this.updateCurrentToolStripMenuItem.Click += new System.EventHandler(this.updateCurrentToolStripMenuItem_Click);
+            // 
+            // updateAllToolStripMenuItem
+            // 
+            this.updateAllToolStripMenuItem.Name = "updateAllToolStripMenuItem";
+            this.updateAllToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.updateAllToolStripMenuItem.Text = "Update All";
+            this.updateAllToolStripMenuItem.Click += new System.EventHandler(this.updateAllToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
@@ -2037,10 +2057,7 @@ namespace PackFileManager
             try
             {
                 string key = Path.GetFileName(Path.GetDirectoryName(packedFile.Filepath));
-                if (key.Contains("_tables"))
-                {
-                    key = key.Remove(key.LastIndexOf('_'), 7);
-                }
+                key = key.Replace("_tables", "");
                 type = DBTypeMap.Instance[key];
                 DBFile currentDBFile = new DBFile(packedFile, type.ToArray(), false);
                 version = currentDBFile.TotalwarHeaderVersion;
@@ -2057,58 +2074,58 @@ namespace PackFileManager
             Settings.Default.Save();
         }
 
-        private void updateDBFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        private void updatePackedFile(PackedFile packedFile)
         {
-            if (currentPackFile != null)
+            try
             {
-                foreach (PackedFile packedFile in currentPackFile.FileList)
+                string key = Path.GetFileName(Path.GetDirectoryName(packedFile.Filepath));
+                if (key.Contains("_table"))
                 {
-                    try
+                    key = key.Remove(key.LastIndexOf('_'), 7);
+                }
+                List<TypeInfo> type = DBTypeMap.Instance[key];
+                if (type != null)
+                {
+                    DBFile dbFile = new DBFile(packedFile, type.ToArray(), false);
+                    if (dbFile.TotalwarHeaderVersion < type.Count - 1)
                     {
-                        string key = Path.GetFileName(Path.GetDirectoryName(packedFile.Filepath));
-                        if (key.Contains("_table"))
-                        {
-                            key = key.Remove(key.LastIndexOf('_'), 7);
-                        }
-                        List<TypeInfo> type = DBTypeMap.Instance[key];
-                        if (type != null)
-                        {
-                            DBFile dbFile = new DBFile(packedFile, type.ToArray(), false);
-                            if (dbFile.TotalwarHeaderVersion < type.Count - 1)
-                            {
-                                // found a more recent db definition; read data from db file
-                                DBFile updatedFile = new DBFile(packedFile, type.ToArray(), true);
+                        // found a more recent db definition; read data from db file
+                        DBFile updatedFile = new DBFile(packedFile, type.ToArray(), true);
 
-                                // identify FieldInstances missing in db file
-                                TypeInfo dbFileInfo = updatedFile.CurrentType;
-                                TypeInfo targetInfo = type[type.Count - 1];
-                                for (int i = dbFileInfo.fields.Count; i < targetInfo.fields.Count; i++)
+                        // identify FieldInstances missing in db file
+                        TypeInfo dbFileInfo = updatedFile.CurrentType;
+                        TypeInfo targetInfo = type[type.Count - 1];
+                        for (int i = dbFileInfo.fields.Count; i < targetInfo.fields.Count; i++)
+                        {
+                            foreach (List<FieldInstance> entry in updatedFile.Entries)
+                            {
+                                FieldInstance field = FieldInstance.createInstance(targetInfo.fields[i]);
+                                if (field != null)
                                 {
-                                    foreach (List<FieldInstance> entry in updatedFile.Entries)
-                                    {
-                                        FieldInstance field = FieldInstance.createInstance(targetInfo.fields[i]);
-                                        if (field != null)
-                                        {
-                                            entry.Add(field);
-                                        }
-                                        else
-                                        {
-                                            Console.WriteLine("can't create: {0}", targetInfo.fields[i]);
-                                        }
-                                    }
+                                    entry.Add(field);
                                 }
-                                updatedFile.TotalwarHeaderVersion = type.Count - 1;
-                                packedFile.ReplaceData(updatedFile.GetBytes());
+                                else
+                                {
+                                    Console.WriteLine("can't create: {0}", targetInfo.fields[i]);
+                                }
                             }
                         }
-                    }
-                    catch (Exception x)
-                    {
-                        // could not read 
+                        updatedFile.TotalwarHeaderVersion = type.Count - 1;
+                        packedFile.ReplaceData(updatedFile.GetBytes());
+
+                        if (dbFileEditorControl.currentPackedFile == packedFile)
+                        {
+                            dbFileEditorControl.Open(packedFile, currentPackFile);
+                        }
                     }
                 }
             }
+            catch (Exception x)
+            {
+                MessageBox.Show(string.Format("Could not update {0}: {1}", Path.GetFileName(packedFile.Filepath), x.Message));
+            }
         }
+    
 
         private void saveToDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -2126,6 +2143,25 @@ namespace PackFileManager
             catch (Exception x)
             {
                 MessageBox.Show(string.Format("Could not save user db descriptions: {0}\nUser Directory won't be used anymore. A backup has been made.", x.Message));
+            }
+        }
+
+        private void updateAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentPackFile != null)
+            {
+                foreach (PackedFile packedFile in currentPackFile.FileList)
+                {
+                    updatePackedFile(packedFile);
+                }
+            }
+        }
+
+        private void updateCurrentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (dbFileEditorControl.currentPackedFile != null)
+            {
+                updatePackedFile(dbFileEditorControl.currentPackedFile);
             }
         }
     }
