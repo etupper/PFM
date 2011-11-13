@@ -98,6 +98,7 @@ namespace PackFileManager
         private ToolStripMenuItem reloadToolStripMenuItem;
         private ToolStripMenuItem updateOnStartupToolStripMenuItem;
         private ToolStripMenuItem updateDBFilesToolStripMenuItem;
+        private ToolStripMenuItem saveToDirectoryToolStripMenuItem;
         private UnitVariantFileEditorControl unitVariantFileEditorControl;
 
         public PackFileManagerForm(string[] args)
@@ -106,15 +107,7 @@ namespace PackFileManager
 
             if (Settings.Default.UpdateOnStartup)
             {
-                try
-                {
-                    DBFileTypesUpdater.checkVersion(Path.GetDirectoryName(Application.ExecutablePath));
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show(string.Format("Failed to update DBTypeFiles: {0}", e.Message), "Automatic Update Failed", 
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                tryUpdate(false);
             }
 
             string ShogunTotalWarDirectory = IOFunctions.GetShogunTotalWarDirectory();
@@ -629,6 +622,7 @@ namespace PackFileManager
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            PackFileManager.Properties.Settings settings1 = new PackFileManager.Properties.Settings();
             this.packTreeView = new System.Windows.Forms.TreeView();
             this.packActionMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exportFileListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -697,6 +691,7 @@ namespace PackFileManager
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.addDirectoryFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.openDBFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.saveToDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packActionMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -1148,7 +1143,8 @@ namespace PackFileManager
             this.searchForUpdateToolStripMenuItem,
             this.updateOnStartupToolStripMenuItem,
             this.fromXsdFileToolStripMenuItem,
-            this.reloadToolStripMenuItem});
+            this.reloadToolStripMenuItem,
+            this.saveToDirectoryToolStripMenuItem});
             this.updateToolStripMenuItem.Name = "updateToolStripMenuItem";
             this.updateToolStripMenuItem.Size = new System.Drawing.Size(102, 20);
             this.updateToolStripMenuItem.Text = "DB Descriptions";
@@ -1162,6 +1158,12 @@ namespace PackFileManager
             // 
             // updateOnStartupToolStripMenuItem
             // 
+            settings1.SettingsKey = "";
+            settings1.TwcThreadId = "10595000";
+            settings1.UpdateOnStartup = false;
+            settings1.UseFirstColumnAsRowHeader = false;
+            settings1.UseOnlineDefinitions = false;
+            this.updateOnStartupToolStripMenuItem.Checked = settings1.UpdateOnStartup;
             this.updateOnStartupToolStripMenuItem.CheckOnClick = true;
             this.updateOnStartupToolStripMenuItem.Name = "updateOnStartupToolStripMenuItem";
             this.updateOnStartupToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
@@ -1268,6 +1270,13 @@ namespace PackFileManager
             // openDBFileDialog
             // 
             this.openDBFileDialog.Filter = "Text CSV|*.txt|Any File|*.*";
+            // 
+            // saveToDirectoryToolStripMenuItem
+            // 
+            this.saveToDirectoryToolStripMenuItem.Name = "saveToDirectoryToolStripMenuItem";
+            this.saveToDirectoryToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.saveToDirectoryToolStripMenuItem.Text = "Save to Directory";
+            this.saveToDirectoryToolStripMenuItem.Click += new System.EventHandler(this.saveToDirectoryToolStripMenuItem_Click);
             // 
             // PackFileManagerForm
             // 
@@ -1943,18 +1952,26 @@ namespace PackFileManager
             tryUpdate();
         }
 
-        public static void tryUpdate()
+        public static void tryUpdate(bool showSuccess = true)
         {
             try
             {
                 string path = Path.GetDirectoryName(Application.ExecutablePath);
-                bool update = DBFileTypesUpdater.checkVersion(path);
-                string message = update ? "DB File description updated." : "No update performed.";
-                MessageBox.Show(message, "Update result", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                string version = Application.ProductVersion;
+                bool update = DBFileTypesUpdater.checkVersion(path, ref version);
+                if (showSuccess)
+                {
+                    string message = update ? "DB File description updated." : "No update performed.";
+                    MessageBox.Show(message, "Update result", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
                 if (update)
                 {
                     DBTypeMap.Instance.initializeTypeMap(path);
                     DBReferenceMap.Instance.load(path);
+                }
+                if (version != Application.ProductVersion)
+                {
+                    MessageBox.Show(string.Format("A new version of PFM is available ({0})", version), "New Software version available");
                 }
             }
             catch (Exception e)
@@ -2094,6 +2111,18 @@ namespace PackFileManager
                         // could not read 
                     }
                 }
+            }
+        }
+
+        private void saveToDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DBTypeMap.Instance.saveToFile(Path.GetDirectoryName(Application.ExecutablePath));
+            }
+            catch (Exception x)
+            {
+                MessageBox.Show(string.Format("Could not save user db descriptions: {0}\nUser Directory won't be used anymore. A backup has been made.", x.Message));
             }
         }
     }
