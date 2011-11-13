@@ -622,7 +622,6 @@ namespace PackFileManager
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            PackFileManager.Properties.Settings settings1 = new PackFileManager.Properties.Settings();
             this.packTreeView = new System.Windows.Forms.TreeView();
             this.packActionMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.exportFileListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -676,6 +675,7 @@ namespace PackFileManager
             this.updateOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fromXsdFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.indexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -691,7 +691,6 @@ namespace PackFileManager
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.addDirectoryFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.openDBFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.saveToDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packActionMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -714,7 +713,7 @@ namespace PackFileManager
             this.packTreeView.Indent = 19;
             this.packTreeView.Location = new System.Drawing.Point(0, 52);
             this.packTreeView.Name = "packTreeView";
-            this.packTreeView.Size = new System.Drawing.Size(339, 548);
+            this.packTreeView.Size = new System.Drawing.Size(199, 548);
             this.packTreeView.TabIndex = 2;
             this.packTreeView.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.packTreeView_AfterLabelEdit);
             this.packTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.packTreeView_AfterSelect);
@@ -740,7 +739,7 @@ namespace PackFileManager
             this.changePackTypeToolStripMenuItem});
             this.packActionMenuStrip.Name = "packActionMenuStrip";
             this.packActionMenuStrip.OwnerItem = this.packActionDropDownButton;
-            this.packActionMenuStrip.Size = new System.Drawing.Size(211, 296);
+            this.packActionMenuStrip.Size = new System.Drawing.Size(211, 274);
             this.packActionMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.packActionMenuStrip_Opening);
             // 
             // exportFileListToolStripMenuItem
@@ -916,7 +915,7 @@ namespace PackFileManager
             // 
             this.splitContainer1.Panel2.Controls.Add(this.pictureBox1);
             this.splitContainer1.Size = new System.Drawing.Size(909, 603);
-            this.splitContainer1.SplitterDistance = 342;
+            this.splitContainer1.SplitterDistance = 202;
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 9;
             // 
@@ -946,7 +945,7 @@ namespace PackFileManager
             this.packActionDropDownButton});
             this.packActionToolStrip.Location = new System.Drawing.Point(0, 0);
             this.packActionToolStrip.Name = "packActionToolStrip";
-            this.packActionToolStrip.Size = new System.Drawing.Size(338, 25);
+            this.packActionToolStrip.Size = new System.Drawing.Size(198, 25);
             this.packActionToolStrip.TabIndex = 1;
             this.packActionToolStrip.Text = "toolStrip1";
             this.packActionToolStrip.Resize += new System.EventHandler(this.packActionToolStrip_Resize);
@@ -1158,12 +1157,6 @@ namespace PackFileManager
             // 
             // updateOnStartupToolStripMenuItem
             // 
-            settings1.SettingsKey = "";
-            settings1.TwcThreadId = "10595000";
-            settings1.UpdateOnStartup = false;
-            settings1.UseFirstColumnAsRowHeader = false;
-            settings1.UseOnlineDefinitions = false;
-            this.updateOnStartupToolStripMenuItem.Checked = settings1.UpdateOnStartup;
             this.updateOnStartupToolStripMenuItem.CheckOnClick = true;
             this.updateOnStartupToolStripMenuItem.Name = "updateOnStartupToolStripMenuItem";
             this.updateOnStartupToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
@@ -1184,6 +1177,13 @@ namespace PackFileManager
             this.reloadToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.reloadToolStripMenuItem.Text = "Reload from Local Directory";
             this.reloadToolStripMenuItem.Visible = false;
+            // 
+            // saveToDirectoryToolStripMenuItem
+            // 
+            this.saveToDirectoryToolStripMenuItem.Name = "saveToDirectoryToolStripMenuItem";
+            this.saveToDirectoryToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.saveToDirectoryToolStripMenuItem.Text = "Save to Directory";
+            this.saveToDirectoryToolStripMenuItem.Click += new System.EventHandler(this.saveToDirectoryToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -1270,13 +1270,6 @@ namespace PackFileManager
             // openDBFileDialog
             // 
             this.openDBFileDialog.Filter = "Text CSV|*.txt|Any File|*.*";
-            // 
-            // saveToDirectoryToolStripMenuItem
-            // 
-            this.saveToDirectoryToolStripMenuItem.Name = "saveToDirectoryToolStripMenuItem";
-            this.saveToDirectoryToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
-            this.saveToDirectoryToolStripMenuItem.Text = "Save to Directory";
-            this.saveToDirectoryToolStripMenuItem.Click += new System.EventHandler(this.saveToDirectoryToolStripMenuItem_Click);
             // 
             // PackFileManagerForm
             // 
