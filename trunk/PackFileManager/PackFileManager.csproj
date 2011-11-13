@@ -53,6 +53,9 @@
     <EmbeddedResource Include="PackFileManager\DBFileEditorControl.resx">
       <DependentUpon>DBFileEditorControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="PackFileManager\InputBox.resx">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PackFileManager\LocFileEditorControl.resx">
       <DependentUpon>LocFileEditorControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -81,6 +84,12 @@
     <Compile Include="PackFileManager\DBFileTypesUpdater.cs" />
     <Compile Include="PackFileManager\ImageViewerControl.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PackFileManager\InputBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PackFileManager\InputBox.Designer.cs">
+      <DependentUpon>InputBox.cs</DependentUpon>
     </Compile>
     <Compile Include="PackFileManager\PackFileManagerForm.cs">
       <SubType>Form</SubType>
