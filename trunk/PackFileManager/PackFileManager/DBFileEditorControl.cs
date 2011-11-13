@@ -754,13 +754,13 @@ namespace PackFileManager
                 }));
                 menu.MenuItems.Add(item);
 
-                item = new MenuItem("Clear ignore list for this table", new EventHandler(delegate(object s, EventArgs args)
+                item = new MenuItem("Clear Hide list for this table", new EventHandler(delegate(object s, EventArgs args)
                 {
                     Settings.Default.ResetIgnores(currentPackedFile.Filepath);
                     Open(currentPackedFile, currentPackedFile.PackFile);
                 }));
                 menu.MenuItems.Add(item);
-                item = new MenuItem("Clear ignore list for all tables", new EventHandler(delegate(object s, EventArgs args)
+                item = new MenuItem("Clear Hide list for all tables", new EventHandler(delegate(object s, EventArgs args)
                 {
                     Settings.Default.IgnoreColumns = "";
                     Open(currentPackedFile, currentPackedFile.PackFile);
