@@ -13,10 +13,11 @@ namespace PackFileManager
 	class DBFileTypesUpdater
 	{
         static Regex FileTypeRegex = new Regex("<a href=\".*(attachmentid=[^\"]*)\"[^>]*>DBFileTypes_([0-9]*).zip</a>.*</td>");
-        static Regex SwVersionRegex = new Regex(@"Pack File Manager ([0-9]*)\.([0-9]*)\.([0-9]*)");
+        static Regex SwVersionRegex = new Regex(@"Update.*Pack File Manager ([0-9]*\.[0-9]*(\.[0-9]*)?)");
+        static Comparer<string> comparator = new BuildVersionComparator();
         static string VERSION_FILE = "version";
 
-        public static bool checkVersion(string basePath)
+        public static bool checkVersion(string basePath, ref string swVersion)
         {
             // read the delivery announcement thread page into a string
             bool result = false;
@@ -26,6 +27,15 @@ namespace PackFileManager
             StreamReader stream = new StreamReader(response.GetResponseStream());
             string wholePage = stream.ReadToEnd();
             stream.Close();
+
+            // find latest software version on page
+            foreach(Match m in SwVersionRegex.Matches(wholePage)) {
+                string matchVersion = SwVersionRegex.Match(wholePage).Groups[1].Value;
+                if (comparator.Compare(matchVersion, swVersion) > 0)
+                {
+                    swVersion = matchVersion;
+                }
+            }
 
             // parse page content for attachment names
             int highestVersion = -1;
@@ -94,4 +104,36 @@ namespace PackFileManager
             return result;
         }
 	}
+
+    // compare build numbers
+    public class BuildVersionComparator : Comparer<string>
+    {
+        public override int Compare(string v1, string v2)
+        {
+            int result = 0;
+            string[] v1Split = v1.Split('.');
+            string[] v2Split = v2.Split('.');
+            for (int i = 0; i < Math.Min(v1Split.Length, v2Split.Length); i++)
+            {
+                int v1Version = 0, v2Version = 0;
+                int.TryParse(v1Split[i], out v1Version);
+                int.TryParse(v2Split[i], out v2Version);
+                result = v1Version - v2Version;
+                if (result != 0)
+                {
+                    return result;
+                }
+            }
+            if (result == 0)
+            {
+                // different version lengths (eg 1.7.2 and 2.0)
+                result = v1Split.Length != v2Split.Length ? 1 : 0;
+                // longer one is larger (2.0.1 > 2.0)
+                result *= v1Split.Length > v2Split.Length ? 1 : -1;
+            }
+
+            // result > 0: v1 is larger
+            return result;
+        }
+    }
 }
