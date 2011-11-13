@@ -2,15 +2,14 @@
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Collections.Generic;
-using System.Xml;
-using System.Xml.Schema;
 
 namespace Common
 {
 	public class DBTypeMap
 	{
-        static Regex DB_FILE_TYPE_PATTERN = new Regex("DBFileTypes_([0-9]*)");
+        static Regex DB_FILE_TYPE_PATTERN = new Regex("DBFileTypes_([0-9]*).txt");
         public static readonly string DB_FILE_TYPE_DIR_NAME = "DBFileTypes";
+        public static readonly string DB_TYPE_USER_DIR_NAME = "DBFileTypes_user";
 
         private SortedDictionary<string, List<TypeInfo>> typeMap;
 
@@ -29,13 +28,96 @@ namespace Common
             typeMap = new XsdParser(xsdFile).loadXsd();
         }
 
+        public void saveToFile(string directory)
+        {
+            // never overwrite downloaded files, use another subdirectory
+            string dir = Path.Combine(directory, DB_TYPE_USER_DIR_NAME);
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+            try
+            {
+                Dictionary<int, List<TypeInfo>> versionToInfos = new Dictionary<int, List<TypeInfo>>();
+
+                // collect all typeinfo lists, sorted by version number
+                foreach (string key in typeMap.Keys)
+                {
+                    List<TypeInfo> infos = typeMap[key];
+                    for (int i = 0; i < infos.Count; i++)
+                    {
+                        if (infos[i] != null)
+                        {
+                            List<TypeInfo> addTo = retrieveOrAdd<int>(versionToInfos, i);
+                            addTo.Add(infos[i]);
+                        }
+                    }
+                }
+                Comparer<TypeInfo> comparer = new TypeInfoComparer();
+                foreach (int version in versionToInfos.Keys)
+                {
+                    StreamWriter writer = new StreamWriter(Path.Combine(dir, "DBFileTypes_" + version + ".txt"));
+                    List<TypeInfo> infos = versionToInfos[version];
+                    infos.Sort(comparer);
+                    foreach (TypeInfo info in infos)
+                    {
+                        // header: table name, tab, first encoded field
+                        writer.Write(string.Format("{0}\t{1}", info.name, encodeField(info.fields[0])));
+                        for (int i = 1; i < info.fields.Count; i++)
+                        {
+                            // semicolon at eol is marker that there are more fields to come
+                            writer.WriteLine(";");
+                            writer.Write(string.Format("{0}", encodeField(info.fields[i])));
+                        }
+                        // make file more readable by separating entries
+                        for (int i = 0; i < 3; i++) writer.WriteLine();
+                    }
+                    writer.Close();
+                }
+            }
+            catch (Exception x)
+            {
+                Directory.Move(dir, Path.Combine(directory, DB_TYPE_USER_DIR_NAME + ".save"));
+                throw x;
+            }
+        }
+        string encodeField(FieldInfo info) {
+            string result = string.Format("{0},{1}", info.name, info.type);
+            switch(info.modifier) {
+                case FieldInfo.Modifier.NextFieldRepeats:
+                    result += ",*";
+                    break;
+                case FieldInfo.Modifier.NextFieldIsConditional:
+                    result += ",1";
+                    break;
+            }
+            return result;
+        }
+        private static List<TypeInfo> retrieveOrAdd<T>(IDictionary<T, List<TypeInfo>> dict, T key)
+        {
+            List<TypeInfo> list;
+            if (!dict.TryGetValue(key, out list))
+            {
+                list = new List<TypeInfo>();
+                dict.Add(key, list);
+            }
+            return list;
+        }
+
         private static SortedDictionary<string, List<TypeInfo>> loadDbFileTypes(string basePath)
         {
             SortedDictionary<string, List<TypeInfo>> result = new SortedDictionary<string, List<TypeInfo>>();
             int headerVersion = 0;
 
+            // prefer loading from user directory
+            string path = Path.Combine(basePath, DB_TYPE_USER_DIR_NAME);
+            if (!Directory.Exists(path))
+            {
+                path = Path.Combine(basePath, DB_FILE_TYPE_DIR_NAME);
+            }
+
             // find the highest header version
-            string[] matchingFiles = Directory.GetFiles(Path.Combine(basePath, DB_FILE_TYPE_DIR_NAME), "DBFileTypes_*");
+            string[] matchingFiles = Directory.GetFiles(path, "DBFileTypes_*");
             foreach (string file in matchingFiles)
             {
                 if (DB_FILE_TYPE_PATTERN.IsMatch(file))
@@ -46,11 +128,7 @@ namespace Common
                         SortedDictionary<string, TypeInfo> fromFile = getTypeMapFromFile(file);
                         foreach (string key in fromFile.Keys)
                         {
-                            List<TypeInfo> addTo;
-                            if (!result.TryGetValue(key, out addTo)) {
-                                addTo = new List<TypeInfo>();
-                                result.Add(key, addTo);
-                            }
+                            List<TypeInfo> addTo = retrieveOrAdd<string>(result, key);
                             if (addTo.Count < version+1)
                             {
                                 for (int i = addTo.Count; i < version+1; i++)
@@ -127,261 +205,12 @@ namespace Common
         }
 
 	}
-    public class TableConstraint
+
+    class TypeInfoComparer : Comparer<TypeInfo>
     {
-        public string Name { get; set; }
-        public string Table { get; set; }
-        public List<string> Fields { get; set; }
-    }
-    class TableReferenceEntry
-    {
-        public string Name { get; set; }
-        public string fromTable { get; set; }
-        public int fromTableIndex { get; set; }
-        public string toTable { get; set; }
-        public int toTableIndex { get; set; }
-    }
-    public class XsdParser
-    {
-        public static Regex TABLES_SUFFIX = new Regex("_tables");
-
-        int lastVersion = 0;
-        SortedDictionary<string, List<TypeInfo>> allInfos = new SortedDictionary<string, List<TypeInfo>>();
-        XmlSchema schema;
-        List<TableConstraint> constraints = new List<TableConstraint>();
-
-        // temporaries during parsing
-        string currentDbFileName;
-        TypeInfo currentInfo;
-        List<TypeInfo> infos;
-
-        TableReferenceEntry resolveReference(string referenceName, string fromTable, string fromRow, string uniqueName)
+        public override int Compare(TypeInfo x, TypeInfo y)
         {
-            int index = findTableRowIndex(fromTable, fromRow);
-            if (index == -1)
-            {
-                return null;
-            }
-            string toTable = null;
-            int toIndex = -1;
-            foreach (TableConstraint constraint in constraints)
-            {
-                if (constraint.Name == uniqueName)
-                {
-                    if (constraint.Fields.Count != 1)
-                    {
-                        return null;
-                    }
-                    toTable = constraint.Table.Substring(3).Replace("_tables", "");
-                    toIndex = findTableRowIndex(toTable, constraint.Fields[0].Substring(1));
-                }
-            }
-            if (toIndex == -1)
-            {
-                return null;
-            }
-            return new TableReferenceEntry { Name = referenceName,
-                fromTable = fromTable, fromTableIndex = index,
-                toTable = toTable, toTableIndex = toIndex };
-        }
-        int findTableRowIndex(string tableName, string rowName)
-        {
-            List<TypeInfo> fromInfos = null;
-            if (!allInfos.TryGetValue(tableName, out fromInfos)) {
-                return -1;
-            }
-            TypeInfo firstInfo = null;
-            foreach (TypeInfo ti in fromInfos)
-            {
-                if (ti != null)
-                {
-                    firstInfo = ti;
-                    break;
-                }
-            }
-            if (firstInfo == null)
-            {
-                return -1;
-            }
-            int index = 0;
-            for (; index < firstInfo.fields.Count; index++)
-            {
-                if (firstInfo.fields[index].name == rowName)
-                {
-                    break;
-                }
-            }
-            return (index == firstInfo.fields.Count) ? -1 : index;
-        }
-
-        public XsdParser(string file)
-        {
-            FileStream fs;
-            XmlSchemaSet set;
-            try
-            {
-                fs = new FileStream(file, FileMode.Open);
-                schema = XmlSchema.Read(fs, new ValidationEventHandler(ShowCompileError));
-                set = new XmlSchemaSet();
-                set.Add(schema);
-
-                set.Compile();
-
-                Console.WriteLine("reading finished");
-                //loadXsd();
-            }
-            catch (XmlSchemaException e)
-            {
-                Console.WriteLine("LineNumber = {0}", e.LineNumber);
-                Console.WriteLine("LinePosition = {0}", e.LinePosition);
-                Console.WriteLine("Message = {0}", e.Message);
-                Console.WriteLine("Source = {0}", e.Source);
-            }
-        }
-        public SortedDictionary<string, List<TypeInfo>> loadXsd()
-        {
-            handleObject(schema);
-            return allInfos;
-        }
-        private void startNewDbFile(XmlSchemaComplexType type)
-        {
-            // add previously read db file
-            if (currentDbFileName != null)
-            {
-                addCurrentInfo();
-                allInfos.Add(currentDbFileName.Replace("_tables", ""), infos);
-            }
-            lastVersion = 0;
-            currentDbFileName = type.Name;
-            currentInfo = new TypeInfo(currentDbFileName);
-        }
-
-        private void addDbAttribute(XmlSchemaAttribute attribute)
-        {
-            bool optional = false;
-            if (attribute.UnhandledAttributes != null)
-            {
-                foreach (XmlAttribute unhandled in attribute.UnhandledAttributes)
-                {
-                    if (unhandled.Name == "msprop:Optional" && unhandled.Value == "true")
-                    {
-                        optional = true;
-                    }
-                    if (unhandled.Name == "msProp:VersionStart")
-                    {
-                        int nextVersion = int.Parse(unhandled.Value);
-                        addCurrentInfo();
-                        lastVersion = nextVersion;
-                    }
-                }
-            }
-            if (optional)
-            {
-                FieldInfo field = new FieldInfo("->", "Boolean", "1");
-                currentInfo.fields.Add(field);
-            }
-            FieldInfo fieldType = new FieldInfo(attribute.Name, attribute.AttributeSchemaType.TypeCode.ToString());
-            currentInfo.fields.Add(fieldType);
-        }
-
-        private void handleObject(XmlSchemaObject o)
-        {
-            string str = "unknown";
-            XmlSchemaObjectCollection children = new XmlSchemaObjectCollection();
-            if (o is XmlSchema)
-            {
-                str = "root";
-                children = ((XmlSchema)o).Items;
-            }
-            else if (o is XmlSchemaComplexType)
-            {
-                XmlSchemaComplexType type = (XmlSchemaComplexType)o;
-                startNewDbFile(type);
-                str = type.Name;
-                children = type.Attributes;
-                infos = new List<TypeInfo>();
-            }
-            else if (o is XmlSchemaAttribute)
-            {
-                XmlSchemaAttribute attribute = (XmlSchemaAttribute)o;
-                addDbAttribute(attribute);
-                str = string.Format("{0} ({1})", attribute.Name, attribute.AttributeSchemaType.TypeCode);
-            }
-            else if (o is XmlSchemaElement) 
-            {
-                // children = ((XmlSchemaElement)o).
-                XmlSchemaElement element = (XmlSchemaElement)o;
-                foreach (XmlSchemaObject constraint in element.Constraints)
-                {
-                    if (constraint is XmlSchemaUnique)
-                    {
-                        XmlSchemaUnique unique = (XmlSchemaUnique)constraint;
-                        List<string> fields = new List<string>(unique.Fields.Count);
-                        foreach (XmlSchemaObject field in unique.Fields)
-                        {
-                            if (field is XmlSchemaXPath)
-                            {
-                                fields.Add(((XmlSchemaXPath)field).XPath);
-                            }
-                        }
-                        constraints.Add(new TableConstraint
-                        {
-                            Name = unique.Name,
-                            Table = unique.Selector.XPath,
-                            Fields = fields
-                        });
-                    }
-                    else if (constraint is XmlSchemaKeyref)
-                    {
-                        XmlSchemaKeyref reference = (XmlSchemaKeyref) constraint;
-                        string fromTable = reference.Selector.XPath.Substring(3).Replace("_tables", "");
-                        string fromRow = ((XmlSchemaXPath)reference.Fields[0]).XPath.Substring(1);
-                        try
-                        {
-                            TableReferenceEntry tableRef = resolveReference(reference.Name, fromTable, fromRow, reference.Refer.Name);
-                            if (tableRef != null)
-                            {
-                                Console.WriteLine("{0}#{1} - {2}#{3}", tableRef.fromTable, tableRef.fromTableIndex, tableRef.toTable, tableRef.toTableIndex);
-                            }
-                            else
-                            {
-                                Console.WriteLine("could not resolve reference");
-                            }
-                        }
-                        catch (Exception)
-                        {
-                        }
-                    }
-                }
-            } 
-            else
-            {
-                Console.WriteLine("unknown type: {0}", o);
-            }
-
-            if (o is XmlSchemaAnnotated && ((XmlSchemaAnnotated)o).UnhandledAttributes != null)
-            {
-                string attlist = "";
-                new List<XmlAttribute>(((XmlSchemaAnnotated)o).UnhandledAttributes).ForEach(uh => attlist += " " + uh);
-                str = string.Format("{0} (unhandled: {1})", str, attlist);
-            }
-
-            foreach (XmlSchemaObject child in children)
-            {
-                handleObject(child);
-            }
-        }
-        private void addCurrentInfo()
-        {
-            for (int i = infos.Count; i < lastVersion + 1; i++)
-            {
-                infos.Add(null);
-            }
-            infos[lastVersion] = currentInfo;
-        }
-        private static void ShowCompileError(object sender, ValidationEventArgs e)
-        {
-            Console.WriteLine("Validation Error: {0}", e.Message);
+            return x.name.CompareTo(y.name);
         }
     }
 }
