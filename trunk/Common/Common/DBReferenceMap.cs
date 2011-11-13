@@ -13,13 +13,31 @@ namespace Common
         public static readonly DBReferenceMap Instance = new DBReferenceMap();
 
         public Dictionary<string, List<TableReference>> references = new Dictionary<string, List<TableReference>>();
+        Dictionary<KeyValuePair<string,int>, SortedSet<string>> valueCache = new Dictionary<KeyValuePair<string,int>,SortedSet<string>>();
+        PackFile lastPack = null;
 
         private DBReferenceMap() { }
+
+        PackFile LastPack
+        {
+            get { return lastPack; }
+            set
+            {
+                if ((value != null && lastPack != null) && 
+                    (value.Filepath != lastPack.Filepath))
+                {
+                    // clear cache when using another pack file
+                    valueCache.Clear();
+                }
+                lastPack = value;
+            }
+        }
 
         public void load(string directory)
         {
             string filename = Path.Combine(directory, DBTypeMap.DB_FILE_TYPE_DIR_NAME, "references.txt");
             references.Clear();
+            LastPack = null;
             foreach (string line in File.ReadAllLines(filename))
             {
                 try
@@ -46,6 +64,7 @@ namespace Common
         }
         public void validateReferences(string directory, PackFile pack)
         {
+            LastPack = pack;
             // verify dependencies
             foreach (string fromMap in references.Keys)
             {
@@ -73,13 +92,23 @@ namespace Common
         }
         SortedSet<string> collectValues(int index, string reference, PackFile pack)
         {
+            if (pack != lastPack)
+            {
+                lastPack = pack;
+            }
             string dbFileName = string.Format(@"db\{0}_tables\{0}", reference);
+
+            SortedSet<string> result = new SortedSet<string>();
+            if (valueCache.TryGetValue(new KeyValuePair<string, int>(dbFileName, index), out result))
+            {
+                return result;
+            }
             foreach (PackedFile file in pack.FileList)
             {
                 if (file.Filepath == dbFileName)
                 {
+                    result = new SortedSet<string>();
                     DBFile dbFile = new DBFile(file, DBTypeMap.Instance[reference].ToArray());
-                    SortedSet<string> result = new SortedSet<string>();
                     foreach (List<FieldInstance> entry in dbFile.Entries)
                     {
                         string toAdd = entry[index].Value;
@@ -88,14 +117,16 @@ namespace Common
                             result.Add(toAdd);
                         }
                     }
-                    return result;
                 }
             }
-            return null;
+            valueCache.Add(new KeyValuePair<string, int>(dbFileName, index), result);
+            return result;
         }
 
         public SortedSet<string> resolveFromPackFile(string key, int index, PackFile packFile)
         {
+            LastPack = packFile;
+            SortedSet<string> result = null;
             if (references.ContainsKey(key))
             {
                 TableReference toResolve = null;
@@ -110,26 +141,9 @@ namespace Common
                 if (toResolve == null) 
                     return null;
 
-                string dbFileName = string.Format(@"db\{0}_tables\{0}", toResolve.toMap);
-                foreach (PackedFile file in packFile.FileList)
-                {
-                    if (file.Filepath == dbFileName)
-                    {
-                        DBFile dbFile = new DBFile(file, DBTypeMap.Instance[toResolve.toMap].ToArray());
-                        SortedSet<string> result = new SortedSet<string>();
-                        foreach (List<FieldInstance> entry in dbFile.Entries)
-                        {
-                            string toAdd = entry[toResolve.toIndex].Value;
-                            if (toAdd != null)
-                            {
-                                result.Add(toAdd);
-                            }
-                        }
-                        return result;
-                    }
-                }
+                result = collectValues(toResolve.toIndex, toResolve.toMap, packFile);
             }
-            return null;
+            return result;
         }
 	}
 
