@@ -20,7 +20,7 @@
             }
         }
 
-        [DebuggerNonUserCode, DefaultSettingValue("False"), UserScopedSetting]
+        [DefaultSettingValue("False"), UserScopedSetting]
         public bool UseFirstColumnAsRowHeader
         {
             get
@@ -33,7 +33,7 @@
             }
         }
 
-        [DebuggerNonUserCode, DefaultSettingValue(""), UserScopedSetting]
+        [DefaultSettingValue(""), UserScopedSetting]
         public string IgnoreColumns
         {
             get
@@ -126,7 +126,7 @@
             return result;
         }
 
-        [DebuggerNonUserCode, DefaultSettingValue("False"), UserScopedSetting]
+        [DefaultSettingValue("False"), UserScopedSetting]
         public bool ShowAllColumns
         {
             get
