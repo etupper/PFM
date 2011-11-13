@@ -161,7 +161,6 @@ namespace Common
             get
             {
                 List<string> result = new List<string>(typeMap.Keys);
-                result.Sort();
                 return result;
             }
         }
@@ -206,7 +205,6 @@ namespace Common
             }
             return dictionary;
         }
-
 	}
 
     class TypeInfoComparer : Comparer<TypeInfo>
