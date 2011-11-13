@@ -15,7 +15,7 @@ namespace PackFileManager
     public class DBFileEditorControl : UserControl
     {
         private ToolStripButton addNewRowButton;
-        private CheckBox checkBox1;
+        private CheckBox useFirstColumnAsRowHeader;
         private ToolStripButton cloneCurrentRow;
         private IContainer components;
         private ToolStripButton copyToolStripButton;
@@ -41,6 +41,8 @@ namespace PackFileManager
             this.InitializeComponent();
             initTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
             this.dataGridView.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.useComboBoxCells.Checked = Settings.Default.UseComboboxCells;
+            this.useFirstColumnAsRowHeader.Checked = Settings.Default.UseFirstColumnAsRowHeader;
         }
 
         private void addNewRowButton_Click(object sender, EventArgs e)
@@ -59,8 +61,8 @@ namespace PackFileManager
 
         private void checkBox_CheckedChanged(object sender, EventArgs e)
         {
-            this.toggleFirstColumnAsRowHeader(this.checkBox1.Checked);
-            Settings.Default.UseFirstColumnAsRowHeader = this.checkBox1.Checked;
+            this.toggleFirstColumnAsRowHeader(this.useFirstColumnAsRowHeader.Checked);
+            Settings.Default.UseFirstColumnAsRowHeader = this.useFirstColumnAsRowHeader.Checked;
             Settings.Default.Save();
         }
 
@@ -174,7 +176,7 @@ namespace PackFileManager
 
         private void dataGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
-            if ((((this.currentDBFile.CurrentType.fields.Count > 1) && this.checkBox1.Checked) && ((e.ColumnIndex == -1) && (e.RowIndex > -1))) && (e.RowIndex < (this.dataGridView.DataSource as BindingSource).Count))
+            if ((((this.currentDBFile.CurrentType.fields.Count > 1) && this.useFirstColumnAsRowHeader.Checked) && ((e.ColumnIndex == -1) && (e.RowIndex > -1))) && (e.RowIndex < (this.dataGridView.DataSource as BindingSource).Count))
             {
                 e.PaintBackground(e.ClipBounds, false);
                 string s = ((this.dataGridView.DataSource as BindingSource)[e.RowIndex] as DataRowView)[1].ToString();
@@ -304,7 +306,7 @@ namespace PackFileManager
             this.useOnlineDefinitionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openDBFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.unsupportedDBErrorTextBox = new System.Windows.Forms.TextBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.useFirstColumnAsRowHeader = new System.Windows.Forms.CheckBox();
             this.useComboBoxCells = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.toolStrip.SuspendLayout();
@@ -331,6 +333,8 @@ namespace PackFileManager
             this.dataGridView.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dataGridView_DataBindingComplete);
             this.dataGridView.SelectionChanged += new System.EventHandler(this.dataGridView_SelectionChanged);
             this.dataGridView.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.dataGridView_KeyPress);
+            this.dataGridView.ColumnHeaderMouseClick += dataGridView1_ColumnHeaderMouseClick;
+
             // 
             // toolStrip
             // 
@@ -454,14 +458,14 @@ namespace PackFileManager
             // 
             // checkBox1
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(422, 4);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(183, 17);
-            this.checkBox1.TabIndex = 4;
-            this.checkBox1.Text = "Use First Column As Row Header";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
+            this.useFirstColumnAsRowHeader.AutoSize = true;
+            this.useFirstColumnAsRowHeader.Location = new System.Drawing.Point(422, 4);
+            this.useFirstColumnAsRowHeader.Name = "checkBox1";
+            this.useFirstColumnAsRowHeader.Size = new System.Drawing.Size(183, 17);
+            this.useFirstColumnAsRowHeader.TabIndex = 4;
+            this.useFirstColumnAsRowHeader.Text = "Use First Column As Row Header";
+            this.useFirstColumnAsRowHeader.UseVisualStyleBackColor = true;
+            this.useFirstColumnAsRowHeader.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
             // 
             // useComboBoxCells
             // 
@@ -479,7 +483,7 @@ namespace PackFileManager
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.useComboBoxCells);
-            this.Controls.Add(this.checkBox1);
+            this.Controls.Add(this.useFirstColumnAsRowHeader);
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.dataGridView);
             this.Controls.Add(this.unsupportedDBErrorTextBox);
@@ -497,7 +501,7 @@ namespace PackFileManager
         DataGridViewColumn createColumn(string columnName, List<FieldInfo> fields, int num, PackFile packFile)
         {
             DataGridViewColumn column = null;
-            if (useComboBoxCells.Checked && packFile != null)
+            if (Settings.Default.UseComboboxCells && packFile != null)
             {
                 string key = Path.GetFileName(currentPackedFile.Filepath).Replace("_tables", "");
                 try
@@ -508,7 +512,7 @@ namespace PackFileManager
                         column = new DataGridViewComboBoxColumn
                         {
                             DataPropertyName = columnName,
-                            HeaderText = fields[num].name + "_" + num
+                            HeaderText = fields[num].name
                         };
                         DataGridViewComboBoxColumn cb = (DataGridViewComboBoxColumn)column;
                         cb.Items.Add(string.Empty);
@@ -527,9 +531,12 @@ namespace PackFileManager
             {
                 column = new DataGridViewAutoFilterTextBoxColumn {
                     DataPropertyName = columnName,
-                    HeaderText = fields[num].name + "_" + num
+                    HeaderText = fields[num].name, // + "_" + num,
+                    AutomaticSortingEnabled = false
                 };
             }
+            column.SortMode = DataGridViewColumnSortMode.Programmatic;
+            column.Tag = fields[num];
             return column;
         }
 
@@ -670,7 +677,56 @@ namespace PackFileManager
 
         private void useComboBoxCells_CheckedChanged(object sender, EventArgs e)
         {
-            Refresh();
+            if (currentPackedFile != null)
+            {
+                // rebuild table
+                Open(currentPackedFile, currentPackedFile.PackFile);
+            }
+        }
+        private void dataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            DataGridViewColumn newColumn = dataGridView.Columns[e.ColumnIndex];
+            DataGridViewColumn oldColumn = dataGridView.SortedColumn;
+            ListSortDirection direction;
+
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                FieldInfo info = (FieldInfo)newColumn.Tag;
+                InputBox box = new InputBox { Text = "Enter new description", Input = info.name };
+                if (box.ShowDialog() == DialogResult.OK)
+                {
+                    info.name = box.Input;
+                    newColumn.HeaderText = info.name;
+                }
+                return;
+            }
+
+            // If oldColumn is null, then the DataGridView is not sorted.
+            if (oldColumn != null)
+            {
+                // Sort the same column again, reversing the SortOrder.
+                if (oldColumn == newColumn &&
+                    dataGridView.SortOrder == SortOrder.Ascending)
+                {
+                    direction = ListSortDirection.Descending;
+                }
+                else
+                {
+                    // Sort a new column and remove the old SortGlyph.
+                    direction = ListSortDirection.Ascending;
+                    oldColumn.HeaderCell.SortGlyphDirection = SortOrder.None;
+                }
+            }
+            else
+            {
+                direction = ListSortDirection.Ascending;
+            }
+
+            // Sort the selected column.
+            dataGridView.Sort(newColumn, direction);
+            newColumn.HeaderCell.SortGlyphDirection =
+                direction == ListSortDirection.Ascending ?
+                SortOrder.Ascending : SortOrder.Descending;
         }
     }
 }
