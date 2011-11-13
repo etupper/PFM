@@ -44,7 +44,6 @@ namespace PackFileManager
             initTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
             this.dataGridView.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridView.ColumnHeaderMouseClick += dataGridView1_ColumnHeaderMouseClick;
-            this.useComboBoxCells.Checked = Settings.Default.UseComboboxCells;
             this.useFirstColumnAsRowHeader.Checked = Settings.Default.UseFirstColumnAsRowHeader;
             this.showAllColumns.Checked = Settings.Default.ShowAllColumns;
         }
@@ -471,6 +470,7 @@ namespace PackFileManager
             this.useFirstColumnAsRowHeader.TabIndex = 4;
             this.useFirstColumnAsRowHeader.Text = "Use First Column As Row Header";
             this.useFirstColumnAsRowHeader.UseVisualStyleBackColor = true;
+            this.useComboBoxCells.Checked = Settings.Default.UseComboboxCells;
             this.useFirstColumnAsRowHeader.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
             // 
             // useComboBoxCells
@@ -627,6 +627,7 @@ namespace PackFileManager
                 this.dataGridView.Visible = true;
                 this.unsupportedDBErrorTextBox.Visible = false;
             }
+            toggleFirstColumnAsRowHeader(Settings.Default.UseFirstColumnAsRowHeader);
         }
 
         private void pasteEvent()
