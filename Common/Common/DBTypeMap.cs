@@ -61,15 +61,26 @@ namespace Common
                     StreamWriter writer = new StreamWriter(Path.Combine(dir, "DBFileTypes_" + version + ".txt"));
                     List<TypeInfo> infos = versionToInfos[version];
                     infos.Sort(comparer);
+                    bool nextFieldConditional = false;
                     foreach (TypeInfo info in infos)
                     {
                         // header: table name, tab, first encoded field
                         writer.Write(string.Format("{0}\t{1}", info.name, encodeField(info.fields[0])));
+                        nextFieldConditional = info.fields[0].modifier == FieldInfo.Modifier.NextFieldIsConditional;
                         for (int i = 1; i < info.fields.Count; i++)
                         {
-                            // semicolon at eol is marker that there are more fields to come
-                            writer.WriteLine(";");
+                            if (nextFieldConditional)
+                            {
+                                // don't separate condition and condition target fields
+                                writer.Write(";");
+                            }
+                            else
+                            {
+                                // semicolon at eol is marker that there are more fields to come
+                                writer.WriteLine(";");
+                            }
                             writer.Write(string.Format("{0}", encodeField(info.fields[i])));
+                            nextFieldConditional = info.fields[i].modifier == FieldInfo.Modifier.NextFieldIsConditional;
                         }
                         // make file more readable by separating entries
                         for (int i = 0; i < 3; i++) writer.WriteLine();
@@ -85,7 +96,8 @@ namespace Common
             return result;
         }
         string encodeField(FieldInfo info) {
-            string result = string.Format("{0},{1}", info.name, info.type);
+            string typeString = info.type == PackTypeCode.Empty ? info.Length.ToString() : info.type.ToString();
+            string result = string.Format("{0},{1}", info.name, typeString);
             switch(info.modifier) {
                 case FieldInfo.Modifier.NextFieldRepeats:
                     result += ",*";
