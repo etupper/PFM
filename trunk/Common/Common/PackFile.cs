@@ -95,7 +95,7 @@ namespace Common
                 }
                 catch (Exception e)
                 {
-                    throw new InvalidOperationException(string.Format("Could not add {0} to {1}: {2}", str, Filepath, e));
+                    throw new InvalidOperationException(string.Format("Could not add {0} to {1}: {2}", str, Filepath, e.Message));
                 }
             }
         }
