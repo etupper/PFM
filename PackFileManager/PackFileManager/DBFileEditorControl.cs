@@ -14,6 +14,12 @@ namespace PackFileManager
 
     public class DBFileEditorControl : UserControl
     {
+        enum COPIED_TYPE {
+            NONE,
+            ROWS,
+            CELLS
+        }
+
         private ToolStripButton addNewRowButton;
         private CheckBox useFirstColumnAsRowHeader;
         private ToolStripButton cloneCurrentRow;
@@ -37,6 +43,7 @@ namespace PackFileManager
         private CheckBox showAllColumns;
         private bool dataChanged = false;
         private List<List<FieldInstance>> copiedRows = new List<List<FieldInstance>>();
+        private COPIED_TYPE lastCopy = COPIED_TYPE.NONE;
 
         public DBFileEditorControl()
         {
@@ -54,23 +61,14 @@ namespace PackFileManager
             if (currentPackedFile != null)
             {
                 if (arge.Control)
-                if (arge.KeyCode == Keys.C)
                 {
-                    copyEvent();
-                    copiedRows = new List<List<FieldInstance>>();
-                    DataGridViewSelectedRowCollection selected = dataGridView.SelectedRows;
-                    foreach (DataGridViewRow row in selected)
+                    if (arge.KeyCode == Keys.C)
                     {
-                        List<FieldInstance> toCopy = currentDBFile.Entries[row.Index];
-                        List<FieldInstance> copy = new List<FieldInstance>(toCopy.Count);
-                        toCopy.ForEach(field => copy.Add(new FieldInstance(field.Info, field.Value)));
-                        copiedRows.Add(copy);
+                        copyEvent();
                     }
-                } else if (arge.KeyCode == Keys.V) {
-                    int insertAt = dataGridView.CurrentCell.RowIndex;
-                    foreach (List<FieldInstance> copied in copiedRows)
+                    else if (arge.KeyCode == Keys.V)
                     {
-                        createRow(copied, insertAt);
+                        pasteEvent();
                     }
                 }
             }
@@ -159,17 +157,48 @@ namespace PackFileManager
 
         private void copyEvent()
         {
-            int num = (this.dataGridView.SelectedRows.Count == 1) ? this.dataGridView.SelectedRows[0].Index : this.dataGridView.SelectedCells[0].RowIndex;
-            int index = this.currentDataTable.Rows.IndexOf((this.dataGridView.Rows[num].DataBoundItem as DataRowView).Row);
-            List<FieldInstance> list = this.currentDBFile.Entries[index];
-            string[] strArray = new string[this.currentDataTable.Columns.Count - 1];
-            for (int i = 1; i < this.currentDataTable.Columns.Count; i++)
+            copiedRows = new List<List<FieldInstance>>();
+            if (dataGridView.SelectedRows.Count != 0)
             {
-                int num4 = Convert.ToInt32(this.currentDataTable.Columns[i].ColumnName);
-                strArray[i - 1] = list[num4].Value;
+                DataGridViewSelectedRowCollection selected = dataGridView.SelectedRows;
+                foreach (DataGridViewRow row in selected)
+                {
+                    List<FieldInstance> toCopy = currentDBFile.Entries[row.Index];
+                    List<FieldInstance> copy = new List<FieldInstance>(toCopy.Count);
+                    toCopy.ForEach(field => copy.Add(new FieldInstance(field.Info, field.Value)));
+                    copiedRows.Add(copy);
+                    lastCopy = COPIED_TYPE.ROWS;
+                }
             }
-            Clipboard.SetText(string.Join("\t", strArray) + "\r\n");
-            this.checkClipboardForPaste();
+            else
+            {
+                DataGridViewSelectedCellCollection cells = dataGridView.SelectedCells;
+                copiedRows = new List<List<FieldInstance>>();
+                int minColumn = dataGridView.ColumnCount;
+                int maxColumn = -1;
+                int minRow = dataGridView.RowCount;
+                int maxRow = -1;
+                foreach (DataGridViewCell cell in cells)
+                {
+                    minColumn = Math.Min(minColumn, cell.ColumnIndex);
+                    maxColumn = Math.Max(maxColumn, cell.ColumnIndex);
+                    minRow = Math.Min(minRow, cell.RowIndex);
+                    maxRow = Math.Max(maxRow, cell.RowIndex);
+                }
+                for (int j = minRow; j <= maxRow; j++)
+                {
+                    DataRowView dataRowView = this.dataGridView.Rows[j].DataBoundItem as DataRowView;
+                    List<FieldInstance> copy = new List<FieldInstance>(maxColumn-minColumn);
+                    for (int i = minColumn; i <= maxColumn; i++)
+                    {
+                        FieldInfo info = (FieldInfo)dataGridView.Columns[i].Tag;
+                        Console.WriteLine("{1}: {0}", dataRowView[i], info.type);
+                        copy.Add(new FieldInstance(info, dataRowView[i].ToString()));
+                    }
+                    copiedRows.Add(copy);
+                }
+                lastCopy = COPIED_TYPE.CELLS;
+            }
         }
 
         private void copyToolStripButton_Click(object sender, EventArgs e)
@@ -587,6 +616,8 @@ namespace PackFileManager
             column.SortMode = DataGridViewColumnSortMode.Programmatic;
             column.HeaderText = fields[num].name + (Settings.Default.IsColumnIgnored(currentPackedFile.Filepath, fields[num].name) ? "*" : "");
             column.Tag = fields[num];
+            column.Visible = fields[num].modifier == FieldInfo.Modifier.None && (Settings.Default.ShowAllColumns ||
+            !Settings.Default.IsColumnIgnored(currentPackedFile.Filepath, fields[num].name));
             return column;
         }
 
@@ -616,26 +647,19 @@ namespace PackFileManager
                 this.dataGridView.Columns.Add(dataGridViewColumn);
                 for (num = 0; num < info.fields.Count; num++)
                 {
-                    if (info.fields[num].modifier == FieldInfo.Modifier.None)
+                    string columnName = num.ToString();
+                    DataColumn column = new DataColumn(columnName);
+                    if ((info.fields[num].type.ToString() == TypeCode.Empty.ToString()) || ((num > 0) && (info.fields[num - 1].modifier == FieldInfo.Modifier.NextFieldRepeats)))
                     {
-                        string columnName = num.ToString();
-                        DataColumn column = new DataColumn(columnName);
-                        if ((info.fields[num].type.ToString() == TypeCode.Empty.ToString()) || ((num > 0) && (info.fields[num - 1].modifier == FieldInfo.Modifier.NextFieldRepeats)))
-                        {
-                            column.DataType = System.Type.GetType("System.String");
-                        }
-                        else
-                        {
-                            column.DataType = System.Type.GetType("System." + info.fields[num].type.ToString());
-                        }
-                        this.currentDataTable.Columns.Add(column);
-                        PackTypeCode code1 = info.fields[num].type;
-                        if (Settings.Default.ShowAllColumns ||
-                        !Settings.Default.IsColumnIgnored(currentPackedFile.Filepath, info.fields[num].name))
-                        {
-                            this.dataGridView.Columns.Add(createColumn(columnName, info.fields, num, packFile));
-                        }
+                        column.DataType = System.Type.GetType("System.String");
                     }
+                    else
+                    {
+                        column.DataType = System.Type.GetType("System." + info.fields[num].type.ToString());
+                    }
+                    this.currentDataTable.Columns.Add(column);
+                    PackTypeCode code1 = info.fields[num].type;
+                    this.dataGridView.Columns.Add(createColumn(columnName, info.fields, num, packFile));
                 }
                 this.currentDataSet.Tables.Add(this.currentDataTable);
                 this.currentDataTable.ColumnChanged += new DataColumnChangeEventHandler(this.currentDataTable_ColumnChanged);
@@ -665,21 +689,42 @@ namespace PackFileManager
 
         private void pasteEvent()
         {
-            if (Clipboard.ContainsText())
+            List<List<FieldInstance>> rows = copiedRows;
+            int insertAtRow = dataGridView.CurrentCell.RowIndex;
+            if (lastCopy == COPIED_TYPE.ROWS)
             {
-                string[] strArray2 = Clipboard.GetText().Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)[0].Split("\t".ToCharArray());
-                int num = (this.dataGridView.SelectedRows.Count == 1) ? this.dataGridView.SelectedRows[0].Index : this.dataGridView.SelectedCells[0].RowIndex;
-                int index = this.currentDataTable.Rows.IndexOf((this.dataGridView.Rows[num].DataBoundItem as DataRowView).Row);
-                DataRow row = this.currentDataTable.Rows[index];
-                List<FieldInstance> list = this.currentDBFile.Entries[index];
-                for (int i = 1; i < this.currentDataTable.Columns.Count; i++)
+                insertAtRow++;
+                foreach (List<FieldInstance> copied in rows)
                 {
-                    int num4 = Convert.ToInt32(this.currentDataTable.Columns[i].ColumnName);
-                    list[num4].Value = strArray2[i - 1];
-                    row[i] = Convert.ChangeType(strArray2[i - 1], this.currentDataTable.Columns[i].DataType);
+                    createRow(copied, insertAtRow);
                 }
-                this.currentPackedFile.ReplaceData(this.currentDBFile.GetBytes());
-                this.dataGridView.Refresh();
+            }
+            else if (lastCopy == COPIED_TYPE.CELLS)
+            {
+                int insertAtColumn = dataGridView.CurrentCell.ColumnIndex;
+                for (int j = 0; j < copiedRows.Count; j++)
+                {
+                    int row = insertAtRow + j;
+                    DataRow dataRow = currentDataTable.Rows[row];
+                    for (int i = 0; i < copiedRows[j].Count; i++)
+                    {
+                        int col = insertAtColumn + i;
+                        string val = copiedRows[j][i].Value;
+                        try
+                        {
+                            if (copiedRows[j][i] != null)
+                            {
+                                dataRow[col] = val;
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            MessageBox.Show(string.Format("Could not set {0}/{1} to '{2}': {3}", col, row, val, e));
+                        }
+                    }
+                }
+                currentPackedFile.ReplaceData(currentDBFile.GetBytes());
+                dataGridView.Refresh();
             }
         }
 
@@ -782,23 +827,23 @@ namespace PackFileManager
                     {
                         Settings.Default.IgnoreColumn(currentPackedFile.Filepath, ignoreField);
                     }
-                    Open(currentPackedFile, currentPackedFile.PackFile);
                     Settings.Default.Save();
+                    applyColumnVisibility();
                 }));
                 menu.MenuItems.Add(item);
 
                 item = new MenuItem("Clear Hide list for this table", new EventHandler(delegate(object s, EventArgs args)
                 {
                     Settings.Default.ResetIgnores(currentPackedFile.Filepath);
-                    Open(currentPackedFile, currentPackedFile.PackFile);
                     Settings.Default.Save();
+                    applyColumnVisibility();
                 }));
                 menu.MenuItems.Add(item);
                 item = new MenuItem("Clear Hide list for all tables", new EventHandler(delegate(object s, EventArgs args)
                 {
                     Settings.Default.IgnoreColumns = "";
-                    Open(currentPackedFile, currentPackedFile.PackFile);
                     Settings.Default.Save();
+                    applyColumnVisibility();
                 }));
                 menu.MenuItems.Add(item);
                 menu.Show(dataGridView, e.Location);
@@ -835,13 +880,36 @@ namespace PackFileManager
                 SortOrder.Ascending : SortOrder.Descending;
         }
 
+        private void applyColumnVisibility()
+        {
+            if (currentPackedFile == null)
+            {
+                return;
+            }
+            for (int i = 0; i < dataGridView.ColumnCount; i++)
+            {
+                DataGridViewColumn column = dataGridView.Columns[i];
+                if (column != null && column.Tag != null)
+                {
+                    FieldInfo info = ((FieldInfo)column.Tag);
+                    bool show = !Settings.Default.IsColumnIgnored(currentPackedFile.Filepath, info.name);
+                    column.Visible = (Settings.Default.ShowAllColumns || (show && info.modifier == FieldInfo.Modifier.None));
+                    column.HeaderText = info.name + (show ? "" : "*");
+                }
+                else
+                {
+                    Console.WriteLine("no column?");
+                }
+            }
+        }
+
         private void showAllColumns_CheckedChanged(object sender, EventArgs e)
         {
             Settings.Default.ShowAllColumns = showAllColumns.Checked;
             Settings.Default.Save();
             if (currentPackedFile != null)
             {
-                Open(currentPackedFile, currentPackedFile.PackFile);
+                applyColumnVisibility();
             }
         }
     }
