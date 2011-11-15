@@ -40,6 +40,8 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Common\DBReferenceMap.cs" />
     <Compile Include="Common\DBTypeMap.cs" />
+    <Compile Include="Common\PFHeader.cs" />
+    <Compile Include="Common\PFHeaderReader.cs" />
     <Compile Include="Common\XsdParser.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="Common\IOFunctions.cs" />
