@@ -18,10 +18,7 @@ namespace Common
         private bool isModified;
         private string relativePathAnchor;
         private ulong size;
-        private string PackIdentifier = "PFH2";
-        private uint FilesOverwritten = 0;
-        private uint FileNameOffset = 0;
-        private byte[] FileNameData;
+		PFHeader header;
 
         private PackType type;
 
@@ -46,16 +43,25 @@ namespace Common
                 type = PackType.Release;
                 size = 0L;
                 fileList = new SortedList<string, PackedFile>();
+                header = new PFHeader
+                {
+                    PackIdentifier = "PFH3",
+                    Type = PackType.Mod,
+                    Version = 0,
+                    FileCount = 0,
+                    ReplacedPackFileName = "",
+                    DataStart = 0x20
+                };
             }
         }
 
         public PackedFile Add(string filepath)
         {
-            if (this.fileList.ContainsKey(filepath))
+            PackedFile file = new PackedFile(this, filepath);
+            if (this.fileList.ContainsKey(file.Filepath))
             {
                 throw new ArgumentException("filepath already exists in pack");
             }
-            PackedFile file = new PackedFile(this, filepath);
             this.fileList.Capacity++;
             this.fileList.Add(filepath, file);
             return file;
@@ -83,7 +89,14 @@ namespace Common
         {
             foreach (string str in filepaths)
             {
-                this.Add(str);
+                try
+                {
+                    this.Add(str);
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidOperationException(string.Format("Could not add {0} to {1}: {2}", str, Filepath, e));
+                }
             }
         }
 
@@ -155,53 +168,26 @@ namespace Common
             this.isModified = false;
             using (var reader = new BinaryReader(new FileStream(packFilepath, FileMode.Open), Encoding.ASCII))
             {
-                ulong num8;
-                this.PackIdentifier = new string(reader.ReadChars(4));
-                if (this.PackIdentifier != "PFH0" && this.PackIdentifier != "PFH2" && this.PackIdentifier != "PFH3")
-                {
-                    throw new ArgumentException("not a pack file", "packFilepath");
-                }
-                int PackType = reader.ReadInt32();
-                if (PackType > 4)
-                {
-                    throw new InvalidDataException("unknown pack type");
-                }
-                this.type = (PackType) PackType;
-                int num2 = reader.ReadInt32(); // previous files? or files overwritten
-                this.FilesOverwritten = (uint) num2;
-                this.FileNameOffset = reader.ReadUInt32();
-
-                uint num4 = 0;
-                uint num5 = 0;
-                ulong offset = 0L;
-                reader.BaseStream.Seek(0x10L, SeekOrigin.Begin);
-                num4 = reader.ReadUInt32();
-                this.fileList.Capacity = (int) num4;
-                num5 = reader.ReadUInt32();
-                if (this.PackIdentifier == "PFH2" || this.PackIdentifier == "PFH3")
-                {
-                    var PackFileTime = reader.ReadInt64();
-                    var date = DateTime.FromFileTimeUtc(PackFileTime);
-                    if (this.FileNameOffset > 0)
-                    {
-                        this.FileNameData = reader.ReadBytes((int) this.FileNameOffset); // Read File Names as bytes
-                    }
-                    offset = 0x20 + this.FileNameOffset + num5;
-                }
-                else
-                {
-                    offset = 0x18 + num5;
-                }
+                string packIdentifier = new string(reader.ReadChars(4));
+				PFHeaderReader pfhReader;
+				if (packIdentifier == "PFH3") {
+					pfhReader = new PFH2HeaderReader(packIdentifier);
+				} else if (packIdentifier == "PFH0") {
+					pfhReader = new PFH0HeaderReader();
+				} else {
+					throw new Exception();
+				}
+				pfhReader.readFromStream(reader);
+				header = pfhReader.Header;
                 this.OnHeaderLoaded();
-                num8 = 0L;
-                for (uint i = 0; i < num4; i++)
-                {
-                    /*
-                    if (PackType == 0x40) {
-                        // reader.ReadInt32();
-                        reader.ReadChars(8);
-                    }
-                     * */
+				
+                ulong num8 = 0L;
+				long offset = header.DataStart;
+				for (int i = 0; i < header.FileCount; i++) {
+//                    if (PackType == 0x40) {
+//                        // reader.ReadInt32();
+//                        reader.ReadChars(8);
+//                    }
                     uint num10 = 5;
                     uint size = reader.ReadUInt32();
                     StringBuilder builder2 = new StringBuilder();
@@ -218,12 +204,13 @@ namespace Common
                     {
                         filename = string.Format("{0}_{1}", builder2, j++);
                     }
-                    this.fileList.Add(builder2.ToString(), new PackedFile(this, size, filename, offset));
+					string packedFileName = builder2.ToString();
+                    this.fileList.Add(packedFileName, new PackedFile(this, size, filename, (ulong) offset));
                     offset += size;
                     num8 += num10;
                     this.OnPackedFileLoaded();
                 }
-            }
+			}
             this.OnFinishedLoading();
         }
 
@@ -262,39 +249,39 @@ namespace Common
         {
             using (BinaryWriter writer = new BinaryWriter(new FileStream(filepath, FileMode.Create), Encoding.ASCII))
             {
-                writer.Write(this.PackIdentifier.ToCharArray());
-                writer.Write((int)this.type);
-                writer.Write((int)this.FilesOverwritten);
-                writer.Write((int)this.FileNameOffset);
-                int num = 0;
-                int num2 = 0;
+                writer.Write(header.PackIdentifier.ToCharArray());
+                writer.Write((int)header.Type);
+                writer.Write((int)header.Version);
+                writer.Write((int)header.ReplacedPackFileName.Length);
+                uint fileCount = 0;
+                UInt32 indexSize = 0;
                 foreach (PackedFile file in this.fileList.Values)
                 {
                     if (file.Action is PackedFile.RenamePackAction)
                     {
-                        num++;
-                        num2 += (file.Action as PackedFile.RenamePackAction).filepath.Length + 5;
+                        fileCount++;
+                        indexSize += (uint) ((file.Action as PackedFile.RenamePackAction).filepath.Length + 5);
                     }
                     else if (!(file.Action is PackedFile.DeleteFilePackAction))
                     {
-                        num++;
-                        num2 += file.Filepath.Length + 5;
+                        fileCount++;
+                        indexSize += (uint) (file.Filepath.Length + 5);
                     }
                 }
-                writer.Write(num);
-                writer.Write(num2);
+                writer.Write(fileCount);
+                writer.Write(indexSize);
 
                 // File Time
-                Int64 fileTime = DateTime.Now.ToFileTimeUtc();
-                if (this.PackIdentifier == "PFH2" || this.PackIdentifier == "PFH3")
+                if (header.PackIdentifier == "PFH2" || header.PackIdentifier == "PFH3")
                 {
+	                Int64 fileTime = DateTime.Now.ToFileTimeUtc();
                     writer.Write(fileTime);
                 }
 
                 // Write File Names stored from opening the file
-                if (this.FileNameOffset > 0)
+                if (header.ReplacedPackFileName.Length > 0)
                 {
-                    writer.Write(this.FileNameData);
+                    writer.Write(header.ReplacedPackFileName.ToCharArray());
                 }
 
                 foreach (PackedFile file in this.fileList.Values)
