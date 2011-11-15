@@ -148,6 +148,10 @@ namespace PackFileManager
 
         private void copyEvent()
         {
+            if (currentDBFile == null)
+            {
+                return;
+            }
             copiedRows = new List<List<FieldInstance>>();
             if (dataGridView.SelectedRows.Count != 0)
             {
@@ -286,7 +290,6 @@ namespace PackFileManager
         private void dataGridView_SelectionChanged(object sender, EventArgs e)
         {
             this.cloneCurrentRow.Enabled = (this.dataGridView.SelectedRows.Count == 1) || (this.dataGridView.SelectedCells.Count == 1);
-            this.copyToolStripButton.Enabled = this.cloneCurrentRow.Enabled;
         }
 
         private void DBFileEditorControl_Enter(object sender, EventArgs e)
