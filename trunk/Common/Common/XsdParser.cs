@@ -229,8 +229,9 @@ namespace Common
                                 Console.WriteLine("could not resolve reference");
                             }
                         }
-                        catch (Exception)
+                        catch (Exception x)
                         {
+                            Console.WriteLine(x);
                         }
                     }
                 }
