@@ -90,7 +90,7 @@ namespace PackFileManager
             }
             this.currentDBFile.Entries.Insert(index, newEntry);
             currentDataTable.Rows.InsertAt(row, index);
-            this.dataGridView.FirstDisplayedScrollingRowIndex = this.dataGridView.RowCount - 1;
+            this.dataGridView.FirstDisplayedScrollingRowIndex = index;
         }
 
         private void checkBox_CheckedChanged(object sender, EventArgs e)
@@ -100,15 +100,6 @@ namespace PackFileManager
                 this.toggleFirstColumnAsRowHeader(this.useFirstColumnAsRowHeader.Checked);
                 Settings.Default.UseFirstColumnAsRowHeader = this.useFirstColumnAsRowHeader.Checked;
                 Settings.Default.Save();
-            }
-        }
-
-        private void checkClipboardForPaste()
-        {
-            this.pasteToolStripButton.Enabled = false;
-            if (Clipboard.ContainsText() && (Clipboard.GetText().Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)[0].Split("\t".ToCharArray()).Length == (this.currentDataTable.Columns.Count - 1)))
-            {
-                this.pasteToolStripButton.Enabled = true;
             }
         }
 
@@ -199,6 +190,7 @@ namespace PackFileManager
                 }
                 lastCopy = COPIED_TYPE.CELLS;
             }
+            pasteToolStripButton.Enabled = copiedRows.Count != 0;
         }
 
         private void copyToolStripButton_Click(object sender, EventArgs e)
@@ -299,7 +291,7 @@ namespace PackFileManager
 
         private void DBFileEditorControl_Enter(object sender, EventArgs e)
         {
-            this.checkClipboardForPaste();
+            pasteToolStripButton.Enabled = copiedRows.Count != 0;
         }
 
         protected override void Dispose(bool disposing)
@@ -361,6 +353,7 @@ namespace PackFileManager
 
         private void InitializeComponent()
         {
+            PackFileManager.Properties.Settings settings3 = new PackFileManager.Properties.Settings();
             this.dataGridView = new System.Windows.Forms.DataGridView();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.addNewRowButton = new System.Windows.Forms.ToolStripButton();
@@ -375,8 +368,8 @@ namespace PackFileManager
             this.openDBFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.unsupportedDBErrorTextBox = new System.Windows.Forms.TextBox();
             this.useFirstColumnAsRowHeader = new System.Windows.Forms.CheckBox();
-            this.useComboBoxCells = new System.Windows.Forms.CheckBox();
             this.showAllColumns = new System.Windows.Forms.CheckBox();
+            this.useComboBoxCells = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -448,8 +441,8 @@ namespace PackFileManager
             this.copyToolStripButton.Enabled = false;
             this.copyToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.copyToolStripButton.Name = "copyToolStripButton";
-            this.copyToolStripButton.Size = new System.Drawing.Size(65, 22);
-            this.copyToolStripButton.Text = "&Copy Row";
+            this.copyToolStripButton.Size = new System.Drawing.Size(39, 22);
+            this.copyToolStripButton.Text = "&Copy";
             this.copyToolStripButton.ToolTipText = "Copy Current Row";
             this.copyToolStripButton.Click += new System.EventHandler(this.copyToolStripButton_Click);
             // 
@@ -459,8 +452,8 @@ namespace PackFileManager
             this.pasteToolStripButton.Enabled = false;
             this.pasteToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.pasteToolStripButton.Name = "pasteToolStripButton";
-            this.pasteToolStripButton.Size = new System.Drawing.Size(65, 22);
-            this.pasteToolStripButton.Text = "&Paste Row";
+            this.pasteToolStripButton.Size = new System.Drawing.Size(39, 22);
+            this.pasteToolStripButton.Text = "&Paste";
             this.pasteToolStripButton.ToolTipText = "Paste Row from Clipboard";
             this.pasteToolStripButton.Click += new System.EventHandler(this.pasteToolStripButton_Click);
             // 
@@ -532,19 +525,7 @@ namespace PackFileManager
             this.useFirstColumnAsRowHeader.TabIndex = 4;
             this.useFirstColumnAsRowHeader.Text = "Use First Column As Row Header";
             this.useFirstColumnAsRowHeader.UseVisualStyleBackColor = true;
-            this.useComboBoxCells.Checked = Settings.Default.UseComboboxCells;
             this.useFirstColumnAsRowHeader.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
-            // 
-            // useComboBoxCells
-            // 
-            this.useComboBoxCells.AutoSize = true;
-            this.useComboBoxCells.Location = new System.Drawing.Point(611, 4);
-            this.useComboBoxCells.Name = "useComboBoxCells";
-            this.useComboBoxCells.Size = new System.Drawing.Size(124, 17);
-            this.useComboBoxCells.TabIndex = 5;
-            this.useComboBoxCells.Text = "Use ComboBox Cells";
-            this.useComboBoxCells.UseVisualStyleBackColor = true;
-            this.useComboBoxCells.CheckedChanged += new System.EventHandler(this.useComboBoxCells_CheckedChanged);
             // 
             // showAllColumns
             // 
@@ -556,6 +537,27 @@ namespace PackFileManager
             this.showAllColumns.Text = "Show all columns";
             this.showAllColumns.UseVisualStyleBackColor = true;
             this.showAllColumns.CheckedChanged += new System.EventHandler(this.showAllColumns_CheckedChanged);
+            // 
+            // useComboBoxCells
+            // 
+            this.useComboBoxCells.AutoSize = true;
+            settings3.IgnoreColumns = "";
+            settings3.SettingsKey = "";
+            settings3.ShowAllColumns = false;
+            settings3.TwcThreadId = "10595000";
+            settings3.UpdateOnStartup = false;
+            settings3.UseComboboxCells = true;
+            settings3.UseFirstColumnAsRowHeader = false;
+            settings3.UseOnlineDefinitions = false;
+            this.useComboBoxCells.Checked = settings3.UseComboboxCells;
+            this.useComboBoxCells.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.useComboBoxCells.Location = new System.Drawing.Point(611, 4);
+            this.useComboBoxCells.Name = "useComboBoxCells";
+            this.useComboBoxCells.Size = new System.Drawing.Size(124, 17);
+            this.useComboBoxCells.TabIndex = 5;
+            this.useComboBoxCells.Text = "Use ComboBox Cells";
+            this.useComboBoxCells.UseVisualStyleBackColor = true;
+            this.useComboBoxCells.CheckedChanged += new System.EventHandler(this.useComboBoxCells_CheckedChanged);
             // 
             // DBFileEditorControl
             // 
@@ -623,6 +625,9 @@ namespace PackFileManager
 
         public void Open(PackedFile packedFile, PackFile packFile = null)
         {
+            copiedRows.Clear();
+            copyToolStripButton.Enabled = true;
+            pasteToolStripButton.Enabled = false;
             int num;
             string key = Path.GetFileName(Path.GetDirectoryName(packedFile.Filepath));
             key = key.Remove(key.LastIndexOf('_'), 7);
