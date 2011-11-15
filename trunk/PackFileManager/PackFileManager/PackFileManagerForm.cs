@@ -242,8 +242,15 @@ namespace PackFileManager
             addReplaceOpenFileDialog.Multiselect = true;
             if (addReplaceOpenFileDialog.ShowDialog() == DialogResult.OK)
             {
-                this.currentPackFile.AddRange(addReplaceOpenFileDialog.FileNames);
-                this.nodeRenamed = true;
+                try
+                {
+                    this.currentPackFile.AddRange(addReplaceOpenFileDialog.FileNames);
+                    this.nodeRenamed = true;
+                }
+                catch (Exception x)
+                {
+                    MessageBox.Show(x.Message, "Problem, Sir!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
                 this.Refresh();
             }
         }
