@@ -19,7 +19,6 @@ namespace PackFileManager
         private FolderBrowserDialog addDirectoryFolderBrowserDialog;
         private ToolStripMenuItem addDirectoryToolStripMenuItem;
         private ToolStripMenuItem addFileToolStripMenuItem;
-        public OpenFileDialog addReplaceOpenFileDialog;
         private AtlasFileEditorControl atlasFileEditorControl;
         private ToolStripMenuItem bootToolStripMenuItem;
         private ToolStripMenuItem cAPacksAreReadOnlyToolStripMenuItem;
@@ -239,10 +238,11 @@ namespace PackFileManager
 
         private void addFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.addReplaceOpenFileDialog.Multiselect = true;
-            if (this.addReplaceOpenFileDialog.ShowDialog() == DialogResult.OK)
+            OpenFileDialog addReplaceOpenFileDialog = new OpenFileDialog();
+            addReplaceOpenFileDialog.Multiselect = true;
+            if (addReplaceOpenFileDialog.ShowDialog() == DialogResult.OK)
             {
-                this.currentPackFile.AddRange(this.addReplaceOpenFileDialog.FileNames);
+                this.currentPackFile.AddRange(addReplaceOpenFileDialog.FileNames);
                 this.nodeRenamed = true;
                 this.Refresh();
             }
@@ -259,19 +259,22 @@ namespace PackFileManager
             string mouseover = "";
             try
             {
-                if (!canShow(file2, out mouseover))
+                if (file2.Filepath.StartsWith("db\\"))
                 {
-                    node.Parent.ToolTipText = mouseover;
-                    node.Parent.ForeColor = Color.Red;
-                    node.ForeColor = Color.Red;
-                }
-                else if (headerVersionObsolete(file2))
-                {
-                    node.Parent.BackColor = Color.Yellow;
-                    node.BackColor = Color.Yellow;
+                    if (!canShow(file2, out mouseover))
+                    {
+                        node.Parent.ToolTipText = mouseover;
+                        node.Parent.ForeColor = Color.Red;
+                        node.ForeColor = Color.Red;
+                    }
+                    else if (headerVersionObsolete(file2))
+                    {
+                        node.Parent.BackColor = Color.Yellow;
+                        node.BackColor = Color.Yellow;
+                    }
                 }
             }
-            catch (Exception) {
+            catch (Exception x) {
 //                Console.WriteLine(x);
             }
             node.ToolTipText = mouseover;
@@ -690,7 +693,6 @@ namespace PackFileManager
             this.packStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.packActionProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.extractFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            this.addReplaceOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.choosePathAnchorFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.addDirectoryFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
@@ -742,8 +744,7 @@ namespace PackFileManager
             this.toolStripSeparator1,
             this.changePackTypeToolStripMenuItem});
             this.packActionMenuStrip.Name = "packActionMenuStrip";
-            this.packActionMenuStrip.OwnerItem = this.packActionDropDownButton;
-            this.packActionMenuStrip.Size = new System.Drawing.Size(211, 296);
+            this.packActionMenuStrip.Size = new System.Drawing.Size(211, 274);
             this.packActionMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.packActionMenuStrip_Opening);
             // 
             // exportFileListToolStripMenuItem
@@ -1361,6 +1362,10 @@ namespace PackFileManager
 
         public void openExternal(PackedFile packedFile, string verb)
         {
+            if (packedFile == null)
+            {
+                return;
+            }
             this.openPackedFile = packedFile;
             this.openFilePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(packedFile.Filepath));
             if (!File.Exists(this.openFilePath))
@@ -1854,11 +1859,12 @@ namespace PackFileManager
 
         private void replaceFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.addReplaceOpenFileDialog.Multiselect = false;
-            if (this.addReplaceOpenFileDialog.ShowDialog() == DialogResult.OK)
+            OpenFileDialog addReplaceOpenFileDialog = new OpenFileDialog();
+            addReplaceOpenFileDialog.Multiselect = false;
+            if (addReplaceOpenFileDialog.ShowDialog() == DialogResult.OK)
             {
                 PackedFile tag = this.packTreeView.SelectedNode.Tag as PackedFile;
-                this.currentPackFile.Replace(tag, this.addReplaceOpenFileDialog.FileName);
+                this.currentPackFile.Replace(tag, addReplaceOpenFileDialog.FileName);
             }
         }
 
@@ -2059,11 +2065,15 @@ namespace PackFileManager
                 string key = Path.GetFileName(Path.GetDirectoryName(packedFile.Filepath));
                 key = key.Replace("_tables", "");
                 type = DBTypeMap.Instance[key];
-                DBFile currentDBFile = new DBFile(packedFile, type.ToArray(), false);
-                version = currentDBFile.TotalwarHeaderVersion;
+                // do we have a definition at all?
+                if (type != null)
+                {
+                    DBFile currentDBFile = new DBFile(packedFile, type.ToArray(), false);
+                    version = currentDBFile.TotalwarHeaderVersion;
+                }
             }
-            catch (Exception) {
-//                Console.WriteLine(x);
+            catch (Exception x) {
+                Console.WriteLine(x);
             }
             return version != -1 && version < type.Count-1;
         }
