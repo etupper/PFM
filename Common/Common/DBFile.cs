@@ -10,12 +10,13 @@ using System.Diagnostics;
 
 namespace Common
 {
-
     public class DBFile
     {
-        private List<List<FieldInstance>> entries;
+		static UInt32 GUID_MARKER = BitConverter.ToUInt32(new byte[] { 0xFD, 0xFE, 0xFC, 0xFF}, 0);
+		static UInt32 VERSION_MARKER = BitConverter.ToUInt32(new byte[] { 0xFC, 0xFD, 0xFE, 0xFF}, 0);
+
+		private List<List<FieldInstance>> entries;
         private TypeInfo typeInfo;
-        private PackedFile packedFile;
         private int headerVersion;
         public int TotalwarHeaderVersion
         {
@@ -30,34 +31,44 @@ namespace Common
             }
         }
         private readonly TypeInfo[] type = new TypeInfo[Settings.Default.totalwarHeaderVersions];
-        private Int16 GUIDLength;
-        private byte[] GUID;
+        public string GUID;
 
         public DBFile(PackedFile packedFile, TypeInfo[] type, bool readData = true)
         {
             BinaryReader reader = readHeader(packedFile);
-
+			int i = 0;
+            uint entryCount = reader.ReadUInt32();
             if (readData)
             {
                 this.type = type;
                 try
                 {
                     this.typeInfo = type[TotalwarHeaderVersion];
+					if (typeInfo == null) {
+						// find the next-lower version...
+						for (i = TotalwarHeaderVersion-1; i >= 0; i--) {
+							typeInfo = type[i];
+							if (typeInfo!= null) {
+								break;
+							}
+						}
+					}
                     //this.typeInfo = type[0]; // temporarily overwrite with 0 for db testing
-                    int num3 = reader.ReadInt32();
                     this.entries = new List<List<FieldInstance>>();
-                    for (int i = 0; i < num3; i++)
+                    for (i = 0; i < entryCount; i++)
                     {
                         List<FieldInstance> entry = new List<FieldInstance>();
                         this.addFields(reader, entry, 0, this.typeInfo.fields.Count);
                         this.entries.Add(entry);
                     }
                 }
-                catch (Exception)
+                catch (Exception x)
                 {
                     throw new DBFileNotSupportedException(
-                        string.Format("This table has an unexpected format. DB file version is {0}, we can handle up to version {1}.",
-                        TotalwarHeaderVersion, type.Length - 1));
+                        string.Format("Table {4} at {5} has an unexpected format: " +
+							"failure to read field {2}. " +
+                        	"DB file version is {0}, we can handle up to version {1}.\n{3}",
+                        TotalwarHeaderVersion, type.Length-1, i, x, packedFile.Filepath, packedFile.offset));
                 }
             }
         }
@@ -66,56 +77,36 @@ namespace Common
             typeInfo = toCopy.typeInfo;
             TotalwarHeaderVersion = toCopy.TotalwarHeaderVersion;
             type = toCopy.type;
-            GUIDLength = toCopy.GUIDLength;
-            GUID = toCopy.GUID;
+			GUID = toCopy.GUID;
             toCopy.entries.ForEach(entry => entries.Add(new List<FieldInstance>(entry)));
         }
         private BinaryReader readHeader(PackedFile packedFile)
         {
-            this.packedFile = packedFile;
             var reader = new BinaryReader(new MemoryStream(packedFile.Data, false));
-            byte num = reader.ReadByte();
-            int index = 0;
+			int justForFun = reader.PeekChar();
+            byte index = reader.ReadByte();
             int version = 0;
-            if (num != 1)
+            if (index != 1)
             {
-                var bytes = new List<byte>();
-                bytes.AddRange(reader.ReadBytes(3));
-                bytes.Add(0x00);
-                UInt32 header = BitConverter.ToUInt32(bytes.ToArray(), 0);
-                if (header != 0x00FFFCFE && header != 0x00FFFEFD)
-                {
-                    throw new DBFileNotSupportedException("DB Header type unknown");
-                }
-                if (header == 0x00FFFCFE)
-                {
-                    this.GUIDLength = reader.ReadInt16();
-                    this.GUID = reader.ReadBytes(this.GUIDLength * 2);
-                    //Int16 guidLength = reader.ReadInt16();
-                    //var guid = reader.ReadBytes(guidLength * 2);
-                    version = reader.ReadByte();
-                    if (version == 0xFC)
-                    {
-                        bytes.Clear();
-                        bytes.AddRange(reader.ReadBytes(3));
-                        bytes.Add(0x00);
-                        header = BitConverter.ToUInt32(bytes.ToArray(), 0);
-                        if (header != 0x00FFFEFD)
-                        {
-                            throw new DBFileNotSupportedException("DB Header type unknown");
-                        }
-                    }
-                }
-                if (version == 0xFC)
-                {
-                    index = reader.ReadInt32();
-                    if (reader.ReadByte() != 1)
-                    {
-                        throw new DBFileNotSupportedException("DB Header type unknown");
-                    }
-                }
+				// I don't think those can actually occur more than once per file
+				while (index == 0xFC || index == 0xFD) {
+	                var bytes = new List<byte>(4);
+	                bytes.Add(index);
+	                bytes.AddRange(reader.ReadBytes(3));
+	                UInt32 header = BitConverter.ToUInt32(bytes.ToArray(), 0);
+					if (header == GUID_MARKER) {
+						string guid = IOFunctions.readCAString(reader);
+						GUID = guid;
+						index = reader.ReadByte();
+					} else if (header == VERSION_MARKER) {
+						version = (byte) reader.ReadInt32();
+						index = reader.ReadByte();
+					} else {
+						throw new DBFileNotSupportedException("");
+					}
+				}
             }
-            headerVersion = index;
+            headerVersion = version;
             return reader;
         }
 
@@ -143,7 +134,6 @@ namespace Common
                 {
                     var nameAttribute = field.Attribute("name");
                     var xsTypeAttribute = field.Attribute("type");
-                    var useAttribute = field.Attribute("use");
 
                     if (nameAttribute != null) delimitedFields += nameAttribute.Value;
                     delimitedFields += ",";
@@ -162,9 +152,9 @@ namespace Common
             {
             for (int i = startIndex; i < endIndex; i++)
                 {
-                    int num2;
-                    int num3;
-                    string[] strArray;
+                    int num2 = -1;
+                    int num3 = -1;
+                    string[] strArray = null;
                     FieldInfo field = this.typeInfo.fields[i];
                         string str = this.getFieldValue(reader, field);
                         entry.Add(new FieldInstance(field, str));
@@ -469,11 +459,13 @@ namespace Common
             else
             {
                 writer.Write(new byte[] { 0xfd, 0xfe, 0xfc, 0xff });
-                writer.Write(this.GUIDLength);
-                writer.Write(this.GUID);
+				IOFunctions.writeCAString(writer, GUID);
 
-                writer.Write(new byte[] { 0xfc, 0xfd, 0xfe, 0xff });
-                writer.Write(this.TotalwarHeaderVersion);
+				if (TotalwarHeaderVersion != 0) {
+	                writer.Write(new byte[] { 0xfc, 0xfd, 0xfe, 0xff });
+	                writer.Write(this.TotalwarHeaderVersion);
+				}
+
                 writer.Write((byte) 1);
                 info = this.type[this.TotalwarHeaderVersion];
             }
