@@ -196,24 +196,17 @@ namespace Common
         private static SortedDictionary<string, TypeInfo> parseTypeMap(string[] lines)
         {
             SortedDictionary<string, TypeInfo> dictionary = new SortedDictionary<string, TypeInfo>();
-            string str = "";
+			TypeInfo lastInfo = null;
             foreach (string str2 in lines)
             {
+				if (str2.EndsWith(":")) {
+					lastInfo = new TypeInfo(str2.Replace(":", ""));
+					dictionary.Add(lastInfo.name, lastInfo);
                 // ignore empty and comment lines
-                if ((str2.Length != 0) && (str2[0] != '#'))
-                {
-                    // append all strings until line without ; at the end
-                    str = str + str2;
-                    if ((str2[str2.Length - 1] != ';') && (str2[str2.Length - 1] != '\t'))
-                    {
-                        string[] strArray = str.Split("\t".ToCharArray());
-                        
-                        // let the TypeInfo class parse this
-                        TypeInfo info = new TypeInfo(strArray[0], strArray[1]);
-                        dictionary.Add(strArray[0], info);
-                        str = "";
-                    }
-                }
+				} else if (!str2.StartsWith("#") && str2.Trim().Length != 0) {
+					string[] split = str2.Split(',');
+					lastInfo.fields.Add(new FieldInfo(split[0], split[1].Replace(";", "")));
+				}
             }
             return dictionary;
         }

@@ -6,7 +6,7 @@
     using System.Runtime.InteropServices;
     using System.Text;
 
-    [DebuggerDisplay("Filepath = {Filepath}")]
+    [DebuggerDisplay("{offset}@{Filepath}")]
     public class PackedFile
     {
         private PackAction action;
