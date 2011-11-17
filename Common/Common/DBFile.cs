@@ -15,17 +15,18 @@ namespace Common
 		static UInt32 GUID_MARKER = BitConverter.ToUInt32(new byte[] { 0xFD, 0xFE, 0xFC, 0xFF}, 0);
 		static UInt32 VERSION_MARKER = BitConverter.ToUInt32(new byte[] { 0xFC, 0xFD, 0xFE, 0xFF}, 0);
 
-		private List<List<FieldInstance>> entries;
+        private PackedFile packedFile;
+        public PackedFile PackedFile {
+            get { return packedFile; }
+        }
+
+        private List<List<FieldInstance>> entries;
         private TypeInfo typeInfo;
         private int headerVersion;
         public int TotalwarHeaderVersion
         {
-            get
-            {
-                return headerVersion;
-            }
-            set
-            {
+            get { return headerVersion; }
+            set {
                 headerVersion = value;
                 typeInfo = type[value];
             }
@@ -35,6 +36,7 @@ namespace Common
 
         public DBFile(PackedFile packedFile, TypeInfo[] type, bool readData = true)
         {
+            this.packedFile = packedFile;
             BinaryReader reader = readHeader(packedFile);
 			int i = 0;
             uint entryCount = reader.ReadUInt32();
@@ -46,21 +48,30 @@ namespace Common
                     this.typeInfo = type[TotalwarHeaderVersion];
 					if (typeInfo == null) {
 						// find the next-lower version...
-						for (i = TotalwarHeaderVersion-1; i >= 0; i--) {
-							typeInfo = type[i];
-							if (typeInfo!= null) {
-								break;
-							}
-						}
+//						for (i = TotalwarHeaderVersion-1; i >= 0; i--) {
+//							typeInfo = type[i];
+//							if (typeInfo!= null) {
+//								break;
+//							}
+//						}
 					}
-                    //this.typeInfo = type[0]; // temporarily overwrite with 0 for db testing
                     this.entries = new List<List<FieldInstance>>();
                     for (i = 0; i < entryCount; i++)
                     {
                         List<FieldInstance> entry = new List<FieldInstance>();
                         this.addFields(reader, entry, 0, this.typeInfo.fields.Count);
+                        if (entry.Count != typeInfo.fields.Count) {
+                            int length = 0;
+                            // BinaryReader logReader = new BinaryReader(packedFile);
+                            throw new DBFileNotSupportedException(
+                                string.Format("Only read {0}/{1} fields for {3} (file offset {4}), previously read {2} entries",
+                                entry.Count, typeInfo.fields.Count, entries.Count, packedFile.Filepath, packedFile.offset), this);
+                        }
                         this.entries.Add(entry);
                     }
+                }
+                catch (DBFileNotSupportedException) {
+                    throw;
                 }
                 catch (Exception x)
                 {
@@ -68,9 +79,19 @@ namespace Common
                         string.Format("Table {4} at {5} has an unexpected format: " +
 							"failure to read field {2}. " +
                         	"DB file version is {0}, we can handle up to version {1}.\n{3}",
-                        TotalwarHeaderVersion, type.Length-1, i, x, packedFile.Filepath, packedFile.offset));
+                        TotalwarHeaderVersion, type.Length-1, i, x, packedFile.Filepath, packedFile.offset), this);
                 }
             }
+        }
+        int countNoModifier(List<FieldInstance> fields) {
+            int i = 0;
+            foreach(FieldInstance field in fields) {
+                i++;
+                if (field.Info.modifier == FieldInfo.Modifier.NextFieldIsConditional && field.Value == Boolean.FalseString) {
+                    i++;
+                }
+            }
+            return i;
         }
         public DBFile(DBFile toCopy)
         {
@@ -102,7 +123,7 @@ namespace Common
 						version = (byte) reader.ReadInt32();
 						index = reader.ReadByte();
 					} else {
-						throw new DBFileNotSupportedException("");
+						throw new DBFileNotSupportedException(this);
 					}
 				}
             }
@@ -126,7 +147,7 @@ namespace Common
 
                 if (tableNode == null)
                 {
-                    throw new DBFileNotSupportedException("Unknown table.");
+                    throw new DBFileNotSupportedException("Unknown table.", this);
                 }
 
                 var fields = tableNode.XPathSelectElements("./xs:attribute", namespaceManager);
@@ -150,56 +171,53 @@ namespace Common
         {
             try
             {
-            for (int i = startIndex; i < endIndex; i++)
+                for (int i = startIndex; i < endIndex; i++)
                 {
                     int num2 = -1;
                     int num3 = -1;
                     string[] strArray = null;
                     FieldInfo field = this.typeInfo.fields[i];
-                        string str = this.getFieldValue(reader, field);
-                        entry.Add(new FieldInstance(field, str));
-                        switch (field.modifier)
+                    string str = this.getFieldValue(reader, field);
+                    entry.Add(new FieldInstance(field, str));
+                    switch (field.modifier)
+                    {
+                    case FieldInfo.Modifier.NextFieldIsConditional:
+                        if (field.TestConditionalValue(str))
                         {
-                            case FieldInfo.Modifier.NextFieldIsConditional:
-                                if (field.TestConditionalValue(str))
-                                {
-                                    break;
-                                }
-                                goto Label_00AB;
-
-                            case FieldInfo.Modifier.NextFieldRepeats:
-                                num3 = Convert.ToInt32(str);
-                                strArray = new string[num3];
-                                num2 = 0;
-                                goto Label_0111;
-
-                            default:
-                                {
-                                    continue;
-                                }
+                            break;
                         }
-                        this.addFields(reader, entry, i + 1, (i + 1) + field.length);
-                        goto Label_00E8;
-                    Label_00AB:
                         num2 = 1;
                         while (num2 <= field.length)
                         {
                             entry.Add(new FieldInstance(typeInfo.fields[i + num2], ""));
                             num2++;
                         }
-                    Label_00E8:
                         i += field.length;
                         continue;
-                    Label_00F4:
-                        strArray[num2] = this.getFieldValue(reader, typeInfo.fields[i + 1]);
-                        num2++;
-                    Label_0111:
-                        if (num2 < num3)
-                        {
-                            goto Label_00F4;
-                        }
-                        entry.Add(new FieldInstance(typeInfo.fields[i + 1], string.Join(", ", strArray)));
-                        i++;
+
+                    case FieldInfo.Modifier.NextFieldRepeats:
+                        num3 = Convert.ToInt32(str);
+                        strArray = new string[num3];
+                        num2 = 0;
+                        goto Label_0111;
+
+                    default:
+                            continue;
+                    }
+                    this.addFields(reader, entry, i + 1, (i + 1) + field.length);
+                    i += field.length;
+                    continue;
+                Label_00AB:
+                Label_00F4:
+                    strArray[num2] = this.getFieldValue(reader, typeInfo.fields[i + 1]);
+                    num2++;
+                Label_0111:
+                    if (num2 < num3)
+                    {
+                        goto Label_00F4;
+                    }
+                    entry.Add(new FieldInstance(typeInfo.fields[i + 1], string.Join(", ", strArray)));
+                    i++;
                 }
             }
             catch (Exception e)
@@ -396,7 +414,7 @@ namespace Common
             TypeInfo info;
             if (this.type[0].name != reader.ReadLine().TrimEnd(new char[0]).Trim(new char[] { '"' }))
             {
-                throw new DBFileNotSupportedException("File type of imported DB doesn't match that of the currently opened one");
+                throw new DBFileNotSupportedException("File type of imported DB doesn't match that of the currently opened one", this);
             }
             string str = reader.ReadLine().TrimEnd(new char[0]).Trim(new char[] { '"' });
             if (str == "1.0")

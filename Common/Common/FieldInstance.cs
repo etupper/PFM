@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Common
 {
 
-    [DebuggerDisplay("FieldInfo = {Info}; Value = {Value}")]
+    [DebuggerDisplay("{Value}:{Info}; ")]
     public class FieldInstance
     {
         public FieldInstance(FieldInfo fieldInfo, string value)
