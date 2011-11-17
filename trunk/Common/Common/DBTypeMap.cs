@@ -204,21 +204,38 @@ namespace Common
 					dictionary.Add(lastInfo.name, lastInfo);
                 // ignore empty and comment lines
 				} else if (!str2.StartsWith("#") && str2.Trim().Length != 0) {
-                    string[] entries = str2.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                    foreach(string entry in entries) {
-    					string[] split = entry.Split(',');
-                        FieldInfo info;
-                        if (split.Length == 3) {
-                            info = new FieldInfo(split[0], split[1].Replace(";", ""), split[2]);
-                        } else {
-                            info = new FieldInfo(split[0], split[1].Replace(";", ""));
-                        }
+                    try
+                    {
+                        if (str2.Contains(";"))
+                        {
+                            foreach (string entry in str2.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+                            {
+                                lastInfo.fields.Add(parseEntry(entry));
+                            }
 //                        FieldInfo info = (split.Length == 3)
     					lastInfo.fields.Add(info);
+                        }
+                        else
+                        {
+                            lastInfo.fields.Add(parseEntry(str2));
+                        }
+
                     }
-				}
+                    catch (Exception)
+                    {
+                        string haha = str2;
+                        throw;
+                    }
+                }
             }
             return dictionary;
+        }
+        static FieldInfo parseEntry(string entry)
+        {
+            string[] split = entry.Split(',');
+            FieldInfo newInfo = split.Length == 3 ? new FieldInfo(split[0], split[1].Replace(";", ""), split[2])
+                : new FieldInfo(split[0], split[1].Replace(";", ""));
+            return newInfo;
         }
 	}
 
