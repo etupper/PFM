@@ -4,8 +4,15 @@
 
     public class DBFileNotSupportedException : Exception
     {
-        public DBFileNotSupportedException(string message) : base(message)
+        public DBFile DbFile { get; set; }
+
+        public DBFileNotSupportedException(DBFile file)
+            : this(string.Format("DB File {0} not supported", file.PackedFile.Filepath), file) {}
+
+        public DBFileNotSupportedException(string message, DBFile file)
+            : base(message)
         {
+            DbFile = file;
         }
     }
 }

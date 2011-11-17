@@ -3,7 +3,7 @@
     using System;
     using System.Diagnostics;
 
-    [DebuggerDisplay("Name = {Name}; Type = {Type}; Modifier = {Mod}")]
+    [DebuggerDisplay("{Name}: {Type}; Modifier = {Mod}")]
     public class FieldInfo
     {
         public int length;
