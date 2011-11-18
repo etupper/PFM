@@ -8,14 +8,11 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Diagnostics;
 
-namespace Common
-{
-    public class DBFile
-    {
-		static UInt32 GUID_MARKER = BitConverter.ToUInt32(new byte[] { 0xFD, 0xFE, 0xFC, 0xFF}, 0);
-		static UInt32 VERSION_MARKER = BitConverter.ToUInt32(new byte[] { 0xFC, 0xFD, 0xFE, 0xFF}, 0);
+namespace Common {
+    public class DBFile {
+        static UInt32 GUID_MARKER = BitConverter.ToUInt32(new byte[] { 0xFD, 0xFE, 0xFC, 0xFF }, 0);
+        static UInt32 VERSION_MARKER = BitConverter.ToUInt32(new byte[] { 0xFC, 0xFD, 0xFE, 0xFF }, 0);
 
-        private PackedFile packedFile;
         public PackedFile PackedFile {
             get { return packedFile; }
         }
@@ -23,8 +20,8 @@ namespace Common
         private List<List<FieldInstance>> entries;
         private TypeInfo typeInfo;
         private int headerVersion;
-        public int TotalwarHeaderVersion
-        {
+        private PackedFile packedFile;
+        public int TotalwarHeaderVersion {
             get { return headerVersion; }
             set {
                 headerVersion = value;
@@ -34,58 +31,48 @@ namespace Common
         private readonly TypeInfo[] type = new TypeInfo[Settings.Default.totalwarHeaderVersions];
         public string GUID;
 
-        public DBFile(PackedFile packedFile, TypeInfo[] type, bool readData = true)
-        {
+        public DBFile(PackedFile packedFile, TypeInfo[] type, bool readData = true) {
             this.packedFile = packedFile;
             BinaryReader reader = readHeader(packedFile);
-			int i = 0;
+            int i = 0;
             uint entryCount = reader.ReadUInt32();
-            if (readData)
-            {
+            if (readData) {
                 this.type = type;
-                try
-                {
+                try {
                     this.typeInfo = type[TotalwarHeaderVersion];
-					if (typeInfo == null) {
-						// find the next-lower version...
-//						for (i = TotalwarHeaderVersion-1; i >= 0; i--) {
-//							typeInfo = type[i];
-//							if (typeInfo!= null) {
-//								break;
-//							}
-//						}
-					}
+                    if (typeInfo == null) {
+                        // find the next-lower version...
+                        //						for (i = TotalwarHeaderVersion-1; i >= 0; i--) {
+                        //							typeInfo = type[i];
+                        //							if (typeInfo!= null) {
+                        //								break;
+                        //							}
+                        //						}
+                    }
                     this.entries = new List<List<FieldInstance>>();
-                    for (i = 0; i < entryCount; i++)
-                    {
-                        List<FieldInstance> entry = new List<FieldInstance>();
-                        this.addFields(reader, entry, 0, this.typeInfo.fields.Count);
+                    for (i = 0; i < entryCount; i++) {
+                        List<FieldInstance> entry = readEntry(reader, 0, this.typeInfo.fields.Count);
                         if (entry.Count != typeInfo.fields.Count) {
-                            int length = 0;
-                            // BinaryReader logReader = new BinaryReader(packedFile);
                             throw new DBFileNotSupportedException(
                                 string.Format("Only read {0}/{1} fields for {3} (file offset {4}), previously read {2} entries",
                                 entry.Count, typeInfo.fields.Count, entries.Count, packedFile.Filepath, packedFile.offset), this);
                         }
                         this.entries.Add(entry);
                     }
-                }
-                catch (DBFileNotSupportedException) {
+                } catch (DBFileNotSupportedException) {
                     throw;
-                }
-                catch (Exception x)
-                {
+                } catch (Exception x) {
                     throw new DBFileNotSupportedException(
                         string.Format("Table {4} at {5} has an unexpected format: " +
-							"failure to read field {2}. " +
-                        	"DB file version is {0}, we can handle up to version {1}.\n{3}",
-                        TotalwarHeaderVersion, type.Length-1, i, x, packedFile.Filepath, packedFile.offset), this);
+                            "failure to read field {2}. " +
+                            "DB file version is {0}, we can handle up to version {1}.\n{3}",
+                        TotalwarHeaderVersion, type.Length - 1, i, x, packedFile.Filepath, packedFile.offset), this);
                 }
             }
         }
         int countNoModifier(List<FieldInstance> fields) {
             int i = 0;
-            foreach(FieldInstance field in fields) {
+            foreach (FieldInstance field in fields) {
                 i++;
                 if (field.Info.modifier == FieldInfo.Modifier.NextFieldIsConditional && field.Value == Boolean.FalseString) {
                     i++;
@@ -93,50 +80,46 @@ namespace Common
             }
             return i;
         }
-        public DBFile(DBFile toCopy)
-        {
+        public DBFile(DBFile toCopy) {
             typeInfo = toCopy.typeInfo;
             TotalwarHeaderVersion = toCopy.TotalwarHeaderVersion;
             type = toCopy.type;
-			GUID = toCopy.GUID;
+            GUID = toCopy.GUID;
             toCopy.entries.ForEach(entry => entries.Add(new List<FieldInstance>(entry)));
         }
-        private BinaryReader readHeader(PackedFile packedFile)
-        {
+
+        private BinaryReader readHeader(PackedFile packedFile) {
             var reader = new BinaryReader(new MemoryStream(packedFile.Data, false));
-			int justForFun = reader.PeekChar();
+            int justForFun = reader.PeekChar();
             byte index = reader.ReadByte();
             int version = 0;
-            if (index != 1)
-            {
-				// I don't think those can actually occur more than once per file
-				while (index == 0xFC || index == 0xFD) {
-	                var bytes = new List<byte>(4);
-	                bytes.Add(index);
-	                bytes.AddRange(reader.ReadBytes(3));
-	                UInt32 header = BitConverter.ToUInt32(bytes.ToArray(), 0);
-					if (header == GUID_MARKER) {
-						string guid = IOFunctions.readCAString(reader);
-						GUID = guid;
-						index = reader.ReadByte();
-					} else if (header == VERSION_MARKER) {
-						version = (byte) reader.ReadInt32();
-						index = reader.ReadByte();
-					} else {
-						throw new DBFileNotSupportedException(this);
-					}
-				}
+            if (index != 1) {
+                // I don't think those can actually occur more than once per file
+                while (index == 0xFC || index == 0xFD) {
+                    var bytes = new List<byte>(4);
+                    bytes.Add(index);
+                    bytes.AddRange(reader.ReadBytes(3));
+                    UInt32 header = BitConverter.ToUInt32(bytes.ToArray(), 0);
+                    if (header == GUID_MARKER) {
+                        string guid = IOFunctions.readCAString(reader);
+                        GUID = guid;
+                        index = reader.ReadByte();
+                    } else if (header == VERSION_MARKER) {
+                        version = (byte)reader.ReadInt32();
+                        index = reader.ReadByte();
+                    } else {
+                        throw new DBFileNotSupportedException(this);
+                    }
+                }
             }
             headerVersion = version;
             return reader;
         }
 
-        private TypeInfo GetTypeInfo(string dbName)
-        {
+        private TypeInfo GetTypeInfo(string dbName) {
             string delimitedFields = string.Empty;
             const string dbSchemaPath = @"DB.xsd";
-            using (var stream = new FileStream(dbSchemaPath, FileMode.Open, FileAccess.Read))
-            {
+            using (var stream = new FileStream(dbSchemaPath, FileMode.Open, FileAccess.Read)) {
                 var reader = XmlReader.Create(stream);
                 var root = XElement.Load(reader);
                 var nameTable = reader.NameTable;
@@ -145,14 +128,12 @@ namespace Common
                 var xpathQuery = string.Format("./xs:complexType[@name=\"{0}\"]", dbName);
                 var tableNode = root.XPathSelectElement(xpathQuery, namespaceManager);
 
-                if (tableNode == null)
-                {
+                if (tableNode == null) {
                     throw new DBFileNotSupportedException("Unknown table.", this);
                 }
 
                 var fields = tableNode.XPathSelectElements("./xs:attribute", namespaceManager);
-                foreach (var field in fields)
-                {
+                foreach (var field in fields) {
                     var nameAttribute = field.Attribute("name");
                     var xsTypeAttribute = field.Attribute("type");
 
@@ -167,79 +148,47 @@ namespace Common
             return typeInfo;
         }
 
-        private void addFields(BinaryReader reader, List<FieldInstance> entry, int startIndex, int endIndex)
-        {
-            try
-            {
-                for (int i = startIndex; i < endIndex; i++)
-                {
-                    int num2 = -1;
-                    int num3 = -1;
-                    string[] strArray = null;
-                    FieldInfo field = this.typeInfo.fields[i];
-                    string str = this.getFieldValue(reader, field);
-                    entry.Add(new FieldInstance(field, str));
-                    switch (field.modifier)
-                    {
+        private List<FieldInstance> readEntry(BinaryReader reader, int startIndex, int endIndex) {
+            List<FieldInstance> entry = new List<FieldInstance>();
+            for (int i = startIndex; i < endIndex; i++) {
+                int counter = -1;
+                FieldInfo field = this.typeInfo.fields[i];
+                string str = this.getFieldValue(reader, field);
+                entry.Add(new FieldInstance(field, str));
+                switch (field.modifier) {
                     case FieldInfo.Modifier.NextFieldIsConditional:
-                        if (field.TestConditionalValue(str))
-                        {
-                            break;
+                        if (field.TestConditionalValue(str)) {
+                            entry.Add(new FieldInstance(typeInfo.fields[i + 1], ""));
+                            i++;
                         }
-                        num2 = 1;
-                        while (num2 <= field.length)
-                        {
-                            entry.Add(new FieldInstance(typeInfo.fields[i + num2], ""));
-                            num2++;
-                        }
-                        i += field.length;
-                        continue;
+                        break;
 
                     case FieldInfo.Modifier.NextFieldRepeats:
-                        num3 = Convert.ToInt32(str);
-                        strArray = new string[num3];
-                        num2 = 0;
-                        goto Label_0111;
-
+                        int repeatCount = Convert.ToInt32(str);
+                        List<string> repeatedValues = new List<string>(repeatCount);
+                        for (counter = 0; counter < repeatCount; counter++) {
+                            repeatedValues.Add(getFieldValue(reader, typeInfo.fields[i + 1]));
+                        }
+                        entry.Add(new FieldInstance(typeInfo.fields[i + 1], string.Join(", ", repeatedValues)));
+                        i++;
+                        continue;
                     default:
-                            continue;
-                    }
-                    this.addFields(reader, entry, i + 1, (i + 1) + field.length);
-                    i += field.length;
-                    continue;
-                Label_00AB:
-                Label_00F4:
-                    strArray[num2] = this.getFieldValue(reader, typeInfo.fields[i + 1]);
-                    num2++;
-                Label_0111:
-                    if (num2 < num3)
-                    {
-                        goto Label_00F4;
-                    }
-                    entry.Add(new FieldInstance(typeInfo.fields[i + 1], string.Join(", ", strArray)));
-                    i++;
+                        continue;
                 }
             }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
-            }
+            return entry;
         }
 
-        public void Export(StreamWriter writer)
-        {
+        public void Export(StreamWriter writer) {
             writer.WriteLine(typeInfo.name);
             writer.WriteLine(Convert.ToString(this.TotalwarHeaderVersion));
-            foreach (FieldInfo info2 in typeInfo.fields)
-            {
+            foreach (FieldInfo info2 in typeInfo.fields) {
                 writer.Write(info2.name + "\t");
             }
             writer.WriteLine();
-            foreach (List<FieldInstance> list in this.entries)
-            {
+            foreach (List<FieldInstance> list in this.entries) {
                 string str = "";
-                foreach (FieldInstance instance in list)
-                {
+                foreach (FieldInstance instance in list) {
                     string str2 = instance.Value;
                     str = str + str2.Replace("\t", @"\t").Replace("\n", @"\n") + "\t";
                 }
@@ -247,13 +196,10 @@ namespace Common
             }
         }
 
-        public byte[] GetBytes()
-        {
+        public byte[] GetBytes() {
             byte[] buffer;
-            using (MemoryStream stream = new MemoryStream())
-            {
-                using (BinaryWriter writer = new BinaryWriter(stream))
-                {
+            using (MemoryStream stream = new MemoryStream()) {
+                using (BinaryWriter writer = new BinaryWriter(stream)) {
                     this.writeEntries(writer);
                     buffer = stream.ToArray();
                 }
@@ -261,20 +207,16 @@ namespace Common
             return buffer;
         }
 
-        private string getFieldValue(BinaryReader reader, FieldInfo field)
-        {
-            switch (field.type)
-            {
-                case PackTypeCode.Empty:
-                {
-                    byte[] buffer = reader.ReadBytes(field.length);
-                    StringBuilder builder = new StringBuilder();
-                    for (int i = 0; i < buffer.Length; i++)
-                    {
-                        builder.AppendFormat("{0:X2} ", buffer[i]);
+        private string getFieldValue(BinaryReader reader, FieldInfo field) {
+            switch (field.type) {
+                case PackTypeCode.Empty: {
+                        byte[] buffer = reader.ReadBytes(field.length);
+                        StringBuilder builder = new StringBuilder();
+                        for (int i = 0; i < buffer.Length; i++) {
+                            builder.AppendFormat("{0:X2} ", buffer[i]);
+                        }
+                        return builder.ToString();
                     }
-                    return builder.ToString();
-                }
                 case PackTypeCode.Boolean:
                     return Convert.ToBoolean(reader.ReadByte()).ToString();
 
@@ -311,15 +253,12 @@ namespace Common
             throw new InvalidDataException("unknown field type");
         }
 
-        public List<FieldInstance> GetNewEntry()
-        {
+        public List<FieldInstance> GetNewEntry() {
             List<FieldInstance> list = new List<FieldInstance>();
-            foreach (FieldInfo info in typeInfo.fields)
-            {
+            foreach (FieldInfo info in typeInfo.fields) {
                 List<string> list2;
                 int num;
-                switch (info.type)
-                {
+                switch (info.type) {
                     case PackTypeCode.Empty:
                         list2 = new List<string>();
                         num = 0;
@@ -332,76 +271,62 @@ namespace Common
                     case PackTypeCode.Byte:
                     case PackTypeCode.Decimal:
                     case PackTypeCode.DateTime:
-                    case (PackTypeCode.DateTime | PackTypeCode.Object):
-                    {
-                        continue;
-                    }
-                    case PackTypeCode.Boolean:
-                    {
-                        list.Add(new FieldInstance(info, "False"));
-                        continue;
-                    }
-                    case PackTypeCode.Int16:
-                    {
-                        list.Add(new FieldInstance(info, "0"));
-                        continue;
-                    }
-                    case PackTypeCode.UInt16:
-                    {
-                        list.Add(new FieldInstance(info, "0"));
-                        continue;
-                    }
-                    case PackTypeCode.Int32:
-                    {
-                        list.Add(new FieldInstance(info, "0"));
-                        continue;
-                    }
-                    case PackTypeCode.UInt32:
-                    {
-                        list.Add(new FieldInstance(info, "0"));
-                        continue;
-                    }
-                    case PackTypeCode.Int64:
-                    {
-                        list.Add(new FieldInstance(info, "0"));
-                        continue;
-                    }
-                    case PackTypeCode.UInt64:
-                    {
-                        list.Add(new FieldInstance(info, "0"));
-                        continue;
-                    }
-                    case PackTypeCode.Single:
-                    {
-                        list.Add(new FieldInstance(info, "0"));
-                        continue;
-                    }
-                    case PackTypeCode.Double:
-                    {
-                        list.Add(new FieldInstance(info, "0"));
-                        continue;
-                    }
-                    case PackTypeCode.String:
-                    {
-                        list.Add(new FieldInstance(info, string.Empty));
-                        continue;
-                    }
-                    case PackTypeCode.StringContainer:
-                    {
-                        list.Add(new FieldInstance(info, string.Empty));
-                        continue;
-                    }
-                    default:
-                    {
-                        continue;
-                    }
+                    case (PackTypeCode.DateTime | PackTypeCode.Object): {
+                            continue;
+                        }
+                    case PackTypeCode.Boolean: {
+                            list.Add(new FieldInstance(info, "False"));
+                            continue;
+                        }
+                    case PackTypeCode.Int16: {
+                            list.Add(new FieldInstance(info, "0"));
+                            continue;
+                        }
+                    case PackTypeCode.UInt16: {
+                            list.Add(new FieldInstance(info, "0"));
+                            continue;
+                        }
+                    case PackTypeCode.Int32: {
+                            list.Add(new FieldInstance(info, "0"));
+                            continue;
+                        }
+                    case PackTypeCode.UInt32: {
+                            list.Add(new FieldInstance(info, "0"));
+                            continue;
+                        }
+                    case PackTypeCode.Int64: {
+                            list.Add(new FieldInstance(info, "0"));
+                            continue;
+                        }
+                    case PackTypeCode.UInt64: {
+                            list.Add(new FieldInstance(info, "0"));
+                            continue;
+                        }
+                    case PackTypeCode.Single: {
+                            list.Add(new FieldInstance(info, "0"));
+                            continue;
+                        }
+                    case PackTypeCode.Double: {
+                            list.Add(new FieldInstance(info, "0"));
+                            continue;
+                        }
+                    case PackTypeCode.String: {
+                            list.Add(new FieldInstance(info, string.Empty));
+                            continue;
+                        }
+                    case PackTypeCode.StringContainer: {
+                            list.Add(new FieldInstance(info, string.Empty));
+                            continue;
+                        }
+                    default: {
+                            continue;
+                        }
                 }
             Label_01AC:
                 list2.Add("00");
                 num++;
             Label_01BC:
-                if (num < info.length)
-                {
+                if (num < info.length) {
                     goto Label_01AC;
                 }
                 list.Add(new FieldInstance(info, string.Join(" ", list2.ToArray())));
@@ -409,40 +334,30 @@ namespace Common
             return list;
         }
 
-        public void Import(StreamReader reader)
-        {
+        public void Import(StreamReader reader) {
             TypeInfo info;
-            if (this.type[0].name != reader.ReadLine().TrimEnd(new char[0]).Trim(new char[] { '"' }))
-            {
+            if (this.type[0].name != reader.ReadLine().TrimEnd(new char[0]).Trim(new char[] { '"' })) {
                 throw new DBFileNotSupportedException("File type of imported DB doesn't match that of the currently opened one", this);
             }
             string str = reader.ReadLine().TrimEnd(new char[0]).Trim(new char[] { '"' });
-            if (str == "1.0")
-            {
+            if (str == "1.0") {
                 this.TotalwarHeaderVersion = 0;
                 info = this.type[0];
-            }
-            else if (str == "1.2")
-            {
+            } else if (str == "1.2") {
                 this.TotalwarHeaderVersion = 1;
                 info = this.type[1];
-            }
-            else
-            {
+            } else {
                 this.TotalwarHeaderVersion = Convert.ToInt32(str);
                 info = this.type[this.TotalwarHeaderVersion];
             }
             reader.ReadLine();
             this.entries = new List<List<FieldInstance>>();
-            while (!reader.EndOfStream)
-            {
+            while (!reader.EndOfStream) {
                 string str2 = reader.ReadLine();
-                if (str2.Trim() != "")
-                {
+                if (str2.Trim() != "") {
                     string[] strArray = str2.Split(new char[] { '\t' });
                     List<FieldInstance> item = new List<FieldInstance>();
-                    for (int i = 0; i < strArray.Length; i++)
-                    {
+                    for (int i = 0; i < strArray.Length; i++) {
                         FieldInfo fieldInfo = info.fields[i];
                         string str3 = strArray[i].Replace(@"\t", "\t").Replace(@"\n", "\n").Trim(new char[] { '"' });
                         item.Add(new FieldInstance(fieldInfo, str3));
@@ -452,52 +367,42 @@ namespace Common
             }
         }
 
-        private string readString(BinaryReader reader)
-        {
+        private string readString(BinaryReader reader) {
             ushort count = reader.ReadUInt16();
             return new string(reader.ReadChars(count));
         }
 
-        public void Save()
-        {
-            using (BinaryWriter writer = new BinaryWriter(new FileStream("foo.txt", FileMode.Create)))
-            {
+        public void Save() {
+            using (BinaryWriter writer = new BinaryWriter(new FileStream("foo.txt", FileMode.Create))) {
                 this.writeEntries(writer);
             }
         }
 
-        private void writeEntries(BinaryWriter writer)
-        {
+        private void writeEntries(BinaryWriter writer) {
             TypeInfo info;
-            if (this.TotalwarHeaderVersion == 0)
-            {
-                writer.Write((byte) 1);
+            if (this.TotalwarHeaderVersion == 0) {
+                writer.Write((byte)1);
                 info = this.type[0];
-            }
-            else
-            {
+            } else {
                 writer.Write(new byte[] { 0xfd, 0xfe, 0xfc, 0xff });
-				IOFunctions.writeCAString(writer, GUID);
+                IOFunctions.writeCAString(writer, GUID);
 
-				if (TotalwarHeaderVersion != 0) {
-	                writer.Write(new byte[] { 0xfc, 0xfd, 0xfe, 0xff });
-	                writer.Write(this.TotalwarHeaderVersion);
-				}
+                if (TotalwarHeaderVersion != 0) {
+                    writer.Write(new byte[] { 0xfc, 0xfd, 0xfe, 0xff });
+                    writer.Write(this.TotalwarHeaderVersion);
+                }
 
-                writer.Write((byte) 1);
+                writer.Write((byte)1);
                 info = this.type[this.TotalwarHeaderVersion];
             }
             writer.Write(this.Entries.Count);
-            for (int i = 0; i < this.Entries.Count; i++)
-            {
+            for (int i = 0; i < this.Entries.Count; i++) {
                 this.writeFields(writer, this.entries[i], 0, info.fields.Count);
             }
         }
 
-        private void writeFields(BinaryWriter writer, List<FieldInstance> entry, int startIndex, int endIndex)
-        {
-            for (int i = startIndex; i < endIndex; i++)
-            {
+        private void writeFields(BinaryWriter writer, List<FieldInstance> entry, int startIndex, int endIndex) {
+            for (int i = startIndex; i < endIndex; i++) {
                 int num2;
                 string[] strArray;
                 int num3;
@@ -505,53 +410,44 @@ namespace Common
                 FieldInfo field = instance.Info;
                 string str = instance.Value;
                 this.writeFieldValuePair(writer, field, str);
-                switch (field.modifier)
-                {
-                    case FieldInfo.Modifier.NextFieldIsConditional:
-                    {
-                        if (field.TestConditionalValue(str))
-                        {
-                            this.writeFields(writer, entry, i + 1, (i + 1) + field.length);
+                switch (field.modifier) {
+                    case FieldInfo.Modifier.NextFieldIsConditional: {
+                            if (field.TestConditionalValue(str)) {
+                                this.writeFields(writer, entry, i + 1, (i + 1) + field.length);
+                            }
+                            i += field.length;
+                            continue;
                         }
-                        i += field.length;
-                        continue;
-                    }
                     case FieldInfo.Modifier.NextFieldRepeats:
                         num2 = Convert.ToInt32(str);
                         strArray = entry[i + 1].Value.Split(",".ToCharArray());
                         num3 = 0;
                         goto Label_00CE;
 
-                    default:
-                    {
-                        continue;
-                    }
+                    default: {
+                            continue;
+                        }
                 }
             Label_00B1:
                 this.writeFieldValuePair(writer, entry[i + 1].Info, strArray[num3]);
                 num3++;
             Label_00CE:
-                if (num3 < num2)
-                {
+                if (num3 < num2) {
                     goto Label_00B1;
                 }
                 i++;
             }
         }
 
-        private void writeFieldValuePair(BinaryWriter writer, FieldInfo field, string value)
-        {
-            switch (field.type)
-            {
-                case PackTypeCode.Empty:
-                {
-                    string[] strArray = value.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                    foreach (string str in strArray)
-                    {
-                        writer.Write(Convert.ToByte(str, 0x10));
+        private void writeFieldValuePair(BinaryWriter writer, FieldInfo field, string value) {
+            switch (field.type) {
+                case PackTypeCode.Empty: {
+                        string[] strArray = value.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                        foreach (string str in strArray) {
+                            writer.Write(Convert.ToByte(str, 0x10));
+                        }
+                        return;
                     }
-                    return;
-                }
                 case PackTypeCode.Boolean:
                     writer.Write(Convert.ToBoolean(value));
                     return;
@@ -599,18 +495,14 @@ namespace Common
             throw new InvalidDataException("unknown field type");
         }
 
-        public TypeInfo CurrentType
-        {
-            get
-            {
+        public TypeInfo CurrentType {
+            get {
                 return typeInfo;
             }
         }
 
-        public List<List<FieldInstance>> Entries
-        {
-            get
-            {
+        public List<List<FieldInstance>> Entries {
+            get {
                 return this.entries;
             }
         }
