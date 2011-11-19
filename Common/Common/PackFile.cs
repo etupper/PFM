@@ -170,7 +170,7 @@ namespace Common
             {
                 string packIdentifier = new string(reader.ReadChars(4));
 				PFHeaderReader pfhReader;
-				if (packIdentifier == "PFH3") {
+				if (packIdentifier == "PFH3" || packIdentifier == "PFH2") {
 					pfhReader = new PFH2HeaderReader(packIdentifier);
 				} else if (packIdentifier == "PFH0") {
 					pfhReader = new PFH0HeaderReader();
