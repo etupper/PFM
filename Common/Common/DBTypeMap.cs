@@ -154,16 +154,23 @@ namespace Common {
         }
 
         private static SortedDictionary<string, TypeInfo> getTypeMapFromFile(string filepath) {
-            string[] lines = File.ReadAllLines(filepath);
-            return parseTypeMap(lines);
+            try {
+                string[] lines = File.ReadAllLines(filepath);
+                return parseTypeMap(lines);
+            } catch (Exception) {
+                throw;
+            }
         }
 
         private static SortedDictionary<string, TypeInfo> parseTypeMap(string[] lines) {
             SortedDictionary<string, TypeInfo> dictionary = new SortedDictionary<string, TypeInfo>();
             TypeInfo lastInfo = null;
             foreach (string str2 in lines) {
-                if (str2.EndsWith(":")) {
-                    lastInfo = new TypeInfo(str2.Replace(":", ""));
+                if (str2.Contains("\t")) {
+                    string[] split = str2.Split("\t".ToCharArray());
+                    lastInfo = new TypeInfo(split[0]);
+                    string[] info = split[1].Split(",".ToCharArray());
+                    lastInfo.fields.Add(new FieldInfo(info[0], info[1].Replace(";", "")));
                     dictionary.Add(lastInfo.name, lastInfo);
                     // ignore empty and comment lines
                 } else if (!str2.StartsWith("#") && str2.Trim().Length != 0) {
