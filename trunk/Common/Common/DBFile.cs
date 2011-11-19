@@ -9,6 +9,11 @@ using System.Xml.XPath;
 using System.Diagnostics;
 
 namespace Common {
+    public class DBFileHeader {
+        public string GUID { get; set; }
+        public int Version { get; set; }
+        public uint EntryCount { get; set; }
+    }
     public class DBFile {
         static UInt32 GUID_MARKER = BitConverter.ToUInt32(new byte[] { 0xFD, 0xFE, 0xFC, 0xFF }, 0);
         static UInt32 VERSION_MARKER = BitConverter.ToUInt32(new byte[] { 0xFC, 0xFD, 0xFE, 0xFF }, 0);
@@ -17,9 +22,12 @@ namespace Common {
             get { return packedFile; }
         }
 
+        public string GUID;
+        private int headerVersion;
+        uint entryCount;
+
         private List<List<FieldInstance>> entries;
         private TypeInfo typeInfo;
-        private int headerVersion;
         private PackedFile packedFile;
         public int TotalwarHeaderVersion {
             get { return headerVersion; }
@@ -29,13 +37,11 @@ namespace Common {
             }
         }
         private readonly TypeInfo[] type = new TypeInfo[Settings.Default.totalwarHeaderVersions];
-        public string GUID;
 
         public DBFile(PackedFile packedFile, TypeInfo[] type, bool readData = true) {
             this.packedFile = packedFile;
             BinaryReader reader = readHeader(packedFile);
             int i = 0;
-            uint entryCount = reader.ReadUInt32();
             if (readData) {
                 this.type = type;
                 try {
@@ -113,6 +119,7 @@ namespace Common {
                 }
             }
             headerVersion = version;
+            entryCount = reader.ReadUInt32();
             return reader;
         }
 
@@ -158,9 +165,14 @@ namespace Common {
                 switch (field.modifier) {
                     case FieldInfo.Modifier.NextFieldIsConditional:
                         if (field.TestConditionalValue(str)) {
-                            entry.Add(new FieldInstance(typeInfo.fields[i + 1], ""));
-                            i++;
+                            // if condition is true, we can read the next field as is
+                            break;
                         }
+                        // otherwise, we have to include empty fields to have the correct number of entries
+                        for (counter = 0; counter < field.length; counter++) {
+                            entry.Add(new FieldInstance(typeInfo.fields[i + 1], ""));
+                        }
+                        i+= field.length;
                         break;
 
                     case FieldInfo.Modifier.NextFieldRepeats:
