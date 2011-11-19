@@ -11,7 +11,10 @@ namespace Common
     public class PackFile
     {
         public static readonly List<string> CAPackList = new List<string> { 
-            "boot.pack", "data.pack", "local_en.pack", "local_en_patch.pack", "models.pack", "models2.pack", "movies.pack", "movies2.pack", "patch_movies.pack", "patch.pack", "patch2.pack", "sound.pack", "terrain.pack"
+            "boot.pack", "data.pack", "local_en.pack", "local_en_patch.pack", "models.pack", "models2.pack", 
+            "movies.pack", "movies2.pack", "patch_movies.pack", "patch.pack", "patch2.pack", 
+            "patch3.pack", "patch4.pack", "patch5.pack", "patch6.pack", "patch7.pack", "patch8.pack", "patch9.pack", "patch10.pack", 
+            "sound.pack", "terrain.pack"
          };
         private SortedList<string, PackedFile> fileList;
         private string filepath;
@@ -108,23 +111,6 @@ namespace Common
         public void Delete(PackedFile packedFile)
         {
             this.fileList[packedFile.Filepath].Delete();
-        }
-
-        public static PackType GetPackType(string filepath)
-        {
-            using (BinaryReader reader = new BinaryReader(new FileStream(filepath, FileMode.Open), Encoding.ASCII))
-            {
-                if (new string(reader.ReadChars(4)) != "PFH2")
-                {
-                    throw new ArgumentException("not a pack file", "filepath");
-                }
-                byte num = reader.ReadByte();
-                if (num > 4)
-                {
-                    throw new InvalidDataException("unknown pack type");
-                }
-                return (PackType)num;
-            }
         }
 
         private void OnFinishedLoading()
