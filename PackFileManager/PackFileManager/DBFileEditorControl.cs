@@ -55,6 +55,7 @@ namespace PackFileManager
             this.useFirstColumnAsRowHeader.Checked = Settings.Default.UseFirstColumnAsRowHeader;
             this.showAllColumns.Checked = Settings.Default.ShowAllColumns;
             dataGridView.KeyUp += copyPaste;
+            useComboBoxCells.Checked = Settings.Default.UseComboboxCells;
         }
         private void copyPaste(object sender, KeyEventArgs arge)
         {
