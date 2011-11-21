@@ -4,7 +4,18 @@ using System.IO;
 using System.Text;
 
 namespace Common {
-    public class DBFileHeaderCodec {
+    public class DBFileCodec {
+        public DBFile readDbFile(Stream stream, List<TypeInfo> infos) {
+            BinaryReader reader = new BinaryReader (stream);
+            DBFileHeader header = readHeader (reader);
+            DBFile file = new DBFile (header, infos[header.Version]);
+
+            for (int i = 0; i < header.EntryCount; i++) {
+                file.Entries.Add (readFields (reader, file.CurrentType));
+            }
+            return file;
+        }
+
         static UInt32 GUID_MARKER = BitConverter.ToUInt32 (new byte[] { 0xFD, 0xFE, 0xFC, 0xFF}, 0);
         static UInt32 VERSION_MARKER = BitConverter.ToUInt32 (new byte[] { 0xFC, 0xFD, 0xFE, 0xFF}, 0);
 
@@ -32,28 +43,6 @@ namespace Common {
             }
             uint entryCount = reader.ReadUInt32 ();
             return new DBFileHeader (guid, version, entryCount);
-        }
-        public void writeHeader(BinaryWriter writer, DBFileHeader header) {
-            if (header.GUID != "") {
-                writer.Write (GUID_MARKER);
-                writer.Write (VERSION_MARKER);
-                writer.Write (header.Version);
-            }
-            writer.Write ((byte)1);
-            writer.Write (header.EntryCount);
-        }
-    }
-
-    public class DBFileCodec {
-        public DBFile readDbFile(BinaryReader reader, List<TypeInfo> infos) {
-            DBFileHeaderCodec headerReader = new DBFileHeaderCodec ();
-            DBFileHeader header = headerReader.readHeader (reader);
-            DBFile file = new DBFile (header);
-
-            for (int i = 0; i < header.EntryCount; i++) {
-                file.Entries.Add (readFields (reader, file.CurrentType));
-            }
-            return file;
         }
 
         // creates a list of field values from the given type.
@@ -90,6 +79,22 @@ namespace Common {
                 }
             }
             return entry;
+        }
+
+        public void writeDbFile(Stream stream, DBFile file) {
+            BinaryWriter writer = new BinaryWriter (stream);
+            writeHeader (writer, file.header);
+            writeFields (writer, file);
+        }
+
+        public void writeHeader(BinaryWriter writer, DBFileHeader header) {
+            if (header.GUID != "") {
+                writer.Write (GUID_MARKER);
+                writer.Write (VERSION_MARKER);
+                writer.Write (header.Version);
+            }
+            writer.Write ((byte)1);
+            writer.Write (header.EntryCount);
         }
 
         public void writeFields(BinaryWriter writer, DBFile file) {
