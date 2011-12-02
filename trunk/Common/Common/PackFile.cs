@@ -14,6 +14,7 @@ namespace Common
             "boot.pack", "data.pack", "local_en.pack", "local_en_patch.pack", "models.pack", "models2.pack", 
             "movies.pack", "movies2.pack", "patch_movies.pack", "patch.pack", "patch2.pack", 
             "patch3.pack", "patch4.pack", "patch5.pack", "patch6.pack", "patch7.pack", "patch8.pack", "patch9.pack", "patch10.pack", 
+            "patch11.pack", "patch12.pack", 
             "sound.pack", "terrain.pack"
          };
         private SortedList<string, PackedFile> fileList;
@@ -22,8 +23,6 @@ namespace Common
         private string relativePathAnchor;
         private ulong size;
 		PFHeader header;
-
-        private PackType type;
 
         public event EventHandler FinishedLoading;
 
@@ -43,7 +42,6 @@ namespace Common
             {
                 this.filepath = filepath;
                 relativePathAnchor = Path.GetDirectoryName(filepath);
-                type = PackType.Release;
                 size = 0L;
                 fileList = new SortedList<string, PackedFile>();
                 header = new PFHeader
@@ -357,11 +355,11 @@ namespace Common
         {
             get
             {
-                return this.type;
+                return header.Type;
             }
             set
             {
-                this.type = value;
+                header.Type = value;
             }
         }
     }
