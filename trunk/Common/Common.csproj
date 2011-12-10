@@ -90,4 +90,8 @@
     <EmbeddedResource Include="Common.ErrorBox.resources" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>
