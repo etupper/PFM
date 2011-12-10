@@ -6,6 +6,7 @@
 
     public class UnitVariantFile
     {
+        private uint version;
         private byte b1 = 0;
         private byte b2 = 0;
         private byte b3 = 0;
@@ -16,6 +17,7 @@
         private List<UnitVariantObject> unitVariantObjects = new List<UnitVariantObject>();
         private uint unknown1 = 0;
         private uint unknown2 = 0;
+        private int unknown3 = 0;
 
         public void add(UnitVariantObject newEntry)
         {
@@ -115,7 +117,7 @@
             {
                 throw new FileLoadException("Illegal unit_variant file: Does not start with 'VRNT'");
             }
-            byte[] buffer2 = reader.ReadBytes(4);
+            this.version = reader.ReadUInt32();
             this.numEntries = reader.ReadUInt32();
             this.unknown1 = reader.ReadUInt32();
             byte[] buffer3 = reader.ReadBytes(4);
@@ -124,6 +126,9 @@
             this.b3 = buffer3[2];
             this.b4 = buffer3[3];
             this.unknown2 = BitConverter.ToUInt32(buffer3, 0);
+            if (version == 2) {
+                this.unknown3 = reader.ReadInt32();
+            }
             this.unitVariantObjects = new List<UnitVariantObject>();
             for (int i = 0; i < this.numEntries; i++)
             {
@@ -155,10 +160,13 @@
         private void writeToStream(BinaryWriter writer)
         {
             writer.Write("VRNT".ToCharArray(0, 4));
-            writer.Write((uint) 0);
+            writer.Write(this.version);
             writer.Write(this.numEntries);
             writer.Write(this.unknown1);
             writer.Write(this.unknown2);
+            if (version == 2) {
+                writer.Write(this.unknown3);
+            }
             for (int i = 0; i < this.numEntries; i++)
             {
                 IOFunctions.writeStringContainer(writer, this.unitVariantObjects[i].ModelPart);

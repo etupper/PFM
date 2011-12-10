@@ -1493,7 +1493,7 @@ namespace PackFileManager
         private static bool isTextFileType(PackedFile file) {
             string[] extensions = {
                                       "txt", "lua", "csv", "fx", "fx_fragment", "h", "battle_script", "xml", 
-                                      "tai", "xml.rigging", "placement"
+                                      "tai", "xml.rigging", "placement", "hlsl"
 
                                   };
             bool result = false;
