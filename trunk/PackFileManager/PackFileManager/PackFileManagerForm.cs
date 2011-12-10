@@ -100,6 +100,7 @@ namespace PackFileManager
         private ToolStripMenuItem saveToDirectoryToolStripMenuItem;
         private ToolStripMenuItem updateCurrentToolStripMenuItem;
         private ToolStripMenuItem updateAllToolStripMenuItem;
+        private ToolStripMenuItem openAsTextMenuItem;
         private UnitVariantFileEditorControl unitVariantFileEditorControl;
 
         public PackFileManagerForm(string[] args)
@@ -643,6 +644,7 @@ namespace PackFileManager
             this.addDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openAsTextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.replaceFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -744,6 +746,7 @@ namespace PackFileManager
             this.addDirectoryToolStripMenuItem,
             this.searchFileToolStripMenuItem,
             this.openFileToolStripMenuItem,
+            this.openAsTextMenuItem,
             this.replaceFileToolStripMenuItem,
             this.deleteFileToolStripMenuItem,
             this.renameToolStripMenuItem,
@@ -751,7 +754,8 @@ namespace PackFileManager
             this.toolStripSeparator1,
             this.changePackTypeToolStripMenuItem});
             this.packActionMenuStrip.Name = "packActionMenuStrip";
-            this.packActionMenuStrip.Size = new System.Drawing.Size(211, 274);
+            this.packActionMenuStrip.OwnerItem = this.packActionDropDownButton;
+            this.packActionMenuStrip.Size = new System.Drawing.Size(211, 318);
             this.packActionMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.packActionMenuStrip_Opening);
             // 
             // exportFileListToolStripMenuItem
@@ -806,6 +810,13 @@ namespace PackFileManager
             this.openFileToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.openFileToolStripMenuItem.Text = "Open File...";
             this.openFileToolStripMenuItem.Click += new System.EventHandler(this.openFileToolStripMenuItem_Click);
+            // 
+            // openAsTextMenuItem
+            // 
+            this.openAsTextMenuItem.Name = "openAsTextMenuItem";
+            this.openAsTextMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.openAsTextMenuItem.Text = "Open as Text";
+            this.openAsTextMenuItem.Click += new System.EventHandler(this.openAsText_click);
             // 
             // replaceFileToolStripMenuItem
             // 
@@ -1450,13 +1461,9 @@ namespace PackFileManager
             {
                 this.viewModel(packedFile);
             }
-            else if ((((packedFile.Filepath.EndsWith(".txt") || packedFile.Filepath.EndsWith(".lua")) || (packedFile.Filepath.EndsWith(".csv") || packedFile.Filepath.EndsWith(".fx"))) || ((packedFile.Filepath.EndsWith(".fx_fragment") || packedFile.Filepath.EndsWith(".h")) || packedFile.Filepath.EndsWith(".battle_script"))) || packedFile.Filepath.EndsWith(".xml"))
+            else if (isTextFileType(packedFile))
             {
-                TextFileEditorControl control3 = new TextFileEditorControl(packedFile) {
-                    Dock = DockStyle.Fill
-                };
-                this.textFileEditorControl = control3;
-                this.splitContainer1.Panel2.Controls.Add(this.textFileEditorControl);
+                openAsText(packedFile);
             }
             else if (packedFile.Filepath.Contains(@"db\"))
             {
@@ -1473,6 +1480,30 @@ namespace PackFileManager
                     MessageBox.Show(x.Message + "\n" + x.StackTrace, "Problem, sir!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+        }
+
+        private void openAsText(PackedFile packedFile) {
+            TextFileEditorControl control3 = new TextFileEditorControl(packedFile) {
+                Dock = DockStyle.Fill
+            };
+            this.textFileEditorControl = control3;
+            this.splitContainer1.Panel2.Controls.Add(this.textFileEditorControl);
+        }
+
+        private static bool isTextFileType(PackedFile file) {
+            string[] extensions = {
+                                      "txt", "lua", "csv", "fx", "fx_fragment", "h", "battle_script", "xml", 
+                                      "tai", "xml.rigging", "placement"
+
+                                  };
+            bool result = false;
+            foreach (string ext in extensions) {
+                if (file.Filepath.EndsWith(ext)) {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
         }
 
         private void openReadMe(PackedFile packedFile)
@@ -2180,6 +2211,12 @@ namespace PackFileManager
             {
                 updatePackedFile(dbFileEditorControl.currentPackedFile);
             }
+        }
+
+        private void openAsText_click(object sender, EventArgs e) {
+            List<PackedFile> packedFiles = new List<PackedFile>();
+            packedFiles.Add(this.packTreeView.SelectedNode.Tag as PackedFile);
+            openAsText(packedFiles[0]);
         }
     }
 }
