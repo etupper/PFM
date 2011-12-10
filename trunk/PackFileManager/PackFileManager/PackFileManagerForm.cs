@@ -2091,6 +2091,7 @@ namespace PackFileManager
             else
             {
                 display = string.Format("{0}: no definition available", key);
+                result = false;
             }
             return result;
         }

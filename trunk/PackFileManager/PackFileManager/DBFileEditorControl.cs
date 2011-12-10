@@ -692,8 +692,8 @@ namespace PackFileManager
                 this.exportButton.Enabled = true;
                 this.dataGridView.Visible = true;
                 this.unsupportedDBErrorTextBox.Visible = false;
+                toggleFirstColumnAsRowHeader(Settings.Default.UseFirstColumnAsRowHeader);
             }
-            toggleFirstColumnAsRowHeader(Settings.Default.UseFirstColumnAsRowHeader);
         }
 
         private void pasteEvent()
@@ -746,11 +746,7 @@ namespace PackFileManager
         {
             this.dataGridView.Visible = false;
             this.unsupportedDBErrorTextBox.Visible = true;
-            this.unsupportedDBErrorTextBox.Text = message;
-            foreach (string str in DBTypeMap.Instance.DBFileTypes)
-            {
-                this.unsupportedDBErrorTextBox.Text = this.unsupportedDBErrorTextBox.Text + str + "\r\n";
-            }
+            this.unsupportedDBErrorTextBox.Text = string.Format("{0}{1}", message, string.Join("\r\n", DBTypeMap.Instance.DBFileTypes));
             this.addNewRowButton.Enabled = false;
             this.importButton.Enabled = false;
             this.exportButton.Enabled = false;
