@@ -348,7 +348,7 @@ namespace Common {
 
         public void Import(StreamReader reader) {
             TypeInfo info;
-            if (this.type[0].name != reader.ReadLine().TrimEnd(new char[0]).Trim(new char[] { '"' })) {
+            if (this.CurrentType.name != reader.ReadLine().TrimEnd(new char[0]).Trim(new char[] { '"' })) {
                 throw new DBFileNotSupportedException("File type of imported DB doesn't match that of the currently opened one", this);
             }
             string str = reader.ReadLine().TrimEnd(new char[0]).Trim(new char[] { '"' });
