@@ -168,10 +168,10 @@ namespace Common
                 ulong num8 = 0L;
 				long offset = header.DataStart;
 				for (int i = 0; i < header.FileCount; i++) {
-//                    if (PackType == 0x40) {
-//                        // reader.ReadInt32();
-//                        reader.ReadChars(8);
-//                    }
+                    /* if (header.Type == PackType.Bootx) {
+                        reader.ReadInt32();
+                        byte[] b = reader.ReadBytes(4);
+                    }*/
                     uint num10 = 5;
                     uint size = reader.ReadUInt32();
                     StringBuilder builder2 = new StringBuilder();

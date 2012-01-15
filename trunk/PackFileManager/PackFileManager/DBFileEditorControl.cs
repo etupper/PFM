@@ -78,7 +78,11 @@ namespace PackFileManager
         private void addNewRowButton_Click(object sender, EventArgs e)
         {
             List<FieldInstance> newEntry = this.currentDBFile.GetNewEntry();
-            createRow(newEntry, currentDataTable.Rows.Count-1);
+            int insertAtColumn = dataGridView.Rows.Count;
+            if (dataGridView.CurrentCell != null) {
+                insertAtColumn = dataGridView.CurrentCell.RowIndex + 1;
+            }
+            createRow(newEntry, insertAtColumn);
         }
 
         private void createRow(List<FieldInstance> newEntry, int index)
