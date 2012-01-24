@@ -170,7 +170,13 @@ namespace Common {
                     string[] split = str2.Split("\t".ToCharArray());
                     lastInfo = new TypeInfo(split[0]);
                     string[] info = split[1].Split(",".ToCharArray());
-                    lastInfo.fields.Add(new FieldInfo(info[0], info[1].Replace(";", "")));
+                    FieldInfo firstField;
+                    if (info.Length == 3) {
+                        firstField = new FieldInfo(info[0], info[1].Replace(";", ""), info[2].Replace(";", ""));
+                    } else {
+                        firstField = new FieldInfo(info[0], info[1].Replace(";", ""));
+                    }
+                    lastInfo.fields.Add(firstField);
                     dictionary.Add(lastInfo.name, lastInfo);
                     // ignore empty and comment lines
                 } else if (!str2.StartsWith("#") && str2.Trim().Length != 0) {
