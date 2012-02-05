@@ -144,6 +144,7 @@ namespace PackFileManager
             };
             this.dbFileEditorControl = control;
             this.nodeRenamed = false;
+            Text = string.Format("Pack File Manager {0} BETA (Total War - Shogun 2)", Application.ProductVersion);
             if (args.Length == 1)
             {
                 if (!File.Exists(args[0]))
@@ -152,7 +153,6 @@ namespace PackFileManager
                 }
                 this.OpenExistingPackFile(args[0]);
             }
-            Text = string.Format("Pack File Manager {0} BETA (Total War - Shogun 2)", Application.ProductVersion);
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
