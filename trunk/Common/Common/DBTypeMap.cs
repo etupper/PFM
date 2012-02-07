@@ -139,19 +139,32 @@ namespace Common {
         }
 
         public List<string> DBFileTypes {
-            get {
-                List<string> result = new List<string>(typeMap.Keys);
-                return result;
-            }
-        }
-
+			get {
+				List<string> result = new List<string> (typeMap.Keys);
+				return result;
+			}
+		}
+		
+		/*
         public List<TypeInfo> this[string key] {
             get {
                 List<TypeInfo> result = null;
                 typeMap.TryGetValue(key, out result);
                 return result;
             }
-        }
+        }*/
+		public TypeInfo this [string table, int version] {
+			get {
+				List<TypeInfo> result = null;
+				return typeMap.TryGetValue (table, out result) ? result [version] : null;
+			}
+		}		
+		public bool IsSupported(string table) {
+			return typeMap.ContainsKey (table);
+		}
+		public int MaxVersion(string table) {
+			return IsSupported (table) ? typeMap [table].Count - 1 : -1;
+		}
 
         private static SortedDictionary<string, TypeInfo> getTypeMapFromFile(string filepath) {
             try {

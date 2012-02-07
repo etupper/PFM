@@ -33,19 +33,19 @@ namespace Common {
             get { return headerVersion; }
             set {
                 headerVersion = value;
-                typeInfo = type[value];
+//                typeInfo = type[value];
             }
         }
-        private readonly TypeInfo[] type = new TypeInfo[Settings.Default.totalwarHeaderVersions];
+        // private readonly TypeInfo[] type = new TypeInfo[Settings.Default.totalwarHeaderVersions];
 
-        public DBFile(PackedFile packedFile, TypeInfo[] type, bool readData = true) {
-            this.packedFile = packedFile;
-            BinaryReader reader = readHeader(packedFile);
-            int i = 0;
-            if (readData) {
-                this.type = type;
-                try {
-                    this.typeInfo = type[TotalwarHeaderVersion];
+        public DBFile (PackedFile packedFile, string type, bool readData = true) {
+			this.packedFile = packedFile;
+			BinaryReader reader = readHeader (packedFile);
+			int i = 0;
+			if (readData) {
+                // this.type = type;
+				try {
+					this.typeInfo = DBTypeMap.Instance [type, TotalwarHeaderVersion];
                     if (typeInfo == null) {
                         // find the next-lower version...
                         //						for (i = TotalwarHeaderVersion-1; i >= 0; i--) {
@@ -89,7 +89,7 @@ namespace Common {
         public DBFile(DBFile toCopy) {
             typeInfo = toCopy.typeInfo;
             TotalwarHeaderVersion = toCopy.TotalwarHeaderVersion;
-            type = toCopy.type;
+            //type = toCopy.type;
             GUID = toCopy.GUID;
             toCopy.entries.ForEach(entry => entries.Add(new List<FieldInstance>(entry)));
         }
@@ -346,38 +346,36 @@ namespace Common {
             return list;
         }
 
-        public void Import(StreamReader reader) {
-            TypeInfo info;
-            if (this.CurrentType.name != reader.ReadLine().TrimEnd(new char[0]).Trim(new char[] { '"' })) {
-                throw new DBFileNotSupportedException("File type of imported DB doesn't match that of the currently opened one", this);
-            }
-            string str = reader.ReadLine().TrimEnd(new char[0]).Trim(new char[] { '"' });
-            if (str == "1.0") {
-                this.TotalwarHeaderVersion = 0;
-                info = this.type[0];
-            } else if (str == "1.2") {
-                this.TotalwarHeaderVersion = 1;
-                info = this.type[1];
-            } else {
-                this.TotalwarHeaderVersion = Convert.ToInt32(str);
-                info = this.type[this.TotalwarHeaderVersion];
-            }
-            reader.ReadLine();
-            this.entries = new List<List<FieldInstance>>();
-            while (!reader.EndOfStream) {
-                string str2 = reader.ReadLine();
-                if (str2.Trim() != "") {
-                    string[] strArray = str2.Split(new char[] { '\t' });
-                    List<FieldInstance> item = new List<FieldInstance>();
-                    for (int i = 0; i < strArray.Length; i++) {
-                        FieldInfo fieldInfo = info.fields[i];
-                        string str3 = strArray[i].Replace(@"\t", "\t").Replace(@"\n", "\n").Trim(new char[] { '"' });
-                        item.Add(new FieldInstance(fieldInfo, str3));
-                    }
-                    this.entries.Add(item);
-                }
-            }
-        }
+        public void Import(StreamReader reader, string type) {
+			TypeInfo info;
+			if (this.CurrentType.name != reader.ReadLine ().TrimEnd (new char[0]).Trim (new char[] { '"' })) {
+				throw new DBFileNotSupportedException ("File type of imported DB doesn't match that of the currently opened one", this);
+			}
+			string str = reader.ReadLine ().TrimEnd (new char[0]).Trim (new char[] { '"' });
+			if (str == "1.0") {
+				this.TotalwarHeaderVersion = 0;
+			} else if (str == "1.2") {
+				this.TotalwarHeaderVersion = 1;
+			} else {
+				this.TotalwarHeaderVersion = Convert.ToInt32 (str);
+			}
+			info = DBTypeMap.Instance [type, TotalwarHeaderVersion];
+			reader.ReadLine ();
+			this.entries = new List<List<FieldInstance>> ();
+			while (!reader.EndOfStream) {
+				string str2 = reader.ReadLine ();
+				if (str2.Trim () != "") {
+					string[] strArray = str2.Split (new char[] { '\t' });
+					List<FieldInstance> item = new List<FieldInstance> ();
+					for (int i = 0; i < strArray.Length; i++) {
+						FieldInfo fieldInfo = info.fields [i];
+						string str3 = strArray [i].Replace (@"\t", "\t").Replace (@"\n", "\n").Trim (new char[] { '"' });
+						item.Add (new FieldInstance (fieldInfo, str3));
+					}
+					this.entries.Add (item);
+				}
+			}
+		}
 
         private string readString(BinaryReader reader) {
             ushort count = reader.ReadUInt16();
@@ -391,10 +389,10 @@ namespace Common {
         }
 
         private void writeEntries(BinaryWriter writer) {
-            TypeInfo info;
+            // TypeInfo info;
             if (this.TotalwarHeaderVersion == 0) {
                 writer.Write((byte)1);
-                info = this.type[0];
+                // info = this.type[0];
             } else {
                 writer.Write(new byte[] { 0xfd, 0xfe, 0xfc, 0xff });
                 IOFunctions.writeCAString(writer, GUID);
@@ -405,11 +403,11 @@ namespace Common {
                 }
 
                 writer.Write((byte)1);
-                info = this.type[this.TotalwarHeaderVersion];
+                // info = this.type[this.TotalwarHeaderVersion];
             }
             writer.Write(this.Entries.Count);
             for (int i = 0; i < this.Entries.Count; i++) {
-                this.writeFields(writer, this.entries[i], 0, info.fields.Count);
+                this.writeFields(writer, this.entries[i], 0, this.typeInfo.fields.Count);
             }
         }
 
@@ -514,10 +512,14 @@ namespace Common {
         }
 
         public List<List<FieldInstance>> Entries {
-            get {
-                return this.entries;
-            }
-        }
+			get {
+				return this.entries;
+			}
+		}
+		
+		public static string typename(string fullPath) {
+            return fullPath.Split ('\\') [1].Split ('/') [0].Replace ("_tables", "");
+		}
     }
 }
 
