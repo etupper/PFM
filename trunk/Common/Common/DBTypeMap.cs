@@ -54,7 +54,6 @@ namespace Common {
                     foreach (TypeInfo info in infos) {
                         // header: table name, tab, first encoded field
                         writer.Write(string.Format("{0}\t{1}", info.name, encodeField(info.fields[0])));
-                        nextFieldConditional = info.fields[0].modifier == FieldInfo.Modifier.NextFieldIsConditional;
                         for (int i = 1; i < info.fields.Count; i++) {
                             if (nextFieldConditional) {
                                 // don't separate condition and condition target fields
@@ -182,35 +181,29 @@ namespace Common {
                 if (str2.Contains("\t")) {
                     string[] split = str2.Split("\t".ToCharArray());
                     lastInfo = new TypeInfo(split[0]);
-                    string[] info = split[1].Split(",".ToCharArray());
-                    FieldInfo firstField;
-                    if (info.Length == 3) {
-                        firstField = new FieldInfo(info[0], info[1].Replace(";", ""), info[2].Replace(";", ""));
-                    } else {
-                        firstField = new FieldInfo(info[0], info[1].Replace(";", ""));
-                    }
-                    lastInfo.fields.Add(firstField);
+                    lastInfo.fields.AddRange(parseInfo(split[1]));
                     dictionary.Add(lastInfo.name, lastInfo);
                     // ignore empty and comment lines
                 } else if (!str2.StartsWith("#") && str2.Trim().Length != 0) {
-                    string[] entries = str2.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                    foreach (string entry in entries) {
-                        try {
-                            string[] split = entry.Split(',');
-                            FieldInfo info;
-                            if (split.Length == 3) {
-                                info = new FieldInfo(split[0], split[1].Replace(";", ""), split[2]);
-                            } else {
-                                info = new FieldInfo(split[0], split[1].Replace(";", ""));
-                            }
-                            lastInfo.fields.Add(info);
-                        } catch (Exception) {
-                            throw;
-                        }
-                    }
+                    lastInfo.fields.AddRange(parseInfo(str2));
                 }
             }
             return dictionary;
+        }
+        private static List<FieldInfo> parseInfo(string str2) {
+            List<FieldInfo> infos = new List<FieldInfo>();
+            string[] entries = str2.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            foreach (string entry in entries) {
+                string[] split = entry.Split(',');
+                FieldInfo info;
+                if (split.Length == 3) {
+                    info = new FieldInfo(split[0], split[1].Replace(";", ""), split[2]);
+                } else {
+                    info = new FieldInfo(split[0], split[1].Replace(";", ""));
+                }
+                infos.Add(info);
+            }
+            return infos;
         }
     }
 
