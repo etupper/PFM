@@ -347,7 +347,8 @@ namespace PackFileManager
                 {
                     try
                     {
-                        this.currentDBFile.Import(reader);
+						string type = DBFile.typename(openDBFileDialog.FileName);
+                        this.currentDBFile.Import(reader, type);
                     }
                     catch (DBFileNotSupportedException exception)
                     {
@@ -637,10 +638,8 @@ namespace PackFileManager
             copyToolStripButton.Enabled = true;
             pasteToolStripButton.Enabled = false;
             int num;
-            string key = Path.GetFileName(Path.GetDirectoryName(packedFile.Filepath));
-            key = key.Remove(key.LastIndexOf('_'), 7);
-            List<TypeInfo> type = DBTypeMap.Instance[key];
-            if (type == null)
+            string key = DBFile.typename(packedFile.Filepath);
+            if (!DBTypeMap.Instance.IsSupported(key))
             {
                 this.showDBFileNotSupportedMessage("Sorry, this db file isn't supported yet.\r\n\r\nCurrently supported files:\r\n");
             }
@@ -648,8 +647,8 @@ namespace PackFileManager
             {
                 this.dataGridView.DataSource = null;
                 this.currentPackedFile = packedFile;
-                this.currentDBFile = new DBFile(packedFile, type.ToArray());
-                TypeInfo info = type[this.currentDBFile.TotalwarHeaderVersion];
+                this.currentDBFile = new DBFile(packedFile, key);
+                TypeInfo info = currentDBFile.CurrentType;
                 this.currentDataSet = new DataSet(info.name + "_DataSet");
                 this.currentDataTable = new DataTable(info.name + "_DataTable");
                 this.currentDataTable.Columns.Add(new DataColumn("#", System.Type.GetType("System.UInt32")));

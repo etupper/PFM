@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
   <PropertyGroup>
     <ProjectType>local</ProjectType>
@@ -8,8 +8,9 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <AssemblyName>Common</AssemblyName>
     <OutputType>Library</OutputType>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <RootNamespace>Common</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -38,11 +39,8 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Common\DBReferenceMap.cs" />
-    <Compile Include="Common\DBTypeMap.cs" />
     <Compile Include="Common\PFHeader.cs" />
     <Compile Include="Common\PFHeaderReader.cs" />
-    <Compile Include="Common\XsdParser.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="Common\IOFunctions.cs" />
     <Compile Include="Common\ErrorBox.cs">
@@ -61,7 +59,6 @@
     <Compile Include="Common\MeshTextureObject.cs" />
     <Compile Include="Common\Properties\Settings.cs" />
     <Compile Include="DataGridViewAutoFilter\DataGridViewAutoFilterTextBoxColumn.cs" />
-    <Compile Include="Common\DBFileNotSupportedException.cs" />
     <Compile Include="Common\CopyPasteComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -70,17 +67,13 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="System\Collections\Generic\Enumerate.cs" />
-    <Compile Include="Common\FieldInfo.cs" />
     <Compile Include="Common\Utilities.cs" />
     <Compile Include="Common\LocFile.cs" />
-    <Compile Include="Common\DBFile.cs" />
-    <Compile Include="Common\PackedFile.cs" />
     <Compile Include="Common\AtlasFile.cs" />
     <Compile Include="Common\SpyEventLogForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Common\PackTypeCode.cs" />
-    <Compile Include="Common\FieldInstance.cs" />
     <Compile Include="SpyTools\SpyEventHandler.cs" />
     <Compile Include="Common\TypeInfo.cs" />
     <Compile Include="Common\PackType.cs" />
@@ -89,6 +82,14 @@
     <EmbeddedResource Include="Common.SpyEventLogForm.resources" />
     <EmbeddedResource Include="Common.ErrorBox.resources" />
     <Reference Include="System.Xml.Linq" />
+    <Compile Include="Common\DBFile.cs" />
+    <Compile Include="Common\DBFileNotSupportedException.cs" />
+    <Compile Include="Common\DBReferenceMap.cs" />
+    <Compile Include="Common\DBTypeMap.cs" />
+    <Compile Include="Common\FieldInfo.cs" />
+    <Compile Include="Common\FieldInstance.cs" />
+    <Compile Include="Common\PackedFile.cs" />
+    <Compile Include="Common\XsdParser.cs" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

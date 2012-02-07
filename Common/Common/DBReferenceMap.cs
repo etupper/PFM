@@ -107,8 +107,9 @@ namespace Common
             {
                 if (file.Filepath == dbFileName)
                 {
+					string type = DBFile.typename(file.Filepath);
                     result = new SortedSet<string>();
-                    DBFile dbFile = new DBFile(file, DBTypeMap.Instance[reference].ToArray());
+                    DBFile dbFile = new DBFile(file, type);
                     foreach (List<FieldInstance> entry in dbFile.Entries)
                     {
                         string toAdd = entry[index].Value;

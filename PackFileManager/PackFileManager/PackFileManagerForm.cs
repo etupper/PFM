@@ -2067,15 +2067,14 @@ namespace PackFileManager
             {
                 key = key.Remove(key.LastIndexOf('_'), 7);
             }
-            List<TypeInfo> type = DBTypeMap.Instance[key];
-            if (type != null)
+            if (DBTypeMap.Instance.IsSupported(key))
             {
                 try
                 {
-                    DBFile currentDBFile = new DBFile(packedFile, type.ToArray(), false);
-                    if (currentDBFile.TotalwarHeaderVersion > type.Count - 1)
+                    DBFile currentDBFile = new DBFile(packedFile, key, false);
+                    if (currentDBFile.TotalwarHeaderVersion > DBTypeMap.Instance.MaxVersion(key))
                     {
-                        display = string.Format("{0}: needs {1}, has {2}", key, currentDBFile.TotalwarHeaderVersion, type.Count - 1);
+                        display = string.Format("{0}: needs {1}, has {2}", key, currentDBFile.TotalwarHeaderVersion, DBTypeMap.Instance.MaxVersion(key));
                         result = false;
                     }
                     else
@@ -2101,13 +2100,11 @@ namespace PackFileManager
             List<TypeInfo> type = null;
             try
             {
-                string key = Path.GetFileName(Path.GetDirectoryName(packedFile.Filepath));
-                key = key.Replace("_tables", "");
-                type = DBTypeMap.Instance[key];
+                string key = DBFile.typename(packedFile.Filepath);
                 // do we have a definition at all?
-                if (type != null)
+                if (DBTypeMap.Instance.IsSupported(key))
                 {
-                    DBFile currentDBFile = new DBFile(packedFile, type.ToArray(), false);
+                    DBFile currentDBFile = new DBFile(packedFile, key, false);
                     version = currentDBFile.TotalwarHeaderVersion;
                 }
             }
@@ -2127,23 +2124,18 @@ namespace PackFileManager
         {
             try
             {
-                string key = Path.GetFileName(Path.GetDirectoryName(packedFile.Filepath));
-                if (key.Contains("_table"))
+                string key = DBFile.typename(packedFile.Filepath);
+                if (DBTypeMap.Instance.IsSupported(key))
                 {
-                    key = key.Remove(key.LastIndexOf('_'), 7);
-                }
-                List<TypeInfo> type = DBTypeMap.Instance[key];
-                if (type != null)
-                {
-                    DBFile dbFile = new DBFile(packedFile, type.ToArray(), false);
-                    if (dbFile.TotalwarHeaderVersion < type.Count - 1)
+                    DBFile dbFile = new DBFile(packedFile, key, false);
+                    if (dbFile.TotalwarHeaderVersion <= DBTypeMap.Instance.MaxVersion(key))
                     {
                         // found a more recent db definition; read data from db file
-                        DBFile updatedFile = new DBFile(packedFile, type.ToArray(), true);
+                        DBFile updatedFile = new DBFile(packedFile, key, true);
 
                         // identify FieldInstances missing in db file
                         TypeInfo dbFileInfo = updatedFile.CurrentType;
-                        TypeInfo targetInfo = type[type.Count - 1];
+                        TypeInfo targetInfo = DBTypeMap.Instance[key, DBTypeMap.Instance.MaxVersion(key)];
                         for (int i = dbFileInfo.fields.Count; i < targetInfo.fields.Count; i++)
                         {
                             foreach (List<FieldInstance> entry in updatedFile.Entries)
@@ -2159,7 +2151,7 @@ namespace PackFileManager
                                 }
                             }
                         }
-                        updatedFile.TotalwarHeaderVersion = type.Count - 1;
+                        updatedFile.TotalwarHeaderVersion = DBTypeMap.Instance.MaxVersion(key);
                         packedFile.ReplaceData(updatedFile.GetBytes());
 
                         if (dbFileEditorControl.currentPackedFile == packedFile)
