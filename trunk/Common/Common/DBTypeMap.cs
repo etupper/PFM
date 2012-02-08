@@ -165,7 +165,7 @@ namespace Common {
 			return IsSupported (table) ? typeMap [table].Count - 1 : -1;
 		}
 
-        private static SortedDictionary<string, TypeInfo> getTypeMapFromFile(string filepath) {
+        public static SortedDictionary<string, TypeInfo> getTypeMapFromFile(string filepath) {
             try {
                 string[] lines = File.ReadAllLines(filepath);
                 return parseTypeMap(lines);

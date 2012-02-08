@@ -1,4 +1,5 @@
 ﻿using Common;
+using DecodeTool;
 using PackFileManager.Properties;
 using System;
 using System.Collections.Generic;
@@ -101,7 +102,10 @@ namespace PackFileManager
         private ToolStripMenuItem updateCurrentToolStripMenuItem;
         private ToolStripMenuItem updateAllToolStripMenuItem;
         private ToolStripMenuItem openAsTextMenuItem;
+        private ToolStripMenuItem exportUnknownToolStripMenuItem;
         private UnitVariantFileEditorControl unitVariantFileEditorControl;
+
+        delegate bool FileFilter (PackedFile file);
 
         public PackFileManagerForm(string[] args)
         {
@@ -577,15 +581,15 @@ namespace PackFileManager
             }
         }
 
-        private void getPackedFilesFromBranch(List<PackedFile> packedFiles, TreeNodeCollection trunk)
+        private void getPackedFilesFromBranch(List<PackedFile> packedFiles, TreeNodeCollection trunk, FileFilter filter = null)
         {
             foreach (TreeNode node in trunk)
             {
                 if (node.Nodes.Count > 0)
                 {
-                    this.getPackedFilesFromBranch(packedFiles, node.Nodes);
+                    this.getPackedFilesFromBranch(packedFiles, node.Nodes, filter);
                 }
-                else
+                else if (filter == null || filter(node.Tag as PackedFile))
                 {
                     packedFiles.Add(node.Tag as PackedFile);
                 }
@@ -706,6 +710,7 @@ namespace PackFileManager
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.addDirectoryFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.openDBFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.exportUnknownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packActionMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -742,6 +747,7 @@ namespace PackFileManager
             this.exportFileListToolStripMenuItem,
             this.extractAllToolStripMenuItem,
             this.extractSelectedToolStripMenuItem,
+            this.exportUnknownToolStripMenuItem,
             this.addFileToolStripMenuItem,
             this.addDirectoryToolStripMenuItem,
             this.searchFileToolStripMenuItem,
@@ -755,7 +761,7 @@ namespace PackFileManager
             this.changePackTypeToolStripMenuItem});
             this.packActionMenuStrip.Name = "packActionMenuStrip";
             this.packActionMenuStrip.OwnerItem = this.packActionDropDownButton;
-            this.packActionMenuStrip.Size = new System.Drawing.Size(211, 318);
+            this.packActionMenuStrip.Size = new System.Drawing.Size(211, 340);
             this.packActionMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.packActionMenuStrip_Opening);
             // 
             // exportFileListToolStripMenuItem
@@ -1309,6 +1315,13 @@ namespace PackFileManager
             // openDBFileDialog
             // 
             this.openDBFileDialog.Filter = "Text CSV|*.txt|Any File|*.*";
+            // 
+            // exportUnknownToolStripMenuItem
+            // 
+            this.exportUnknownToolStripMenuItem.Name = "exportUnknownToolStripMenuItem";
+            this.exportUnknownToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.exportUnknownToolStripMenuItem.Text = "Export Unknown...";
+            this.exportUnknownToolStripMenuItem.Click += new System.EventHandler(this.exportUnknownToolStripMenuItem_Click);
             // 
             // PackFileManagerForm
             // 
@@ -2210,6 +2223,25 @@ namespace PackFileManager
             List<PackedFile> packedFiles = new List<PackedFile>();
             packedFiles.Add(this.packTreeView.SelectedNode.Tag as PackedFile);
             openAsText(packedFiles[0]);
+        }
+
+        private bool unknownDbFormat(PackedFile file) {
+            bool result = file.Filepath.StartsWith("db");
+            string buffer;
+            result &= !canShow(file, out buffer);
+            return result;
+    }
+
+        private void exportUnknownToolStripMenuItem_Click(object sender, EventArgs e) {
+            List<PackedFile> packedFiles = new List<PackedFile>();
+            foreach (TreeNode node in this.packTreeView.Nodes) {
+                if (node.Nodes.Count > 0) {
+                    this.getPackedFilesFromBranch(packedFiles, node.Nodes, unknownDbFormat);
+                } else {
+                    packedFiles.Add(node.Tag as PackedFile);
+                }
+            }
+            this.extractFiles(packedFiles);
         }
     }
 }

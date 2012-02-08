@@ -135,6 +135,10 @@
       <Project>{6D23F5FB-04D4-4D7E-BDFF-FCA718309298}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DecodeTool\DecodeTool.csproj">
+      <Project>{B7E18A8E-7797-4865-97CD-97B2915AA774}</Project>
+      <Name>DecodeTool</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Library\Library.csproj">
       <Project>{6598A7CD-8F27-4D3F-A675-5AE63113A7C3}</Project>
       <Name>Library</Name>

@@ -642,6 +642,9 @@ namespace PackFileManager
             if (!DBTypeMap.Instance.IsSupported(key))
             {
                 this.showDBFileNotSupportedMessage("Sorry, this db file isn't supported yet.\r\n\r\nCurrently supported files:\r\n");
+                DecodeTool.DecodeTool decoder = new DecodeTool.DecodeTool();
+                decoder.Bytes = packedFile.Data;
+                decoder.ShowDialog();
             }
             else
             {
