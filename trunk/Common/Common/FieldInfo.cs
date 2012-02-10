@@ -29,11 +29,11 @@ namespace Common
 			}
 			return null;
 		}
-        public static FieldInfo StringType() { return new StringType(); }
-        public static FieldInfo IntType() { return new IntType(); }
-        public static FieldInfo BoolType() { return new BoolType(); }
-        public static FieldInfo OptStringType() { return new OptStringType(); }
-        public static FieldInfo SingleType() { return new SingleType(); }
+        public static FieldInfo StringType() { return new StringType() { Name = "unknown" }; }
+        public static FieldInfo IntType() { return new IntType() { Name = "unknown" }; }
+        public static FieldInfo BoolType() { return new BoolType() { Name = "unknown" }; }
+        public static FieldInfo OptStringType() { return new OptStringType() { Name = "unknown" }; }
+        public static FieldInfo SingleType() { return new SingleType() { Name = "unknown" }; }
     }
 	
 	[System.Diagnostics.DebuggerDisplay("{Name} - {TypeName}; {Optional}")]

@@ -572,14 +572,20 @@ namespace PackFileManager {
             if (!DBTypeMap.Instance.IsSupported(key)) {
                 this.showDBFileNotSupportedMessage("Sorry, this db file isn't supported yet.\r\n\r\nCurrently supported files:\r\n");
                 DecodeTool.DecodeTool decoder = new DecodeTool.DecodeTool();
+                decoder.TypeName = key;
                 decoder.Bytes = packedFile.Data;
                 decoder.ShowDialog();
             } else {
                 try {
-                    this.currentDBFile = new PackedFileDbCodec(currentPackedFile).readDbFile(currentPackedFile.Data);
+                    this.currentDBFile = new PackedFileDbCodec(packedFile).readDbFile(packedFile.Data);
                 } catch {
+                    DecodeTool.DecodeTool decoder = new DecodeTool.DecodeTool();
+                    decoder.TypeName = key;
+                    decoder.Bytes = packedFile.Data;
+                    decoder.ShowDialog();
                     return;
                 }
+                currentPackedFile = packedFile;
                 TypeInfo info = currentDBFile.CurrentType;
                 this.currentDataSet = new DataSet(info.name + "_DataSet");
                 this.currentDataTable = new DataTable(info.name + "_DataTable");

@@ -53,6 +53,7 @@
             this.headerLength = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.repeatInfo = new System.Windows.Forms.Label();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -96,7 +97,8 @@
             // definitionsToolStripMenuItem
             // 
             this.definitionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadToolStripMenuItem});
+            this.loadToolStripMenuItem,
+            this.saveToolStripMenuItem});
             this.definitionsToolStripMenuItem.Name = "definitionsToolStripMenuItem";
             this.definitionsToolStripMenuItem.Size = new System.Drawing.Size(76, 20);
             this.definitionsToolStripMenuItem.Text = "Definitions";
@@ -104,7 +106,7 @@
             // loadToolStripMenuItem
             // 
             this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.loadToolStripMenuItem.Text = "Load";
             this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
             // 
@@ -374,6 +376,13 @@
             this.repeatInfo.TabIndex = 9;
             this.repeatInfo.Text = "select data...";
             // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            // 
             // DecodeTool
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -435,6 +444,7 @@
         private System.Windows.Forms.Button showTypes;
         private System.Windows.Forms.ToolStripMenuItem moreToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem more1ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
 
     }
 }
