@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -9,7 +10,7 @@ namespace DecodeTool {
 
     class Decoder {
         byte[] bytes = {};
-        List<TypeDescription> descriptions = new List<TypeDescription>();
+        List<FieldInfo> descriptions = new List<FieldInfo>();
 
         public event ValueChanged ChangeListener;
 
@@ -25,7 +26,7 @@ namespace DecodeTool {
             get {
                 List<string> result = new List<string>();
                 using (BinaryReader reader = new BinaryReader(new MemoryStream(bytes))) {
-                    descriptions.ForEach(delegate(TypeDescription d) { result.Add(Util.decodeSafe(d, reader)); });
+                    descriptions.ForEach(delegate(FieldInfo d) { result.Add(Util.decodeSafe(d, reader)); });
                 }
                 return result;
             }
@@ -34,10 +35,10 @@ namespace DecodeTool {
             get {
                 int count = 0;
                 using (BinaryReader reader = new BinaryReader(new MemoryStream(bytes))) {
-                    foreach (TypeDescription d in descriptions) {
+                    foreach (FieldInfo d in descriptions) {
                         try {
                             string decoded = d.Decode(reader);
-                            count += d.GetLength(decoded);
+                            count += d.Length(decoded);
                         } catch {
                             break;
                         }
@@ -46,7 +47,7 @@ namespace DecodeTool {
                 return count;
             }
         }
-        public void addType(TypeDescription type) {
+        public void addType(FieldInfo type) {
             descriptions.Add(type);
             ChangeListener();
         }

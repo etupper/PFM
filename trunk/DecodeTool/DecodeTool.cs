@@ -13,8 +13,7 @@ namespace DecodeTool {
         Regex typeRe = new Regex("DBFileTypes_([0-9]*).txt");
 
         byte[] bytes;
-        List<String> fieldNames = new List<string>();
-        List<TypeDescription> types = new List<TypeDescription>();
+        List<FieldInfo> types = new List<FieldInfo>();
         int offset = 0;
         int displayIndex = 0;
         string typeName = "";
@@ -30,18 +29,24 @@ namespace DecodeTool {
 				if (formatted.Length > maxLength) 
 					formatted = formatted.Substring (0, maxLength);
 				hexView.Text = formatted;
+
+                showInPreview();
 			}
 			get {
 				return bytes;
 			}
 		}
-        string TypeName {
+        public string TypeName {
             get { return typeName; }
             set { typeName = value; typeNameLabel.Text = string.Format("Type: {0}", typeName); }
         }
         int Offset {
             get { return offset; }
-            set { offset = value; setSelection(); }
+            set { 
+                offset = value;
+                headerLength.Text = value.ToString();
+                setSelection(); 
+            }
         }
         int KnownByteCount {
             get {
@@ -49,7 +54,7 @@ namespace DecodeTool {
                 if (Bytes != null) {
                     using (BinaryReader reader = new BinaryReader(new MemoryStream(Bytes))) {
                         reader.BaseStream.Position = offset;
-                        types.ForEach(delegate(TypeDescription d) {
+                        types.ForEach(delegate(FieldInfo d) {
                             int temp;
                             Util.decodeSafe(d, reader, out temp); index += temp; 
                         });
@@ -63,43 +68,41 @@ namespace DecodeTool {
         public DecodeTool() {
             InitializeComponent();
 
-            stringType.Type = Types.StringType;
+            stringType.Factory = Types.StringType;
             stringType.Selected += addType;
 
-            intType.Type = Types.IntType;
+            intType.Factory = Types.IntType;
             intType.Selected += addType;
 
-            boolType.Type = Types.BoolType;
+            boolType.Factory = Types.BoolType;
             boolType.Selected += addType;
 
-            singleType.Type = Types.SingleType;
+            singleType.Factory = Types.SingleType;
             singleType.Selected += addType;
 
-            optStringType.Type = Types.OptStringType;
+            optStringType.Factory = Types.OptStringType;
             optStringType.Selected += addType;
         }
 
         #region Type Management
-        private void addType(TypeDescription type) {
+        private void addType(FieldInfo type) {
+            int insertAt = typeList.SelectedIndex;
             if (typeList.SelectedIndex != -1) {
                 types.Insert(typeList.SelectedIndex, type);
-                fieldNames.Insert(typeList.SelectedIndex, "unknown");
             } else {
                 types.Add(type);
-                fieldNames.Add("unknown");
             }
             setSelection();
+            typeList.SelectedIndex = (Math.Max(insertAt - 3, 0));
         }
         private void delete_Click(object sender, EventArgs e) {
             int selectIndex = -1;
             if (typeList.SelectedIndex == -1) {
                 if (types.Count > 0) {
-                    fieldNames.RemoveAt(types.Count - 1);
                     types.RemoveAt(types.Count - 1);
                 }
             } else {
                 selectIndex = typeList.SelectedIndex;
-                fieldNames.RemoveAt(typeList.SelectedIndex);
                 types.RemoveAt(typeList.SelectedIndex);
             }
             setSelection();
@@ -128,7 +131,7 @@ namespace DecodeTool {
 				string s;
 				int start = (int)reader.BaseStream.Position;
 				int end = start;
-				types.ForEach (delegate(TypeDescription d) {
+				types.ForEach (delegate(FieldInfo d) {
 					int length;
 					s = Util.decodeSafe (d, reader, out length);
 					typeList.Items.Add (d.TypeName);
@@ -145,9 +148,9 @@ namespace DecodeTool {
 						for (int i = 0; i < assumedEntryCount; i++) {
 							try {
 								uint tempBytes = 0;
-								types.ForEach (delegate(TypeDescription d) { 
+								types.ForEach (delegate(FieldInfo d) { 
 									s = d.Decode (reader); 
-									tempBytes += (uint)d.GetLength (s); 
+									tempBytes += (uint)d.Length (s); 
 								});
 								totalBytes += tempBytes;
 							} catch (Exception x) {
@@ -180,7 +183,7 @@ namespace DecodeTool {
         private void skipToCurrentEntry(BinaryReader reader) {
             reader.BaseStream.Position = offset;
             for (int i = 0; i < displayIndex; i++) {
-                types.ForEach(delegate(TypeDescription d) {
+                types.ForEach(delegate(FieldInfo d) {
                     Util.decodeSafe(d, reader);
                 });
             }
@@ -198,42 +201,36 @@ namespace DecodeTool {
 			OpenFileDialog dlg = new OpenFileDialog ();
 			if (dlg.ShowDialog () == DialogResult.OK) {
 				types.Clear ();
-				fieldNames.Clear ();
 				offset = 0;
 				Bytes = File.ReadAllBytes (dlg.FileName);
 				string dir = Path.GetDirectoryName (dlg.FileName);
 				TypeName = Path.GetFileName (dir).Replace ("_tables", "").Trim ();
-				string parent = Path.GetDirectoryName (dir);
-				int maxVersion = -1;
-				foreach (string typeFile in Directory.EnumerateFiles(parent, "DBFileType*")) {
-					Match m = typeRe.Match (typeFile);
-					int version = int.Parse (m.Groups [1].Value);
-					if (version > maxVersion) {
-						SortedDictionary<string, TypeInfo> infos = DBTypeMap.getTypeMapFromFile (typeFile);
-						if (infos.ContainsKey (TypeName)) {
-							TypeInfo info = infos [TypeName];
-							fieldNames.Clear ();
-							types = Util.Convert (info, ref fieldNames);
-						}
-					}
-				}
-				setSelection ();
+                showInPreview();
 			}
 		}
 
         private void loadToolStripMenuItem_Click(object sender, EventArgs e) {
             OpenFileDialog dlg = new OpenFileDialog();
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
-                SortedDictionary<string, TypeInfo> infos = DBTypeMap.getTypeMapFromFile(dlg.FileName);
-                if (infos.ContainsKey(TypeName)) {
-                    TypeInfo info = infos[TypeName];
-                    fieldNames.Clear();
-                    types = Util.Convert(info, ref fieldNames);
-                    setSelection();
-                }
+                DBTypeMap.Instance.initializeFromFile(dlg.FileName);
+                showInPreview();
             }
         }
         #endregion
+
+        void showInPreview() {
+            if (bytes == null) {
+                return;
+            }
+            using (MemoryStream stream = new MemoryStream(bytes)) {
+                DBFileHeader header = PackedFileDbCodec.readHeader(stream);
+                if (DBTypeMap.Instance.IsSupported(TypeName)) {
+                    TypeInfo info = DBTypeMap.Instance[TypeName, header.Version];
+                    types = info.fields;
+                }
+                Offset = header.Length;
+            }
+        }
 
         #region Browsing
         private void goStart_Click(object sender, EventArgs e) {
@@ -261,7 +258,7 @@ namespace DecodeTool {
                 int i = displayIndex;
                 try {
                     for (i = 0; i < assumedEntryCount; i++) {
-                        types.ForEach(delegate(TypeDescription d) {
+                        types.ForEach(delegate(FieldInfo d) {
                             d.Decode(reader);
                         });
                     }
@@ -277,17 +274,15 @@ namespace DecodeTool {
             int newValue = Offset;
             if (int.TryParse(headerLength.Text, out newValue)) {
                 Offset = newValue;
-            } else {
-                headerLength.Text = offset.ToString();
             }
         }
 
         private void showTypes_Click(object sender, EventArgs e) {
 			StringBuilder builder = new StringBuilder ();
 			builder.AppendLine ().AppendLine ();
-			builder.AppendLine (string.Format ("{0}\t{1};", TypeName, Util.ToString (fieldNames [0], types [0])));
+			builder.AppendLine (string.Format ("{0}\t{1};", TypeName, Util.ToString (types[0].Name, types [0])));
 			for (int i = 1; i < types.Count; i++) {
-				string toAppend = Util.ToString (fieldNames [i], types [i]) + (i == types.Count - 1 ? "" : ";");
+				string toAppend = Util.ToString (types [i].Name, types [i]) + (i == types.Count - 1 ? "" : ";");
 				builder.AppendLine (toAppend);
 			}
 			string text = builder.ToString ();
@@ -301,11 +296,11 @@ namespace DecodeTool {
         private void more1ToolStripMenuItem_Click(object sender, EventArgs e) {
             if (typeList.SelectedIndex != -1) {
                 int selected = typeList.SelectedIndex;
-                if (types[typeList.SelectedIndex] == Types.BoolType) {
-                    types[typeList.SelectedIndex] = Types.OptStringType;
+                if (types[typeList.SelectedIndex].TypeName == "boolean") {
+                    types[typeList.SelectedIndex] = Types.FromTypeName("optstring") ;
                     setSelection();
-                } else if (types[typeList.SelectedIndex] == Types.OptStringType) {
-                    types[typeList.SelectedIndex] = Types.BoolType;
+                } else if (types[typeList.SelectedIndex].TypeName == "optstring") {
+                    types[typeList.SelectedIndex] = Types.FromTypeName("boolean");
                     setSelection();
                 }
                 typeList.SelectedIndex = selected;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -9,20 +10,27 @@ using System.Windows.Forms;
 
 namespace DecodeTool {
     public partial class TypeSelection : UserControl {
-        TypeDescription type;
-        public TypeDescription Type {
+        public delegate FieldInfo TypeFactory();
+
+        TypeFactory factory;
+
+        public FieldInfo Type {
             get {
-                return type;
+                return factory != null ? factory() : null;
             }
             set {
-                type = value;
-                if (value != null) {
-                    label.Text = value.TypeName;
-                }
+                // set via factory method
             }
         }
 
-        public delegate void selection(TypeDescription type);
+        public TypeFactory Factory {
+            set {
+                factory = value;
+                label.Text = factory != null ? factory().TypeName : "type";
+            }
+        }
+
+        public delegate void selection(FieldInfo type);
         public event selection Selected;
 
         public void ShowPreview(BinaryReader bytes) {

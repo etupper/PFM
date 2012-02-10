@@ -1,5 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Common
 {
@@ -15,66 +16,18 @@ namespace Common
 
         public FieldInfo Info { get; private set; }
 
-        public string Value { get;  set; }
+        public string Value { get; set; }
 
-        public static FieldInstance createInstance(FieldInfo info)
-        {
-            FieldInstance result = null;
-            switch (info.type)
-            {
-                case PackTypeCode.Empty:
-                    List<string> list2 = new List<string>();
-                    int num = 0;
-                    while (num < info.length)
-                    {
-                        list2.Add("00");
-                        num++;
-                    }
-                    result = new FieldInstance(info, string.Join(" ", list2.ToArray()));
-                    break;
-
-                case PackTypeCode.Object:
-                case PackTypeCode.DBNull:
-                case PackTypeCode.Char:
-                case PackTypeCode.SByte:
-                case PackTypeCode.Byte:
-                case PackTypeCode.Decimal:
-                case PackTypeCode.DateTime:
-                case (PackTypeCode.DateTime | PackTypeCode.Object):
-                    {
-                        break;
-                    }
-                case PackTypeCode.Boolean:
-                    {
-                        result = new FieldInstance(info, "False");
-                        break;
-                    }
-                case PackTypeCode.Int16:
-                case PackTypeCode.UInt16:
-                case PackTypeCode.Int32:
-                case PackTypeCode.UInt32:
-                case PackTypeCode.Int64:
-                case PackTypeCode.UInt64:
-                case PackTypeCode.Single:
-                case PackTypeCode.Double:
-                    {
-                        result = new FieldInstance(info, "0");
-                        break;
-                    }
-                case PackTypeCode.String:
-                case PackTypeCode.StringContainer:
-                    {
-                        result = new FieldInstance(info, string.Empty);
-                        break;
-                    }
-                default:
-                    {
-                        result = null;
-                        break;
-                    }
-            }
-            return result;
-        }
+		public override bool Equals(object o) {
+			bool result = o is FieldInstance;
+			if (result) {
+				result = Value.Equals ((o as FieldInstance).Value);
+			}
+			return result;
+		}
+		public override int GetHashCode() {
+			return 2 * Info.GetHashCode () + 3 * Value.GetHashCode ();
+		}
     }
 }
 

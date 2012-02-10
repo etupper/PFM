@@ -6,7 +6,7 @@
     using System.Runtime.InteropServices;
     using System.Text;
 
-    [DebuggerDisplay("{offset}@{Filepath}")]
+    [DebuggerDisplay("{Filepath}@{offset}")]
     public class PackedFile
     {
         private PackAction action;
@@ -116,10 +116,8 @@
             }
         }
 
-        public string Filepath
-        {
-            get
-            {
+        public string Filepath {
+            get {
                 return this.filepath;
             }
         }
