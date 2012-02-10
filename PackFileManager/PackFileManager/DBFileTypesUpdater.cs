@@ -15,9 +15,9 @@ namespace PackFileManager
         static Regex FileTypeRegex = new Regex("<a href=\".*(attachmentid=[^\"]*)\"[^>]*>schema_([0-9]*).zip</a>.*</td>");
         static Regex SwVersionRegex = new Regex(@"Update.*Pack File Manager ([0-9]*\.[0-9]*(\.[0-9]*)?)");
         static Comparer<string> comparator = new BuildVersionComparator();
-        static string VERSION_FILE = "version";
+        static string VERSION_FILE = "xmlversion";
 
-        public static bool checkVersion(string basePath, ref string swVersion)
+        public static bool checkVersion(string targetDir, ref string swVersion)
         {
             // read the delivery announcement thread page into a string
             bool result = false;
@@ -55,7 +55,6 @@ namespace PackFileManager
             }
 
             // check if we have already the same version as we found on the page
-            string targetDir = Path.Combine(basePath, DBTypeMap.DB_FILE_TYPE_DIR_NAME);
             bool needsUpdate = true;
             if (Directory.Exists(targetDir) && File.Exists(VERSION_FILE))
             {
@@ -76,7 +75,7 @@ namespace PackFileManager
             {
                 // download most current zipfile
                 string dlUrl = string.Format("http://www.twcenter.net/forums/attachment.php?{0}", highestUrl);
-                string zipfile = string.Format("DBFileTypes_{0}.zip", highestVersion);
+                string zipfile = string.Format("schema_{0}.zip", highestVersion);
 
                 FileStream outfile = File.OpenWrite(zipfile);
                 request = (HttpWebRequest)WebRequest.Create(dlUrl);

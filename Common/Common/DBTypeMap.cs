@@ -6,8 +6,6 @@ using System.Collections.Generic;
 namespace Common {
     public class DBTypeMap {
         static Regex DB_FILE_TYPE_PATTERN = new Regex("DBFileTypes_([0-9]*).txt");
-        public static readonly string DB_FILE_TYPE_DIR_NAME = "DBFileTypes";
-        public static readonly string DB_TYPE_USER_DIR_NAME = "DBFileTypes_user";
         public static readonly string SCHEMA_FILE_NAME = "schema.xml";
         public static readonly string SCHEMA_USER_FILE_NAME = "schema_user.xml";
         public SortedDictionary<string, List<FieldInfo>> typeMap = new SortedDictionary<string, List<FieldInfo>>();
