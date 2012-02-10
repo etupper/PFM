@@ -91,7 +91,7 @@ namespace Common {
 			writer.Close ();
 		}
 
-        void writeTable(string name, List<FieldInfo> descriptions) {
+        public void writeTable(string name, List<FieldInfo> descriptions) {
 			Console.WriteLine ("writing table {0}", name);
 			writer.WriteLine ("  <table name='{0}_tables'>", name);
 			foreach (FieldInfo description in descriptions) {
@@ -114,7 +114,18 @@ namespace Common {
 				writer.WriteLine (builder.ToString ());
 			}
 			writer.WriteLine ("  </table>");
+            writer.Flush();
 		}
+
+        public static string tableToString(string name, List<FieldInfo> description) {
+            string result = "";
+            using (StreamReader reader = new StreamReader(new MemoryStream())) {
+                new XmlExporter(reader.BaseStream).writeTable(name, description);
+                reader.BaseStream.Position = 0;
+                result = reader.ReadToEnd();
+            }
+            return result;
+        }
     }
 }
 

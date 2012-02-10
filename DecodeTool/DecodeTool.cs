@@ -93,7 +93,7 @@ namespace DecodeTool {
                 types.Add(type);
             }
             setSelection();
-            typeList.SelectedIndex = (Math.Max(insertAt - 3, 0));
+            if (insertAt != -1) { typeList.SelectedIndex = insertAt; }
         }
         private void delete_Click(object sender, EventArgs e) {
             int selectIndex = -1;
@@ -278,16 +278,7 @@ namespace DecodeTool {
         }
 
         private void showTypes_Click(object sender, EventArgs e) {
-			StringBuilder builder = new StringBuilder ();
-			builder.AppendLine ().AppendLine ();
-			builder.AppendLine (string.Format ("{0}\t{1};", TypeName, Util.ToString (types[0].Name, types [0])));
-			for (int i = 1; i < types.Count; i++) {
-				string toAppend = Util.ToString (types [i].Name, types [i]) + (i == types.Count - 1 ? "" : ";");
-				builder.AppendLine (toAppend);
-			}
-			string text = builder.ToString ();
-			File.WriteAllText ("temp.txt", text);
-			Console.WriteLine (text);
+            string text = XmlExporter.tableToString(TypeName, types);
 			TextDisplay d = new TextDisplay (text);
 			d.ShowDialog ();
 		}
@@ -335,6 +326,16 @@ namespace DecodeTool {
                 long pos = reader.BaseStream.Position;
                 showPreview(reader, pos);
                 color((int) pos, 1, Color.DarkRed);
+            }
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e) {
+            SaveFileDialog dlg = new SaveFileDialog();
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+                using (FileStream stream = File.OpenWrite(dlg.FileName)) {
+                    XmlExporter exporter = new XmlExporter(stream);
+                    exporter.export(DBTypeMap.Instance.typeMap);
+                }
             }
         }
     }
