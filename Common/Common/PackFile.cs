@@ -189,7 +189,7 @@ namespace Common
                         filename = string.Format("{0}_{1}", builder2, j++);
                     }
 					string packedFileName = builder2.ToString();
-                    this.fileList.Add(packedFileName, new PackedFile(this, size, filename, (ulong) offset));
+                    this.fileList.Add(filename, new PackedFile(this, size, packedFileName, (ulong) offset));
                     offset += size;
                     num8 += num10;
                     this.OnPackedFileLoaded();
@@ -229,25 +229,19 @@ namespace Common
             return this.fileList.TryGetValue(filepath, out packedFile);
         }
 
-        private void writeToFile(string filepath)
-        {
-            using (BinaryWriter writer = new BinaryWriter(new FileStream(filepath, FileMode.Create), Encoding.ASCII))
-            {
+        private void writeToFile(string filepath) {
+			using (BinaryWriter writer = new BinaryWriter(new FileStream(filepath, FileMode.Create), Encoding.ASCII)) {
                 writer.Write(header.PackIdentifier.ToCharArray());
                 writer.Write((int)header.Type);
                 writer.Write((int)header.Version);
-                writer.Write((int)header.ReplacedPackFileName.Length);
+				writer.Write ((int)header.ReplacedPackFileName.Length+1);
                 uint fileCount = 0;
                 UInt32 indexSize = 0;
-                foreach (PackedFile file in this.fileList.Values)
-                {
-                    if (file.Action is PackedFile.RenamePackAction)
-                    {
+				foreach (PackedFile file in this.fileList.Values) {
+					if (file.Action is PackedFile.RenamePackAction) {
                         fileCount++;
                         indexSize += (uint) ((file.Action as PackedFile.RenamePackAction).filepath.Length + 5);
-                    }
-                    else if (!(file.Action is PackedFile.DeleteFilePackAction))
-                    {
+					} else if (!(file.Action is PackedFile.DeleteFilePackAction)) {
                         fileCount++;
                         indexSize += (uint) (file.Filepath.Length + 5);
                     }
@@ -256,64 +250,59 @@ namespace Common
                 writer.Write(indexSize);
 
                 // File Time
-                if (header.PackIdentifier == "PFH2" || header.PackIdentifier == "PFH3")
-                {
+				if (header.PackIdentifier == "PFH2" || header.PackIdentifier == "PFH3") {
 	                Int64 fileTime = DateTime.Now.ToFileTimeUtc();
                     writer.Write(fileTime);
                 }
 
                 // Write File Names stored from opening the file
-                if (header.ReplacedPackFileName.Length > 0)
-                {
+				if (header.ReplacedPackFileName.Length > 0) {
                     writer.Write(header.ReplacedPackFileName.ToCharArray());
+					writer.Write ((byte)0);
                 }
 
-                foreach (PackedFile file in this.fileList.Values)
-                {
-                    if (file.Action is PackedFile.RenamePackAction)
-                    {
+				foreach (PackedFile file in this.fileList.Values) {
+					if (file.Action is PackedFile.RenamePackAction) {
                         writer.Write(file.Size);
                         writer.Write((file.Action as PackedFile.RenamePackAction).filepath.ToCharArray());
                         writer.Write('\0');
-                    }
-                    else if (file.Action is PackedFile.ReplaceFilePackAction)
-                    {
+					} else if (file.Action is PackedFile.ReplaceFilePackAction) {
                         writer.Write((int)new FileInfo((file.Action as PackedFile.ReplaceFilePackAction).filepath).Length);
                         writer.Write(file.Filepath.ToCharArray());
                         writer.Write('\0');
-                    }
-                    else if (!(file.Action is PackedFile.DeleteFilePackAction))
-                    {
+					} else if (!(file.Action is PackedFile.DeleteFilePackAction)) {
                         writer.Write(file.Size);
                         writer.Write(file.Filepath.ToCharArray());
                         writer.Write('\0');
                     }
                 }
-                foreach (PackedFile file in this.fileList.Values)
-                {
-                    if (file.Size > 0)
-                    {
-                        writer.Write(file.Data);
+				foreach (PackedFile file in this.fileList.Values) {
+					if (file.Size > 0) {
+						byte[] bytes = file.Data;
+						writer.Write (bytes);
                     }
                 }
             }
         }
 
-        public int FileCount
-        {
-            get
-            {
+		public int FileCount {
+			get {
                 return this.fileList.Capacity;
             }
         }
 
-        public ReadOnlyCollection<PackedFile> FileList
-        {
-            get
-            {
+		public ReadOnlyCollection<PackedFile> FileList {
+			get {
                 return new ReadOnlyCollection<PackedFile>(this.fileList.Values);
             }
+  
         }
+
+		public PFHeader Header {
+			get { 
+				return header;
+			}
+		}
 
         public string Filepath
         {
@@ -351,11 +340,9 @@ namespace Common
             }
         }
 
-        public PackType Type
-        {
-            get
-            {
-                return header.Type;
+        public PackType Type {
+			get {
+				return header.Type;
             }
             set
             {

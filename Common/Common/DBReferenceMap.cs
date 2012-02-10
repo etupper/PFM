@@ -4,28 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Common
-{
-	public class DBReferenceMap
-	{
-        static Regex REFERENCE_LINE = new Regex("([^:]*):([^ ]*) - ([^:]*):(.*)");
-        
+namespace Common {
+    public class DBReferenceMap {
         public static readonly DBReferenceMap Instance = new DBReferenceMap();
-
-        public Dictionary<string, List<TableReference>> references = new Dictionary<string, List<TableReference>>();
-        Dictionary<KeyValuePair<string,int>, SortedSet<string>> valueCache = new Dictionary<KeyValuePair<string,int>,SortedSet<string>>();
+        Dictionary<string, SortedSet<string>> valueCache = new Dictionary<string,SortedSet<string>> ();
         PackFile lastPack = null;
 
-        private DBReferenceMap() { }
+        private DBReferenceMap () {
+        }
 
-        PackFile LastPack
-        {
+        PackFile LastPack {
             get { return lastPack; }
-            set
-            {
+            set {
                 if ((value != null && lastPack != null) && 
-                    (value.Filepath != lastPack.Filepath))
-                {
+                    (value.Filepath != lastPack.Filepath)) {
                     // clear cache when using another pack file
                     valueCache.Clear();
                 }
@@ -33,55 +25,20 @@ namespace Common
             }
         }
 
-        public void load(string directory)
-        {
-            string filename = Path.Combine(directory, DBTypeMap.DB_FILE_TYPE_DIR_NAME, "references.txt");
-            references.Clear();
-            LastPack = null;
-            foreach (string line in File.ReadAllLines(filename))
-            {
-                try
-                {
-                    if (line.StartsWith("#"))
-                        continue;
-                    Match m = REFERENCE_LINE.Match(line);
-                    TableReference reference = new TableReference { 
-                        fromMap = m.Groups[1].Value, fromIndex = int.Parse(m.Groups[2].Value),
-                        toMap = m.Groups[3].Value, toIndex = int.Parse(m.Groups[4].Value)
-                    };
-                    List<TableReference> referenceList = null;
-                    if (!references.TryGetValue(reference.fromMap, out referenceList))
-                    {
-                        referenceList = new List<TableReference>();
-                        references.Add(reference.fromMap, referenceList);
-                    }
-                    referenceList.Add(reference);
-                }
-                catch (Exception x) {
-                    Console.WriteLine("{0}", x.Message);
-                }
-            }
-        }
-        public void validateReferences(string directory, PackFile pack)
-        {
+        /*
+        public void validateReferences(string directory, PackFile pack) {
             LastPack = pack;
             // verify dependencies
-            foreach (string fromMap in references.Keys)
-            {
-                foreach (TableReference reference in references[fromMap])
-                {
-                    if (reference.fromMap == "ancillary_to_effects")
-                    {
+            foreach (string fromMap in references.Keys) {
+                foreach (TableReference reference in references[fromMap]) {
+                    if (reference.fromMap == "ancillary_to_effects") {
                         Console.WriteLine("ok");
                     }
-                    SortedSet<string> values = collectValues(reference.fromIndex, reference.fromMap, pack);
-                    SortedSet<string> allowed = collectValues(reference.toIndex, reference.toMap, pack);
-                    if (values != null && allowed != null)
-                    {
-                        foreach (string val in values)
-                        {
-                            if (val != "" && !allowed.Contains(val))
-                            {
+                    SortedSet<string> values = collectValues (reference.fromMap, pack);
+                    SortedSet<string> allowed = collectValues (reference.toMap, pack);
+                    if (values != null && allowed != null) {
+                        foreach (string val in values) {
+                            if (val != "" && !allowed.Contains (val)) {
                                 Console.WriteLine("value '{0}' in {1}:{2} does not fulfil reference {3}:{4}",
                                     val, reference.fromMap, reference.fromIndex, reference.toMap, reference.toIndex);
                             }
@@ -90,70 +47,54 @@ namespace Common
                 }
             }
         }
-        SortedSet<string> collectValues(int index, string reference, PackFile pack)
-        {
-            if (pack != lastPack)
-            {
+         * */
+
+        SortedSet<string> collectValues(string reference, PackFile pack) {
+			if (pack != lastPack) {
                 lastPack = pack;
             }
-            string dbFileName = string.Format(@"db\{0}_tables\{0}", reference);
-
             SortedSet<string> result = new SortedSet<string>();
-            if (valueCache.TryGetValue(new KeyValuePair<string, int>(dbFileName, index), out result))
-            {
+			if (valueCache.TryGetValue (reference, out result)) {
                 return result;
             }
-            foreach (PackedFile file in pack.FileList)
-            {
-                if (file.Filepath == dbFileName)
-                {
+            string[] split = reference.Split('.');
+			string dbFileName = split[0];
+            string fieldName = split[1];
+            string dbFilePath = Path.Combine("db", dbFileName);
+
+			foreach (PackedFile file in pack.FileList) {
+				if (file.Filepath.StartsWith(dbFilePath)) {
 					string type = DBFile.typename(file.Filepath);
                     result = new SortedSet<string>();
-                    DBFile dbFile = new DBFile(file, type);
-                    foreach (List<FieldInstance> entry in dbFile.Entries)
-                    {
+					DBFile dbFile = new PackedFileDbCodec(file).readDbFile (file.Data);
+                    int index = -1;
+                    for (int i = 0; i < dbFile.CurrentType.fields.Count; i++) {
+                        if (dbFile.CurrentType.fields[i].Name.Equals(fieldName)) {
+                            index = i;
+                            break;
+                        }
+                    }
+                    if (index == -1) {
+                        return null;
+                    }
+					foreach (List<FieldInstance> entry in dbFile.Entries) {
                         string toAdd = entry[index].Value;
-                        if (toAdd != null)
-                        {
+						if (toAdd != null) {
                             result.Add(toAdd);
                         }
                     }
                 }
             }
-            valueCache.Add(new KeyValuePair<string, int>(dbFileName, index), result);
+			valueCache.Add (reference, result);
             return result;
         }
 
-        public SortedSet<string> resolveFromPackFile(string key, int index, PackFile packFile)
-        {
+        public SortedSet<string> resolveFromPackFile(string key, PackFile packFile) {
             LastPack = packFile;
-            SortedSet<string> result = null;
-            if (references.ContainsKey(key))
-            {
-                TableReference toResolve = null;
-                foreach (TableReference tr in references[key])
-                {
-                    if (tr.fromIndex == index)
-                    {
-                        toResolve = tr;
-                        break;
-                    }
-                }
-                if (toResolve == null) 
+            if (key.Length == 0) {
                     return null;
-
-                result = collectValues(toResolve.toIndex, toResolve.toMap, packFile);
             }
-            return result;
+            return collectValues (key, packFile);
         }
 	}
-
-    public class TableReference
-    {
-//        public string Name { get; set; }
-        public string fromMap { get; set; }
-        public int fromIndex { get; set; }
-        public string toMap { get; set; }
-        public int toIndex { get; set; }
     }
-}

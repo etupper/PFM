@@ -111,12 +111,16 @@ namespace PackFileManager
         {
             this.InitializeComponent();
 
-            if (Settings.Default.UpdateOnStartup)
-            {
+			string ShogunTotalWarDirectory = null;
+			try {
+				if (Settings.Default.UpdateOnStartup) {
                 tryUpdate(false);
             }
 
-            string ShogunTotalWarDirectory = IOFunctions.GetShogunTotalWarDirectory();
+				ShogunTotalWarDirectory = IOFunctions.GetShogunTotalWarDirectory ();
+			} catch {
+				ShogunTotalWarDirectory = ".";
+			}
             if (string.IsNullOrEmpty(ShogunTotalWarDirectory))
             {
                 if ((args.Length != 1) || !File.Exists(args[0]))
@@ -284,7 +288,11 @@ namespace PackFileManager
                         node.Parent.BackColor = Color.Yellow;
                         node.BackColor = Color.Yellow;
                     }
+                    if (!node.Parent.Text.Contains("version")) {
+                        DBFileHeader header = PackedFileDbCodec.readHeader(file2);
+                        node.Parent.Text = string.Format("{0} - version {1}", node.Parent.Text, header.Version);
                 }
+            }
             }
             catch (Exception x) {
 //                Console.WriteLine(x);
@@ -712,12 +720,12 @@ namespace PackFileManager
             this.openDBFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.exportUnknownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packActionMenuStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            // ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.packActionToolStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            // ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
@@ -1346,11 +1354,11 @@ namespace PackFileManager
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            // ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.packActionToolStrip.ResumeLayout(false);
             this.packActionToolStrip.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            // ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.statusStrip.ResumeLayout(false);
@@ -1811,29 +1819,26 @@ namespace PackFileManager
             }
         }
 
-        public override void Refresh()
-        {
+        public override void Refresh() {
             Dictionary<string, bool> dictionary = new Dictionary<string, bool>();
-            foreach (TreeNode node in this.getTreeViewBranch(this.packTreeView.Nodes))
-            {
+			foreach (TreeNode node in this.getTreeViewBranch(this.packTreeView.Nodes)) {
                 dictionary[node.Text] = node.IsExpanded;
             }
             string str = (this.packTreeView.SelectedNode != null) ? this.packTreeView.SelectedNode.FullPath : "";
             this.packTreeView.Nodes.Clear();
+			if (currentPackFile == null) {
+				return;
+			}
             TreeNode node2 = this.packTreeView.Nodes.Add(Path.GetFileName(this.currentPackFile.Filepath));
             node2.Expand();
-            foreach (PackedFile file in this.currentPackFile.FileList)
-            {
+			foreach (PackedFile file in this.currentPackFile.FileList) {
                 this.addTreeViewNodeByPath(node2, file);
             }
-            foreach (TreeNode node in this.getTreeViewBranch(this.packTreeView.Nodes))
-            {
-                if (!(!dictionary.ContainsKey(node.Text) ? true : !dictionary[node.Text]))
-                {
+			foreach (TreeNode node in this.getTreeViewBranch(this.packTreeView.Nodes)) {
+				if (!(!dictionary.ContainsKey (node.Text) ? true : !dictionary [node.Text])) {
                     node.Expand();
                 }
-                if (node.FullPath == str)
-                {
+				if (node.FullPath == str) {
                     this.packTreeView.SelectedNode = node;
                 }
             }
@@ -2040,7 +2045,6 @@ namespace PackFileManager
                 if (update)
                 {
                     DBTypeMap.Instance.initializeTypeMap(path);
-                    DBReferenceMap.Instance.load(path);
                 }
                 if (version != Application.ProductVersion)
                 {
@@ -2068,31 +2072,27 @@ namespace PackFileManager
         {
             string path = Path.GetDirectoryName(Application.ExecutablePath);
             DBTypeMap.Instance.initializeTypeMap(path);
-            DBReferenceMap.Instance.load(path);
             MessageBox.Show("DB File Definitions reloaded.");
         }
 
         bool canShow(PackedFile packedFile, out string display)
         {
             bool result = true;
-            string key = Path.GetFileName(Path.GetDirectoryName(packedFile.Filepath));
-            if (key.Contains("_tables"))
-            {
-                key = key.Remove(key.LastIndexOf('_'), 7);
-            }
+            string key = DBFile.typename(packedFile.Filepath);
             if (DBTypeMap.Instance.IsSupported(key))
             {
                 try
                 {
-                    DBFile currentDBFile = new DBFile(packedFile, key, false);
-                    if (currentDBFile.TotalwarHeaderVersion > DBTypeMap.Instance.MaxVersion(key))
+                    DBFileHeader header = PackedFileDbCodec.readHeader(packedFile);
+                    int maxVersion = DBTypeMap.Instance.MaxVersion(key);
+                    if (maxVersion != 0 && header.Version > maxVersion)
                     {
-                        display = string.Format("{0}: needs {1}, has {2}", key, currentDBFile.TotalwarHeaderVersion, DBTypeMap.Instance.MaxVersion(key));
+                        display = string.Format("{0}: needs {1}, has {2}", key, header.Version, DBTypeMap.Instance.MaxVersion(key));
                         result = false;
                     }
                     else
                     {
-                        display = string.Format("Version: {0}", currentDBFile.TotalwarHeaderVersion);
+                        display = string.Format("Version: {0}", header.Version);
                     }
                 }
                 catch (Exception x)
@@ -2109,23 +2109,11 @@ namespace PackFileManager
         }
         private static bool headerVersionObsolete(PackedFile packedFile)
         {
-            int version = -1;
-            List<TypeInfo> type = null;
-            try
-            {
-                string key = DBFile.typename(packedFile.Filepath);
-                // do we have a definition at all?
-                if (DBTypeMap.Instance.IsSupported(key))
-                {
-                    DBFile currentDBFile = new DBFile(packedFile, key, false);
-                    version = currentDBFile.TotalwarHeaderVersion;
+            DBFileHeader header = PackedFileDbCodec.readHeader(packedFile);
+			string type = DBFile.typename(packedFile.Filepath);
+            int maxVersion = DBTypeMap.Instance.MaxVersion(type);
+			return DBTypeMap.Instance.IsSupported(type) && maxVersion != 0 && (header.Version < maxVersion);
                 }
-            }
-            catch (Exception x) {
-                Console.WriteLine(x);
-            }
-            return version != -1 && version < type.Count-1;
-        }
 
         private void updateOnStartupToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -2140,20 +2128,21 @@ namespace PackFileManager
                 string key = DBFile.typename(packedFile.Filepath);
                 if (DBTypeMap.Instance.IsSupported(key))
                 {
-                    DBFile dbFile = new DBFile(packedFile, key, false);
-                    if (dbFile.TotalwarHeaderVersion <= DBTypeMap.Instance.MaxVersion(key))
+                    int maxVersion = DBTypeMap.Instance.MaxVersion(key);
+					DBFileHeader header = PackedFileDbCodec.readHeader(packedFile);
+                    if (header.Version < maxVersion)
                     {
                         // found a more recent db definition; read data from db file
-                        DBFile updatedFile = new DBFile(packedFile, key, true);
+                        DBFile updatedFile = new PackedFileDbCodec(packedFile).readDbFile(packedFile.Data);
 
                         // identify FieldInstances missing in db file
                         TypeInfo dbFileInfo = updatedFile.CurrentType;
-                        TypeInfo targetInfo = DBTypeMap.Instance[key, DBTypeMap.Instance.MaxVersion(key)];
+                        TypeInfo targetInfo = DBTypeMap.Instance[key, maxVersion];;
                         for (int i = dbFileInfo.fields.Count; i < targetInfo.fields.Count; i++)
                         {
                             foreach (List<FieldInstance> entry in updatedFile.Entries)
                             {
-                                FieldInstance field = FieldInstance.createInstance(targetInfo.fields[i]);
+                                FieldInstance field = new FieldInstance(targetInfo.fields[i], targetInfo.fields[i].DefaultValue);
                                 if (field != null)
                                 {
                                     entry.Add(field);
@@ -2164,7 +2153,7 @@ namespace PackFileManager
                                 }
                             }
                         }
-                        updatedFile.TotalwarHeaderVersion = DBTypeMap.Instance.MaxVersion(key);
+                        updatedFile.header.Version = maxVersion;
                         packedFile.ReplaceData(updatedFile.GetBytes());
 
                         if (dbFileEditorControl.currentPackedFile == packedFile)
@@ -2185,15 +2174,15 @@ namespace PackFileManager
         {
             try
             {
-                if (DBTypeMap.Instance.saveToFile(Path.GetDirectoryName(Application.ExecutablePath)))
-                {
-                    string message = "You just created a new directory for your own DB definitions.\n" +
-                        "This means that these will be used instead of the ones received in updates from TWC.\n" +
-                        "Once you have uploaded your changes and they have been integrated,\n" +
-                        "please delete the folder DBFileTypes_user.";
-                    MessageBox.Show(message, "New User DB Definitions created", MessageBoxButtons.OK, MessageBoxIcon.Information);
+//                if (DBTypeMap.Instance.saveToFile(Path.GetDirectoryName(Application.ExecutablePath)))
+//                {
+//                    string message = "You just created a new directory for your own DB definitions.\n" +
+//                        "This means that these will be used instead of the ones received in updates from TWC.\n" +
+//                        "Once you have uploaded your changes and they have been integrated,\n" +
+//                        "please delete the folder DBFileTypes_user.";
+//                    MessageBox.Show(message, "New User DB Definitions created", MessageBoxButtons.OK, MessageBoxIcon.Information);
+//                }
                 }
-            }
             catch (Exception x)
             {
                 MessageBox.Show(string.Format("Could not save user db descriptions: {0}\nUser Directory won't be used anymore. A backup has been made.", x.Message));

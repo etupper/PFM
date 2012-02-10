@@ -9,11 +9,8 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
-namespace PackFileManager
-{
-
-    public class DBFileEditorControl : UserControl
-    {
+namespace PackFileManager {
+    public class DBFileEditorControl : UserControl {
         enum COPIED_TYPE {
             NONE,
             ROWS,
@@ -45,38 +42,33 @@ namespace PackFileManager
         private List<List<FieldInstance>> copiedRows = new List<List<FieldInstance>>();
         private COPIED_TYPE lastCopy = COPIED_TYPE.NONE;
 
-        public DBFileEditorControl()
-        {
+        public DBFileEditorControl() {
             this.components = null;
             this.InitializeComponent();
             initTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
             this.dataGridView.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridView.ColumnHeaderMouseClick += dataGridView1_ColumnHeaderMouseClick;
-            this.useFirstColumnAsRowHeader.Checked = Settings.Default.UseFirstColumnAsRowHeader;
-            this.showAllColumns.Checked = Settings.Default.ShowAllColumns;
+            try {
+                this.useFirstColumnAsRowHeader.Checked = Settings.Default.UseFirstColumnAsRowHeader;
+                this.showAllColumns.Checked = Settings.Default.ShowAllColumns;
+            } catch {
+            }
             dataGridView.KeyUp += copyPaste;
-            useComboBoxCells.Checked = Settings.Default.UseComboboxCells;
         }
-        private void copyPaste(object sender, KeyEventArgs arge)
-        {
-            if (currentPackedFile != null)
-            {
-                if (arge.Control)
-                {
-                    if (arge.KeyCode == Keys.C)
-                    {
+
+        private void copyPaste(object sender, KeyEventArgs arge) {
+            if (currentPackedFile != null) {
+                if (arge.Control) {
+                    if (arge.KeyCode == Keys.C) {
                         copyEvent();
-                    }
-                    else if (arge.KeyCode == Keys.V)
-                    {
+                    } else if (arge.KeyCode == Keys.V) {
                         pasteEvent();
                     }
                 }
             }
         }
 
-        private void addNewRowButton_Click(object sender, EventArgs e)
-        {
+        private void addNewRowButton_Click(object sender, EventArgs e) {
             List<FieldInstance> newEntry = this.currentDBFile.GetNewEntry();
             int insertAtColumn = dataGridView.Rows.Count;
             if (dataGridView.CurrentCell != null) {
@@ -85,11 +77,9 @@ namespace PackFileManager
             createRow(newEntry, insertAtColumn);
         }
 
-        private void createRow(List<FieldInstance> newEntry, int index)
-        {
+        private void createRow(List<FieldInstance> newEntry, int index) {
             DataRow row = this.currentDataTable.NewRow();
-            for (int i = 1; i < this.currentDataTable.Columns.Count; i++)
-            {
+            for (int i = 1; i < this.currentDataTable.Columns.Count; i++) {
                 int num2 = Convert.ToInt32(this.currentDataTable.Columns[i].ColumnName);
                 row[i] = Convert.ChangeType(newEntry[num2].Value, this.currentDataTable.Columns[i].DataType);
             }
@@ -98,29 +88,24 @@ namespace PackFileManager
             this.dataGridView.FirstDisplayedScrollingRowIndex = index;
         }
 
-        private void checkBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (dataGridView.Columns.Count > 0)
-            {
+        private void checkBox_CheckedChanged(object sender, EventArgs e) {
+            if (dataGridView.Columns.Count > 0) {
                 this.toggleFirstColumnAsRowHeader(this.useFirstColumnAsRowHeader.Checked);
                 Settings.Default.UseFirstColumnAsRowHeader = this.useFirstColumnAsRowHeader.Checked;
                 Settings.Default.Save();
             }
         }
 
-        private void cloneCurrentRow_Click(object sender, EventArgs e)
-        {
+        private void cloneCurrentRow_Click(object sender, EventArgs e) {
             int num = (this.dataGridView.SelectedRows.Count == 1) ? this.dataGridView.SelectedRows[0].Index : this.dataGridView.SelectedCells[0].RowIndex;
             int index = this.currentDataTable.Rows.IndexOf((this.dataGridView.Rows[num].DataBoundItem as DataRowView).Row);
             DataRow row = this.currentDataTable.NewRow();
             List<FieldInstance> newEntry = this.currentDBFile.GetNewEntry();
             List<FieldInstance> list2 = this.currentDBFile.Entries[index];
-            for (int i = 1; i < this.currentDataTable.Columns.Count; i++)
-            {
+            for (int i = 1; i < this.currentDataTable.Columns.Count; i++) {
                 int num4 = Convert.ToInt32(this.currentDataTable.Columns[i].ColumnName);
                 newEntry[num4].Value = list2[num4].Value;
-                if (!this.currentDataTable.Columns[i].DataType.ToString().Contains("string"))
-                {
+                if (!this.currentDataTable.Columns[i].DataType.ToString().Contains("string")) {
                     row[i] = list2[num4].Value;
                 }
             }
@@ -129,70 +114,56 @@ namespace PackFileManager
             this.dataGridView.FirstDisplayedScrollingRowIndex = this.dataGridView.RowCount - 1;
         }
 
-        private void compatibilityMode_1_0_ToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
-        {
+        private void compatibilityMode_1_0_ToolStripMenuItem_CheckedChanged(object sender, EventArgs e) {
             Settings.Default.Save();
         }
 
-        private void initTypeMap(string path)
-        {
-            try
-            {
+        private void initTypeMap(string path) {
+            try {
                 DBTypeMap.Instance.initializeTypeMap(path);
-                DBReferenceMap.Instance.load(path);
-            }
-            catch (Exception e)
-            {
-                if (MessageBox.Show(string.Format("Could not initialize type map: {0}.\nTry autoupdate?", e.Message), 
-                    "Initialize failed", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes)
-                {
+                //DBTypeMap.Instance.fromXmlSchema(path);
+                //DBReferenceMap.Instance.load (path);
+            } catch (Exception e) {
+                if (MessageBox.Show(string.Format("Could not initialize type map: {0}.\nTry autoupdate?", e.Message),
+                    "Initialize failed", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes) {
                     PackFileManagerForm.tryUpdate();
                 }
             }
         }
 
-        private void copyEvent()
-        {
-            if (currentDBFile == null)
-            {
+        private void copyEvent() {
+            if (currentDBFile == null) {
                 return;
             }
             copiedRows = new List<List<FieldInstance>>();
-            if (dataGridView.SelectedRows.Count != 0)
-            {
+            if (dataGridView.SelectedRows.Count != 0) {
                 DataGridViewSelectedRowCollection selected = dataGridView.SelectedRows;
-                foreach (DataGridViewRow row in selected)
-                {
+                foreach (DataGridViewRow row in selected) {
                     List<FieldInstance> toCopy = currentDBFile.Entries[row.Index];
                     List<FieldInstance> copy = new List<FieldInstance>(toCopy.Count);
                     toCopy.ForEach(field => copy.Add(new FieldInstance(field.Info, field.Value)));
                     copiedRows.Add(copy);
                     lastCopy = COPIED_TYPE.ROWS;
                 }
-            }
-            else
-            {
+            } else {
                 DataGridViewSelectedCellCollection cells = dataGridView.SelectedCells;
                 copiedRows = new List<List<FieldInstance>>();
                 int minColumn = dataGridView.ColumnCount;
                 int maxColumn = -1;
                 int minRow = dataGridView.RowCount;
                 int maxRow = -1;
-                foreach (DataGridViewCell cell in cells)
-                {
+                foreach (DataGridViewCell cell in cells) {
                     minColumn = Math.Min(minColumn, cell.ColumnIndex);
                     maxColumn = Math.Max(maxColumn, cell.ColumnIndex);
                     minRow = Math.Min(minRow, cell.RowIndex);
                     maxRow = Math.Max(maxRow, cell.RowIndex);
                 }
-                for (int j = minRow; j <= maxRow; j++)
-                {
+                for (int j = minRow; j <= maxRow; j++) {
                     DataRowView dataRowView = this.dataGridView.Rows[j].DataBoundItem as DataRowView;
-                    List<FieldInstance> copy = new List<FieldInstance>(maxColumn-minColumn);
-                    for (int i = minColumn; i <= maxColumn; i++)
-                    {
+                    List<FieldInstance> copy = new List<FieldInstance>(maxColumn - minColumn);
+                    for (int i = minColumn; i <= maxColumn; i++) {
                         FieldInfo info = (FieldInfo)dataGridView.Columns[i].Tag;
-                        Console.WriteLine("{1}: {0}", dataRowView[i], info.type);
+                        Console.WriteLine("{1}: {0}", dataRowView[i], info.TypeName);
                         copy.Add(new FieldInstance(info, dataRowView[i].ToString()));
                     }
                     copiedRows.Add(copy);
@@ -202,156 +173,122 @@ namespace PackFileManager
             pasteToolStripButton.Enabled = copiedRows.Count != 0;
         }
 
-        private void copyToolStripButton_Click(object sender, EventArgs e)
-        {
+        private void copyToolStripButton_Click(object sender, EventArgs e) {
             this.copyEvent();
         }
 
-        private void currentDataTable_ColumnChanged(object sender, DataColumnChangeEventArgs e)
-        {
-            if (((this.dataGridView.DataSource != null) && (e.Row.RowState != DataRowState.Detached)) && (Convert.ToInt32(e.Column.ColumnName) != -1))
-            {
+        private void currentDataTable_ColumnChanged(object sender, DataColumnChangeEventArgs e) {
+            if (((this.dataGridView.DataSource != null) && (e.Row.RowState != DataRowState.Detached)) && (Convert.ToInt32(e.Column.ColumnName) != -1)) {
                 object proposedValue = e.ProposedValue;
                 int num = Convert.ToInt32(e.Column.ColumnName);
                 List<FieldInstance> list = this.currentDBFile.Entries[this.currentDataTable.Rows.IndexOf(e.Row)];
                 FieldInstance instance = list[num];
                 string str = (proposedValue == null) ? "" : proposedValue.ToString();
-                if ((num > 0) && (list[num - 1].Info.modifier == FieldInfo.Modifier.NextFieldIsConditional))
-                {
-                    list[num - 1].Value = list[num - 1].Info.GetConditionString(str.Length > 0);
-                }
                 instance.Value = str;
                 this.currentPackedFile.ReplaceData(this.currentDBFile.GetBytes());
             }
         }
 
-        private void currentDataTable_RowDeleted(object sender, DataRowChangeEventArgs e)
-        {
-            if (e.Action != DataRowAction.Delete)
-            {
+        private void currentDataTable_RowDeleted(object sender, DataRowChangeEventArgs e) {
+            if (e.Action != DataRowAction.Delete) {
                 throw new InvalidDataException("wtf?");
             }
             this.currentDBFile.Entries.RemoveAt(this.currentDataTable.Rows.IndexOf(e.Row));
             this.currentPackedFile.ReplaceData(this.currentDBFile.GetBytes());
         }
 
-        private void currentDataTable_TableNewRow(object sender, DataTableNewRowEventArgs e)
-        {
-            if (this.dataGridView.DataSource != null)
-            {
+        private void currentDataTable_TableNewRow(object sender, DataTableNewRowEventArgs e) {
+            if (this.dataGridView.DataSource != null) {
                 this.currentPackedFile.ReplaceData(this.currentDBFile.GetBytes());
             }
         }
 
-        private void dataGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
-        {
-            if ((((this.currentDBFile.CurrentType.fields.Count > 1) && this.useFirstColumnAsRowHeader.Checked) && ((e.ColumnIndex == -1) && (e.RowIndex > -1))) && (e.RowIndex < (this.dataGridView.DataSource as BindingSource).Count))
-            {
+        private void dataGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e) {
+            if ((((this.currentDBFile.CurrentType.fields.Count > 1) && this.useFirstColumnAsRowHeader.Checked) && ((e.ColumnIndex == -1) && (e.RowIndex > -1))) && (e.RowIndex < (this.dataGridView.DataSource as BindingSource).Count)) {
                 e.PaintBackground(e.ClipBounds, false);
                 string s = ((this.dataGridView.DataSource as BindingSource)[e.RowIndex] as DataRowView)[1].ToString();
-                float num = Convert.ToSingle((int) (e.CellBounds.Height - this.dataGridView.DefaultCellStyle.Font.Height)) / 2f;
+                float num = Convert.ToSingle((int)(e.CellBounds.Height - this.dataGridView.DefaultCellStyle.Font.Height)) / 2f;
                 RectangleF cellBounds = e.CellBounds;
                 cellBounds.Inflate(0f, -num);
                 cellBounds.X += 5f;
                 cellBounds.Width -= 5f;
-                using (Graphics graphics = e.Graphics)
-                {
+                using (Graphics graphics = e.Graphics) {
                     graphics.DrawString(s, this.dataGridView.DefaultCellStyle.Font, Brushes.Black, cellBounds);
                 }
                 e.Handled = true;
             }
         }
 
-        private void dataGridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
-        {
+        private void dataGridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e) {
         }
 
-        private void dataGridView_KeyDown(object sender, KeyEventArgs e)
-        {
+        private void dataGridView_KeyDown(object sender, KeyEventArgs e) {
             object selectedCells = this.dataGridView.SelectedCells;
-            if ((Control.ModifierKeys == Keys.Control) && (e.KeyValue == 0x63))
-            {
+            if ((Control.ModifierKeys == Keys.Control) && (e.KeyValue == 0x63)) {
                 Clipboard.SetData(DataFormats.UnicodeText, selectedCells);
             }
-            if ((e.Modifiers == Keys.ControlKey) && (e.KeyCode == Keys.V))
-            {
+            if ((e.Modifiers == Keys.ControlKey) && (e.KeyCode == Keys.V)) {
                 Clipboard.GetData(DataFormats.UnicodeText);
             }
         }
 
-        private void dataGridView_KeyPress(object sender, KeyPressEventArgs e)
-        {
+        private void dataGridView_KeyPress(object sender, KeyPressEventArgs e) {
             object selectedCells = this.dataGridView.SelectedCells;
-            if ((Control.ModifierKeys == Keys.Control) && (e.KeyChar == 'c'))
-            {
+            if ((Control.ModifierKeys == Keys.Control) && (e.KeyChar == 'c')) {
                 Clipboard.SetData(DataFormats.UnicodeText, selectedCells);
             }
-            if ((Control.ModifierKeys == Keys.Control) && (e.KeyChar == 'v'))
-            {
+            if ((Control.ModifierKeys == Keys.Control) && (e.KeyChar == 'v')) {
                 Clipboard.GetData(DataFormats.UnicodeText);
             }
         }
 
-        private void dataGridView_SelectionChanged(object sender, EventArgs e)
-        {
+        private void dataGridView_SelectionChanged(object sender, EventArgs e) {
             this.cloneCurrentRow.Enabled = (this.dataGridView.SelectedRows.Count == 1) || (this.dataGridView.SelectedCells.Count == 1);
         }
 
-        private void DBFileEditorControl_Enter(object sender, EventArgs e)
-        {
+        private void DBFileEditorControl_Enter(object sender, EventArgs e) {
             pasteToolStripButton.Enabled = copiedRows.Count != 0;
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (this.components != null))
-            {
+        protected override void Dispose(bool disposing) {
+            if (disposing && (this.components != null)) {
                 Utilities.DisposeHandlers(this);
                 this.components.Dispose();
             }
             base.Dispose(disposing);
         }
 
-        private void exportButton_Click(object sender, EventArgs e)
-        {
+        private void exportButton_Click(object sender, EventArgs e) {
             SaveFileDialog dialog = new SaveFileDialog {
                 FileName = this.currentDBFile.CurrentType.name + ".tsv"
             };
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                StreamWriter writer = new StreamWriter(dialog.FileName);
-                try
-                {
-                    this.currentDBFile.Export(writer);
-                }
-                catch (DBFileNotSupportedException exception)
-                {
+            if (dialog.ShowDialog() == DialogResult.OK) {
+                Stream stream = new FileStream(dialog.FileName, FileMode.Create);
+                //StreamWriter writer = new StreamWriter (dialog.FileName);
+                try {
+                    new TextDbCodec().writeDbFile(stream, currentDBFile);
+                    stream.Close();
+                    //this.currentDBFile.Export (writer);
+                } catch (DBFileNotSupportedException exception) {
                     this.showDBFileNotSupportedMessage(exception.Message);
-                }
-                finally
-                {
-                    if (writer != null)
-                    {
-                        writer.Dispose();
+                } finally {
+                    if (stream != null) {
+                        stream.Dispose();
                     }
                 }
             }
         }
 
-        private void importButton_Click(object sender, EventArgs e)
-        {
+        private void importButton_Click(object sender, EventArgs e) {
             this.openDBFileDialog.FileName = this.currentDBFile.CurrentType.name + ".tsv";
-            if (this.openDBFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                using (StreamReader reader = new StreamReader(this.openDBFileDialog.FileName))
-                {
-                    try
-                    {
-						string type = DBFile.typename(openDBFileDialog.FileName);
-                        this.currentDBFile.Import(reader, type);
-                    }
-                    catch (DBFileNotSupportedException exception)
-                    {
+            if (this.openDBFileDialog.ShowDialog() == DialogResult.OK) {
+                using (StreamReader reader = new StreamReader(this.openDBFileDialog.FileName)) {
+                    try {
+                        string type = DBFile.typename(openDBFileDialog.FileName);
+                        using (MemoryStream stream = new MemoryStream(File.ReadAllBytes(openDBFileDialog.FileName))) {
+                            this.currentDBFile.Import(new PackedFileDbCodec(currentDBFile.CurrentType).readDbFile(stream));
+                        }
+                    } catch (DBFileNotSupportedException exception) {
                         this.showDBFileNotSupportedMessage(exception.Message);
                     }
                     this.currentPackedFile.ReplaceData(this.currentDBFile.GetBytes());
@@ -360,8 +297,7 @@ namespace PackFileManager
             }
         }
 
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             PackFileManager.Properties.Settings settings3 = new PackFileManager.Properties.Settings();
             this.dataGridView = new System.Windows.Forms.DataGridView();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
@@ -386,8 +322,8 @@ namespace PackFileManager
             // dataGridView
             // 
             this.dataGridView.AllowUserToAddRows = false;
-            this.dataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.dataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -513,8 +449,8 @@ namespace PackFileManager
             // 
             // unsupportedDBErrorTextBox
             // 
-            this.unsupportedDBErrorTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.unsupportedDBErrorTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.unsupportedDBErrorTextBox.Location = new System.Drawing.Point(0, 28);
             this.unsupportedDBErrorTextBox.Multiline = true;
@@ -589,68 +525,61 @@ namespace PackFileManager
 
         }
 
-        DataGridViewColumn createColumn(string columnName, List<FieldInfo> fields, int num, PackFile packFile)
-        {
+        DataGridViewColumn createColumn(string columnName, FieldInfo fieldInfo, PackFile packFile, int fieldCount) {
             DataGridViewColumn column = null;
-            if (Settings.Default.UseComboboxCells && packFile != null)
-            {
+            if (Settings.Default.UseComboboxCells && packFile != null) {
                 string key = Path.GetFileName(currentPackedFile.Filepath).Replace("_tables", "");
-                try
-                {
-                    SortedSet<string> items = DBReferenceMap.Instance.resolveFromPackFile(key, num, packFile);
-                    if (items != null)
-                    {
-                        column = new DataGridViewComboBoxColumn
-                        {
+                try {
+                    SortedSet<string> items = DBReferenceMap.Instance.resolveFromPackFile(fieldInfo.ForeignReference, packFile);
+                    if (items != null) {
+                        column = new DataGridViewComboBoxColumn {
                             DataPropertyName = columnName
                         };
                         DataGridViewComboBoxColumn cb = (DataGridViewComboBoxColumn)column;
                         cb.Items.Add(string.Empty);
-                        foreach (string item in items)
-                        {
+                        foreach (string item in items) {
                             cb.Items.Add(item);
                         }
                     }
-                }
-                catch (Exception x)
-                {
+                } catch (Exception x) {
                     Console.WriteLine(x);
                 }
             }
-            if (column == null)
-            {
+            if (column == null) {
                 column = new DataGridViewAutoFilterTextBoxColumn {
                     DataPropertyName = columnName,
                     AutomaticSortingEnabled = false
                 };
             }
             column.SortMode = DataGridViewColumnSortMode.Programmatic;
-            column.HeaderText = fields[num].name + (Settings.Default.IsColumnIgnored(currentPackedFile.Filepath, fields[num].name) ? "*" : "");
-            column.Tag = fields[num];
-            column.Visible = fields[num].modifier == FieldInfo.Modifier.None && (Settings.Default.ShowAllColumns ||
-            !Settings.Default.IsColumnIgnored(currentPackedFile.Filepath, fields[num].name));
+            column.HeaderText = fieldInfo.Name + (Settings.Default.IsColumnIgnored(currentPackedFile.Filepath, fieldInfo.Name) ? "*" : "");
+            column.Tag = fieldInfo;
+            column.Visible = !Settings.Default.IsColumnIgnored(currentPackedFile.Filepath, fieldInfo.Name);
+            if (column.Visible) {
+                int visibleColumnCount = Math.Min(fieldCount, 10);
+                int columnWidth = (Width - dataGridView.Columns[0].Width) / visibleColumnCount;
+                column.Width = columnWidth;
+            }
             return column;
         }
 
-        public void Open(PackedFile packedFile, PackFile packFile = null)
-        {
+        public void Open(PackedFile packedFile, PackFile packFile = null) {
             copiedRows.Clear();
             copyToolStripButton.Enabled = true;
             pasteToolStripButton.Enabled = false;
             int num;
             string key = DBFile.typename(packedFile.Filepath);
-            if (!DBTypeMap.Instance.IsSupported(key))
-            {
+            if (!DBTypeMap.Instance.IsSupported(key)) {
                 this.showDBFileNotSupportedMessage("Sorry, this db file isn't supported yet.\r\n\r\nCurrently supported files:\r\n");
                 DecodeTool.DecodeTool decoder = new DecodeTool.DecodeTool();
                 decoder.Bytes = packedFile.Data;
                 decoder.ShowDialog();
-            }
-            else
-            {
-                this.dataGridView.DataSource = null;
-                this.currentPackedFile = packedFile;
-                this.currentDBFile = new DBFile(packedFile, key);
+            } else {
+                try {
+                    this.currentDBFile = new PackedFileDbCodec(currentPackedFile).readDbFile(currentPackedFile.Data);
+                } catch {
+                    return;
+                }
                 TypeInfo info = currentDBFile.CurrentType;
                 this.currentDataSet = new DataSet(info.name + "_DataSet");
                 this.currentDataTable = new DataTable(info.name + "_DataTable");
@@ -660,32 +589,24 @@ namespace PackFileManager
                     Visible = false
                 };
                 this.dataGridView.Columns.Add(dataGridViewColumn);
-                for (num = 0; num < info.fields.Count; num++)
-                {
+                for (num = 0; num < info.fields.Count; num++) {
                     string columnName = num.ToString();
                     DataColumn column = new DataColumn(columnName);
-                    if ((info.fields[num].type.ToString() == TypeCode.Empty.ToString()) || ((num > 0) && (info.fields[num - 1].modifier == FieldInfo.Modifier.NextFieldRepeats)))
-                    {
+                    if (info.fields[num].TypeCode == TypeCode.Empty) {
                         column.DataType = System.Type.GetType("System.String");
-                    }
-                    else
-                    {
-                        column.DataType = System.Type.GetType("System." + info.fields[num].type.ToString());
+                    } else {
+                        column.DataType = System.Type.GetType("System." + info.fields[num].TypeCode);
                     }
                     this.currentDataTable.Columns.Add(column);
-                    PackTypeCode code1 = info.fields[num].type;
-                    this.dataGridView.Columns.Add(createColumn(columnName, info.fields, num, packFile));
+                    this.dataGridView.Columns.Add(createColumn(columnName, info.fields[num], packFile, info.fields.Count));
                 }
                 this.currentDataSet.Tables.Add(this.currentDataTable);
                 this.currentDataTable.ColumnChanged += new DataColumnChangeEventHandler(this.currentDataTable_ColumnChanged);
-                this.currentDataTable.RowDeleting += new DataRowChangeEventHandler(this.currentDataTable_RowDeleted);
                 this.currentDataTable.TableNewRow += new DataTableNewRowEventHandler(this.currentDataTable_TableNewRow);
-                for (num = 0; num < this.currentDBFile.Entries.Count; num++)
-                {
+                for (num = 0; num < this.currentDBFile.Entries.Count; num++) {
                     DataRow row = this.currentDataTable.NewRow();
                     row[0] = num;
-                    for (int i = 1; i < this.currentDataTable.Columns.Count; i++)
-                    {
+                    for (int i = 1; i < this.currentDataTable.Columns.Count; i++) {
                         int num3 = Convert.ToInt32(this.currentDataTable.Columns[i].ColumnName);
                         row[i] = this.currentDBFile.Entries[num][num3].Value;
                     }
@@ -702,38 +623,27 @@ namespace PackFileManager
             }
         }
 
-        private void pasteEvent()
-        {
+        private void pasteEvent() {
             List<List<FieldInstance>> rows = copiedRows;
             int insertAtRow = dataGridView.CurrentCell.RowIndex;
-            if (lastCopy == COPIED_TYPE.ROWS)
-            {
+            if (lastCopy == COPIED_TYPE.ROWS) {
                 insertAtRow++;
-                foreach (List<FieldInstance> copied in rows)
-                {
+                foreach (List<FieldInstance> copied in rows) {
                     createRow(copied, insertAtRow);
                 }
-            }
-            else if (lastCopy == COPIED_TYPE.CELLS)
-            {
+            } else if (lastCopy == COPIED_TYPE.CELLS) {
                 int insertAtColumn = dataGridView.CurrentCell.ColumnIndex;
-                for (int j = 0; j < copiedRows.Count; j++)
-                {
+                for (int j = 0; j < copiedRows.Count; j++) {
                     int row = insertAtRow + j;
                     DataRow dataRow = currentDataTable.Rows[row];
-                    for (int i = 0; i < copiedRows[j].Count; i++)
-                    {
+                    for (int i = 0; i < copiedRows[j].Count; i++) {
                         int col = insertAtColumn + i;
                         string val = copiedRows[j][i].Value;
-                        try
-                        {
-                            if (copiedRows[j][i] != null)
-                            {
+                        try {
+                            if (copiedRows[j][i] != null) {
                                 dataRow[col] = val;
                             }
-                        }
-                        catch (Exception e)
-                        {
+                        } catch (Exception e) {
                             MessageBox.Show(string.Format("Could not set {0}/{1} to '{2}': {3}", col, row, val, e));
                         }
                     }
@@ -743,99 +653,84 @@ namespace PackFileManager
             }
         }
 
-        private void pasteToolStripButton_Click(object sender, EventArgs e)
-        {
+        private void pasteToolStripButton_Click(object sender, EventArgs e) {
             this.pasteEvent();
         }
 
-        private void showDBFileNotSupportedMessage(string message)
-        {
+        private void showDBFileNotSupportedMessage(string message) {
             this.dataGridView.Visible = false;
             this.unsupportedDBErrorTextBox.Visible = true;
             this.unsupportedDBErrorTextBox.Text = string.Format("{0}{1}", message, string.Join("\r\n", DBTypeMap.Instance.DBFileTypes));
+            this.unsupportedDBErrorTextBox.Text = message;
             this.addNewRowButton.Enabled = false;
             this.importButton.Enabled = false;
             this.exportButton.Enabled = false;
         }
 
-        private void toggleFirstColumnAsRowHeader(bool isChecked)
-        {
+        private void toggleFirstColumnAsRowHeader(bool isChecked) {
             this.dataGridView.Columns[0].Frozen = isChecked;
-            this.dataGridView.Columns[1].Frozen = isChecked;
-            if (isChecked)
-            {
-                this.dataGridView.TopLeftHeaderCell.Value = this.currentDBFile.Entries[0][0].Info.name;
-                this.dataGridView.RowHeadersVisible = false;
+            if (this.dataGridView.ColumnCount > 1) {
+                this.dataGridView.Columns[1].Frozen = isChecked;
             }
-            else
-            {
+            if (isChecked) {
+                this.dataGridView.TopLeftHeaderCell.Value = this.currentDBFile.Entries[0][0].Info.Name;
+                this.dataGridView.RowHeadersVisible = false;
+            } else {
                 this.dataGridView.TopLeftHeaderCell.Value = "";
                 this.dataGridView.RowHeadersVisible = true;
             }
         }
 
         [Obsolete]
-        private void useOnlineDefinitionsToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
-        {
+        private void useOnlineDefinitionsToolStripMenuItem_CheckedChanged(object sender, EventArgs e) {
             Settings.Default.UseOnlineDefinitions = this.useOnlineDefinitionsToolStripMenuItem.Checked;
             Settings.Default.Save();
             initTypeMap(Directory.GetCurrentDirectory());
         }
 
-        private void writeTypeMapSchema()
-        {
+        private void writeTypeMapSchema() {
         }
 
-        private void useComboBoxCells_CheckedChanged(object sender, EventArgs e)
-        {
+        private void useComboBoxCells_CheckedChanged(object sender, EventArgs e) {
             Settings.Default.UseComboboxCells = useComboBoxCells.Checked;
             Settings.Default.Save();
-            if (currentPackedFile != null)
-            {
+            if (currentPackedFile != null) {
                 // rebuild table
                 Open(currentPackedFile, currentPackedFile.PackFile);
             }
         }
-        private void promptHeaderDescription(DataGridViewColumn newColumn)
-        {
-            FieldInfo info = (FieldInfo)newColumn.Tag;
-            InputBox box = new InputBox { Text = "Enter new description", Input = info.name };
-            if (box.ShowDialog() == DialogResult.OK)
-            {
-                info.name = box.Input;
-                newColumn.HeaderText = info.name;
 
-                if (!dataChanged)
-                {
+        private void promptHeaderDescription(DataGridViewColumn newColumn) {
+            FieldInfo info = (FieldInfo)newColumn.Tag;
+            InputBox box = new InputBox { Text = "Enter new description", Input = info.Name };
+            if (box.ShowDialog() == DialogResult.OK) {
+                info.Name = box.Input;
+                newColumn.HeaderText = info.Name;
+
+                if (!dataChanged) {
                     dataChanged = true;
                     MessageBox.Show("Don't forget to save your changes (DB Definitions->Save to Directory)");
                 }
             }
         }
-        private void dataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
-        {
+
+        private void dataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
             DataGridViewColumn newColumn = dataGridView.Columns[e.ColumnIndex];
 
-            if (e.Button == System.Windows.Forms.MouseButtons.Right)
-            {
+            if (e.Button == System.Windows.Forms.MouseButtons.Right) {
                 ContextMenu menu = new ContextMenu();
-                MenuItem item = new MenuItem("Change Column Description", new EventHandler(delegate(object s, EventArgs args)
-                {
+                MenuItem item = new MenuItem("Change Column Description", new EventHandler(delegate(object s, EventArgs args) {
                     promptHeaderDescription(newColumn);
                 }));
                 menu.MenuItems.Add(item);
 
-                string ignoreField = ((FieldInfo)newColumn.Tag).name;
+                string ignoreField = ((FieldInfo)newColumn.Tag).Name;
                 bool ignored = Settings.Default.IsColumnIgnored(currentPackedFile.Filepath, ignoreField);
                 string itemText = ignored ? "Show Column" : "Hide Column";
-                item = new MenuItem(itemText, new EventHandler(delegate(object s, EventArgs args)
-                {
-                    if (ignored)
-                    {
+                item = new MenuItem(itemText, new EventHandler(delegate(object s, EventArgs args) {
+                    if (ignored) {
                         Settings.Default.UnignoreColumn(currentPackedFile.Filepath, ignoreField);
-                    }
-                    else
-                    {
+                    } else {
                         Settings.Default.IgnoreColumn(currentPackedFile.Filepath, ignoreField);
                     }
                     Settings.Default.Save();
@@ -843,15 +738,13 @@ namespace PackFileManager
                 }));
                 menu.MenuItems.Add(item);
 
-                item = new MenuItem("Clear Hide list for this table", new EventHandler(delegate(object s, EventArgs args)
-                {
+                item = new MenuItem("Clear Hide list for this table", new EventHandler(delegate(object s, EventArgs args) {
                     Settings.Default.ResetIgnores(currentPackedFile.Filepath);
                     Settings.Default.Save();
                     applyColumnVisibility();
                 }));
                 menu.MenuItems.Add(item);
-                item = new MenuItem("Clear Hide list for all tables", new EventHandler(delegate(object s, EventArgs args)
-                {
+                item = new MenuItem("Clear Hide list for all tables", new EventHandler(delegate(object s, EventArgs args) {
                     Settings.Default.IgnoreColumns = "";
                     Settings.Default.Save();
                     applyColumnVisibility();
@@ -864,23 +757,17 @@ namespace PackFileManager
             DataGridViewColumn oldColumn = dataGridView.SortedColumn;
             ListSortDirection direction;
             // If oldColumn is null, then the DataGridView is not sorted.
-            if (oldColumn != null)
-            {
+            if (oldColumn != null) {
                 // Sort the same column again, reversing the SortOrder.
                 if (oldColumn == newColumn &&
-                    dataGridView.SortOrder == SortOrder.Ascending)
-                {
+                    dataGridView.SortOrder == SortOrder.Ascending) {
                     direction = ListSortDirection.Descending;
-                }
-                else
-                {
+                } else {
                     // Sort a new column and remove the old SortGlyph.
                     direction = ListSortDirection.Ascending;
                     oldColumn.HeaderCell.SortGlyphDirection = SortOrder.None;
                 }
-            }
-            else
-            {
+            } else {
                 direction = ListSortDirection.Ascending;
             }
 
@@ -891,38 +778,29 @@ namespace PackFileManager
                 SortOrder.Ascending : SortOrder.Descending;
         }
 
-        private void applyColumnVisibility()
-        {
-            if (currentPackedFile == null)
-            {
+        private void applyColumnVisibility() {
+            if (currentPackedFile == null) {
                 return;
             }
-            for (int i = 0; i < dataGridView.ColumnCount; i++)
-            {
+            for (int i = 0; i < dataGridView.ColumnCount; i++) {
                 DataGridViewColumn column = dataGridView.Columns[i];
-                if (column != null && column.Tag != null)
-                {
+                if (column != null && column.Tag != null) {
                     FieldInfo info = ((FieldInfo)column.Tag);
-                    bool show = !Settings.Default.IsColumnIgnored(currentPackedFile.Filepath, info.name);
-                    column.Visible = (Settings.Default.ShowAllColumns || (show && info.modifier == FieldInfo.Modifier.None));
-                    column.HeaderText = info.name + (show ? "" : "*");
-                }
-                else
-                {
+                    bool show = !Settings.Default.IsColumnIgnored(currentPackedFile.Filepath, info.Name);
+                    column.Visible = (Settings.Default.ShowAllColumns || show);
+                    column.HeaderText = info.Name + (show ? "" : "*");
+                } else {
                     Console.WriteLine("no column?");
                 }
             }
         }
 
-        private void showAllColumns_CheckedChanged(object sender, EventArgs e)
-        {
+        private void showAllColumns_CheckedChanged(object sender, EventArgs e) {
             Settings.Default.ShowAllColumns = showAllColumns.Checked;
             Settings.Default.Save();
-            if (currentPackedFile != null)
-            {
+            if (currentPackedFile != null) {
                 applyColumnVisibility();
             }
         }
     }
 }
-

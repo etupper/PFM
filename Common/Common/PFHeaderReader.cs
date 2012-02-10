@@ -19,23 +19,24 @@ namespace Common
 		}
 		public virtual void readFromStream(BinaryReader reader) {
 			// skip the header ID (just to be on the safe side)
-			reader.BaseStream.Seek(0x04L, SeekOrigin.Begin);
-			readPackType(reader);
-			header.Version = reader.ReadInt32();
-            int replacedPackFilenameLength = reader.ReadInt32();
-            reader.BaseStream.Seek(0x10L, SeekOrigin.Begin);
-			header.FileCount = reader.ReadUInt32();
-			UInt32 indexSize = reader.ReadUInt32();
-			header.DataStart = headerLength() + indexSize;
+			reader.BaseStream.Seek (0x04L, SeekOrigin.Begin);
+			readPackType (reader);
+			header.Version = reader.ReadInt32 ();
+			int replacedPackFilenameLength = reader.ReadInt32 ();
+			reader.BaseStream.Seek (0x10L, SeekOrigin.Begin);
+			header.FileCount = reader.ReadUInt32 ();
+			UInt32 indexSize = reader.ReadUInt32 ();
+			header.DataStart = headerLength () + indexSize;
 
-			reader.BaseStream.Seek(headerLength(), SeekOrigin.Begin);
-	        if (header.Version == 1)
-            {
-                // read pack file reference
-                header.ReplacedPackFileName = 
-					new string(ASCIIEncoding.ASCII.GetChars(reader.ReadBytes(replacedPackFilenameLength)));
-                header.DataStart += replacedPackFilenameLength;
-            }
+			reader.BaseStream.Seek (headerLength (), SeekOrigin.Begin);
+			if (header.Version == 1) {
+				// read pack file reference
+				header.ReplacedPackFileName = 
+					new string (ASCIIEncoding.ASCII.GetChars (reader.ReadBytes (replacedPackFilenameLength - 1)));
+				// skip the null byte
+				reader.ReadByte ();
+				header.DataStart += replacedPackFilenameLength;
+			}
 		}
 		protected abstract long headerLength();
 		

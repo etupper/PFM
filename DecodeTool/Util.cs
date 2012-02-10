@@ -20,16 +20,16 @@ namespace DecodeTool {
 			return result.ToString ();
 		}
 
-        public static string decodeSafe(TypeDescription d, BinaryReader reader) {
+        public static string decodeSafe(FieldInfo d, BinaryReader reader) {
             int ignored;
             return decodeSafe(d, reader, out ignored);
         }
-        public static string decodeSafe(TypeDescription d, BinaryReader reader, out int length) {
+        public static string decodeSafe(FieldInfo d, BinaryReader reader, out int length) {
 			string result = "failure";
 			length = 0;
 			try {
 				result = d.Decode (reader);
-				length = d.GetLength (result);
+				length = d.Length (result);
 				//result = Regex.Replace (result, notAllowed, "?");
 			} catch (Exception x) {
 				result = x.Message.Replace ("\n", "-");
@@ -37,24 +37,25 @@ namespace DecodeTool {
 			return result;
 		}
 
-        public static string ToString(string name, TypeDescription description) {
+        public static string ToString(string name, FieldInfo description) {
 			string result;
-			if (description == Types.OptStringType) {
+			if (description.TypeName == "optstring") {
 				result = string.Format ("->,Boolean,1;{0},String", name);
-			} else if (description is VarBytesDescription) {
-				result = string.Format ("{0},{1}", name, (description as VarBytesDescription).GetLength(""));
+			} else if (description.TypeCode == TypeCode.Empty) {
+				result = string.Format ("{0},{1}", name, description.Length(""));
 			} else {
 				result = string.Format ("{0},{1}", name, description.TypeName);
 			}
 			return result;
 		}
 
-        public static List<TypeDescription> Convert(TypeInfo info, ref List<String> names) {
+        /*
+        public static List<FieldInfo> Convert(FieldInfo info, ref List<String> names) {
             bool nextOptional = false;
             names.Clear();
-            List<TypeDescription> descriptions = new List<TypeDescription>();
+            List<FieldInfo> descriptions = new List<FieldInfo>();
             foreach (FieldInfo field in info.fields) {
-                TypeDescription description;
+                FieldInfo description;
                 if (field.Mod == FieldInfo.Modifier.NextFieldIsConditional) {
                     nextOptional = true;
                     continue;
@@ -70,8 +71,9 @@ namespace DecodeTool {
             return descriptions;
         }
 
-        public static TypeDescription Convert(FieldInfo info) {
-			switch (info.Type) {
+        /*
+        public static FieldInfo Convert(FieldInfo info) {
+			switch (info.TypeCode) {
 			case PackTypeCode.Boolean:
 				return Types.BoolType;
 			case PackTypeCode.UInt16:
@@ -88,5 +90,6 @@ namespace DecodeTool {
 			}
 			throw new InvalidDataException ("unknown type");
 		}
+         * */
     }
 }
