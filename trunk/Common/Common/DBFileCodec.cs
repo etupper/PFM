@@ -70,7 +70,7 @@ namespace Common {
 		 * contained in the header read from it.
 		 */
 		public DBFile readDbFile(Stream stream) {
-			return readDbFile (stream, Type);
+			return readDbFile (stream, null);
 		}
 		/*
 		 * Reads a db file from stream, using the given type.
@@ -82,6 +82,7 @@ namespace Common {
 			BinaryReader reader = new BinaryReader (stream);
 			reader.BaseStream.Position = 0;
 			DBFileHeader header = readHeader (reader);
+            realInfo = realInfo ?? DBTypeMap.Instance[TypeName, header.Version];
 			DBFile file = new DBFile (header, realInfo);
 			reader.BaseStream.Position = header.Length;
 
