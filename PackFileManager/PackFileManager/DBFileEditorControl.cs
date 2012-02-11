@@ -585,7 +585,8 @@ namespace PackFileManager {
                     decoder.ShowDialog();
                     return;
                 }
-                currentPackedFile = packedFile;
+                this.dataGridView.DataSource = null;
+                this.currentPackedFile = packedFile;
                 TypeInfo info = currentDBFile.CurrentType;
                 this.currentDataSet = new DataSet(info.name + "_DataSet");
                 this.currentDataTable = new DataTable(info.name + "_DataTable");
