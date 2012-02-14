@@ -36,7 +36,6 @@ namespace PackFileManager {
         private ToolStripSeparator toolStripSeparator2;
         private TextBox unsupportedDBErrorTextBox;
         private CheckBox useComboBoxCells;
-        private ToolStripMenuItem useOnlineDefinitionsToolStripMenuItem;
         private CheckBox showAllColumns;
         private bool dataChanged = false;
         private List<List<FieldInstance>> copiedRows = new List<List<FieldInstance>>();
@@ -185,7 +184,7 @@ namespace PackFileManager {
                 FieldInstance instance = list[num];
                 string str = (proposedValue == null) ? "" : proposedValue.ToString();
                 instance.Value = str;
-                this.currentPackedFile.ReplaceData(this.currentDBFile.GetBytes());
+                this.currentPackedFile.Data = this.currentDBFile.GetBytes();
             }
         }
 
@@ -194,12 +193,12 @@ namespace PackFileManager {
                 throw new InvalidDataException("wtf?");
             }
             this.currentDBFile.Entries.RemoveAt(this.currentDataTable.Rows.IndexOf(e.Row));
-            this.currentPackedFile.ReplaceData(this.currentDBFile.GetBytes());
+            this.currentPackedFile.Data = this.currentDBFile.GetBytes();
         }
 
         private void currentDataTable_TableNewRow(object sender, DataTableNewRowEventArgs e) {
             if (this.dataGridView.DataSource != null) {
-                this.currentPackedFile.ReplaceData(this.currentDBFile.GetBytes());
+                this.currentPackedFile.Data = (this.currentDBFile.GetBytes());
             }
         }
 
@@ -284,14 +283,13 @@ namespace PackFileManager {
             if (this.openDBFileDialog.ShowDialog() == DialogResult.OK) {
                 using (StreamReader reader = new StreamReader(this.openDBFileDialog.FileName)) {
                     try {
-                        string type = DBFile.typename(openDBFileDialog.FileName);
                         using (MemoryStream stream = new MemoryStream(File.ReadAllBytes(openDBFileDialog.FileName))) {
-                            this.currentDBFile.Import(new PackedFileDbCodec(currentDBFile.CurrentType).readDbFile(stream));
+                            this.currentDBFile.Import((new PackedFileDbCodec()).readDbFile(currentPackedFile.FullPath, stream));
                         }
                     } catch (DBFileNotSupportedException exception) {
                         this.showDBFileNotSupportedMessage(exception.Message);
                     }
-                    this.currentPackedFile.ReplaceData(this.currentDBFile.GetBytes());
+                    this.currentPackedFile.Data = (this.currentDBFile.GetBytes());
                     this.Open(this.currentPackedFile);
                 }
             }
@@ -309,7 +307,6 @@ namespace PackFileManager {
             this.exportButton = new System.Windows.Forms.ToolStripButton();
             this.importButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.useOnlineDefinitionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openDBFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.unsupportedDBErrorTextBox = new System.Windows.Forms.TextBox();
             this.useFirstColumnAsRowHeader = new System.Windows.Forms.CheckBox();
@@ -434,15 +431,6 @@ namespace PackFileManager {
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
-            // useOnlineDefinitionsToolStripMenuItem
-            // 
-            this.useOnlineDefinitionsToolStripMenuItem.CheckOnClick = true;
-            this.useOnlineDefinitionsToolStripMenuItem.Enabled = false;
-            this.useOnlineDefinitionsToolStripMenuItem.Name = "useOnlineDefinitionsToolStripMenuItem";
-            this.useOnlineDefinitionsToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            this.useOnlineDefinitionsToolStripMenuItem.Text = "Use online definitions";
-            this.useOnlineDefinitionsToolStripMenuItem.CheckedChanged += new System.EventHandler(this.useOnlineDefinitionsToolStripMenuItem_CheckedChanged);
-            // 
             // openDBFileDialog
             // 
             this.openDBFileDialog.Filter = "Tab separated values (TSV)|*.tsv|Any File|*.*";
@@ -493,7 +481,6 @@ namespace PackFileManager {
             settings3.UpdateOnStartup = false;
             settings3.UseComboboxCells = true;
             settings3.UseFirstColumnAsRowHeader = false;
-            settings3.UseOnlineDefinitions = false;
             this.useComboBoxCells.Checked = settings3.UseComboboxCells;
             this.useComboBoxCells.CheckState = System.Windows.Forms.CheckState.Checked;
             this.useComboBoxCells.Location = new System.Drawing.Point(611, 4);
@@ -528,9 +515,13 @@ namespace PackFileManager {
         DataGridViewColumn createColumn(string columnName, FieldInfo fieldInfo, PackFile packFile, int fieldCount) {
             DataGridViewColumn column = null;
             if (Settings.Default.UseComboboxCells && packFile != null) {
-                string key = Path.GetFileName(currentPackedFile.Filepath).Replace("_tables", "");
                 try {
-                    SortedSet<string> items = DBReferenceMap.Instance.resolveFromPackFile(fieldInfo.ForeignReference, packFile);
+                    SortedSet<string> items;
+                    if (packFile != null) {
+                        items = DBReferenceMap.Instance.resolveFromPackFile(fieldInfo.ForeignReference, packFile);
+                    } else {
+                        items = DBReferenceMap.Instance[fieldInfo.ForeignReference];
+                    }
                     if (items != null) {
                         column = new DataGridViewComboBoxColumn {
                             DataPropertyName = columnName
@@ -552,9 +543,9 @@ namespace PackFileManager {
                 };
             }
             column.SortMode = DataGridViewColumnSortMode.Programmatic;
-            column.HeaderText = fieldInfo.Name + (Settings.Default.IsColumnIgnored(currentPackedFile.Filepath, fieldInfo.Name) ? "*" : "");
+            column.HeaderText = fieldInfo.Name + (Settings.Default.IsColumnIgnored(currentPackedFile.FullPath, fieldInfo.Name) ? "*" : "");
             column.Tag = fieldInfo;
-            column.Visible = !Settings.Default.IsColumnIgnored(currentPackedFile.Filepath, fieldInfo.Name);
+            column.Visible = !Settings.Default.IsColumnIgnored(currentPackedFile.FullPath, fieldInfo.Name);
             if (column.Visible) {
                 int visibleColumnCount = Math.Min(fieldCount, 10);
                 int columnWidth = (Width - dataGridView.Columns[0].Width) / visibleColumnCount;
@@ -568,7 +559,7 @@ namespace PackFileManager {
             copyToolStripButton.Enabled = true;
             pasteToolStripButton.Enabled = false;
             int num;
-            string key = DBFile.typename(packedFile.Filepath);
+            string key = DBFile.typename(packedFile.FullPath);
             if (!DBTypeMap.Instance.IsSupported(key)) {
                 this.showDBFileNotSupportedMessage("Sorry, this db file isn't supported yet.\r\n\r\nCurrently supported files:\r\n");
                 DecodeTool.DecodeTool decoder = new DecodeTool.DecodeTool();
@@ -577,7 +568,7 @@ namespace PackFileManager {
                 decoder.ShowDialog();
             } else {
                 try {
-                    this.currentDBFile = new PackedFileDbCodec(packedFile).readDbFile(packedFile.Data);
+                    this.currentDBFile = new PackedFileDbCodec().readDbFile(packedFile);
                 } catch {
                     DecodeTool.DecodeTool decoder = new DecodeTool.DecodeTool();
                     decoder.TypeName = key;
@@ -655,7 +646,7 @@ namespace PackFileManager {
                         }
                     }
                 }
-                currentPackedFile.ReplaceData(currentDBFile.GetBytes());
+                currentPackedFile.Data = (currentDBFile.GetBytes());
                 dataGridView.Refresh();
             }
         }
@@ -668,7 +659,7 @@ namespace PackFileManager {
             this.dataGridView.Visible = false;
             this.unsupportedDBErrorTextBox.Visible = true;
             this.unsupportedDBErrorTextBox.Text = string.Format("{0}{1}", message, string.Join("\r\n", DBTypeMap.Instance.DBFileTypes));
-            this.unsupportedDBErrorTextBox.Text = message;
+            // this.unsupportedDBErrorTextBox.Text = message;
             this.addNewRowButton.Enabled = false;
             this.importButton.Enabled = false;
             this.exportButton.Enabled = false;
@@ -688,22 +679,12 @@ namespace PackFileManager {
             }
         }
 
-        [Obsolete]
-        private void useOnlineDefinitionsToolStripMenuItem_CheckedChanged(object sender, EventArgs e) {
-            Settings.Default.UseOnlineDefinitions = this.useOnlineDefinitionsToolStripMenuItem.Checked;
-            Settings.Default.Save();
-            initTypeMap(Directory.GetCurrentDirectory());
-        }
-
-        private void writeTypeMapSchema() {
-        }
-
         private void useComboBoxCells_CheckedChanged(object sender, EventArgs e) {
             Settings.Default.UseComboboxCells = useComboBoxCells.Checked;
             Settings.Default.Save();
             if (currentPackedFile != null) {
                 // rebuild table
-                Open(currentPackedFile, currentPackedFile.PackFile);
+                Open(currentPackedFile, null);
             }
         }
 
@@ -732,13 +713,13 @@ namespace PackFileManager {
                 menu.MenuItems.Add(item);
 
                 string ignoreField = ((FieldInfo)newColumn.Tag).Name;
-                bool ignored = Settings.Default.IsColumnIgnored(currentPackedFile.Filepath, ignoreField);
+                bool ignored = Settings.Default.IsColumnIgnored(currentPackedFile.FullPath, ignoreField);
                 string itemText = ignored ? "Show Column" : "Hide Column";
                 item = new MenuItem(itemText, new EventHandler(delegate(object s, EventArgs args) {
                     if (ignored) {
-                        Settings.Default.UnignoreColumn(currentPackedFile.Filepath, ignoreField);
+                        Settings.Default.UnignoreColumn(currentPackedFile.FullPath, ignoreField);
                     } else {
-                        Settings.Default.IgnoreColumn(currentPackedFile.Filepath, ignoreField);
+                        Settings.Default.IgnoreColumn(currentPackedFile.FullPath, ignoreField);
                     }
                     Settings.Default.Save();
                     applyColumnVisibility();
@@ -746,7 +727,7 @@ namespace PackFileManager {
                 menu.MenuItems.Add(item);
 
                 item = new MenuItem("Clear Hide list for this table", new EventHandler(delegate(object s, EventArgs args) {
-                    Settings.Default.ResetIgnores(currentPackedFile.Filepath);
+                    Settings.Default.ResetIgnores(currentPackedFile.FullPath);
                     Settings.Default.Save();
                     applyColumnVisibility();
                 }));
@@ -793,7 +774,7 @@ namespace PackFileManager {
                 DataGridViewColumn column = dataGridView.Columns[i];
                 if (column != null && column.Tag != null) {
                     FieldInfo info = ((FieldInfo)column.Tag);
-                    bool show = !Settings.Default.IsColumnIgnored(currentPackedFile.Filepath, info.Name);
+                    bool show = !Settings.Default.IsColumnIgnored(currentPackedFile.FullPath, info.Name);
                     column.Visible = (Settings.Default.ShowAllColumns || show);
                     column.HeaderText = info.Name + (show ? "" : "*");
                 } else {

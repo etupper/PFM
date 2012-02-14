@@ -157,11 +157,11 @@
         {
             get
             {
-                return (bool)this["updateOnStartup"];
+                return (bool)this["UpdateOnStartup"];
             }
             set
             {
-                this["updateOnStartup"] = value;
+                this["UpdateOnStartup"] = value;
             }
         }
 
@@ -175,19 +175,6 @@
             set
             {
                 this["TwcThreadId"] = value;
-            }
-        }
-
-        [DebuggerNonUserCode, DefaultSettingValue("False"), UserScopedSetting]
-        public bool UseOnlineDefinitions
-        {
-            get
-            {
-                return (bool) this["UseOnlineDefinitions"];
-            }
-            set
-            {
-                this["UseOnlineDefinitions"] = value;
             }
         }
     }

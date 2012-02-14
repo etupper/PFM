@@ -36,15 +36,15 @@ namespace PackFileTest {
 		public void testAllFiles() {
 			string currentFile = "";
 			try {
-				PackFile packFile = new PackFile (packfileName);
-				foreach (PackedFile packed in packFile.FileList) {
+				PackFile packFile = new PackFileCodec().Open (packfileName);
+				foreach (PackedFile packed in packFile.Files) {
 					try {
-						currentFile = packed.Filepath;
-						if (packed.Filepath.StartsWith ("db")) {
+						currentFile = packed.FullPath;
+						if (currentFile.StartsWith ("db")) {
 							testDbFile (packed);
 						}
 					} catch (Exception x) {
-						// Console.WriteLine (x);
+                        throw x;
 					}
 				}
 			} catch (Exception x) {
@@ -53,7 +53,7 @@ namespace PackFileTest {
 		}
 		
 		public void testDbFile(PackedFile file) {
-			string type = DBFile.typename (file.Filepath);
+			string type = DBFile.typename (file.FullPath);
 			DBFileHeader header = PackedFileDbCodec.readHeader (file);
 			Tuple<string,int> tuple = new Tuple<string, int> (type, header.Version);
 			if (header.EntryCount == 0) {
@@ -111,9 +111,9 @@ namespace PackFileTest {
 		bool testFile(PackedFile file, TypeInfo type) {
 			bool result = true;
 			try {
-				DBFile dbFile = new PackedFileDbCodec(type).readDbFile (file);
+				DBFile dbFile = new PackedFileDbCodec().readDbFile (file);
 				result = (dbFile.Entries.Count == dbFile.header.EntryCount);
-			} catch (Exception x) {
+			} catch {
 				result = false;
 			}
 			return result;

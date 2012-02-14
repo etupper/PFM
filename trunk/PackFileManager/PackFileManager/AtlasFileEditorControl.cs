@@ -13,7 +13,6 @@
         private ToolStripMenuItem addAtlasEntryToolStripMenuItem;
         private ToolStripMenuItem addNewAtlasEntryToolStripMenuItem;
         private AtlasFile atlasFile;
-        private BackgroundWorker backgroundWorker1;
         private CheckBox checkBox1;
         private IContainer components;
         private ContextMenuStrip contextMenuStrip1;
@@ -146,7 +145,6 @@
         private void InitializeComponent()
         {
             this.components = new Container();
-            this.backgroundWorker1 = new BackgroundWorker();
             this.objectListView1 = new ObjectListView();
             this.olvColumn1 = new OLVColumn();
             this.CSCont1 = new OLVColumn();
@@ -550,7 +548,7 @@
 
         public void setData()
         {
-            this.currentPackedFile.ReplaceData(this.atlasFile.GetBytes());
+            this.currentPackedFile.Data = (this.atlasFile.GetBytes());
             this.dataChanged = false;
         }
 
