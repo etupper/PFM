@@ -1447,13 +1447,16 @@ namespace PackFileManager
         {
             try
             {
+                packTreeView.Enabled = false;
                 PackFileCodec codec = new PackFileCodec();
+                codec.PackFileLoaded += file => packTreeView.Enabled = true;
                 new LoadUpdater(codec, filepath, this.packStatusLabel, packActionProgressBar);
                 CurrentPackFile = codec.Open(filepath);
             }
             catch (Exception exception)
             {
                 MessageBox.Show(exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                packTreeView.Enabled = true;
             }
         }
         #endregion
