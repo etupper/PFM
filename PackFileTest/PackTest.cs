@@ -28,16 +28,20 @@ namespace PackFileTest {
 						printList ("no definition for version", test.noDefForVersion);
 						printList ("invalid description", test.invalidDefForVersion);
 						printList ("downgraded versions", test.downgradedVersions);
-						
-						extractFiles (dir, new PackFile (test.packfileName), test.noDefForVersion);
-						extractFiles (dir, new PackFile (test.packfileName), test.invalidDefForVersion);
-						extractFiles (dir, new PackFile (test.packfileName), test.noDefinition);
+
+                        /*
+                        PackFileCodec codec = new PackFileCodec();
+						extractFiles (dir, codec.Open(test.packfileName), test.noDefForVersion);
+                        extractFiles(dir, codec.Open(test.packfileName), test.invalidDefForVersion);
+                        extractFiles(dir, codec.Open(test.packfileName), test.noDefinition);
+                         * */
 					}
 					Console.WriteLine ();
 //				TestRunner runner = new TestRunner (dir);
 //				runner.testAllPacks ();
 				}
             }
+            Console.WriteLine("Test run finished, press any key");
             Console.ReadKey();
         }
 		
@@ -49,8 +53,8 @@ namespace PackFileTest {
 					string failType = failed.Item1;
 					string failPath = string.Format ("db\\{0}_tables\\{0}", failType);
 					PackedFile found = null;
-					foreach (PackedFile packed in pack.FileList) {
-						if (packed.Filepath.Equals (failPath)) {
+					foreach (PackedFile packed in pack.Files) {
+						if (packed.FullPath.Equals (failPath)) {
 							found = packed;
 							break;
 						}
@@ -133,9 +137,9 @@ namespace PackFileTest {
 			}
 		}
 		DBFile fromPacked(PackedFile packedFile) {
-			PackedFileDbCodec dbCodec = new PackedFileDbCodec (packedFile);
+			PackedFileDbCodec dbCodec = new PackedFileDbCodec ();
 			DBFile result = null;
-			if (DBTypeMap.Instance.IsSupported(DBFile.typename(packedFile.Filepath))) {
+			if (DBTypeMap.Instance.IsSupported(DBFile.typename(packedFile.FullPath))) {
 				result = dbCodec.readDbFile (packedFile);
 			} else {
 				Stream readFrom = new MemoryStream (packedFile.Data, 0, (int)packedFile.Size);
@@ -149,7 +153,7 @@ namespace PackFileTest {
 		public void testPackFile(string file) {
 			try {
 				Console.WriteLine ("testing pack file {0}", file);
-				PackFile packFile = new PackFile (file);
+                PackFile packFile = new PackFileCodec().Open(file);
 				PFHeader pfh = packFile.Header;
 				string log = string.Format ("type: {0}/{1}, supersedes {2}, contains {3} files", 
 				pfh.Type, pfh.Version, pfh.ReplacedPackFileName, pfh.FileCount);
@@ -160,54 +164,55 @@ namespace PackFileTest {
 					Directory.CreateDirectory (testDir);
 				}
 
-				foreach (PackedFile packedFile in packFile.FileList) {
-					if (packedFile.Filepath.StartsWith ("db")) {
-						string version = "<unknown>";
+				foreach (PackedFile packed in packFile.Files) {
+                    PackedFileSource packedFile = packed.Source as PackedFileSource;
+					if (packed.FullPath.StartsWith ("db")) {
+                        string version = "<unknown>";
 						try {
-							if (packedFile.Size != 0) {
-								DBFile dbFile = fromPacked (packedFile);
-								if (dbFile != null && dbFile.header.EntryCount != 0) {
-									testedFiles++;
-									if (dbFile.header.EntryCount != dbFile.Entries.Count) {
-										failures.Add (new TestFailure 
-											(string.Format ("invalid count for {0}: was {1}, expected {2}", 
-											packedFile.Filepath, dbFile.Entries.Count, dbFile.header.EntryCount)));
-										continue;
-									}
-									byte[] bytes = dbFile.GetBytes ();
-									int size = bytes.Length;
-									if (size < packedFile.Size) {
-										failures.Add (new TestFailure (string.Format 
-											("{2} @ {3:x}: \nexpected {0} bytes (up to {4:x}), got {1} (to {5:x})", 
-											packedFile.Size, size, packedFile.Filepath, packedFile.offset, 
-											(packedFile.offset + packedFile.Size), (packedFile.offset + (ulong)size))));
-										if (Verbose) {
-											dumpPackedFile (file, packedFile);
-										}
-									} else {
-										packedFile.ReplaceData (dbFile.GetBytes ());
-									}
-								} else if (dbFile == null) {
-									unknownFiles.Add (string.Format ("{0}", typename (packedFile), packedFile.offset, packFile.Filepath));
-								}
-							}
+                            if (packed.Size != 0) {
+                                DBFile dbFile = fromPacked(packed);
+                                if (dbFile != null && dbFile.header.EntryCount != 0) {
+                                    testedFiles++;
+                                    if (dbFile.header.EntryCount != dbFile.Entries.Count) {
+                                        failures.Add(new TestFailure
+                                            (string.Format("invalid count for {0}: was {1}, expected {2}",
+                                            packed.FullPath, dbFile.Entries.Count, dbFile.header.EntryCount)));
+                                        continue;
+                                    }
+                                    byte[] bytes = dbFile.GetBytes();
+                                    int size = bytes.Length;
+                                    if (size < packed.Size) {
+                                        failures.Add(new TestFailure(string.Format
+                                            ("{2} @ {3:x}: \nexpected {0} bytes (up to {4:x}), got {1} (to {5:x})",
+                                            packed.Size, size, packed.FullPath, packedFile.Offset,
+                                            (packedFile.Offset + packed.Size), (packedFile.Offset + size))));
+                                        if (Verbose) {
+                                            dumpPackedFile(file, packed);
+                                        }
+//                                    } else {
+//                                        packed.ReplaceData(dbFile.GetBytes());
+                                    }
+                                } else if (dbFile == null) {
+                                    unknownFiles.Add(string.Format("{0}", typename(packed), packedFile.Offset, packFile.Filepath));
+                                }
+                            }
 						} catch (Exception x) {
 							TestFailure failure = new TestFailure {
-							packedFile = packedFile,
-							Description = string.Format ("{0} when trying to read \n{1} \nversion {2} starting at {3:x6} (size {4})", 
-									x.Message, packedFile.Filepath, version, packedFile.offset, packFile.Size)
+							packedFile = packed,
+							Description = string.Format ("{0} when trying to read \n{1} \nversion {2} starting at {3:x6}",
+                                    x.Message, packed.FullPath, version, packedFile.Offset)
 							};
 							failures.Add (failure);
 							
 							if (Verbose) {
-								dumpAndRead (file, packedFile);
+								dumpAndRead (file, packed);
 							}
 							// Console.WriteLine (failure.Description);
 						}
 					}
 				}
 				if (failures.Count == 0) {
-					testSave (packFile);
+					//testSave (packFile);
 				}
 				// Console.WriteLine ("unknown files: {0}: {1}", unknownFiles.Count, string.Join (",", unknownFiles));
 				Console.WriteLine ("passed {0}/{1}", testedFiles - failures.Count, testedFiles);
@@ -228,16 +233,13 @@ namespace PackFileTest {
 		
 		private static void readPackedFromFile(PackedFile packedFile, string dumpFile) {
 			try {
-				Console.WriteLine ("re-reading {0}", packedFile.Filepath);
+				Console.WriteLine ("re-reading {0}", packedFile.FullPath);
 				FileStream stream = File.OpenRead (dumpFile);
-				PackedFileDbCodec codec = new PackedFileDbCodec (packedFile);
+				PackedFileDbCodec codec = new PackedFileDbCodec ();
 				DBFileHeader header = PackedFileDbCodec.readHeader (stream);
-				Console.WriteLine ("file: {0}, version {1}", packedFile.Filepath, header.Version);
-//				TypeInfo info = DBTypeMap.Instance [typename (packedFile)] [header.Version];
-//				BinaryReader reader = new BinaryReader (stream);
+				Console.WriteLine ("file: {0}, version {1}", packedFile.FullPath, header.Version);
 				codec.readDbFile (packedFile);
 				Console.WriteLine ();
-				//codec.readDbFile (stream, DBTypeMap.Instance [typename (packedFile)]);
 				stream.Close ();
 			} catch (Exception) {
 				Console.WriteLine ("re-read failed");
@@ -248,13 +250,14 @@ namespace PackFileTest {
 			// dump raw file (directly from packed file with given size) into file
 			byte[] bytes = new byte[packedFile.Size + 1];
 			Array.Copy (packedFile.Data, bytes, packedFile.Size);
-			string dumpedName = Path.Combine (Path.GetDirectoryName (file), Path.GetFileName (packedFile.Filepath) + "_raw");
+			string dumpedName = Path.Combine (Path.GetDirectoryName (file), Path.GetFileName (packedFile.FullPath) + "_raw");
 			File.WriteAllBytes (dumpedName, bytes);
 			return dumpedName;
 		}
 		
-		private static void dumpDbFile(PackedFile packed, DBFile file) {
-			Console.WriteLine ("dumping file {0} @ {1:x}", packed.Filepath, packed.offset);
+		private static void dumpDbFile(PackedFile packedFile, DBFile file) {
+            PackedFileSource packed = packedFile.Source as PackedFileSource;
+			Console.WriteLine ("dumping file {0} @ {1:x}", packedFile.FullPath, packed.Offset);
 			for (int j = 0; j < file.Entries.Count; j++) {
 				List<FieldInstance> entry = file.Entries [j];
 				Console.WriteLine ("entry {0}:", j);
@@ -266,7 +269,7 @@ namespace PackFileTest {
 			Console.Out.Flush ();
 		}
 
-		private void testSave(PackFile packFile) {
+/*		private void testSave(PackFile packFile) {
 			packFile.SaveAs ("verification.pack");
 			packFile = new PackFile (packFile.Filepath);
 			PackFile savedPack = new PackFile ("verification.pack");
@@ -301,7 +304,8 @@ namespace PackFileTest {
 						}
 					} catch (Exception x) {
 						failures.Add (new TestFailure (string.Format
-							("{0}\nPackfile {1}\npacked file {2}, offset {3}, size {4}", x.Message, packFile.Filepath, packed.Filepath, packed.offset, packed.Size)));
+							("{0}\nPackfile {1}\npacked file {2}, offset {3}, size {4}", x.Message, 
+                            packFile.Filepath, packed.Filepath, (packed as PackedPackedFile).Offset, packed.Size)));
 //						Console.WriteLine (x);
 //						Console.WriteLine ("Packfile {0}", packFile);
 //						Console.WriteLine ("packed file {0}, offset {1}, size {2}", packed.Filepath, packed.offset, packed.Size);
@@ -310,20 +314,21 @@ namespace PackFileTest {
 				}
 			}
 		}
+ * */
 		
 		private static void dumpReadEntry(FieldInfo info, string val) {
 			Console.WriteLine ("read {0} field: value {1}", info.TypeName, val);
 		}
 		
 		private static string filename(PackedFile file) {
-			string dbFile = file.Filepath;
+			string dbFile = file.FullPath;
 			string result = dbFile.Substring (dbFile.LastIndexOf ('\\') + 1).Replace ("_tables", "");
 			return result;
 		}
 		
 		private static string typename(PackedFile file) {
 			// string dbFile = file.Filepath;
-			string result = file.Filepath.Split ('\\')[1].Replace("_tables", "");
+            string result = file.FullPath.Split('\\')[1].Replace("_tables", "");
 			// string result = dbFile.Substring (dbFile.LastIndexOf ('\\') + 1).Replace ("_tables", "");
 			return result;
 		}

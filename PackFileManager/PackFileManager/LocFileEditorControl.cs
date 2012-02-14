@@ -76,7 +76,7 @@ namespace PackFileManager
             this.dataGridView.FirstDisplayedScrollingRowIndex = this.dataGridView.RowCount - 1;
             this.dataGridView.Rows[this.dataGridView.Rows.Count - 2].Selected = true;
             this.dataChanged = true;
-            this.currentPackedFile.ReplaceData(this.locFile.GetBytes());
+            this.currentPackedFile.Data = this.locFile.GetBytes();
         }
 
         private void cloneCurrentRow_Click(object sender, EventArgs e)
@@ -90,13 +90,13 @@ namespace PackFileManager
             this.dataGridView.FirstDisplayedScrollingRowIndex = this.dataGridView.RowCount - 1;
             this.dataGridView.Rows[this.dataGridView.Rows.Count - 2].Selected = true;
             this.dataChanged = true;
-            this.currentPackedFile.ReplaceData(this.locFile.GetBytes());
+            this.currentPackedFile.Data = this.locFile.GetBytes();
         }
 
         private void dataGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             this.dataChanged = true;
-            this.currentPackedFile.ReplaceData(this.locFile.GetBytes());
+            this.currentPackedFile.Data = (this.locFile.GetBytes());
         }
 
         private void dataGridView_SelectionChanged(object sender, EventArgs e)
@@ -108,7 +108,7 @@ namespace PackFileManager
         private void dataGridView_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
             this.dataChanged = true;
-            this.currentPackedFile.ReplaceData(this.locFile.GetBytes());
+            this.currentPackedFile.Data = (this.locFile.GetBytes());
         }
 
         private void deleteCurrentRow_Click(object sender, EventArgs e)
@@ -116,7 +116,7 @@ namespace PackFileManager
             int index = (this.dataGridView.SelectedRows.Count == 1) ? this.dataGridView.SelectedRows[0].Index : this.dataGridView.SelectedCells[0].RowIndex;
             this.currentDataTable.Rows.RemoveAt(index);
             this.dataChanged = true;
-            this.currentPackedFile.ReplaceData(this.locFile.GetBytes());
+            this.currentPackedFile.Data = (this.locFile.GetBytes());
         }
 
         protected override void Dispose(bool disposing)
@@ -192,7 +192,7 @@ namespace PackFileManager
                 }
             }
             this.dataChanged = true;
-            this.currentPackedFile.ReplaceData(this.locFile.GetBytes());
+            this.currentPackedFile.Data = (this.locFile.GetBytes());
         }
 
         private void InitializeComponent()
@@ -331,7 +331,7 @@ namespace PackFileManager
                 LocEntry newEntry = new LocEntry(tag, localised, tooltip);
                 this.locFile.add(newEntry);
             }
-            this.currentPackedFile.ReplaceData(this.locFile.GetBytes());
+            this.currentPackedFile.Data = (this.locFile.GetBytes());
         }
 
         public void updatePackedFile()

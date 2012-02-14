@@ -7,8 +7,6 @@ using Common;
 
 namespace DecodeTool {       
     public class Util {
-		static String notAllowed = @"[^a-zA-Z0-9\s\.\\\-_/]";
-		
         public static String formatHex(byte[] bytes) {
 			if (bytes.Length == 0)
 				return "";

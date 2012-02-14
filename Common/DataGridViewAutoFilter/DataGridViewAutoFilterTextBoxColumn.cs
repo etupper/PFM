@@ -36,7 +36,7 @@
         }
 
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), EditorBrowsable(EditorBrowsableState.Never)]
-        public System.Type DefaultHeaderCellType
+        public new System.Type DefaultHeaderCellType
         {
             get
             {
@@ -71,7 +71,7 @@
         }
 
         [EditorBrowsable(EditorBrowsableState.Advanced), DefaultValue(2), Browsable(false)]
-        public DataGridViewColumnSortMode SortMode
+        public new DataGridViewColumnSortMode SortMode
         {
             get
             {

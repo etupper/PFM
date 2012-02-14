@@ -575,7 +575,7 @@
             }
         }
 
-        [CompilerGenerated]
+/*        [CompilerGenerated]
         private sealed class <get_Objects>d__4f : IEnumerable<object>, IEnumerable, IEnumerator<object>, IEnumerator, IDisposable
         {
             private int <>1__state;
@@ -660,6 +660,7 @@
                 }
             }
         }
+        */
     }
 }
 

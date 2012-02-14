@@ -463,7 +463,7 @@
 
         public void setData()
         {
-            this.currentPackedFile.ReplaceData(this.unitVariantFile.GetBytes());
+            this.currentPackedFile.Data = (this.unitVariantFile.GetBytes());
             this.dataChanged = false;
         }
 

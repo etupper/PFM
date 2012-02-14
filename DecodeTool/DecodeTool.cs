@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Drawing;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Common;
 
 namespace DecodeTool {
     public partial class DecodeTool : Form {
-        Regex typeRe = new Regex("DBFileTypes_([0-9]*).txt");
-
         byte[] bytes;
         List<FieldInfo> types = new List<FieldInfo>();
         int offset = 0;
@@ -123,11 +119,11 @@ namespace DecodeTool {
 			hexView.Select (0, 0);
 
 			using (BinaryReader reader = new BinaryReader(new MemoryStream(bytes))) {
-                showPreview(reader, KnownByteCount);
+				showPreview(reader, KnownByteCount);
 
 				typeList.Items.Clear ();
 				valueList.Items.Clear ();
-                skipToCurrentEntry(reader);
+				skipToCurrentEntry(reader);
 				string s;
 				int start = (int)reader.BaseStream.Position;
 				int end = start;
@@ -318,10 +314,9 @@ namespace DecodeTool {
         private void valueList_SelectedIndexChanged(object sender, EventArgs e) {
             using (BinaryReader reader = new BinaryReader(new MemoryStream(bytes))) {
                 skipToCurrentEntry(reader);
-                int start = (int) reader.BaseStream.Position;
                 int index = (sender as ListBox).SelectedIndex;
                 for (int i = 0; i < index; i++) {
-                    string temp = types[i].Decode(reader);
+                    types[i].Decode(reader);
                 }
                 long pos = reader.BaseStream.Position;
                 showPreview(reader, pos);

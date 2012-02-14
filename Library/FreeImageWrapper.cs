@@ -1991,18 +1991,16 @@ namespace FreeImageAPI
 		/// <see cref="FREE_IMAGE_FORMAT.FIF_UNKNOWN"/></param>.
 		/// <param name="flags">Flags to enable or disable plugin-features.</param>
 		/// <returns>Handle to a FreeImage multi-paged bitmap.</returns>
-		public static FIMULTIBITMAP OpenMultiBitmapFromStream(Stream stream, ref FREE_IMAGE_FORMAT format, FREE_IMAGE_LOAD_FLAGS flags)
-		{
+		public static FIMULTIBITMAP OpenMultiBitmapFromStream(Stream stream, ref FREE_IMAGE_FORMAT format, FREE_IMAGE_LOAD_FLAGS flags) {
 			if (stream == null)
 				return FIMULTIBITMAP.Zero;
 
 			if (!stream.CanSeek)
-				stream = new StreamWrapper(stream, true);
+				stream = new StreamWrapper (stream, true);
 
 			FIMULTIBITMAP mdib = FIMULTIBITMAP.Zero;
 			FreeImageIO io = FreeImageStreamIO.io;
-			fi_handle handle = new fi_handle(stream);
-
+			fi_handle handle = new fi_handle (stream);
 			try
 			{
 				if (format == FREE_IMAGE_FORMAT.FIF_UNKNOWN)
@@ -2031,8 +2029,7 @@ namespace FreeImageAPI
 				if (!mdib.IsNull)
 					CloseMultiBitmap(mdib, FREE_IMAGE_SAVE_FLAGS.DEFAULT);
 
-				if (handle != null)
-					handle.Dispose();
+				handle.Dispose();
 
 				throw;
 			}
