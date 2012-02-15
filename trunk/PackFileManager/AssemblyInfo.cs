@@ -1,4 +1,4 @@
-﻿// Assembly PackFileManager, Version 1.7.6
+﻿// Assembly PackFileManager, Version 2
 
 [assembly: System.Reflection.AssemblyVersion("2.0.0.0")]
 [assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)]
@@ -12,6 +12,6 @@
 [assembly: System.Reflection.AssemblyTrademark("")]
 [assembly: System.Runtime.InteropServices.ComVisible(false)]
 [assembly: System.Runtime.InteropServices.Guid("3f1cda43-b5a1-4c88-814b-4260dbe2fae6")]
-[assembly: System.Reflection.AssemblyFileVersion("2.0.0")]
+[assembly: System.Reflection.AssemblyFileVersion("2.0.1")]
 [assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.DisableOptimizations | System.Diagnostics.DebuggableAttribute.DebuggingModes.EnableEditAndContinue | System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints | System.Diagnostics.DebuggableAttribute.DebuggingModes.Default)]
 
