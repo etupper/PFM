@@ -53,66 +53,62 @@ namespace Common {
 
         private List<List<FieldInstance>> entries = new List<List<FieldInstance>>();
         public DBFileHeader Header;
-		private TypeInfo typeInfo;
+        public TypeInfo CurrentType {
+            get;
+            set;
+        }
 
 		#region Attributes
-        public int TotalwarHeaderVersion {
-            get { return Header.Version; }
-                }
-		public TypeInfo CurrentType {
-			get {
-				return typeInfo;
-                }
-            }
         public FieldInstance this[int row, int column] {
             get {
                 return entries[row][column];
             }
         }
 
-		public List<List<FieldInstance>> Entries {
-			get {
-				return this.entries;
-			}
-		}
+        public List<List<FieldInstance>> Entries {
+            get {
+                return this.entries;
+            }
+        }
 		#endregion
 
         #region Constructors
         public DBFile (DBFileHeader h, TypeInfo info) {
 			Header = h;
-			typeInfo = info;
+			CurrentType = info;
 		}
 
-        public DBFile (DBFile toCopy) : this(toCopy.Header, toCopy.typeInfo) {
+        public DBFile (DBFile toCopy) : this(toCopy.Header, toCopy.CurrentType) {
 			Header = new DBFileHeader (toCopy.Header.GUID, toCopy.Header.Version, toCopy.Header.EntryCount, toCopy.Header.HasVersionMarker);
 			toCopy.entries.ForEach (entry => entries.Add (new List<FieldInstance> (entry)));
 		}
         #endregion
 
         public byte[] GetBytes() {
+            Header.EntryCount = (uint) Entries.Count;
             byte[] buffer;
 			MemoryStream stream = new MemoryStream ();
 			new PackedFileDbCodec().writeDbFile (stream, this);
-                    buffer = stream.ToArray();
+            buffer = stream.ToArray();
 			stream.Dispose ();
             return buffer;
         }
 
         public List<FieldInstance> GetNewEntry() {
 			List<FieldInstance> newEntry = new List<FieldInstance> ();
-			foreach (FieldInfo field in typeInfo.fields) {
+			foreach (FieldInfo field in CurrentType.fields) {
 				newEntry.Add (new FieldInstance (field, field.DefaultValue));
 			}
 			return newEntry;
 		}
 
         public void Import(DBFile file) {
-			if (typeInfo.name != file.typeInfo.name) {
+			if (CurrentType.name != file.CurrentType.name) {
 				throw new DBFileNotSupportedException ("File type of imported DB doesn't match that of the currently opened one", this);
 			}
 			DBFileHeader h = file.Header;
 			Header = new DBFileHeader (h.GUID, h.Version, h.EntryCount, h.HasVersionMarker);
-			typeInfo = file.typeInfo;
+			CurrentType = file.CurrentType;
 			this.entries = new List<List<FieldInstance>> ();
 			entries.AddRange (file.entries);
 		}
