@@ -1834,14 +1834,14 @@ namespace PackFileManager
                 if (cAPacksAreReadOnlyToolStripMenuItem.Checked) {
                     switch (currentPackFile.Type) {
                         case PackType.Mod:
-                            result = true;
+                            result = false;
                             break;
                         case PackType.Movie:
                             Regex caMovieRe = new Regex("(patch_)?movies([0-9]*).pack");
                             result = caMovieRe.IsMatch(Path.GetFileName(currentPackFile.Filepath));
                             break;
                         default:
-                            result = false;
+                            result = true;
                             break;
                     }
                 }
