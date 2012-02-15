@@ -119,6 +119,10 @@ namespace PackFileManager
         private ToolStripMenuItem toolStripMenuItem10;
         private ToolStripMenuItem toolStripMenuItem11;
         private ToolStripMenuItem toolStripMenuItem12;
+        private ToolStripMenuItem emptyDirectoryToolStripMenuItem;
+        private ToolStripMenuItem toolStripMenuItem13;
+        private ToolStripMenuItem dBFileFromTSVToolStripMenuItem;
+        private ToolStripMenuItem toolStripMenuItem14;
         private UnitVariantFileEditorControl unitVariantFileEditorControl;
         #endregion
 
@@ -330,6 +334,7 @@ namespace PackFileManager
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem13 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
@@ -343,6 +348,8 @@ namespace PackFileManager
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.emptyDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dBFileFromTSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
@@ -412,8 +419,9 @@ namespace PackFileManager
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.addDirectoryFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.openDBFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.toolStripMenuItem14 = new System.Windows.Forms.ToolStripMenuItem();
             this.packActionMenuStrip.SuspendLayout();
-            //            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.menuStrip.SuspendLayout();
@@ -453,8 +461,10 @@ namespace PackFileManager
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem3,
+            this.toolStripMenuItem13,
             this.toolStripMenuItem2,
-            this.toolStripMenuItem3});
+            this.toolStripMenuItem14});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem1.Text = "Add";
@@ -474,6 +484,13 @@ namespace PackFileManager
             this.toolStripMenuItem3.Size = new System.Drawing.Size(185, 22);
             this.toolStripMenuItem3.Text = "&Directory...";
             this.toolStripMenuItem3.Click += new System.EventHandler(this.addDirectoryToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem13
+            // 
+            this.toolStripMenuItem13.Name = "toolStripMenuItem13";
+            this.toolStripMenuItem13.Size = new System.Drawing.Size(185, 22);
+            this.toolStripMenuItem13.Text = "Empty Directory";
+            this.toolStripMenuItem13.Click += new System.EventHandler(this.emptyDirectoryToolStripMenuItem_Click);
             // 
             // toolStripMenuItem4
             // 
@@ -554,8 +571,10 @@ namespace PackFileManager
             // addToolStripMenuItem
             // 
             this.addToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.emptyDirectoryToolStripMenuItem,
+            this.addDirectoryToolStripMenuItem,
             this.addFileToolStripMenuItem,
-            this.addDirectoryToolStripMenuItem});
+            this.dBFileFromTSVToolStripMenuItem});
             this.addToolStripMenuItem.Name = "addToolStripMenuItem";
             this.addToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.addToolStripMenuItem.Text = "Add";
@@ -575,6 +594,20 @@ namespace PackFileManager
             this.addDirectoryToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.addDirectoryToolStripMenuItem.Text = "&Directory...";
             this.addDirectoryToolStripMenuItem.Click += new System.EventHandler(this.addDirectoryToolStripMenuItem_Click);
+            // 
+            // emptyDirectoryToolStripMenuItem
+            // 
+            this.emptyDirectoryToolStripMenuItem.Name = "emptyDirectoryToolStripMenuItem";
+            this.emptyDirectoryToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.emptyDirectoryToolStripMenuItem.Text = "Empty Directory";
+            this.emptyDirectoryToolStripMenuItem.Click += new System.EventHandler(this.emptyDirectoryToolStripMenuItem_Click);
+            // 
+            // dBFileFromTSVToolStripMenuItem
+            // 
+            this.dBFileFromTSVToolStripMenuItem.Name = "dBFileFromTSVToolStripMenuItem";
+            this.dBFileFromTSVToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.dBFileFromTSVToolStripMenuItem.Text = "DB file from TSV";
+            this.dBFileFromTSVToolStripMenuItem.Click += new System.EventHandler(this.dBFileFromTSVToolStripMenuItem_Click);
             // 
             // packOpenFileDialog
             // 
@@ -1121,6 +1154,13 @@ namespace PackFileManager
             // 
             this.openDBFileDialog.Filter = "Text CSV|*.txt|Any File|*.*";
             // 
+            // toolStripMenuItem14
+            // 
+            this.toolStripMenuItem14.Name = "toolStripMenuItem14";
+            this.toolStripMenuItem14.Size = new System.Drawing.Size(185, 22);
+            this.toolStripMenuItem14.Text = "DB file from TSV";
+            this.toolStripMenuItem14.Click += new System.EventHandler(this.dBFileFromTSVToolStripMenuItem_Click);
+            // 
             // PackFileManagerForm
             // 
             this.AutoScroll = true;
@@ -1142,7 +1182,7 @@ namespace PackFileManager
             this.Shown += new System.EventHandler(this.PackFileManagerForm_Shown);
             this.packActionMenuStrip.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
-            // ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
@@ -1182,6 +1222,7 @@ namespace PackFileManager
                 }
             }
         }
+
 
         private void PackFileManagerForm_Load(object sender, EventArgs e) {
             base.TopMost = true;
@@ -1414,16 +1455,18 @@ namespace PackFileManager
         }
 
         public PackFile CurrentPackFile {
-            get { return currentPackFile; }
-            set {
-                if (currentPackFile != null) {
-                    currentPackFile.Modified -= currentPackFile_Modified;
-                }
-                currentPackFile = value;
-                currentPackFile.Modified += currentPackFile_Modified;
-                Refresh();
-            }
-        }
+			get { return currentPackFile; }
+			set {
+				// unregister from previous
+				if (currentPackFile != null) {
+					currentPackFile.Modified -= currentPackFile_Modified;
+				}
+				// register previous and build tree
+				currentPackFile = value;
+				currentPackFile.Modified += currentPackFile_Modified;
+				Refresh ();
+			}
+		}
 
         #region Open Pack
         private void newToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -1447,9 +1490,7 @@ namespace PackFileManager
         {
             try
             {
-                packTreeView.Enabled = false;
                 PackFileCodec codec = new PackFileCodec();
-                codec.PackFileLoaded += file => packTreeView.Enabled = true;
                 new LoadUpdater(codec, filepath, this.packStatusLabel, packActionProgressBar);
                 CurrentPackFile = codec.Open(filepath);
             }
@@ -1645,30 +1686,7 @@ namespace PackFileManager
 
         private void packTreeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (this.splitContainer1.Panel2.Controls.Contains(this.locFileEditorControl))
-            {
-                this.locFileEditorControl.updatePackedFile();
-            }
-            else if (this.splitContainer1.Panel2.Controls.Contains(this.readmeEditorControl))
-            {
-                this.readmeEditorControl.updatePackedFile();
-            }
-            else if (this.splitContainer1.Panel2.Controls.Contains(this.atlasFileEditorControl))
-            {
-                this.atlasFileEditorControl.updatePackedFile();
-            }
-            else if (this.splitContainer1.Panel2.Controls.Contains(this.unitVariantFileEditorControl))
-            {
-                this.unitVariantFileEditorControl.updatePackedFile();
-            }
-            else if (this.splitContainer1.Panel2.Controls.Contains(this.imageViewerControl))
-            {
-                this.imageViewerControl.CloseImageViewerControl();
-            }
-            else if (this.splitContainer1.Panel2.Controls.Contains(this.textFileEditorControl))
-            {
-                this.textFileEditorControl.CloseTextFileEditorControl();
-            }
+            closeEditors();
             this.splitContainer1.Panel2.Controls.Clear();
 			
             if (this.packTreeView.SelectedNode != null)
@@ -1834,14 +1852,14 @@ namespace PackFileManager
                 if (cAPacksAreReadOnlyToolStripMenuItem.Checked) {
                     switch (currentPackFile.Type) {
                         case PackType.Mod:
-                            result = false;
+                            result = true;
                             break;
                         case PackType.Movie:
                             Regex caMovieRe = new Regex("(patch_)?movies([0-9]*).pack");
                             result = caMovieRe.IsMatch(Path.GetFileName(currentPackFile.Filepath));
                             break;
                         default:
-                            result = true;
+                            result = false;
                             break;
                     }
                 }
@@ -1960,26 +1978,30 @@ namespace PackFileManager
         }
 
         public static void tryUpdate(bool showSuccess = true) {
-            try {
-                string path = Path.GetDirectoryName(Application.ExecutablePath);
-                string version = Application.ProductVersion;
-                bool update = DBFileTypesUpdater.checkVersion(path, ref version);
-                if (showSuccess) {
-                    string message = update ? "DB File description updated." : "No update performed.";
-                    MessageBox.Show(message, "Update result", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			try {
+				string path = Path.GetDirectoryName (Application.ExecutablePath);
+				string version = Application.ProductVersion;
+				bool update = DBFileTypesUpdater.checkVersion (path, ref version);
+				if (showSuccess) {
+					string message = update ? "DB File description updated." : "No update performed.";
+					MessageBox.Show (message, "Update result", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-                if (update) {
-                    DBTypeMap.Instance.initializeTypeMap(path);
+				if (update) {
+					DBTypeMap.Instance.initializeTypeMap (path);
                 }
-                if (version != Application.ProductVersion) {
-                    MessageBox.Show(string.Format("A new version of PFM is available ({0})", version), "New Software version available");
+				if (version != Application.ProductVersion) {
+					MessageBox.Show (string.Format ("A new version of PFM is available ({0})", version), "New Software version available");
                 }
-            } catch (Exception e) {
-                MessageBox.Show(
-                    string.Format("Update failed: \n{0}\n{1}", e.Message, e.StackTrace), "Problem, sir!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			} catch (Exception e) {
+				MessageBox.Show (
+                    string.Format ("Update failed: \n{0}\n{1}", e.Message, e.StackTrace), 
+					"Problem, sir!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
+		
+		// this could do with an update; since the transition to schema.xml,
+		// we also know obsolete fields and can remove them,
+		// and we can add fields in the middle instead of assuming they got appended.
         private void updatePackedFile(PackedFile packedFile) {
             try {
                 string key = DBFile.typename(packedFile.FullPath);
@@ -2003,8 +2025,8 @@ namespace PackFileManager
                                 }
                             }
                         }
-                        updatedFile.header.Version = maxVersion;
-                        packedFile.Data = updatedFile.GetBytes();
+                        updatedFile.Header.Version = maxVersion;
+                        packedFile.Data = PackedFileDbCodec.Encode(updatedFile);
 
                         if (dbFileEditorControl.currentPackedFile == packedFile) {
                             dbFileEditorControl.Open(packedFile, currentPackFile);
@@ -2017,11 +2039,11 @@ namespace PackFileManager
         }
 
         private bool unknownDbFormat(PackedFile file) {
-            bool result = file.FullPath.StartsWith("db");
-            string buffer;
-            result &= !PackedFileDbCodec.CanDecode(file, out buffer);
-            return result;
-    }
+			bool result = file.FullPath.StartsWith ("db");
+			string buffer;
+			result &= !PackedFileDbCodec.CanDecode (file, out buffer);
+			return result;
+		}
 
         private void exportUnknownToolStripMenuItem_Click(object sender, EventArgs e) {
             List<PackedFile> packedFiles = new List<PackedFile>();
@@ -2035,7 +2057,44 @@ namespace PackFileManager
             this.extractFiles(packedFiles);
         }
         #endregion
+
+        private void emptyDirectoryToolStripMenuItem_Click(object sender, EventArgs e) {
+            VirtualDirectory dir = packTreeView.SelectedNode.Tag as VirtualDirectory;
+            if (dir != null) {
+                try {
+                    VirtualDirectory newDir = new VirtualDirectory() { Name = "empty" };
+                    dir.Add(newDir);
+                    foreach (TreeNode node in packTreeView.SelectedNode.Nodes) {
+                        if (node.Tag == newDir) {
+                            node.EnsureVisible();
+                            node.BeginEdit();
+                            break;
+                        }
+                    }
+                } catch { }
+            }
+        }
+
+        private void dBFileFromTSVToolStripMenuItem_Click(object sender, EventArgs e) {
+            VirtualDirectory dir = packTreeView.SelectedNode.Tag as VirtualDirectory;
+            if (dir != null) {
+                if (openDBFileDialog.ShowDialog() == DialogResult.OK) {
+                    using (FileStream filestream = File.OpenRead(openDBFileDialog.FileName)) {
+                        string filename = Path.GetFileNameWithoutExtension(openDBFileDialog.FileName);
+                        DBFile file = new TextDbCodec().readDbFile(filestream);
+                        byte[] data;
+                        using (MemoryStream stream = new MemoryStream()) {
+                            PackedFileDbCodec.Instance.Encode(stream, file);
+                            data = stream.ToArray();
+                        }
+                        dir.Add(new PackedFile() { Data = data, Name = filename, Parent = dir });
+                    }
+                }
+            } else {
+                MessageBox.Show("Select a directory to add to");
     }
+        }
+	}
 
     class LoadUpdater {
         private string file;
@@ -2052,21 +2111,21 @@ namespace PackFileManager
             bar.Value = 0;
             bar.Step = 10;
             Connect(codec);
-        }
+                }
         public void Connect(PackFileCodec codec) {
             codec.HeaderLoaded += HeaderLoaded;
             codec.PackedFileLoaded += PackedFileLoaded;
             codec.PackFileLoaded += PackFileLoaded;
             currentCodec = codec;
-        }
+            }
         public void Disconnect() {
             if (currentCodec != null) {
                 currentCodec.HeaderLoaded -= HeaderLoaded;
                 currentCodec.PackedFileLoaded -= PackedFileLoaded;
                 currentCodec.PackFileLoaded -= PackFileLoaded;
                 currentCodec = null;
-            }
         }
+    }
         public void HeaderLoaded(PFHeader header) {
             count = header.FileCount;
             progress.Maximum = (int) header.FileCount;

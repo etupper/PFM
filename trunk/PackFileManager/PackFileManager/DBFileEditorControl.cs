@@ -120,8 +120,6 @@ namespace PackFileManager {
         private void initTypeMap(string path) {
             try {
                 DBTypeMap.Instance.initializeTypeMap(path);
-                //DBTypeMap.Instance.fromXmlSchema(path);
-                //DBReferenceMap.Instance.load (path);
             } catch (Exception e) {
                 if (MessageBox.Show(string.Format("Could not initialize type map: {0}.\nTry autoupdate?", e.Message),
                     "Initialize failed", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes) {
@@ -289,7 +287,7 @@ namespace PackFileManager {
                     } catch (DBFileNotSupportedException exception) {
                         this.showDBFileNotSupportedMessage(exception.Message);
                     }
-                    this.currentPackedFile.Data = (this.currentDBFile.GetBytes());
+                    this.currentPackedFile.Data = (PackedFileDbCodec.Encode(currentDBFile));
                     this.Open(this.currentPackedFile);
                 }
             }

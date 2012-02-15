@@ -52,18 +52,23 @@ namespace Common {
     public class DBFile {
 
         private List<List<FieldInstance>> entries = new List<List<FieldInstance>>();
-        public DBFileHeader header;
+        public DBFileHeader Header;
 		private TypeInfo typeInfo;
 
 		#region Attributes
         public int TotalwarHeaderVersion {
-            get { return header.Version; }
+            get { return Header.Version; }
                 }
 		public TypeInfo CurrentType {
 			get {
 				return typeInfo;
                 }
             }
+        public FieldInstance this[int row, int column] {
+            get {
+                return entries[row][column];
+            }
+        }
 
 		public List<List<FieldInstance>> Entries {
 			get {
@@ -74,12 +79,12 @@ namespace Common {
 
         #region Constructors
         public DBFile (DBFileHeader h, TypeInfo info) {
-			header = h;
+			Header = h;
 			typeInfo = info;
 		}
 
-        public DBFile (DBFile toCopy) : this(toCopy.header, toCopy.typeInfo) {
-			header = new DBFileHeader (toCopy.header.GUID, toCopy.header.Version, toCopy.header.EntryCount, toCopy.header.HasVersionMarker);
+        public DBFile (DBFile toCopy) : this(toCopy.Header, toCopy.typeInfo) {
+			Header = new DBFileHeader (toCopy.Header.GUID, toCopy.Header.Version, toCopy.Header.EntryCount, toCopy.Header.HasVersionMarker);
 			toCopy.entries.ForEach (entry => entries.Add (new List<FieldInstance> (entry)));
 		}
         #endregion
@@ -105,8 +110,8 @@ namespace Common {
 			if (typeInfo.name != file.typeInfo.name) {
 				throw new DBFileNotSupportedException ("File type of imported DB doesn't match that of the currently opened one", this);
 			}
-			DBFileHeader h = file.header;
-			header = new DBFileHeader (h.GUID, h.Version, h.EntryCount, h.HasVersionMarker);
+			DBFileHeader h = file.Header;
+			Header = new DBFileHeader (h.GUID, h.Version, h.EntryCount, h.HasVersionMarker);
 			typeInfo = file.typeInfo;
 			this.entries = new List<List<FieldInstance>> ();
 			entries.AddRange (file.entries);
