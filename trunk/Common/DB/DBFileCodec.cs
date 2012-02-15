@@ -252,7 +252,7 @@ namespace Common {
         public void writeDbFile(Stream stream, DBFile file) {
             StreamWriter writer = new StreamWriter (stream);
             writer.WriteLine (file.CurrentType.name);
-            writer.WriteLine (Convert.ToString (file.TotalwarHeaderVersion));
+            writer.WriteLine (Convert.ToString (file.Header.Version));
             foreach (FieldInfo info2 in file.CurrentType.fields) {
                 writer.Write (info2.Name + "\t");
             }

@@ -17,6 +17,7 @@ namespace PackFileManager {
             CELLS
         }
 
+        #region Members
         private ToolStripButton addNewRowButton;
         private CheckBox useFirstColumnAsRowHeader;
         private ToolStripButton cloneCurrentRow;
@@ -40,6 +41,7 @@ namespace PackFileManager {
         private bool dataChanged = false;
         private List<List<FieldInstance>> copiedRows = new List<List<FieldInstance>>();
         private COPIED_TYPE lastCopy = COPIED_TYPE.NONE;
+        #endregion
 
         public DBFileEditorControl() {
             this.components = null;
@@ -431,7 +433,7 @@ namespace PackFileManager {
             // 
             // openDBFileDialog
             // 
-            this.openDBFileDialog.Filter = "Tab separated values (TSV)|*.tsv|Any File|*.*";
+            this.openDBFileDialog.Filter = "Tab separated values (TSV)|*.tsv,*.csv|Any File|*.*";
             // 
             // unsupportedDBErrorTextBox
             // 

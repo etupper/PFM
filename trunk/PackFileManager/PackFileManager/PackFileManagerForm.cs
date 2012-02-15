@@ -228,7 +228,7 @@ namespace PackFileManager
             EnableMenuItems();
         }
 
-        #region File Add/Delete
+        #region Entry Add/Delete
         VirtualDirectory AddTo {
             get {
                 VirtualDirectory addTo;
@@ -307,6 +307,47 @@ namespace PackFileManager
             if (addReplaceOpenFileDialog.ShowDialog() == DialogResult.OK) {
                 PackedFile tag = this.packTreeView.SelectedNode.Tag as PackedFile;
                 tag.Source = new FileSystemSource(addReplaceOpenFileDialog.FileName);
+            }
+        }
+        
+        private void emptyDirectoryToolStripMenuItem_Click(object sender, EventArgs e) {
+            VirtualDirectory dir = packTreeView.SelectedNode.Tag as VirtualDirectory;
+            if (dir != null) {
+                try {
+                    VirtualDirectory newDir = new VirtualDirectory() { Name = "empty" };
+                    dir.Add(newDir);
+                    foreach (TreeNode node in packTreeView.SelectedNode.Nodes) {
+                        if (node.Tag == newDir) {
+                            node.EnsureVisible();
+                            node.BeginEdit();
+                            break;
+                        }
+                    }
+                } catch { }
+            }
+        }
+
+        private void dBFileFromTSVToolStripMenuItem_Click(object sender, EventArgs e) {
+            VirtualDirectory dir = packTreeView.SelectedNode.Tag as VirtualDirectory;
+            if (dir != null) {
+                if (openDBFileDialog.ShowDialog() == DialogResult.OK) {
+                    try {
+                        using (FileStream filestream = File.OpenRead(openDBFileDialog.FileName)) {
+                            string filename = Path.GetFileNameWithoutExtension(openDBFileDialog.FileName);
+                            DBFile file = new TextDbCodec().readDbFile(filestream);
+                            byte[] data;
+                            using (MemoryStream stream = new MemoryStream()) {
+                                PackedFileDbCodec.Instance.Encode(stream, file);
+                                data = stream.ToArray();
+                            }
+                            dir.Add(new PackedFile() { Data = data, Name = filename, Parent = dir });
+                        }
+                    } catch (Exception x) {
+                        MessageBox.Show(x.Message);
+                    }
+                }
+            } else {
+                MessageBox.Show("Select a directory to add to");
             }
         }
 
@@ -2057,43 +2098,6 @@ namespace PackFileManager
             this.extractFiles(packedFiles);
         }
         #endregion
-
-        private void emptyDirectoryToolStripMenuItem_Click(object sender, EventArgs e) {
-            VirtualDirectory dir = packTreeView.SelectedNode.Tag as VirtualDirectory;
-            if (dir != null) {
-                try {
-                    VirtualDirectory newDir = new VirtualDirectory() { Name = "empty" };
-                    dir.Add(newDir);
-                    foreach (TreeNode node in packTreeView.SelectedNode.Nodes) {
-                        if (node.Tag == newDir) {
-                            node.EnsureVisible();
-                            node.BeginEdit();
-                            break;
-                        }
-                    }
-                } catch { }
-            }
-        }
-
-        private void dBFileFromTSVToolStripMenuItem_Click(object sender, EventArgs e) {
-            VirtualDirectory dir = packTreeView.SelectedNode.Tag as VirtualDirectory;
-            if (dir != null) {
-                if (openDBFileDialog.ShowDialog() == DialogResult.OK) {
-                    using (FileStream filestream = File.OpenRead(openDBFileDialog.FileName)) {
-                        string filename = Path.GetFileNameWithoutExtension(openDBFileDialog.FileName);
-                        DBFile file = new TextDbCodec().readDbFile(filestream);
-                        byte[] data;
-                        using (MemoryStream stream = new MemoryStream()) {
-                            PackedFileDbCodec.Instance.Encode(stream, file);
-                            data = stream.ToArray();
-                        }
-                        dir.Add(new PackedFile() { Data = data, Name = filename, Parent = dir });
-                    }
-                }
-            } else {
-                MessageBox.Show("Select a directory to add to");
-    }
-        }
 	}
 
     class LoadUpdater {
