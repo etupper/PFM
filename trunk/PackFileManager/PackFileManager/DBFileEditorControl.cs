@@ -284,7 +284,7 @@ namespace PackFileManager {
                 using (StreamReader reader = new StreamReader(this.openDBFileDialog.FileName)) {
                     try {
                         using (MemoryStream stream = new MemoryStream(File.ReadAllBytes(openDBFileDialog.FileName))) {
-                            this.currentDBFile.Import((new PackedFileDbCodec()).readDbFile(currentPackedFile.FullPath, stream));
+                            this.currentDBFile.Import((new TextDbCodec()).readDbFile(stream));
                         }
                     } catch (DBFileNotSupportedException exception) {
                         this.showDBFileNotSupportedMessage(exception.Message);
@@ -600,6 +600,7 @@ namespace PackFileManager {
                 }
                 this.currentDataSet.Tables.Add(this.currentDataTable);
                 this.currentDataTable.ColumnChanged += new DataColumnChangeEventHandler(this.currentDataTable_ColumnChanged);
+                this.currentDataTable.RowDeleting += new DataRowChangeEventHandler(this.currentDataTable_RowDeleted); 
                 this.currentDataTable.TableNewRow += new DataTableNewRowEventHandler(this.currentDataTable_TableNewRow);
                 for (num = 0; num < this.currentDBFile.Entries.Count; num++) {
                     DataRow row = this.currentDataTable.NewRow();
