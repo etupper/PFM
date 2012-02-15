@@ -24,12 +24,21 @@ namespace Common {
 		// header markers
 		static UInt32 GUID_MARKER = BitConverter.ToUInt32 (new byte[] { 0xFD, 0xFE, 0xFC, 0xFF}, 0);
 		static UInt32 VERSION_MARKER = BitConverter.ToUInt32 (new byte[] { 0xFC, 0xFD, 0xFE, 0xFF}, 0);
-		
+
+        public static PackedFileDbCodec Instance = new PackedFileDbCodec();
+
+        public static byte[] Encode(DBFile file) {
+            using (MemoryStream stream = new MemoryStream()) {
+                PackedFileDbCodec.Instance.Encode(stream, file);
+                return stream.ToArray();
+            }
+        }
+
 		#region Read
 		public DBFile readDbFile(PackedFile file) {
-			return decode(file);
+			return Decode(file);
 		}
-        public DBFile decode(PackedFile file) {
+        public DBFile Decode(PackedFile file) {
             return readDbFile(file.FullPath, file.Data);
         }
 
@@ -56,7 +65,7 @@ namespace Common {
 				try {
 					file.Entries.Add (readFields (reader, realInfo));
 				} catch (Exception x) {
-					string message = string.Format ("{2} at entry {0}, db version {1}", i, file.header.Version, x.Message);
+					string message = string.Format ("{2} at entry {0}, db version {1}", i, file.Header.Version, x.Message);
 					throw new DBFileNotSupportedException (message, x);
 				}
 			}
@@ -159,12 +168,12 @@ namespace Common {
         #region Write
         public void writeDbFile(Stream stream, DBFile file) {
 			BinaryWriter writer = new BinaryWriter (stream);
-			writeHeader (writer, file.header);
+			writeHeader (writer, file.Header);
 			writeFields (writer, file);
 			writer.Flush ();
 		}
 
-        public void encode(Stream stream, DBFile file) {
+        public void Encode(Stream stream, DBFile file) {
             writeDbFile(stream, file);
         }
 

@@ -1,5 +1,4 @@
-﻿namespace PackFileManager
-{
+﻿namespace PackFileManager {
     using BrightIdeasSoftware;
     using Common;
     using System;
@@ -9,8 +8,7 @@
     using System.Drawing;
     using System.Windows.Forms;
 
-    public class UnitVariantFileEditorControl : UserControl
-    {
+    public class UnitVariantFileEditorControl : UserControl {
         private ToolStripMenuItem addReferenceToModelPartToolStripMenuItem;
         private IContainer components;
         private ContextMenuStrip contextMenuStrip1;
@@ -38,15 +36,13 @@
         private TreeListView treeListView1;
         private UnitVariantFile unitVariantFile;
 
-        public UnitVariantFileEditorControl()
-        {
+        public UnitVariantFileEditorControl() {
             this.dataChanged = false;
             this.components = null;
             this.InitializeComponent();
         }
 
-        public UnitVariantFileEditorControl(PackedFile packedFile)
-        {
+        public UnitVariantFileEditorControl(PackedFile packedFile) {
             this.dataChanged = false;
             this.components = null;
             this.InitializeComponent();
@@ -73,15 +69,11 @@
             this.treeListView1.Sort(this.olvColumn2, SortOrder.Ascending);
         }
 
-        private void addReference_Click(object sender, EventArgs e)
-        {
+        private void addReference_Click(object sender, EventArgs e) {
             UnitVariantObject entry = new UnitVariantObject();
-            if (this.treeListView1.SelectedObject is MeshTextureObject)
-            {
+            if (this.treeListView1.SelectedObject is MeshTextureObject) {
                 entry = (UnitVariantObject) this.treeListView1.GetParent(this.treeListView1.SelectedObject);
-            }
-            else
-            {
+            } else {
                 entry = (UnitVariantObject) this.treeListView1.SelectedObject;
             }
             MeshTextureObject mTO = new MeshTextureObject("NEW_ENTRY", "NEW_ENTRY", false, false);
@@ -91,30 +83,23 @@
             this.Refresh();
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (this.components != null))
-            {
+        protected override void Dispose(bool disposing) {
+            if (disposing && (this.components != null)) {
                 Utilities.DisposeHandlers(this);
                 this.components.Dispose();
             }
             base.Dispose(disposing);
         }
 
-        private void exportTSV_Click(object sender, EventArgs e)
-        {
+        private void exportTSV_Click(object sender, EventArgs e) {
             List<string> strings = new List<string>();
-            for (int i = 0; i < this.treeListView1.Items.Count; i++)
-            {
+            for (int i = 0; i < this.treeListView1.Items.Count; i++) {
                 OLVListItem item = (OLVListItem) this.treeListView1.Items[i];
-                if (item.RowObject is UnitVariantObject)
-                {
+                if (item.RowObject is UnitVariantObject) {
                     UnitVariantObject rowObject = (UnitVariantObject) item.RowObject;
                     strings.Add(rowObject.ModelPart.ToString() + "\t" + rowObject.Num1.ToString() + "\t" + rowObject.Num2.ToString() + "\t" + rowObject.Num3.ToString() + "\t" + rowObject.Num4.ToString());
-                    if (rowObject.MeshTextureList != null)
-                    {
-                        foreach (MeshTextureObject obj3 in rowObject.MeshTextureList)
-                        {
+                    if (rowObject.MeshTextureList != null) {
+                        foreach (MeshTextureObject obj3 in rowObject.MeshTextureList) {
                             strings.Add("\t\t\t\t\t" + obj3.Mesh + "\t" + obj3.Texture + "\t" + obj3.Bool1.ToString() + "\t" + obj3.Bool2.ToString());
                         }
                     }
@@ -123,8 +108,7 @@
             IOFunctions.writeToTSVFile(strings);
         }
 
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             this.components = new Container();
             this.richTextBox1 = new RichTextBox();
             this.richTextBox2 = new RichTextBox();
@@ -307,16 +291,12 @@
             base.ResumeLayout(false);
         }
 
-        private void insertModelPart_Click(object sender, EventArgs e)
-        {
+        private void insertModelPart_Click(object sender, EventArgs e) {
             UnitVariantObject entry = new UnitVariantObject();
             UnitVariantObject parent = new UnitVariantObject();
-            if (this.treeListView1.SelectedObject is MeshTextureObject)
-            {
+            if (this.treeListView1.SelectedObject is MeshTextureObject) {
                 parent = (UnitVariantObject) this.treeListView1.GetParent(this.treeListView1.SelectedObject);
-            }
-            else
-            {
+            } else {
                 parent = (UnitVariantObject) this.treeListView1.SelectedObject;
             }
             entry.ModelPart = "NEW_ENTRY";
@@ -330,15 +310,11 @@
             this.Refresh();
         }
 
-        private void removeModelPart_Click(object sender, EventArgs e)
-        {
+        private void removeModelPart_Click(object sender, EventArgs e) {
             UnitVariantObject parent = new UnitVariantObject();
-            if (this.treeListView1.SelectedObject is MeshTextureObject)
-            {
+            if (this.treeListView1.SelectedObject is MeshTextureObject) {
                 parent = (UnitVariantObject) this.treeListView1.GetParent(this.treeListView1.SelectedObject);
-            }
-            else
-            {
+            } else {
                 parent = (UnitVariantObject) this.treeListView1.SelectedObject;
             }
             this.unitVariantFile.removeUVO((int) parent.Num1);
@@ -349,8 +325,7 @@
             this.Refresh();
         }
 
-        private void removeReference_Click(object sender, EventArgs e)
-        {
+        private void removeReference_Click(object sender, EventArgs e) {
             MeshTextureObject selectedObject = (MeshTextureObject) this.treeListView1.SelectedObject;
             UnitVariantObject parent = (UnitVariantObject) this.treeListView1.GetParent(this.treeListView1.SelectedObject);
             int index = this.treeListView1.IndexOf(this.treeListView1.SelectedObject) - this.treeListView1.IndexOf(this.treeListView1.GetParent(this.treeListView1.SelectedObject));
@@ -361,21 +336,17 @@
             this.Refresh();
         }
 
-        private void richTextBox2_MouseHover(object sender, EventArgs e)
-        {
+        private void richTextBox2_MouseHover(object sender, EventArgs e) {
             new ToolTip().SetToolTip(this.richTextBox2, "Unknown two byte sequence [B1B2] expressed in hexadecimal. (Uneditable)");
         }
 
-        public void richTextBox3_Click(object sender, EventArgs e)
-        {
+        public void richTextBox3_Click(object sender, EventArgs e) {
             this.richTextBox3.Text = this.unitVariantFile.Unknown2.ToString();
             this.richTextBox3.SelectAll();
         }
 
-        private void richTextBox3_LostFocus(object sender, EventArgs e)
-        {
-            if (this.richTextBox3.Modified)
-            {
+        private void richTextBox3_LostFocus(object sender, EventArgs e) {
+            if (this.richTextBox3.Modified) {
                 this.unitVariantFile.Unknown2 = Convert.ToUInt32(this.richTextBox3.Text);
                 byte[] bytes = BitConverter.GetBytes(this.unitVariantFile.Unknown2);
                 this.unitVariantFile.B1 = bytes[0];
@@ -389,73 +360,57 @@
             }
         }
 
-        private void richTextBox3_MouseHover(object sender, EventArgs e)
-        {
+        private void richTextBox3_MouseHover(object sender, EventArgs e) {
             new ToolTip().SetToolTip(this.richTextBox3, "Unknown two byte sequence [B1B2] expressed as an unsigned integer value. (Editable)");
         }
 
-        private void richTextBox3_TextChanged(object sender, EventArgs e)
-        {
+        private void richTextBox3_TextChanged(object sender, EventArgs e) {
             this.unitVariantFile.Unknown2 = Convert.ToUInt32(this.richTextBox3.Text);
             this.dataChanged = true;
         }
 
-        private void richTextBox4_MouseHover(object sender, EventArgs e)
-        {
+        private void richTextBox4_MouseHover(object sender, EventArgs e) {
             new ToolTip().SetToolTip(this.richTextBox4, "First byte [B1] in an unknown two byte sequence [B1B2] expressed as an unsigned integer value. (Uneditable)");
         }
 
-        private void richTextBox5_MouseHover(object sender, EventArgs e)
-        {
+        private void richTextBox5_MouseHover(object sender, EventArgs e) {
             new ToolTip().SetToolTip(this.richTextBox5, "Second byte [B2] in an unknown two byte sequence [B1B2] expressed as an unsigned integer value. (Uneditable)");
         }
 
-        public void richTextBox6_Click(object sender, EventArgs e)
-        {
+        public void richTextBox6_Click(object sender, EventArgs e) {
             this.richTextBox6.Text = this.unitVariantFile.NumEntries.ToString();
             this.richTextBox6.SelectAll();
         }
 
-        private void richTextBox6_MouseHover(object sender, EventArgs e)
-        {
+        private void richTextBox6_MouseHover(object sender, EventArgs e) {
             new ToolTip().SetToolTip(this.richTextBox6, "Number of Model Parts. (Uneditable)");
         }
 
-        private void richTextBox6_TextChanged(object sender, EventArgs e)
-        {
+        private void richTextBox6_TextChanged(object sender, EventArgs e) {
             this.unitVariantFile.NumEntries = Convert.ToUInt32(this.richTextBox6.Text);
             this.dataChanged = true;
         }
 
-        private void setColumnWidth()
-        {
+        private void setColumnWidth() {
             float width = 0f;
             float num2 = 0f;
-            using (Graphics graphics = base.CreateGraphics())
-            {
-                foreach (UnitVariantObject obj2 in this.unitVariantFile.UnitVariantObjects)
-                {
-                    if (obj2.MeshTextureList != null)
-                    {
-                        foreach (MeshTextureObject obj3 in obj2.MeshTextureList)
-                        {
-                            if (width < graphics.MeasureString(obj3.Mesh, this.Font).Width)
-                            {
+            using (Graphics graphics = base.CreateGraphics()) {
+                foreach (UnitVariantObject obj2 in this.unitVariantFile.UnitVariantObjects) {
+                    if (obj2.MeshTextureList != null) {
+                        foreach (MeshTextureObject obj3 in obj2.MeshTextureList) {
+                            if (width < graphics.MeasureString(obj3.Mesh, this.Font).Width) {
                                 width = graphics.MeasureString(obj3.Mesh, this.Font).Width;
                             }
-                            if (num2 < graphics.MeasureString(obj3.Texture, this.Font).Width)
-                            {
+                            if (num2 < graphics.MeasureString(obj3.Texture, this.Font).Width) {
                                 num2 = graphics.MeasureString(obj3.Texture, this.Font).Width;
                             }
                         }
                     }
                 }
-                if (width > 0f)
-                {
+                if (width > 0f) {
                     this.olvColumn6.Width = (int) width;
                 }
-                if (num2 > 0f)
-                {
+                if (num2 > 0f) {
                     this.olvColumn7.Width = (int) num2;
                 }
             }
@@ -467,8 +422,7 @@
             this.dataChanged = false;
         }
 
-        private void treeListView1_CellEditFinishing(object sender, CellEditEventArgs e)
-        {
+        private void treeListView1_CellEditFinishing(object sender, CellEditEventArgs e) {
             AspectPutterDelegate delegate2 = null;
             AspectPutterDelegate delegate3 = null;
             AspectPutterDelegate delegate4 = null;
@@ -478,14 +432,11 @@
             AspectPutterDelegate delegate8 = null;
             AspectPutterDelegate delegate9 = null;
             AspectPutterDelegate delegate10 = null;
-            switch ((e.Column.Index + 1))
-            {
+            switch ((e.Column.Index + 1)) {
                 case 1:
-                    if (delegate2 == null)
-                    {
+                    if (delegate2 == null) {
                         delegate2 = delegate (object x, object newValue) {
-                            if (x is UnitVariantObject)
-                            {
+                            if (x is UnitVariantObject) {
                                 ((UnitVariantObject) x).ModelPart = (string) newValue;
                             }
                             this.dataChanged = true;
@@ -495,11 +446,9 @@
                     break;
 
                 case 2:
-                    if (delegate3 == null)
-                    {
+                    if (delegate3 == null) {
                         delegate3 = delegate (object x, object newValue) {
-                            if (x is UnitVariantObject)
-                            {
+                            if (x is UnitVariantObject) {
                                 ((UnitVariantObject) x).Num1 = (uint) newValue;
                             }
                             this.dataChanged = true;
@@ -509,11 +458,9 @@
                     break;
 
                 case 3:
-                    if (delegate4 == null)
-                    {
+                    if (delegate4 == null) {
                         delegate4 = delegate (object x, object newValue) {
-                            if (x is UnitVariantObject)
-                            {
+                            if (x is UnitVariantObject) {
                                 ((UnitVariantObject) x).Num2 = (uint) newValue;
                             }
                             this.dataChanged = true;
@@ -523,11 +470,9 @@
                     break;
 
                 case 4:
-                    if (delegate5 == null)
-                    {
+                    if (delegate5 == null) {
                         delegate5 = delegate (object x, object newValue) {
-                            if (x is UnitVariantObject)
-                            {
+                            if (x is UnitVariantObject) {
                                 ((UnitVariantObject) x).Num3 = (uint) newValue;
                             }
                             this.dataChanged = true;
@@ -537,11 +482,9 @@
                     break;
 
                 case 5:
-                    if (delegate6 == null)
-                    {
+                    if (delegate6 == null) {
                         delegate6 = delegate (object x, object newValue) {
-                            if (x is UnitVariantObject)
-                            {
+                            if (x is UnitVariantObject) {
                                 ((UnitVariantObject) x).Num4 = (uint) newValue;
                             }
                             this.dataChanged = true;
@@ -551,11 +494,9 @@
                     break;
 
                 case 6:
-                    if (delegate7 == null)
-                    {
+                    if (delegate7 == null) {
                         delegate7 = delegate (object x, object newValue) {
-                            if (x is MeshTextureObject)
-                            {
+                            if (x is MeshTextureObject) {
                                 ((MeshTextureObject) x).Mesh = (string) newValue;
                             }
                             this.dataChanged = true;
@@ -565,11 +506,9 @@
                     break;
 
                 case 7:
-                    if (delegate8 == null)
-                    {
+                    if (delegate8 == null) {
                         delegate8 = delegate (object x, object newValue) {
-                            if (x is MeshTextureObject)
-                            {
+                            if (x is MeshTextureObject) {
                                 ((MeshTextureObject) x).Texture = (string) newValue;
                             }
                             this.dataChanged = true;
@@ -579,11 +518,9 @@
                     break;
 
                 case 8:
-                    if (delegate9 == null)
-                    {
+                    if (delegate9 == null) {
                         delegate9 = delegate (object x, object newValue) {
-                            if (x is MeshTextureObject)
-                            {
+                            if (x is MeshTextureObject) {
                                 ((MeshTextureObject) x).Bool1 = (bool) newValue;
                             }
                             this.dataChanged = true;
@@ -593,11 +530,9 @@
                     break;
 
                 case 9:
-                    if (delegate10 == null)
-                    {
+                    if (delegate10 == null) {
                         delegate10 = delegate (object x, object newValue) {
-                            if (x is MeshTextureObject)
-                            {
+                            if (x is MeshTextureObject) {
                                 ((MeshTextureObject) x).Bool2 = (bool) newValue;
                             }
                             this.dataChanged = true;
@@ -609,18 +544,13 @@
             this.Refresh();
         }
 
-        private void treeListView1_CellRightClick(object sender, CellRightClickEventArgs e)
-        {
-            if (e.Item != null)
-            {
+        private void treeListView1_CellRightClick(object sender, CellRightClickEventArgs e) {
+            if (e.Item != null) {
                 e.Item.Selected = true;
                 this.contextMenuStrip1.Show(this.treeListView1, e.Location.X, e.Location.Y);
-                if (e.Model is MeshTextureObject)
-                {
+                if (e.Model is MeshTextureObject) {
                     this.removeReferenceToModelPartToolStripMenuItem1.Enabled = true;
-                }
-                else if (e.Model is UnitVariantObject)
-                {
+                } else if (e.Model is UnitVariantObject) {
                     this.removeReferenceToModelPartToolStripMenuItem1.Enabled = false;
                     this.removeModelPartToolStripMenuItem.Enabled = true;
                     this.insertModelPartToolStripMenuItem.Enabled = true;
@@ -628,13 +558,10 @@
             }
         }
 
-        public void updatePackedFile()
-        {
-            if (this.dataChanged)
-            {
+        public void updatePackedFile() {
+            if (this.dataChanged) {
                 this.setData();
             }
         }
     }
 }
-

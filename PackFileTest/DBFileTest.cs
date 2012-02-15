@@ -4,142 +4,139 @@ using System.Collections.Generic;
 using Common;
 
 namespace PackFileTest {
-	public class DBFileTest : IComparable {
-		public string packfileName;
-		string Packfile { 
-			get { return packfileName; }
-			set { packfileName = value; }
-		}
-		
-		public string generalError = "";
-		public SortedSet<Tuple<string, int>> supported = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
-		public SortedSet<Tuple<string, int>> noDefinition = new SortedSet<Tuple<string,int>>(VERSION_COMPARE);
-		public SortedSet<Tuple<string, int>> noDefForVersion = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
-		public SortedSet<Tuple<string, int>> invalidDefForVersion = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
-		public SortedSet<Tuple<string, int, int>> downgradedVersions = new SortedSet<Tuple<string, int, int>>(DOWNGRADED_COMPARE);
-		public SortedSet<Tuple<string,int>> emptyTables = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
+    public class DBFileTest : IComparable {
+        // to conveniently set breakpoints for certain tables.
+        private string debug_at = "sound_events";
 
-		public static SortedSet<DBFileTest> testAllPacks(string dir) {
-			SortedSet<DBFileTest> tests = new SortedSet<DBFileTest> ();
-			foreach (string file in Directory.EnumerateFiles (dir, "*.pack")) {
-				DBFileTest test = new DBFileTest (file);
-				test.testAllFiles ();
-				tests.Add (test);
-			}
-			return tests;
-		}
+        public string Packfile {
+            get;
+            set;
+        }
+        private bool testTsv;
 
-		public DBFileTest (string file) {
-			packfileName = file;
-		}
-		
-		public void testAllFiles() {
-			string currentFile = "";
-			try {
-				PackFile packFile = new PackFileCodec().Open (packfileName);
-				foreach (PackedFile packed in packFile.Files) {
-					try {
-						currentFile = packed.FullPath;
-						if (currentFile.StartsWith ("db")) {
-							testDbFile (packed);
-						}
-					} catch (Exception x) {
-                        throw x;
-					}
-				}
-			} catch (Exception x) {
-				generalError = string.Format ("reading {0}: {1}", currentFile, x.Message);
-			}
-		}
-		
-		public void testDbFile(PackedFile file) {
-			string type = DBFile.typename (file.FullPath);
-			DBFileHeader header = PackedFileDbCodec.readHeader (file);
-			Tuple<string,int> tuple = new Tuple<string, int> (type, header.Version);
-			if (header.EntryCount == 0) {
-				emptyTables.Add (tuple);
-			} else if (DBTypeMap.Instance.IsSupported (type)) {
-				try {
-					TypeInfo info = DBTypeMap.Instance [type, header.Version];
-					if (info != null) {
-						if (testFile (file, info)) {
-							supported.Add (tuple);
-						} else if (!invalidDefForVersion.Contains (tuple)) {
-							invalidDefForVersion.Add (tuple);
-						}
-					} else {
-						TryDowngrade (file, type, header, tuple, ref info);
-					}
-				} catch {
-					invalidDefForVersion.Add (tuple);
-				}
-			} else {
-				noDefinition.Add (tuple);
-			}
-		}
+        #region Result lists
+        public SortedSet<string> generalErrors = new SortedSet<string>();
+        public SortedSet<Tuple<string, int>> supported = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
+        public SortedSet<Tuple<string, int>> noDefinition = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
+        public SortedSet<Tuple<string, int>> noDefForVersion = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
+        public SortedSet<Tuple<string, int>> invalidDefForVersion = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
+        public SortedSet<Tuple<string, int>> emptyTables = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
+        public SortedSet<Tuple<string, int>> tsvFails = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
+        #endregion
 
-		void TryDowngrade(PackedFile file, string type, DBFileHeader header, Tuple<string, int> tuple, ref TypeInfo info) {
-			// downgrade...
-			int downgradedVersion = -1;
-			info = DBTypeMap.Instance [type, header.Version];
-			for (int i = header.Version; i >= 0; i--) {
-				info = DBTypeMap.Instance [type, i];
-				if (info != null) {
-					downgradedVersion = i;
-					break;
-				}
-			}
-			if (downgradedVersion != -1) {
-				if (testFile (file, info)) {
-					downgradedVersions.Add (new Tuple<string, int, int> (type, header.Version, downgradedVersion));
-				} else {
-					noDefForVersion.Add (tuple);
-				}
-			} else {
-				noDefForVersion.Add (tuple);
-			}
-		}
-		
-		public int CompareTo(object o) {
-			int result = 0;
-			if (o is DBFileTest) {
-				result = packfileName.CompareTo ((o as DBFileTest).packfileName);
-			}
-			return result;
-		}
+        public DBFileTest(string file, bool tsv) {
+            Packfile = file;
+            testTsv = tsv;
+        }
 
-		bool testFile(PackedFile file, TypeInfo type) {
-			bool result = true;
-			try {
-				DBFile dbFile = new PackedFileDbCodec().readDbFile (file);
-				result = (dbFile.Entries.Count == dbFile.header.EntryCount);
-			} catch {
-				result = false;
-			}
-			return result;
-		}
+        // tests all db files in this test's pack
+        public void testAllFiles() {
+            string currentFile = "";
+            PackFile packFile = new PackFileCodec().Open(Packfile);
+            foreach (PackedFile packed in packFile.Files) {
+                try {
+                    currentFile = packed.FullPath;
+                    if (currentFile.StartsWith("db")) {
+                        testDbFile(packed);
+                    }
+                } catch (Exception x) {
+                    generalErrors.Add(string.Format("reading {0}: {1}", packed.FullPath, x.Message));
+                }
+            }
+        }
 
-		class TableVersionComparer : IComparer<Tuple<string, int>> {
-			public int Compare(Tuple<string, int> a, Tuple<string, int> b) {
-				int result = a.Item1.CompareTo (b.Item1);
-				if (result == 0) {
-					result = a.Item2.CompareTo (a.Item2);
-				}
-				return result;
-			}
-		}
+        // test the given packed file as a database file
+        // tests PackedFileCodec and the db definitions we have
+        public void testDbFile(PackedFile file) {
+            PackedFileDbCodec packedCodec = new PackedFileDbCodec();
+            string type = DBFile.typename(file.FullPath);
+            DBFileHeader header = PackedFileDbCodec.readHeader(file);
+            Tuple<string, int> tuple = new Tuple<string, int>(type, header.Version);
+            if (header.EntryCount == 0) {
+                // special case: we will never find out the structure of a file
+                // if it contains no data
+                emptyTables.Add(tuple);
+            } else if (DBTypeMap.Instance.IsSupported(type)) {
+                SortedSet<Tuple<string, int>> addTo = null;
+                try {
+                    if (file.FullPath.EndsWith(debug_at)) {
+                        Console.WriteLine("stop right here");
+                    }
+                    // a wrong db definition might not cause errors,
+                    // but read less entries than there are
+                    DBFile dbFile = packedCodec.readDbFile(file);
+                    if (dbFile.Entries.Count == dbFile.Header.EntryCount) {
+                        addTo = supported;
+                        // only test tsv import/export if asked,
+                        // it takes some time more than just the read checks
+                        if (testTsv) {
+                            testTsvExport(dbFile);
+                        }
+                    } else {
+                        // didn't get what we expect
+                        addTo = invalidDefForVersion;
+                    }
+                } catch {
+                    addTo = invalidDefForVersion;
+                }
+                addTo.Add(tuple);
+            } else {
+                noDefinition.Add(tuple);
+            }
+        }
 
-		class TableVersionDowngradedComparer : IComparer<Tuple<string, int, int>> {
-			public int Compare(Tuple<string, int, int> a, Tuple<string, int, int> b) {
-				int result = a.Item1.CompareTo (b.Item1);
-				if (result == 0) {
-					result = a.Item2.CompareTo (a.Item2);
-				}
-				return result;
-			}
-		}
-		static IComparer<Tuple<string, int>> VERSION_COMPARE = new TableVersionComparer ();
-		static IComparer<Tuple<string, int, int>> DOWNGRADED_COMPARE = new TableVersionDowngradedComparer ();
-	}
+        // test the tsv codec
+        public void testTsvExport(DBFile originalFile) {
+            Tuple<string, int> tuple = new Tuple<string, int>(originalFile.CurrentType.name, originalFile.Header.Version);
+            DBFile reimport;
+            try {
+                // export to tsv
+                TextDbCodec codec = new TextDbCodec();
+                string exportPath = Path.Combine(Path.GetTempPath(), "exportTest.tsv");
+                if (originalFile.CurrentType.name.Equals(debug_at)) {
+                    Console.WriteLine("stop right here");
+                }
+                using (Stream filestream = File.Open(exportPath, FileMode.Create)) {
+                    codec.writeDbFile(filestream, originalFile);
+                }
+                // re-import
+                using (Stream filestream = File.OpenRead(exportPath)) {
+                    reimport = codec.readDbFile(filestream);
+                    // check all read values against original ones
+                    for (int row = 0; row < originalFile.Entries.Count; row++) {
+                        for (int column = 0; column < originalFile.CurrentType.fields.Count; column++) {
+                            FieldInstance originalValue = originalFile[row, column];
+                            FieldInstance reimportValue = reimport[row, column];
+                            if (!originalValue.Equals(reimportValue)) {
+                                tsvFails.Add(tuple);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception x) {
+                Console.WriteLine(x);
+                tsvFails.Add(tuple);
+            }
+        }
+
+        public int CompareTo(object o) {
+            int result = 0;
+            if (o is DBFileTest) {
+                result = Packfile.CompareTo((o as DBFileTest).Packfile);
+            }
+            return result;
+        }
+
+        // i like sorted things
+        class TableVersionComparer : IComparer<Tuple<string, int>> {
+            public int Compare(Tuple<string, int> a, Tuple<string, int> b) {
+                int result = a.Item1.CompareTo(b.Item1);
+                if (result == 0) {
+                    result = a.Item2.CompareTo(a.Item2);
+                }
+                return result;
+            }
+        }
+        static IComparer<Tuple<string, int>> VERSION_COMPARE = new TableVersionComparer();
+    }
 }
-

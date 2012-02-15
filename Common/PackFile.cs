@@ -11,70 +11,39 @@ namespace Common {
         public delegate void ModifyEvent();
         public event ModifyEvent Modified;
 
-        private string filepath;
-        public string Filepath {
-            get {
-                return filepath;
-            }
-        }
-        public List<string> FileList {
-            get {
-                List<string> result = new List<string>((int)header.FileCount);
-                listAll(result, "", root);
-                return result;
-            }
-        }
-        public List<PackedFile> Files {
-            get {
-                List<PackedFile> result = new List<PackedFile>((int)header.FileCount);
-                retrieveAll(result, root);
-                return result;
-            }
-        }
-        public PackedFile this [string filepath] {
-			get {
-				string[] paths = Path.GetDirectoryName (filepath).Split (Path.DirectorySeparatorChar);
-				VirtualDirectory dir = root;
-				foreach (string subDir in paths) {
-					dir = dir.getSubdirectory (subDir);
-				}
-				return dir.GetFile (Path.GetFileName (filepath));
-			}
-		}
+        private PFHeader header;
+        private bool modified;
+
+        #region Attributes
+        // header access
         public PFHeader Header {
             get { return header; }
         }
-        public int FileCount {
-            get {
-                List<string> result = new List<string>((int)header.FileCount);
-                listAll(result, "", root, false);
-                return result.Count;
-            }
-        }
-        private VirtualDirectory root;
-        private PFHeader header;
 
-        public PackFile(string path, PFHeader h) {
-            header = h;
-            filepath = path;
-            root = new VirtualDirectory() { Name = Path.GetFileName(path) };
-            DirAdded(root);
+        // the path on the file system
+        public string Filepath {
+            get;
+            private set;
         }
 
+        // the root node of this file;
+        // named with the file name, stripped from any FullPath query of entries
         public VirtualDirectory Root {
-            get { return root; }
+            get;
+            private set;
         }
 
+        // Query type from header; calls Modified when set
         public PackType Type {
             get { return Header.Type; }
-            set { 
-                if (value != Header.Type) { 
-                    Header.Type = value; 
-                    IsModified = true; 
-                } 
+            set {
+                if (value != Header.Type) {
+                    Header.Type = value;
+                    IsModified = true;
+                }
             }
         }
-        private bool modified;
+        // Modified attribute, calls Modified event after set
         public bool IsModified {
             get { return modified; }
             set {
@@ -84,32 +53,85 @@ namespace Common {
                 }
             }
         }
-        public void Add(PackedFile file) {
-            Add(file.FullPath, file);
+        #endregion
+
+        public PackFile(string path, PFHeader h) {
+            header = h;
+            Filepath = path;
+            Root = new VirtualDirectory() { Name = Path.GetFileName(path) };
+            DirAdded(Root);
         }
+
         public void Add(string fullPath, PackedFile file) {
             Root.Add(fullPath, file);
         }
+
+        #region Entry Access
+        // retrieves the names of all entries (directories and packed files)
+        public List<string> FileList {
+            get {
+                List<string> result = new List<string>((int)header.FileCount);
+                listAll(result, "", Root);
+                return result;
+            }
+        }
+        // lists all contained packed files
+        public List<PackedFile> Files {
+            get {
+                List<PackedFile> result = new List<PackedFile>((int)header.FileCount);
+                retrieveAll(result, Root);
+                return result;
+            }
+        }
+        // retrieves the packed file at the given path name
+        public PackedFile this[string filepath] {
+            get {
+                string[] paths = Path.GetDirectoryName(filepath).Split(Path.DirectorySeparatorChar);
+                VirtualDirectory dir = Root;
+                foreach (string subDir in paths) {
+                    dir = dir.getSubdirectory(subDir);
+                }
+                return dir.GetFile(Path.GetFileName(filepath));
+            }
+        }
+        public int FileCount {
+            get {
+                List<string> result = new List<string>((int)header.FileCount);
+                listAll(result, "", Root, false);
+                return result.Count;
+            }
+        }
+        #endregion
+
+        #region Event Handler for Entries
+        // Set self to modified
         private void EntryModified(PackEntry file) {
             IsModified = true;
         }
+        // Set modified
         private void EntryRenamed(PackEntry file, string name) {
             EntryModified(file);
         }
+        // Register modified and rename handlers
         private void EntryAdded(PackEntry file) {
             file.ModifiedEvent += EntryModified;
             file.RenameEvent += EntryRenamed;
         }
+        // Unregister modified and rename handlers
         private void EntryRemoved(PackEntry entry) {
             entry.ModifiedEvent -= EntryModified;
             entry.RenameEvent -= EntryRenamed;
         }
+        // Call EntryAdded and register Added and Removed handlers
         private void DirAdded(PackEntry dir) {
             EntryAdded(dir);
             (dir as VirtualDirectory).FileAdded += EntryAdded;
             (dir as VirtualDirectory).DirectoryAdded += DirAdded;
             (dir as VirtualDirectory).FileRemoved += EntryRemoved;
         }
+        #endregion
+
+        #region Entry Iteration utility functions
         private static void listAll(List<string> addTo, string currentPath, VirtualDirectory filesFrom, bool includeDirs = true) {
             // add all files from subdirectories first
             foreach (VirtualDirectory dir in filesFrom.Subdirectories) {
@@ -131,18 +153,21 @@ namespace Common {
             }
             files.AddRange(filesFrom.Files);
         }
-
-        // private 
+        #endregion
     }
 
+    /*
+     * Class containing general pack file information.
+     */
     public class PFHeader {
-        private string replacedPackFile = "";
+        string identifier;
 
         public PFHeader(string id) {
             PackIdentifier = id;
         }
 
-        string identifier;
+        // query/set identifier
+        // throws Exception if unknown
         public string PackIdentifier {
             get {
                 return identifier;
@@ -159,16 +184,20 @@ namespace Common {
                 identifier = value;
             }
         }
+        // query/set pack type
         public PackType Type { get; set; }
+        // query/set version
         public int Version { get; set; }
+        // query/set offset for data in file
         public long DataStart { get; set; }
+        // query/set number of contained files
         public UInt32 FileCount { get; set; }
-
+        // query/set name of pack file replaced by this
         public string ReplacedPackFileName {
-            get { return replacedPackFile; }
-            set { replacedPackFile = value; }
+            get;
+            set;
         }
-
+        // query length of header itself
         public int Length {
             get {
                 int result;
@@ -191,11 +220,14 @@ namespace Common {
     }
 
     public enum PackType {
+        // up to movie, ids are sequential
         Boot,
         Release,
         Patch,
         Mod,
         Movie,
+        // have to force id value for boot; there are more of those special ones,
+        // but we can't handle them yet
         BootX = 0x40
     }
 }

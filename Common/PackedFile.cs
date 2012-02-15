@@ -1,5 +1,4 @@
-﻿namespace Common
-{
+﻿namespace Common {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -74,47 +73,47 @@
 
     [DebuggerDisplay("{Name}")]
     public class PackedFile : PackEntry {
-		public DateTime EditTime {
-			get;
-			set;
-		}
+        public DateTime EditTime {
+            get;
+            set;
+        }
 
         private static readonly byte[] EMPTY = new byte[0];
 
         public byte[] Data {
-			get {
-				return Source == null ? EMPTY : Source.ReadData ();
-			}
-			set {
-				Source = new MemorySource (value);
-				Modified = true;
-				EditTime = DateTime.Now;
-			}
-		}
+            get {
+                return Source == null ? EMPTY : Source.ReadData();
+            }
+            set {
+                Source = new MemorySource(value);
+                Modified = true;
+                EditTime = DateTime.Now;
+            }
+        }
         public long Size {
             get { return Source.Size; }
         }
         DataSource source;
         public DataSource Source {
-			get { return source; }
-			set {
-				source = value;
-				Modified = true;
-				EditTime = DateTime.Now;
-			}
-		}
-        public PackedFile() { }
-        public PackedFile (string filename) {
-			Name = Path.GetFileName (filename);
-			Source = new FileSystemSource (filename);
-			Modified = false;
-			EditTime = File.GetLastWriteTime (filename);
+            get { return source; }
+            set {
+                source = value;
+                Modified = true;
+                EditTime = DateTime.Now;
+            }
         }
-        public PackedFile (string packFile, string packedName, long offset, long len) {
-			Name = Path.GetFileName (packedName);
-			Source = new PackedFileSource (packedName, packFile, offset, len);
-			Modified = false;
-			EditTime = File.GetLastWriteTime (packFile);
+        public PackedFile() { }
+        public PackedFile(string filename) {
+            Name = Path.GetFileName(filename);
+            Source = new FileSystemSource(filename);
+            Modified = false;
+            EditTime = File.GetLastWriteTime(filename);
+        }
+        public PackedFile(string packFile, string packedName, long offset, long len) {
+            Name = Path.GetFileName(packedName);
+            Source = new PackedFileSource(packedName, packFile, offset, len);
+            Modified = false;
+            EditTime = File.GetLastWriteTime(packFile);
         }
         // public abstract byte[] ReadData();
 
@@ -185,6 +184,7 @@
         }
         public void Add(VirtualDirectory dir) {
             subdirectories.Add(dir);
+            dir.Parent = this;
             if (DirectoryAdded != null) {
                 DirectoryAdded(dir);
             }
@@ -226,24 +226,24 @@
          * Adds all file from the given directory path.
          */
         public void Add(string basePath) {
-			string[] files = Directory.GetFiles (basePath, "*.*", SearchOption.AllDirectories);
-			foreach (string filepath in files) {
-				string relativePath = filepath.Replace (Path.GetDirectoryName (basePath), "");
-				Add (relativePath, new PackedFile (filepath));
-			}
-		}
+            string[] files = Directory.GetFiles(basePath, "*.*", SearchOption.AllDirectories);
+            foreach (string filepath in files) {
+                string relativePath = filepath.Replace(Path.GetDirectoryName(basePath), "");
+                Add(relativePath, new PackedFile(filepath));
+            }
+        }
         public void Add(string relativePath, PackedFile file) {
-			char[] splitAt = { Path.DirectorySeparatorChar };
-			string[] dirs = Path.GetDirectoryName (relativePath).Split (splitAt, StringSplitOptions.RemoveEmptyEntries);
-			VirtualDirectory current = this;
-			if (dirs.Length > 0) {
-				foreach (string dir in dirs) {
-					current = current.getSubdirectory (dir);
-				}
-			}
-			file.Parent = current;
-			current.Add (file);
-		}
+            char[] splitAt = { Path.DirectorySeparatorChar };
+            string[] dirs = Path.GetDirectoryName(relativePath).Split(splitAt, StringSplitOptions.RemoveEmptyEntries);
+            VirtualDirectory current = this;
+            if (dirs.Length > 0) {
+                foreach (string dir in dirs) {
+                    current = current.getSubdirectory(dir);
+                }
+            }
+            file.Parent = current;
+            current.Add(file);
+        }
     }
     public abstract class DataSource {
         public long Size {
@@ -252,7 +252,7 @@
         }
         public abstract byte[] ReadData();
     }
-    
+
     [DebuggerDisplay("From file {filepath}")]
     public class FileSystemSource : DataSource {
         protected string filepath;
@@ -298,4 +298,3 @@
         }
     }
 }
-

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Common {
     interface Codec<T> {
-        T decode(PackedFile file);
-        void encode(Stream stream, T toEncode);
+        T Decode(PackedFile file);
+        void Encode(Stream stream, T toEncode);
     }
 }
