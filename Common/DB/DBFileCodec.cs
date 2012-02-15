@@ -205,7 +205,7 @@ namespace Common {
         }
 
         public DBFile readDbFile(StreamReader reader) {
-			string typeInfoName = reader.ReadLine ().Trim (QUOTES);
+			string typeInfoName = reader.ReadLine ().Replace("\t", "").Trim (QUOTES);
 			string versionStr = reader.ReadLine ().Trim (QUOTES);
 			int version;
 			switch (versionStr) {
@@ -229,7 +229,7 @@ namespace Common {
 					List<FieldInstance> item = new List<FieldInstance> ();
 					for (int i = 0; i < strArray.Length; i++) {
 						FieldInfo fieldInfo = info.fields [i];
-						string str3 = strArray [i].Replace (@"\t", "\t").Replace (@"\n", "\n").Trim (new char[] { '"' });
+						string str3 = strArray [i].Replace (@"\t", "\t").Replace (@"\n", "\n").Trim (QUOTES );
 						item.Add (new FieldInstance (fieldInfo, str3));
 					}
 					entries.Add (item);
@@ -256,6 +256,7 @@ namespace Common {
                 }
                 writer.WriteLine (str.TrimEnd (new char[] { '\t' }));
             }
+            writer.Flush();
         }
     }
 }
