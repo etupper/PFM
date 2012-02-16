@@ -27,7 +27,7 @@ namespace PackFileManager {
         private DataTable currentDataTable;
         private DBFile currentDBFile;
         public PackedFile currentPackedFile;
-        private DataGridView dataGridView;
+        private DataGridViewExtended dataGridView;
         private ToolStripButton exportButton;
         private ToolStripButton importButton;
         public OpenFileDialog openDBFileDialog;
@@ -297,7 +297,7 @@ namespace PackFileManager {
 
         private void InitializeComponent() {
             PackFileManager.Properties.Settings settings3 = new PackFileManager.Properties.Settings();
-            this.dataGridView = new System.Windows.Forms.DataGridView();
+            this.dataGridView = new DataGridViewExtended();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.addNewRowButton = new System.Windows.Forms.ToolStripButton();
             this.cloneCurrentRow = new System.Windows.Forms.ToolStripButton();
