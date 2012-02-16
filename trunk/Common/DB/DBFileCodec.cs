@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Common {
 	/*
@@ -12,20 +13,21 @@ namespace Common {
 		void writeDbFile(Stream stream, DBFile dbFile);
 	}
 	
-            
 	/*
 	 * A class parsing dbfiles from and to data streams in packed file format.
 	 */
     public class PackedFileDbCodec : Codec<DBFile> {
+		public static readonly PackedFileDbCodec Instance = new PackedFileDbCodec();
+		
 		public delegate void EntryLoaded(FieldInfo info, string value);
 		public delegate void HeaderLoaded(DBFileHeader header);
 		public delegate void LoadingPackedFile(PackedFile packed);
 
+		#region Internal
 		// header markers
 		static UInt32 GUID_MARKER = BitConverter.ToUInt32 (new byte[] { 0xFD, 0xFE, 0xFC, 0xFF}, 0);
 		static UInt32 VERSION_MARKER = BitConverter.ToUInt32 (new byte[] { 0xFC, 0xFD, 0xFE, 0xFF}, 0);
-
-        public static PackedFileDbCodec Instance = new PackedFileDbCodec();
+		#endregion
 
         public static byte[] Encode(DBFile file) {
             using (MemoryStream stream = new MemoryStream()) {
@@ -168,6 +170,7 @@ namespace Common {
         #region Write
         public void writeDbFile(Stream stream, DBFile file) {
 			BinaryWriter writer = new BinaryWriter (stream);
+            file.Header.EntryCount = (uint) file.Entries.Count;
 			writeHeader (writer, file.Header);
 			writeFields (writer, file);
 			writer.Flush ();
@@ -198,9 +201,14 @@ namespace Common {
 
         private void writeEntry(BinaryWriter writer, List<FieldInstance> fields) {
 			for (int i = 0; i < fields.Count; i++) {
+                try {
 				FieldInstance field = fields [i];
 				field.Info.Encode (writer, field.Value);
+                } catch (Exception x) {
+                    Console.WriteLine(x);
+                    throw x;
 			}
+		}
 		}
         #endregion
     }
@@ -209,13 +217,19 @@ namespace Common {
 	 */
     public class TextDbCodec : DbCodec {
         static char[] QUOTES = { '"' };
+		static char[] TABS = { '\t' };
+		static string format = "\"{0}\"";
+		
         public DBFile readDbFile(Stream stream) {
             return readDbFile (new StreamReader (stream));
         }
 
+		// read from given stream
         public DBFile readDbFile(StreamReader reader) {
-			string typeInfoName = reader.ReadLine ().Replace("\t", "").Trim (QUOTES);
-			string versionStr = reader.ReadLine ().Trim (QUOTES);
+            // another tool might have saved tabs and quotes around this 
+            // (at least open office does)
+            string typeInfoName = reader.ReadLine().Replace("\t", "").Trim(QUOTES);
+            string versionStr = reader.ReadLine().Replace("\t", "").Trim(QUOTES);
 			int version;
 			switch (versionStr) {
 			case "1.0":
@@ -229,19 +243,24 @@ namespace Common {
 				break;
 			}
 			TypeInfo info = DBTypeMap.Instance [typeInfoName, version];
+			// ignore header line (type names)
 			reader.ReadLine ();
 			List<List<FieldInstance>> entries = new List<List<FieldInstance>> ();
+			string str2;
 			while (!reader.EndOfStream) {
-				string str2 = reader.ReadLine ();
-				if (str2.Trim () != "") {
-					string[] strArray = str2.Split (new char[] { '\t' });
+				str2 = reader.ReadLine ();
+				string[] strArray;
+				try {
+					strArray = str2.Split (TABS, StringSplitOptions.None);
 					List<FieldInstance> item = new List<FieldInstance> ();
 					for (int i = 0; i < strArray.Length; i++) {
 						FieldInfo fieldInfo = info.fields [i];
-						string str3 = strArray [i].Replace (@"\t", "\t").Replace (@"\n", "\n").Trim (QUOTES );
+						string str3 = Unformat (strArray [i]);
 						item.Add (new FieldInstance (fieldInfo, str3));
 					}
 					entries.Add (item);
+				} catch (Exception x) {
+					// Console.WriteLine (x);
 				}
 			}
 			DBFileHeader header = new DBFileHeader ("", version, (uint)entries.Count, version != 0);
@@ -249,23 +268,36 @@ namespace Common {
 			file.Entries.AddRange (entries);
 			return file;
 		}
+		private string Format(string input) {
+			return string.Format (format, Regex.Escape (input));
+		}
+		private string Unformat(string formatted) {
+			string result = Regex.Unescape (formatted);
+            if (result.StartsWith("\"")) {
+                // remove one leading and trailing quote if present
+                result = result.Substring(1, result.Length - 2);
+            }
+            return result;
+		}
+
+		// write the given file to stream
         public void writeDbFile(Stream stream, DBFile file) {
             StreamWriter writer = new StreamWriter (stream);
             writer.WriteLine (file.CurrentType.name);
-            writer.WriteLine (Convert.ToString (file.Header.Version));
+			writer.WriteLine (Convert.ToString (file.Header.Version));
             foreach (FieldInfo info2 in file.CurrentType.fields) {
                 writer.Write (info2.Name + "\t");
             }
             writer.WriteLine ();
             foreach (List<FieldInstance> list in file.Entries) {
-                string str = "";
-                foreach (FieldInstance instance in list) {
-                    string str2 = instance.Value;
-                    str = str + str2.Replace ("\t", @"\t").Replace ("\n", @"\n") + "\t";
+				string str = Format(list [0].Value);
+				for (int i = 1; i < list.Count; i++) {
+					string current = list [i].Value;
+					str += "\t" + Format (current);
                 }
-                writer.WriteLine (str.TrimEnd (new char[] { '\t' }));
+				writer.WriteLine (str);
             }
-            writer.Flush();
+			writer.Flush ();
         }
     }
 }
