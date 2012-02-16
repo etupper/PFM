@@ -70,7 +70,6 @@ namespace Common {
 
             foreach (string packfileName in pack.FileList) {
                 if (packfileName.StartsWith(dbFullPath)) {
-                    string type = DBFile.typename(packfileName);
                     result = new SortedSet<string>();
                     PackedFile file = pack[packfileName];
                     DBFile dbFile = new PackedFileDbCodec().readDbFile(file);

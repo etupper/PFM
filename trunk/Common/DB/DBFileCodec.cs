@@ -215,17 +215,32 @@ namespace Common {
 	
 	/*
 	 */
-    public class TextDbCodec : DbCodec {
+    public class TextDbCodec : Codec<DBFile> {
         static char[] QUOTES = { '"' };
 		static char[] TABS = { '\t' };
 		static string format = "\"{0}\"";
-		
+
+        public static readonly Codec<DBFile> Instance = new TextDbCodec();
+
+        public static byte[] Encode(DBFile file) {
+            using (MemoryStream stream = new MemoryStream()) {
+                TextDbCodec.Instance.Encode(stream, file);
+                return stream.ToArray();
+            }
+        }
+
         public DBFile readDbFile(Stream stream) {
-            return readDbFile (new StreamReader (stream));
+            return Decode (new StreamReader (stream));
+        }
+
+        public DBFile Decode(PackedFile file) {
+            using (Stream stream = new MemoryStream(file.Data)) {
+                return readDbFile(stream);
+            }
         }
 
 		// read from given stream
-        public DBFile readDbFile(StreamReader reader) {
+        public DBFile Decode(StreamReader reader) {
             // another tool might have saved tabs and quotes around this 
             // (at least open office does)
             string typeInfoName = reader.ReadLine().Replace("\t", "").Trim(QUOTES);
@@ -281,7 +296,7 @@ namespace Common {
 		}
 
 		// write the given file to stream
-        public void writeDbFile(Stream stream, DBFile file) {
+        public void Encode(Stream stream, DBFile file) {
             StreamWriter writer = new StreamWriter (stream);
             writer.WriteLine (file.CurrentType.name);
 			writer.WriteLine (Convert.ToString (file.Header.Version));

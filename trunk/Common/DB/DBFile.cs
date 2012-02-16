@@ -12,9 +12,16 @@ namespace Common {
     public class DBFileHeader {
         public string GUID { get; set; }
         public bool HasVersionMarker { get; set; }
-
         public int Version { get; set; }
         public uint EntryCount { get; set; }
+		public int Length {
+			get {
+				int result = 5;
+				result += (GUID.Length != 0) ? 78 : 0;
+				result += HasVersionMarker ? 8 : 0;
+				return result;
+			}
+		}
 
         public DBFileHeader(string guid, int version, uint entryCount, bool marker) {
             GUID = guid;
@@ -23,6 +30,7 @@ namespace Common {
             HasVersionMarker = marker;
         }
 
+		#region Framework Overrides
         public override bool Equals(object other) {
             bool result = false;
             if (other is DBFileHeader) {
@@ -36,21 +44,13 @@ namespace Common {
         public override int GetHashCode() {
             return GUID.GetHashCode();
         }
-        public int Length {
-            get {
-                int result = 5;
-                result += (GUID.Length != 0) ? 78 : 0;
-                result += HasVersionMarker ? 8 : 0;
-                return result;
+		#endregion
             }
-        }
-    }
 
 	/*
 	 * Class representing a database file.
 	 */
     public class DBFile {
-
         private List<List<FieldInstance>> entries = new List<List<FieldInstance>>();
         public DBFileHeader Header;
         public TypeInfo CurrentType {
@@ -59,17 +59,19 @@ namespace Common {
         }
 
 		#region Attributes
-        public FieldInstance this[int row, int column] {
-            get {
-                return entries[row][column];
-            }
-        }
-
+		// the entries of this file
         public List<List<FieldInstance>> Entries {
             get {
                 return this.entries;
             }
         }
+
+        // access by row/column
+		public FieldInstance this [int row, int column] {
+			get {
+				return entries [row][column];
+			}
+		}
 		#endregion
 
         #region Constructors
@@ -84,16 +86,6 @@ namespace Common {
 		}
         #endregion
 
-        public byte[] GetBytes() {
-            Header.EntryCount = (uint) Entries.Count;
-            byte[] buffer;
-			MemoryStream stream = new MemoryStream ();
-			new PackedFileDbCodec().writeDbFile (stream, this);
-            buffer = stream.ToArray();
-			stream.Dispose ();
-            return buffer;
-        }
-
         public List<FieldInstance> GetNewEntry() {
 			List<FieldInstance> newEntry = new List<FieldInstance> ();
 			foreach (FieldInfo field in CurrentType.fields) {
@@ -104,13 +96,22 @@ namespace Common {
 
         public void Import(DBFile file) {
 			if (CurrentType.name != file.CurrentType.name) {
-				throw new DBFileNotSupportedException ("File type of imported DB doesn't match that of the currently opened one", this);
+				throw new DBFileNotSupportedException 
+					("File type of imported DB doesn't match that of the currently opened one", this);
+			}
+			// check field type compatibility
+			for (int i = 0; i < file.CurrentType.fields.Count; i++) {
+				if (file.CurrentType.fields [i].TypeCode != CurrentType.fields [i].TypeCode) {
+					throw new DBFileNotSupportedException 
+						("Data structure of imported DB doesn't match that of currently opened one at field " + i, this);
+				}
 			}
 			DBFileHeader h = file.Header;
 			Header = new DBFileHeader (h.GUID, h.Version, h.EntryCount, h.HasVersionMarker);
 			CurrentType = file.CurrentType;
-			this.entries = new List<List<FieldInstance>> ();
+			// this.entries = new List<List<FieldInstance>> ();
 			entries.AddRange (file.entries);
+            Header.EntryCount = (uint) entries.Count;
 		}
 
 		public static string typename(string fullPath) {
