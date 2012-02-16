@@ -9,28 +9,35 @@ namespace PackFileTest {
         // just to keep track of what's available in testAll
         private static string[] OPTIONS = { "-t" };
 #pragma warning restore 414
+		
+		private static string OPTIONS_FILENAME = "testoptions.txt";
 
         public static void Main(string[] args) {
             testAll(args);
         }
 
         static void testAll(string[] args) {
-            // run tests for all packs in all dirs given on the command line
-            bool testTsvExport = false;
-            foreach (string dir in args) {
-                if (dir.Equals("-t")) {
-                    Console.WriteLine("TSV export/import enabled");
-                    testTsvExport = true;
-                } else {
-                    ICollection<DBFileTest> tests = testAllPacks(dir, testTsvExport);
-                    Console.WriteLine("Dir: {0}\nTests Run:{1}", dir, tests.Count);
-                    foreach (DBFileTest test in tests) {
-                    }
-                }
-            }
-            Console.WriteLine("Test run finished, press any key");
-            Console.ReadKey();
-        }
+			List<string> arguments = new List<string> ();
+			// run tests for all packs in all dirs given in the options file
+			if (File.Exists (OPTIONS_FILENAME)) {
+				bool testTsvExport = false;
+				foreach (string dir in File.ReadAllLines(OPTIONS_FILENAME)) {
+					if (dir.Equals ("-t")) {
+						Console.WriteLine ("TSV export/import enabled");
+						testTsvExport = true;
+					} else {
+						ICollection<DBFileTest> tests = testAllPacks (dir, testTsvExport);
+						Console.WriteLine ("Dir: {0}\nTests Run:{1}", dir, tests.Count);
+						foreach (DBFileTest test in tests) {
+						}
+					}
+				}
+				Console.WriteLine ("Test run finished, press any key");
+				Console.ReadKey ();
+			} else {
+				Console.Error.Write ("Missing options file {0}", OPTIONS_FILENAME);
+			}
+		}
 
         // run db tests for all files in the given directory
         public static SortedSet<DBFileTest> testAllPacks(string dir, bool testTsv) {
