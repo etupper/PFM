@@ -1436,8 +1436,8 @@ namespace PackFileManager
         #endregion
 
         protected void EnableMenuItems() {
-            saveToDirectoryToolStripMenuItem.Enabled = currentPackFile != null && !CurrentPackFileIsReadOnly && CurrentPackFile.IsModified;
-            createReadMeToolStripMenuItem.Enabled = !CurrentPackFileIsReadOnly;
+            saveToDirectoryToolStripMenuItem.Enabled = currentPackFile != null && !CanWriteCurrentPack && CurrentPackFile.IsModified;
+            createReadMeToolStripMenuItem.Enabled = !CanWriteCurrentPack;
         }
 
         #region Packed from Tree
@@ -1700,7 +1700,7 @@ namespace PackFileManager
             }
             else
             {
-                bool currentPackFileIsReadOnly = CurrentPackFileIsReadOnly;
+                bool currentPackFileIsReadOnly = CanWriteCurrentPack;
                 addDirectoryToolStripMenuItem.Enabled = !currentPackFileIsReadOnly;
                 addFileToolStripMenuItem.Enabled = !currentPackFileIsReadOnly;
                 deleteFileToolStripMenuItem.Enabled = !currentPackFileIsReadOnly;
@@ -1889,7 +1889,7 @@ namespace PackFileManager
         }
 
         #region Save Pack
-        private bool CurrentPackFileIsReadOnly {
+        private bool CanWriteCurrentPack {
             get {
                 bool result = false;
                 if (cAPacksAreReadOnlyToolStripMenuItem.Checked) {
@@ -1899,7 +1899,7 @@ namespace PackFileManager
                             break;
                         case PackType.Movie:
                             var caMovieRe = new Regex("(patch_)?movies([0-9]*).pack");
-                            result = caMovieRe.IsMatch(Path.GetFileName(currentPackFile.Filepath));
+                            result = !caMovieRe.IsMatch(Path.GetFileName(currentPackFile.Filepath));
                             break;
                     }
                 }
@@ -1925,7 +1925,7 @@ namespace PackFileManager
         {
             if (currentPackFile.Filepath.EndsWith("Untitled.pack")) {
                 saveAsToolStripMenuItem_Click(null, null);
-            } else if (CurrentPackFileIsReadOnly) {
+            } else if (!CanWriteCurrentPack) {
                 MessageBox.Show("Won't save CA file with current Setting.");
             } else {
                 closeEditors();

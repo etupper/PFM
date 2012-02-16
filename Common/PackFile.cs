@@ -164,6 +164,9 @@ namespace Common {
 
         public PFHeader(string id) {
             PackIdentifier = id;
+            FileCount = 0;
+            Version = 0;
+            ReplacedPackFileName = "";
         }
 
         // query/set identifier

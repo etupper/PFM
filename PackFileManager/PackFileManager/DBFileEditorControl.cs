@@ -15,7 +15,6 @@ namespace PackFileManager {
         private enum COPIED_TYPE { NONE, ROWS, CELLS }
 
         #region Members
-
         private ToolStripButton addNewRowButton;
         private CheckBox useFirstColumnAsRowHeader;
         private ToolStripButton cloneCurrentRow;
@@ -218,7 +217,7 @@ namespace PackFileManager {
                 FieldInstance instance = list[num];
                 string str = (proposedValue == null) ? "" : proposedValue.ToString();
                 instance.Value = str;
-                currentPackedFile.Data = currentDBFile.GetBytes();
+                currentPackedFile.Data = PackedFileDbCodec.Encode(currentDBFile);
             }
         }
 
@@ -227,12 +226,12 @@ namespace PackFileManager {
                 throw new InvalidDataException("wtf?");
             }
             currentDBFile.Entries.RemoveAt(currentDataTable.Rows.IndexOf(e.Row));
-            currentPackedFile.Data = currentDBFile.GetBytes();
+            currentPackedFile.Data = PackedFileDbCodec.Encode(currentDBFile);
         }
 
         private void currentDataTable_TableNewRow(object sender, DataTableNewRowEventArgs e) {
             if (dataGridView.DataSource != null) {
-                currentPackedFile.Data = (currentDBFile.GetBytes());
+                currentPackedFile.Data = (PackedFileDbCodec.Encode(currentDBFile));
             }
         }
 
@@ -314,47 +313,32 @@ namespace PackFileManager {
             base.Dispose(disposing);
         }
 
-        private void exportButton_Click(object sender, EventArgs e) 
-        {
+        private void exportButton_Click(object sender, EventArgs e) {
             var dialog = new SaveFileDialog { FileName = currentDBFile.CurrentType.name + ".tsv" };
 
-            if (dialog.ShowDialog() == DialogResult.OK) 
-            {
+            if (dialog.ShowDialog() == DialogResult.OK) {
                 Stream stream = new FileStream(dialog.FileName, FileMode.Create);
-                //StreamWriter writer = new StreamWriter (dialog.FileName);
-                try 
-                {
-                    new TextDbCodec().writeDbFile(stream, currentDBFile);
+                try {
+                    TextDbCodec.Instance.Encode(stream, currentDBFile);
                     stream.Close();
-                    //currentDBFile.Export (writer);
-                } 
-                catch (DBFileNotSupportedException exception) 
-                {
+                } catch (DBFileNotSupportedException exception) {
                     showDBFileNotSupportedMessage(exception.Message);
-                } 
-                finally
-                {
+                } finally {
                     stream.Dispose();
                 }
             }
         }
 
-        private void importButton_Click(object sender, EventArgs e) 
-        {
+        private void importButton_Click(object sender, EventArgs e) {
             openDBFileDialog.FileName = currentDBFile.CurrentType.name + ".tsv";
-           
-            if (openDBFileDialog.ShowDialog() == DialogResult.OK) 
-            {
-                try 
-                {
-                    using (var stream = new MemoryStream(File.ReadAllBytes(openDBFileDialog.FileName))) 
-                    {
-                        currentDBFile.Import((new TextDbCodec()).readDbFile(stream));
+
+            if (openDBFileDialog.ShowDialog() == DialogResult.OK) {
+                try {
+                    using (var stream = new MemoryStream(File.ReadAllBytes(openDBFileDialog.FileName))) {
+                        currentDBFile.Import(new TextDbCodec().readDbFile(stream));
                     }
 
-                } 
-                catch (DBFileNotSupportedException exception) 
-                {
+                } catch (DBFileNotSupportedException exception) {
                     showDBFileNotSupportedMessage(exception.Message);
                 }
 
@@ -620,28 +604,21 @@ namespace PackFileManager {
             return column;
         }
 
-        public void Open(PackedFile packedFile, PackFile packFile = null) 
-        {
+        public void Open(PackedFile packedFile, PackFile packFile = null) {
             copiedRows.Clear();
             copyToolStripButton.Enabled = true;
             pasteToolStripButton.Enabled = false;
             string key = DBFile.typename(packedFile.FullPath);
 
-            if (!DBTypeMap.Instance.IsSupported(key)) 
-            {
+            if (!DBTypeMap.Instance.IsSupported(key)) {
                 showDBFileNotSupportedMessage("Sorry, this db file isn't supported yet.\r\n\r\nCurrently supported files:\r\n");
                 var decoder = new DecodeTool.DecodeTool { TypeName = key, Bytes = packedFile.Data };
                 decoder.ShowDialog();
-            } 
-            else 
-            {
-                try 
-                {
+            } else {
+                try {
                     currentDBFile = new PackedFileDbCodec().readDbFile(packedFile);
-                } 
-                catch 
-                {
-                    var decoder = new DecodeTool.DecodeTool {TypeName = key, Bytes = packedFile.Data};
+                } catch {
+                    var decoder = new DecodeTool.DecodeTool { TypeName = key, Bytes = packedFile.Data };
                     decoder.ShowDialog();
                     return;
                 }
@@ -656,31 +633,27 @@ namespace PackFileManager {
                 dataGridView.Columns.Add(dataGridViewColumn);
 
                 int num;
-                for (num = 0; num < info.fields.Count; num++) 
-                {
+                for (num = 0; num < info.fields.Count; num++) {
                     string columnName = num.ToString();
-                    var column = new DataColumn(columnName)
-                                     {
-                                         DataType =
-                                             info.fields[num].TypeCode == TypeCode.Empty
-                                                 ? Type.GetType("System.String")
-                                                 : Type.GetType("System." + info.fields[num].TypeCode)
-                                     };
+                    var column = new DataColumn(columnName) {
+                        DataType =
+                            info.fields[num].TypeCode == TypeCode.Empty
+                                ? Type.GetType("System.String")
+                                : Type.GetType("System." + info.fields[num].TypeCode)
+                    };
                     currentDataTable.Columns.Add(column);
                     dataGridView.Columns.Add(createColumn(columnName, info.fields[num], packFile, info.fields.Count));
                 }
 
                 currentDataSet.Tables.Add(currentDataTable);
                 currentDataTable.ColumnChanged += currentDataTable_ColumnChanged;
-                currentDataTable.RowDeleting += currentDataTable_RowDeleted; 
+                currentDataTable.RowDeleting += currentDataTable_RowDeleted;
                 currentDataTable.TableNewRow += currentDataTable_TableNewRow;
 
-                for (num = 0; num < currentDBFile.Entries.Count; num++) 
-                {
+                for (num = 0; num < currentDBFile.Entries.Count; num++) {
                     DataRow row = currentDataTable.NewRow();
                     row[0] = num;
-                    for (int i = 1; i < currentDataTable.Columns.Count; i++) 
-                    {
+                    for (int i = 1; i < currentDataTable.Columns.Count; i++) {
                         int num3 = Convert.ToInt32(currentDataTable.Columns[i].ColumnName);
                         row[i] = currentDBFile.Entries[num][num3].Value;
                     }
@@ -731,7 +704,7 @@ namespace PackFileManager {
                         }
                     }
                 }
-                currentPackedFile.Data = (currentDBFile.GetBytes());
+                currentPackedFile.Data = (PackedFileDbCodec.Encode(currentDBFile));
                 dataGridView.Refresh();
             }
         }

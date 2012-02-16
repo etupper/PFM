@@ -97,7 +97,7 @@ namespace PackFileTest {
                     Console.WriteLine("stop right here");
                 }
                 using (Stream filestream = File.Open(exportPath, FileMode.Create)) {
-                    codec.writeDbFile(filestream, originalFile);
+                    codec.Encode(filestream, originalFile);
                 }
                 // re-import
                 using (Stream filestream = File.OpenRead(exportPath)) {

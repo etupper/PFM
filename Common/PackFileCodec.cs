@@ -82,14 +82,14 @@ namespace Common {
 
 			// skip the time
 			reader.BaseStream.Seek (header.Length, SeekOrigin.Begin);
-			if (header.Version == 1) {
-				// read pack file reference
-				header.ReplacedPackFileName = 
-					new string (ASCIIEncoding.ASCII.GetChars (reader.ReadBytes (replacedPackFilenameLength - 1)));
-				// skip the null byte
-				reader.ReadByte ();
-				header.DataStart += replacedPackFilenameLength;
-			}
+            if (header.Version == 1) {
+                // read pack file reference
+                header.ReplacedPackFileName =
+                    new string(ASCIIEncoding.ASCII.GetChars(reader.ReadBytes(replacedPackFilenameLength - 1)));
+                // skip the null byte
+                reader.ReadByte();
+                header.DataStart += replacedPackFilenameLength;
+            }
 			return header;
 		}
 
