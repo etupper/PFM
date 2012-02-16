@@ -1886,6 +1886,9 @@ namespace PackFileManager
             if (readmeEditorControl != null) {
                 readmeEditorControl.updatePackedFile();
             }
+            if (textFileEditorControl != null) {
+                textFileEditorControl.updatePackedFile();
+            }
         }
 
         #region Save Pack

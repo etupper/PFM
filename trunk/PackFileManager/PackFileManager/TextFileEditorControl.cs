@@ -12,6 +12,8 @@
     {
         private IContainer components;
         private RichTextBox richTextBox1;
+        private PackedFile packedFile;
+        bool changed = false;
 
         public TextFileEditorControl()
         {
@@ -19,18 +21,26 @@
             this.InitializeComponent();
         }
 
-        public TextFileEditorControl(PackedFile packedFile)
+        public TextFileEditorControl(PackedFile file)
         {
             this.components = null;
             this.InitializeComponent();
-            StreamReader reader = new StreamReader(new MemoryStream(packedFile.Data, false), Encoding.ASCII);
+            StreamReader reader = new StreamReader(new MemoryStream(file.Data, false), Encoding.ASCII);
             this.richTextBox1.Show();
+            packedFile = file;
             this.richTextBox1.Text = reader.ReadToEnd();
+            richTextBox1.TextChanged += (b, e) => changed = true;
         }
 
         public void CloseTextFileEditorControl()
         {
             base.Dispose();
+        }
+
+        public void updatePackedFile() {
+            if (changed) {
+                packedFile.Data = Encoding.ASCII.GetBytes(richTextBox1.Text);
+            }
         }
 
         protected override void Dispose(bool disposing)
