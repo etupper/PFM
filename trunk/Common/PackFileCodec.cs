@@ -33,7 +33,7 @@ namespace Common {
 				for (int i = 0; i < file.Header.FileCount; i++) {
 					uint size = reader.ReadUInt32 ();
 					sizes += size;
-					if (file.Header.Type == PackType.BootX) {
+					if (file.Header.Type == PackType.BootX || file.Header.Type == PackType.Shader) {
 						time = reader.ReadInt64 ();
 					} else {
 						time = -1;
@@ -69,9 +69,18 @@ namespace Common {
 			string packIdentifier = new string (reader.ReadChars (4));
 			header = new PFHeader (packIdentifier);
 			int packType = reader.ReadInt32 ();
-			if (packType > 4 && packType != 0x40) {
-				throw new InvalidDataException ("Unknown pack type " + packType);
-			}
+            switch (packType) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 0x40:
+                case 0x41:
+                    break;
+                default:
+                    throw new InvalidDataException("Unknown pack type " + packType);
+            }
 			header.Type = (PackType)packType;
 			header.Version = reader.ReadInt32 ();
 			int replacedPackFilenameLength = reader.ReadInt32 ();
@@ -110,7 +119,7 @@ namespace Common {
 					if (!file.Deleted) {
 						if (file.Size != 0) {
 							indexSize += (uint)file.FullPath.Length + 5;
-							if (packFile.Header.Type == PackType.BootX) {
+							if (packFile.Header.Type == PackType.BootX || packFile.Header.Type == PackType.Shader) {
 								// additional bytes for time
 								indexSize += 8;
 							}
@@ -138,7 +147,7 @@ namespace Common {
 				foreach (PackedFile file in toWrite) {
 					if (file.Size != 0) {
 						writer.Write ((int)file.Size);
-						if (packFile.Header.Type == PackType.BootX) {
+						if (packFile.Header.Type == PackType.BootX || packFile.Header.Type == PackType.Shader) {
 							writer.Write (file.EditTime.Ticks);
 						}
 						// pack pathes use backslash, we replaced when reading
