@@ -76,7 +76,7 @@ namespace Common {
                 case 3:
                 case 4:
                 case 0x40:
-                case 0x41:
+                case 0x42:
                     break;
                 default:
                     throw new InvalidDataException("Unknown pack type " + packType);
