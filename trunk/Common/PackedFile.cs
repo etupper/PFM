@@ -262,27 +262,30 @@
          * an exception is thrown.
          */
         public void Add(PackedFile file) {
-            if (containedFiles.Contains(file)) {
+            if (containedFiles.Contains (file)) {
                 PackedFile contained = null;
                 foreach (PackedFile f in containedFiles) {
-                    if (f.Name.Equals(file.Name)) {
+                    if (f.Name.Equals (file.Name)) {
                         contained = f;
                         break;
                     }
                 }
                 if (contained.Deleted) {
-                    containedFiles.Remove(contained);
+                    containedFiles.Remove (contained);
                     if (FileRemoved != null) {
-                        FileRemoved(contained);
+                        FileRemoved (contained);
                     }
                 } else {
-                    throw new Exception("File already present");
+                    // don't add the file
+                    // probably best to add a notification event parameter
+                    // to provide feedback about this
+                    return;
                 }
             }
-            containedFiles.Add(file);
+            containedFiles.Add (file);
             file.Parent = this;
             if (FileAdded != null) {
-                FileAdded(file);
+                FileAdded (file);
             }
         }
 
