@@ -232,6 +232,6 @@ namespace Common {
         // have to force id value for boot; there are more of those special ones,
         // but we can't handle them yet
         BootX = 0x40,
-        Shader = 0x41
+        Shader = 0x42
     }
 }

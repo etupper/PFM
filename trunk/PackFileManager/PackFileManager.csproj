@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -6,7 +6,7 @@
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{7A1CCA74-67D8-4560-B39C-D6F1E760461B}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>PackFileManager</RootNamespace>
     <AssemblyName>PackFileManager</AssemblyName>
   </PropertyGroup>
@@ -30,28 +30,55 @@
     <PlatformTarget>x86</PlatformTarget>
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="ToolTipRegion.cs" />
-    <Compile Include="PackFileManager\AtlasFileEditorControl.cs" />
-    <Compile Include="PackFileManager\DBFileEditorControl.cs" />
+    <Compile Include="PackFileManager\AtlasFileEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PackFileManager\DBFileEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="PackFileManager\DBFileTypesUpdater.cs" />
-    <Compile Include="PackFileManager\FileAlreadyExistsDialog.cs" />
-    <Compile Include="PackFileManager\ImageViewerControl.cs" />
+    <Compile Include="PackFileManager\FileAlreadyExistsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PackFileManager\ImageViewerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="PackFileManager\InputBox.Designer.cs" />
-    <Compile Include="PackFileManager\InputBox.cs" />
-    <Compile Include="PackFileManager\LocFileEditorControl.cs" />
-    <Compile Include="PackFileManager\PackFileManagerForm.cs" />
+    <Compile Include="PackFileManager\InputBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PackFileManager\LocFileEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PackFileManager\PackFileManagerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="PackFileManager\PackTree.cs" />
     <Compile Include="PackFileManager\Program.cs" />
-    <Compile Include="PackFileManager\TextFileEditorControl.cs" />
-    <Compile Include="PackFileManager\UnitVariantFileEditorControl.cs" />
-    <Compile Include="PackFileManager\caFileEditAdvisory.cs" />
-    <Compile Include="PackFileManager\customMessageBox.cs" />
+    <Compile Include="PackFileManager\TextFileEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PackFileManager\UnitVariantFileEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PackFileManager\caFileEditAdvisory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PackFileManager\customMessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="PackFileManager\Properties\Resources.cs" />
     <Compile Include="PackFileManager\Properties\Settings.cs" />
-    <Compile Include="PackFileManager\DataGridViewExtended.cs" />
+    <Compile Include="PackFileManager\DataGridViewExtended.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="PackFileManager\DragFileInfo.cs" />
     <Compile Include="PackFileManager\FILEDESCRIPTOR.cs" />
     <Compile Include="PackFileManager\DragDropHelper.cs" />
@@ -73,6 +100,7 @@
       <HintPath>..\Files\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
