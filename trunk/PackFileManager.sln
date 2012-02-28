@@ -1,0 +1,80 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{9136096D-A4E5-4FF3-A041-78750164DC13}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DecodeTool", "DecodeTool\DecodeTool.csproj", "{24D6EBD1-5FE9-44B7-B49A-57886298EB00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library", "Library\Library.csproj", "{73766474-441A-4E10-AB13-B215F90987FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackFileManager", "PackFileManager\PackFileManager.csproj", "{7A1CCA74-67D8-4560-B39C-D6F1E760461B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackFileTest", "PackFileTest\PackFileTest.csproj", "{BCAD6365-5BA4-4AD1-8042-D156906C0EFE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{24D6EBD1-5FE9-44B7-B49A-57886298EB00}.Debug|x86.ActiveCfg = Debug|x86
+		{24D6EBD1-5FE9-44B7-B49A-57886298EB00}.Debug|x86.Build.0 = Debug|x86
+		{24D6EBD1-5FE9-44B7-B49A-57886298EB00}.Release|x86.ActiveCfg = Release|x86
+		{24D6EBD1-5FE9-44B7-B49A-57886298EB00}.Release|x86.Build.0 = Release|x86
+		{73766474-441A-4E10-AB13-B215F90987FF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{73766474-441A-4E10-AB13-B215F90987FF}.Debug|x86.Build.0 = Debug|Any CPU
+		{73766474-441A-4E10-AB13-B215F90987FF}.Release|x86.ActiveCfg = Release|Any CPU
+		{73766474-441A-4E10-AB13-B215F90987FF}.Release|x86.Build.0 = Release|Any CPU
+		{7A1CCA74-67D8-4560-B39C-D6F1E760461B}.Debug|x86.ActiveCfg = Debug|x86
+		{7A1CCA74-67D8-4560-B39C-D6F1E760461B}.Debug|x86.Build.0 = Debug|x86
+		{7A1CCA74-67D8-4560-B39C-D6F1E760461B}.Release|x86.ActiveCfg = Release|x86
+		{7A1CCA74-67D8-4560-B39C-D6F1E760461B}.Release|x86.Build.0 = Release|x86
+		{9136096D-A4E5-4FF3-A041-78750164DC13}.Debug|x86.ActiveCfg = Debug|x86
+		{9136096D-A4E5-4FF3-A041-78750164DC13}.Debug|x86.Build.0 = Debug|x86
+		{9136096D-A4E5-4FF3-A041-78750164DC13}.Release|x86.ActiveCfg = Release|x86
+		{9136096D-A4E5-4FF3-A041-78750164DC13}.Release|x86.Build.0 = Release|x86
+		{BCAD6365-5BA4-4AD1-8042-D156906C0EFE}.Debug|x86.ActiveCfg = Debug|x86
+		{BCAD6365-5BA4-4AD1-8042-D156906C0EFE}.Debug|x86.Build.0 = Debug|x86
+		{BCAD6365-5BA4-4AD1-8042-D156906C0EFE}.Release|x86.ActiveCfg = Release|x86
+		{BCAD6365-5BA4-4AD1-8042-D156906C0EFE}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = PackFileManager\PackFileManager.csproj
+		Policies = $0
+		$0.TextStylePolicy = $1
+		$1.inheritsSet = null
+		$1.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $2
+		$2.NamespaceBraceStyle = EndOfLine
+		$2.ClassBraceStyle = EndOfLine
+		$2.InterfaceBraceStyle = EndOfLine
+		$2.StructBraceStyle = EndOfLine
+		$2.EnumBraceStyle = EndOfLine
+		$2.MethodBraceStyle = EndOfLine
+		$2.ConstructorBraceStyle = EndOfLine
+		$2.DestructorBraceStyle = EndOfLine
+		$2.BeforeMethodDeclarationParentheses = False
+		$2.inheritsSet = Mono
+		$2.inheritsScope = text/x-csharp
+		$2.scope = text/x-csharp
+		$0.TextStylePolicy = $3
+		$3.FileWidth = 120
+		$3.RemoveTrailingWhitespace = True
+		$3.inheritsSet = VisualStudio
+		$3.inheritsScope = text/plain
+		$3.scope = text/plain
+		$0.TextStylePolicy = $4
+		$4.inheritsSet = null
+		$4.scope = text/microsoft-resx
+		$0.XmlFormattingPolicy = $5
+		$5.inheritsSet = null
+		$5.scope = text/microsoft-resx
+		$0.TextStylePolicy = $6
+		$6.inheritsSet = null
+		$6.scope = application/xml
+		$0.XmlFormattingPolicy = $7
+		$7.inheritsSet = Mono
+		$7.inheritsScope = application/xml
+		$7.scope = application/xml
+	EndGlobalSection
+EndGlobal
