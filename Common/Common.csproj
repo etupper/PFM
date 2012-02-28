@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9136096D-A4E5-4FF3-A041-78750164DC13}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Common</RootNamespace>
+    <AssemblyName>Common</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="DataGridViewAutoFilter\DataGridViewAutoFilterColumnHeaderCell.cs" />
+    <Compile Include="DataGridViewAutoFilter\DataGridViewAutoFilterTextBoxColumn.cs" />
+    <Compile Include="AtlasFile.cs" />
+    <Compile Include="AtlasObject.cs" />
+    <Compile Include="Codec.cs" />
+    <Compile Include="ErrorBox.cs" />
+    <Compile Include="IOFunctions.cs" />
+    <Compile Include="LocFile.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="PackedFile.cs" />
+    <Compile Include="PackFile.cs" />
+    <Compile Include="PackFileCodec.cs" />
+    <Compile Include="ReadmeEditorControl.cs" />
+    <Compile Include="UnitVariantFile.cs" />
+    <Compile Include="UnitVariantObject.cs" />
+    <Compile Include="Utilities.cs" />
+    <Compile Include="DB\DBFile.cs" />
+    <Compile Include="DB\DBFileCodec.cs" />
+    <Compile Include="DB\DBFileNotSupportedException.cs" />
+    <Compile Include="DB\DBReferenceMap.cs" />
+    <Compile Include="DB\DBTypeMap.cs" />
+    <Compile Include="DB\FieldInfo.cs" />
+    <Compile Include="DB\FieldInstance.cs" />
+    <Compile Include="DB\SchemaXml.cs" />
+    <Compile Include="DB\TypeInfo.cs" />
+    <Compile Include="DB\XsdParser.cs" />
+    <Compile Include="LocEntry.cs" />
+    <Compile Include="MeshTextureObject.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+</Project>

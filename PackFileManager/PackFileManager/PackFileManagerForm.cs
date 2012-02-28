@@ -279,7 +279,7 @@ namespace PackFileManager
         private void addDirectoryToolStripMenuItem_Click(object sender, EventArgs e) {
             if (AddTo != null && addDirectoryFolderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 try {
-                    // AddTo.Add(addDirectoryFolderBrowserDialog.SelectedPath);
+                    AddTo.Add(addDirectoryFolderBrowserDialog.SelectedPath);
                 } catch (Exception x) {
                     MessageBox.Show(string.Format("Failed to add {0}: {1}", addDirectoryFolderBrowserDialog.SelectedPath, x.Message), "Failed to add directory");
                 }
@@ -462,7 +462,7 @@ namespace PackFileManager
             addDirectoryFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             openDBFileDialog = new System.Windows.Forms.OpenFileDialog();
             packActionMenuStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(splitContainer1)).BeginInit();
+            // ((System.ComponentModel.ISupportInitialize)(splitContainer1)).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.SuspendLayout();
             menuStrip.SuspendLayout();
@@ -1224,7 +1224,7 @@ namespace PackFileManager
             Shown += new System.EventHandler(PackFileManagerForm_Shown);
             packActionMenuStrip.ResumeLayout(false);
             splitContainer1.Panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(splitContainer1)).EndInit();
+            // ((System.ComponentModel.ISupportInitialize)(splitContainer1)).EndInit();
             splitContainer1.ResumeLayout(false);
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
@@ -1735,7 +1735,7 @@ namespace PackFileManager
             if (packTreeView.SelectedNode != null)
             {
                 packStatusLabel.Text = " Viewing: " + packTreeView.SelectedNode.Text;
-                packTreeView.LabelEdit = packTreeView.SelectedNode != packTreeView.Nodes[0];
+                packTreeView.LabelEdit = packTreeView.Nodes.Count > 0 && packTreeView.SelectedNode != packTreeView.Nodes[0];
                 if (packTreeView.SelectedNode.Tag is PackedFile)
                 {
                     OpenPackedFile(packTreeView.SelectedNode.Tag);
