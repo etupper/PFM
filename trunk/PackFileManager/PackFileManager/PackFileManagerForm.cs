@@ -39,7 +39,6 @@ namespace PackFileManager
         private ToolStripMenuItem helpToolStripMenuItem;
         private ToolStripMenuItem indexToolStripMenuItem;
         private ToolStripMenuItem newToolStripMenuItem;
-        private bool nodeRenamed;
         public OpenFileDialog openDBFileDialog;
         private bool openFileIsModified;
         private string openFilePath;
@@ -161,8 +160,8 @@ namespace PackFileManager
             }
             else
             {
-                choosePathAnchorFolderBrowserDialog.SelectedPath = string.Format("{0}\\data", ShogunTotalWarDirectory);
-                extractFolderBrowserDialog.SelectedPath = string.Format("{0}\\data", ShogunTotalWarDirectory);
+                choosePathAnchorFolderBrowserDialog.SelectedPath = Path.Combine(ShogunTotalWarDirectory, "data");
+                extractFolderBrowserDialog.SelectedPath = Path.Combine(ShogunTotalWarDirectory, "data");
             }
             saveFileDialog.InitialDirectory = choosePathAnchorFolderBrowserDialog.SelectedPath;
             addDirectoryFolderBrowserDialog.SelectedPath = choosePathAnchorFolderBrowserDialog.SelectedPath;
@@ -170,7 +169,6 @@ namespace PackFileManager
                 Dock = DockStyle.Fill
             };
             dbFileEditorControl = control;
-            nodeRenamed = false;
             Text = string.Format("Pack File Manager {0}", Application.ProductVersion);
             if (args.Length == 1)
             {
@@ -252,7 +250,6 @@ namespace PackFileManager
                     foreach (string file in addReplaceOpenFileDialog.FileNames) {
                         AddTo.Add(new PackedFile(file));
                     }
-                    nodeRenamed = true;
                 } catch (Exception x) {
                     MessageBox.Show(x.Message, "Problem, Sir!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -293,12 +290,7 @@ namespace PackFileManager
         }
 
         private void renameToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (nodeRenamed) {
-                MessageBox.Show("Please save to continue.");
-            } else {
-                packTreeView.SelectedNode.BeginEdit();
-                nodeRenamed = true;
-            }
+            packTreeView.SelectedNode.BeginEdit();
         }
 
         private void replaceFileToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -1773,7 +1765,6 @@ namespace PackFileManager
                     if (!e.Shift)
                     {
                         addFileToolStripMenuItem_Click(this, EventArgs.Empty);
-                        nodeRenamed = true;
                         break;
                     }
                     addDirectoryToolStripMenuItem_Click(this, EventArgs.Empty);
