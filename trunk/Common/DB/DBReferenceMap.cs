@@ -10,72 +10,62 @@ namespace Common {
         Dictionary<string, SortedSet<string>> valueCache = new Dictionary<string, SortedSet<string>>();
         PackFile lastPack = null;
 
-        private DBReferenceMap() {
+        /*
+         * Private to enforce Singleton access.
+         */
+        private DBReferenceMap () {
         }
 
+        /*
+         * The last pack file from which references were resolved; used to invalidate cache
+         * when a new pack is opened.
+         */
         PackFile LastPack {
             get { return lastPack; }
             set {
                 if ((value != null && lastPack != null) &&
                     (value.Filepath != lastPack.Filepath)) {
                     // clear cache when using another pack file
-                    valueCache.Clear();
+                    valueCache.Clear ();
                 }
                 lastPack = value;
             }
         }
 
         /*
-        public void validateReferences(string directory, PackFile pack) {
-            LastPack = pack;
-            // verify dependencies
-            foreach (string fromMap in references.Keys) {
-                foreach (TableReference reference in references[fromMap]) {
-                    if (reference.fromMap == "ancillary_to_effects") {
-                        Console.WriteLine("ok");
-                    }
-                    SortedSet<string> values = collectValues (reference.fromMap, pack);
-                    SortedSet<string> allowed = collectValues (reference.toMap, pack);
-                    if (values != null && allowed != null) {
-                        foreach (string val in values) {
-                            if (val != "" && !allowed.Contains (val)) {
-                                Console.WriteLine("value '{0}' in {1}:{2} does not fulfil reference {3}:{4}",
-                                    val, reference.fromMap, reference.fromIndex, reference.toMap, reference.toIndex);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-         * */
-
-        public SortedSet<string> this[string key] {
+         * Resolve references for given key.
+         */
+        public SortedSet<string> this [string key] {
             get {
-                return valueCache[key];
+                return valueCache [key];
             }
         }
 
+        /*
+         * Go through db files contained in the given pack and resolve the reference
+         * with the given key (form "tableName.columnName").
+         */
         SortedSet<string> collectValues(string reference, PackFile pack) {
             if (pack != lastPack) {
                 lastPack = pack;
             }
-            SortedSet<string> result = new SortedSet<string>();
-            if (valueCache.TryGetValue(reference, out result)) {
+            SortedSet<string> result = new SortedSet<string> ();
+            if (valueCache.TryGetValue (reference, out result)) {
                 return result;
             }
-            string[] split = reference.Split('.');
-            string dbFileName = split[0];
-            string fieldName = split[1];
-            string dbFullPath = Path.Combine("db", dbFileName);
+            string[] split = reference.Split ('.');
+            string dbFileName = split [0];
+            string fieldName = split [1];
+            string dbFullPath = Path.Combine ("db", dbFileName);
+            Console.WriteLine ("looking for {0}", dbFullPath);
 
-            foreach (string packfileName in pack.FileList) {
-                if (packfileName.StartsWith(dbFullPath)) {
-                    result = new SortedSet<string>();
-                    PackedFile file = pack[packfileName];
-                    DBFile dbFile = new PackedFileDbCodec().readDbFile(file);
+            foreach (PackedFile file in pack.Files) {
+                if (file.FullPath.Contains (dbFullPath)) {
+                    result = new SortedSet<string> ();
+                    DBFile dbFile = new PackedFileDbCodec ().readDbFile (file);
                     int index = -1;
                     for (int i = 0; i < dbFile.CurrentType.fields.Count; i++) {
-                        if (dbFile.CurrentType.fields[i].Name.Equals(fieldName)) {
+                        if (dbFile.CurrentType.fields [i].Name.Equals (fieldName)) {
                             index = i;
                             break;
                         }
@@ -84,17 +74,20 @@ namespace Common {
                         return null;
                     }
                     foreach (List<FieldInstance> entry in dbFile.Entries) {
-                        string toAdd = entry[index].Value;
+                        string toAdd = entry [index].Value;
                         if (toAdd != null) {
-                            result.Add(toAdd);
+                            result.Add (toAdd);
                         }
                     }
                 }
             }
-            valueCache.Add(reference, result);
+            valueCache.Add (reference, result);
             return result;
         }
 
+        /*
+         * Resolve given reference from given pack; returns null if reference key is empty.
+         */
         public SortedSet<string> resolveFromPackFile(string key, PackFile packFile) {
             LastPack = packFile;
             if (key.Length == 0) {
