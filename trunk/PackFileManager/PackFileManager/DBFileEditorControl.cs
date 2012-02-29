@@ -40,23 +40,20 @@ namespace PackFileManager {
         private COPIED_TYPE lastCopy = COPIED_TYPE.NONE;
         #endregion
 
-        public DBFileEditorControl() 
-        {
+        public DBFileEditorControl () {
             components = null;
-            InitializeComponent();
-            initTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
+            InitializeComponent ();
+            initTypeMap (Path.GetDirectoryName (Application.ExecutablePath));
             dataGridView.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             dataGridView.ColumnHeaderMouseClick += dataGridView1_ColumnHeaderMouseClick;
-            try 
-            {
+            try {
                 useFirstColumnAsRowHeader.Checked = Settings.Default.UseFirstColumnAsRowHeader;
                 showAllColumns.Checked = Settings.Default.ShowAllColumns;
-            } 
-            catch 
-            {
+            } catch {
                 // TODO: Should not need to swallow an exception.
             }
             dataGridView.KeyUp += copyPaste;
+            openDBFileDialog.Filter = "TSV Files|*.tsv|CSV Files|*.csv|All Files|*.*";
         }
 
         private void copyPaste(object sender, KeyEventArgs arge) 
@@ -314,17 +311,20 @@ namespace PackFileManager {
         }
 
         private void exportButton_Click(object sender, EventArgs e) {
-            var dialog = new SaveFileDialog { FileName = currentDBFile.CurrentType.name + ".tsv" };
+            var dialog = new SaveFileDialog {
+                FileName = currentDBFile.CurrentType.name + ".tsv",
+                Filter = "TSV file|*.tsv|CSV file|*.csv|All Files|*.*"
+            };
 
-            if (dialog.ShowDialog() == DialogResult.OK) {
-                Stream stream = new FileStream(dialog.FileName, FileMode.Create);
+            if (dialog.ShowDialog () == DialogResult.OK) {
+                Stream stream = new FileStream (dialog.FileName, FileMode.Create);
                 try {
-                    TextDbCodec.Instance.Encode(stream, currentDBFile);
-                    stream.Close();
+                    TextDbCodec.Instance.Encode (stream, currentDBFile);
+                    stream.Close ();
                 } catch (DBFileNotSupportedException exception) {
-                    showDBFileNotSupportedMessage(exception.Message);
+                    showDBFileNotSupportedMessage (exception.Message);
                 } finally {
-                    stream.Dispose();
+                    stream.Dispose ();
                 }
             }
         }
