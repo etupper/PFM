@@ -588,7 +588,7 @@ namespace PackFileManager {
 
             if (column == null) 
             {
-                column = new DataGridViewAutoFilterTextBoxColumn {DataPropertyName = columnName, AutomaticSortingEnabled = false };
+                column = new DataGridViewAutoFilterTextBoxColumn {DataPropertyName = columnName };
             }
             column.SortMode = DataGridViewColumnSortMode.Programmatic;
             column.HeaderText = fieldInfo.Name + (Settings.Default.IsColumnIgnored(currentPackedFile.FullPath, fieldInfo.Name) ? "*" : "");
