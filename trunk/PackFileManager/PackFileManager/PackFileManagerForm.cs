@@ -2011,22 +2011,30 @@ namespace PackFileManager
         }
 
         public static void tryUpdate(bool showSuccess = true) {
-			try {
-				string path = Path.GetDirectoryName (Application.ExecutablePath);
-				string version = Application.ProductVersion;
-				bool update = DBFileTypesUpdater.checkVersion (path, ref version);
-				if (showSuccess) {
-					string message = update ? "DB File description updated." : "No update performed.";
-					MessageBox.Show (message, "Update result", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            try {
+                string path = Path.GetDirectoryName (Application.ExecutablePath);
+                string version = Application.ProductVersion;
+                bool update = DBFileTypesUpdater.checkVersion (path, ref version);
+                if (showSuccess) {
+                    string message = update ? "DB File description updated." : "No update performed.";
+                    MessageBox.Show (message, "Update result", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-				if (update) {
-					DBTypeMap.Instance.initializeTypeMap (path);
+                if (update) {
+                    DBTypeMap.Instance.initializeTypeMap (path);
                 }
-				if (version != Application.ProductVersion) {
-					MessageBox.Show (string.Format ("A new version of PFM is available ({0})", version), "New Software version available");
+                if (version != Application.ProductVersion) {
+                    if (MessageBox.Show (string.Format ("A new version of PFM is available ({0})\nAutoinstall?", version),
+                                         "New Software version available",
+                                         MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes) {
+                        Process myProcess = Process.GetCurrentProcess ();
+                        string arguments = string.Format ("{0} {1} mono PackFileManager.exe", myProcess.Id, version);
+                        Process.Start ("AutoUpdater.exe", arguments);
+                        myProcess.CloseMainWindow ();
+                        myProcess.Close ();
+                    }
                 }
-			} catch (Exception e) {
-				MessageBox.Show (
+            } catch (Exception e) {
+                MessageBox.Show (
                     string.Format ("Update failed: \n{0}\n{1}", e.Message, e.StackTrace), 
 					"Problem, sir!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }

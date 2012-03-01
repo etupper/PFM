@@ -14,15 +14,19 @@ namespace AutoUpdater {
      * because it can't write files it still uses while running.
      */
     class Updater {
+        static readonly string sourceForgeFormat =
+            "http://downloads.sourceforge.net/project/packfilemanager/Release/" +
+            "Pack%20File%20Manager%20{0}.zip?r=&ts={1}&use_mirror=master";
+
+        static readonly string targetNameFormat = "PackFileManager{0}.zip";
+
         public static void Main(string[] args) {
             // the id of the process to wait for termination of
             int processId;
-            
-            // the url to download the update from
-            string dlUrl;
-            
-            // the name of the zip file
-            string zipfileName;
+
+            // the target version identifier
+            // determines source URL and target zip filename
+            string version;
             
             // name of the executable to run after the other process has finished
             string startFileName;
@@ -32,44 +36,50 @@ namespace AutoUpdater {
    
             try {
                 processId = int.Parse (args [0]);
-                // dlUrl = args [1];
-                // download url from SF:
-                string version = "2.0.2";
-                dlUrl = string.Format ("https://downloads.sourceforge.net/project/packfilemanager/Release/Pack%20File%20Manager%20{0}.zip?r=&ts={1}&use_mirror=master", version, DateTime.Now.Ticks);
-                zipfileName = args [2];
-                startFileName = args [3];
-                for (int i = 4; i < args.Length; i++) { 
+                version = args [1];
+                startFileName = args [2];
+                for (int i = 3; i < args.Length; i++) {
                     arguments.Add (args [i]);
                 }
-               
             } catch {
-                Console.WriteLine ("usage: <pid> <downloadurl> <zipfilename> <executable>");
+                Console.WriteLine ("usage: <pid> <version> <executable>");
                 return;
             }
    
+            // the url to download the update from
+            string dlUrl = string.Format (sourceForgeFormat, version, DateTime.Now.Ticks);
+
+            // the name of the zip file to store in
+            string zipfileName = string.Format (targetNameFormat, version);
+
             Process proc = null;
             try {
                 proc = Process.GetProcessById (processId);
+                proc.EnableRaisingEvents = true;
             } catch (Exception x) {
                 Console.WriteLine ("Failed to wait for process {0}: {1}", processId, x.Message);
             }
-   
+
             // download file from URL; this also gives the other process some time to shutdown
             // to avoid superfluous waiting
-            FileStream outfile = File.Open (zipfileName, FileMode.Create);
-            var request = (HttpWebRequest)WebRequest.Create (dlUrl);
-            var response = (HttpWebResponse)request.GetResponse ();
-            response.GetResponseStream ().CopyTo (outfile);
-            outfile.Close ();
+            Console.WriteLine ("Downloading from {0}", dlUrl);
+            using (FileStream outfile = File.Open (zipfileName, FileMode.Create)) {
+                var request = (HttpWebRequest)WebRequest.Create (dlUrl);
+                var response = (HttpWebResponse)request.GetResponse ();
+                response.GetResponseStream ().CopyTo (outfile);
+            }
             
             try {
-                if (proc != null) {
+                if (proc != null && !proc.HasExited) {
+                    Console.WriteLine ("waiting for process to exit...");
                     proc.WaitForExit ();
                 }
             } catch (Exception x) {
                 Console.WriteLine ("Failed to wait for process {0}: {1}", processId, x.Message);
             }
             
+            Console.WriteLine ("Installing...");
+
             // unzip all entries
             ZipInputStream zipStream = new ZipInputStream (File.OpenRead (zipfileName));
             ZipEntry entry = zipStream.GetNextEntry ();
@@ -83,6 +93,7 @@ namespace AutoUpdater {
             arguments.ForEach (a => asParameters += " " + a);
             Console.WriteLine ("starting {0} {1}", startFileName, asParameters.Trim ());
             
+            Console.WriteLine ("Okay, finished. Restarting.");
             Process.Start (startFileName, asParameters.Trim ());
         }
     }
