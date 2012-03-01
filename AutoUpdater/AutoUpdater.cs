@@ -57,7 +57,7 @@ namespace AutoUpdater {
                 proc = Process.GetProcessById (processId);
                 proc.EnableRaisingEvents = true;
             } catch (Exception x) {
-                Console.WriteLine ("Failed to wait for process {0}: {1}", processId, x.Message);
+                Console.WriteLine ("Failed to wait for process '{0}': {1}", processId, x.Message);
             }
 
             // download file from URL; this also gives the other process some time to shutdown

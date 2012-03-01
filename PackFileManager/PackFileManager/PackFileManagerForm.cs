@@ -128,56 +128,46 @@ namespace PackFileManager
 
         delegate bool FileFilter (PackedFile file);
 
-        public PackFileManagerForm(string[] args)
-        {
+        public PackFileManagerForm(string[] args) {
             InitializeComponent();
 
-			string ShogunTotalWarDirectory;
-			try {
-				if (Settings.Default.UpdateOnStartup) {
-                tryUpdate(false);
-            }
+            string ShogunTotalWarDirectory;
+            try {
+                if (Settings.Default.UpdateOnStartup) {
+                    tryUpdate(false);
+                }
 
-				ShogunTotalWarDirectory = IOFunctions.GetShogunTotalWarDirectory ();
-			} catch {
-				ShogunTotalWarDirectory = ".";
-			}
-            if (string.IsNullOrEmpty(ShogunTotalWarDirectory))
-            {
-                if ((args.Length != 1) || !File.Exists(args[0]))
-                {
-                    if (choosePathAnchorFolderBrowserDialog.ShowDialog() != DialogResult.OK)
-                    {
+                ShogunTotalWarDirectory = IOFunctions.GetShogunTotalWarDirectory();
+            } catch {
+                ShogunTotalWarDirectory = ".";
+            }
+            if (string.IsNullOrEmpty(ShogunTotalWarDirectory)) {
+                if ((args.Length != 1) || !File.Exists(args[0])) {
+                    if (choosePathAnchorFolderBrowserDialog.ShowDialog() != DialogResult.OK) {
                         throw new InvalidDataException("unable to determine path to \"Total War : Shogun 2\" directory");
                     }
                     extractFolderBrowserDialog.SelectedPath = choosePathAnchorFolderBrowserDialog.SelectedPath;
-                }
-                else
-                {
+                } else {
                     choosePathAnchorFolderBrowserDialog.SelectedPath = Path.GetDirectoryName(args[0]);
                     extractFolderBrowserDialog.SelectedPath = choosePathAnchorFolderBrowserDialog.SelectedPath;
                 }
-            }
-            else
-            {
+            } else {
                 choosePathAnchorFolderBrowserDialog.SelectedPath = Path.Combine(ShogunTotalWarDirectory, "data");
                 extractFolderBrowserDialog.SelectedPath = Path.Combine(ShogunTotalWarDirectory, "data");
             }
             saveFileDialog.InitialDirectory = choosePathAnchorFolderBrowserDialog.SelectedPath;
             addDirectoryFolderBrowserDialog.SelectedPath = choosePathAnchorFolderBrowserDialog.SelectedPath;
-            var control = new DBFileEditorControl {
-                Dock = DockStyle.Fill
-            };
-            dbFileEditorControl = control;
             Text = string.Format("Pack File Manager {0}", Application.ProductVersion);
-            if (args.Length == 1)
-            {
-                if (!File.Exists(args[0]))
-                {
+            if (args.Length == 1) {
+                if (!File.Exists(args[0])) {
                     throw new ArgumentException("path is not a file or path does not exist");
                 }
                 OpenExistingPackFile(args[0]);
             }
+            var control = new DBFileEditorControl() {
+                Dock = DockStyle.Fill
+            };
+            dbFileEditorControl = control;
         }
 
         public override sealed string Text
@@ -1959,7 +1949,7 @@ namespace PackFileManager
 
         private void updateToolStripMenuItem_Click(object sender, EventArgs ev)
         {
-            tryUpdate();
+            tryUpdate(true, currentPackFile == null ? null : currentPackFile.Filepath);
         }
 
         #region DB Management
@@ -2010,33 +2000,36 @@ namespace PackFileManager
             MessageBox.Show("DB File Definitions reloaded.");
         }
 
-        public static void tryUpdate(bool showSuccess = true) {
+        public static void tryUpdate(bool showSuccess = true, string currentPackFile = null) {
             try {
-                string path = Path.GetDirectoryName (Application.ExecutablePath);
+                string path = Path.GetDirectoryName(Application.ExecutablePath);
                 string version = Application.ProductVersion;
-                bool update = DBFileTypesUpdater.checkVersion (path, ref version);
+                bool update = DBFileTypesUpdater.checkVersion(path, ref version);
                 if (showSuccess) {
                     string message = update ? "DB File description updated." : "No update performed.";
-                    MessageBox.Show (message, "Update result", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(message, "Update result", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 if (update) {
-                    DBTypeMap.Instance.initializeTypeMap (path);
+                    DBTypeMap.Instance.initializeTypeMap(path);
                 }
                 if (version != Application.ProductVersion) {
-                    if (MessageBox.Show (string.Format ("A new version of PFM is available ({0})\nAutoinstall?", version),
+                    if (MessageBox.Show(string.Format("A new version of PFM is available ({0})\nAutoinstall?", version),
                                          "New Software version available",
                                          MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes) {
-                        Process myProcess = Process.GetCurrentProcess ();
-                        string arguments = string.Format ("{0} {1} mono PackFileManager.exe", myProcess.Id, version);
-                        Process.Start ("AutoUpdater.exe", arguments);
-                        myProcess.CloseMainWindow ();
-                        myProcess.Close ();
+                        Process myProcess = Process.GetCurrentProcess();
+                        if (myProcess.CloseMainWindow()) {
+                            // re-open file if one is open already
+                            string currentPackPath = currentPackFile == null ? "" : string.Format(" {0}", currentPackFile);
+                            string arguments = string.Format("{0} {1} PackFileManager.exe{2}", myProcess.Id, version, currentPackPath);
+                            Process.Start("AutoUpdater.exe", arguments);
+                            myProcess.Close();
+                        }
                     }
                 }
             } catch (Exception e) {
-                MessageBox.Show (
-                    string.Format ("Update failed: \n{0}\n{1}", e.Message, e.StackTrace), 
-					"Problem, sir!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    string.Format("Update failed: \n{0}\n{1}", e.Message, e.StackTrace),
+                    "Problem, sir!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 		
