@@ -36,6 +36,12 @@
     <OutputPath>bin\Debug</OutputPath>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -117,6 +123,10 @@
     <ProjectReference Include="..\DecodeTool\DecodeTool.csproj">
       <Project>{24D6EBD1-5FE9-44B7-B49A-57886298EB00}</Project>
       <Name>DecodeTool</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AutoUpdater\AutoUpdater.csproj">
+      <Project>{89BF640C-76D4-4A04-A997-98594475D60C}</Project>
+      <Name>AutoUpdater</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
