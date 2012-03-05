@@ -77,10 +77,12 @@ namespace PackFileManager
         private ToolStripMenuItem filesMenu;
         private ToolStripMenuItem changePackTypeToolStripMenuItem;
         private ToolStripMenuItem bootToolStripMenuItem;
+        private ToolStripMenuItem bootXToolStripMenuItem;
         private ToolStripMenuItem releaseToolStripMenuItem;
         private ToolStripMenuItem patchToolStripMenuItem;
         private ToolStripMenuItem modToolStripMenuItem;
         private ToolStripMenuItem movieToolStripMenuItem;
+        private ToolStripMenuItem shaderToolStripMenuItem;
         private ToolStripMenuItem addToolStripMenuItem;
         private ToolStripMenuItem addFileToolStripMenuItem;
         private ToolStripMenuItem addDirectoryToolStripMenuItem;
@@ -351,105 +353,107 @@ namespace PackFileManager
         }
 
         private void InitializeComponent() {
-            components = new System.ComponentModel.Container();
-            packTreeView = new System.Windows.Forms.TreeView();
-            packActionMenuStrip = new System.Windows.Forms.ContextMenuStrip(components);
-            toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripMenuItem13 = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripMenuItem14 = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
-            toolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripMenuItem7 = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripMenuItem8 = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripMenuItem9 = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripMenuItem10 = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripMenuItem11 = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripMenuItem12 = new System.Windows.Forms.ToolStripMenuItem();
-            addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            emptyDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            addDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            addFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            dBFileFromTSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            packOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
-            splitContainer1 = new System.Windows.Forms.SplitContainer();
-            menuStrip = new System.Windows.Forms.MenuStrip();
-            fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
-            saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            changePackTypeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            bootToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            releaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            patchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            modToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            movieToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
-            exportFileListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
-            exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            filesMenu = new System.Windows.Forms.ToolStripMenuItem();
-            deleteFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            replaceFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            openToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            openFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            openAsTextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            extractToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            extractSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            extractAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            exportUnknownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
-            createReadMeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            searchFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            updateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            searchForUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            fromXsdFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            reloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            saveToDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            updateDBFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            updateCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            updateAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            extrasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            cAPacksAreReadOnlyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            updateOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            indexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            statusStrip = new System.Windows.Forms.StatusStrip();
-            packStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            packActionProgressBar = new System.Windows.Forms.ToolStripProgressBar();
-            extractFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            choosePathAnchorFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            addDirectoryFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            openDBFileDialog = new System.Windows.Forms.OpenFileDialog();
-            packActionMenuStrip.SuspendLayout();
+            components = new System.ComponentModel.Container ();
+            packTreeView = new System.Windows.Forms.TreeView ();
+            packActionMenuStrip = new System.Windows.Forms.ContextMenuStrip (components);
+            toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripMenuItem13 = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripMenuItem14 = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator ();
+            toolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripMenuItem7 = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripMenuItem8 = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripMenuItem9 = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripMenuItem10 = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripMenuItem11 = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripMenuItem12 = new System.Windows.Forms.ToolStripMenuItem ();
+            addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            emptyDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            addDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            addFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            dBFileFromTSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            packOpenFileDialog = new System.Windows.Forms.OpenFileDialog ();
+            splitContainer1 = new System.Windows.Forms.SplitContainer ();
+            menuStrip = new System.Windows.Forms.MenuStrip ();
+            fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripSeparator = new System.Windows.Forms.ToolStripSeparator ();
+            saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator ();
+            changePackTypeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            bootToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            bootXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            releaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            patchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            modToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            movieToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            shaderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator ();
+            exportFileListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator ();
+            exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            filesMenu = new System.Windows.Forms.ToolStripMenuItem ();
+            deleteFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            replaceFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator ();
+            openToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem ();
+            openFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            openAsTextMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            extractToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            extractSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            extractAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            exportUnknownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator ();
+            createReadMeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            searchFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator ();
+            cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator ();
+            selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            updateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            searchForUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            fromXsdFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            reloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            saveToDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            updateDBFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            updateCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            updateAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            extrasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            cAPacksAreReadOnlyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            updateOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            indexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator ();
+            aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            statusStrip = new System.Windows.Forms.StatusStrip ();
+            packStatusLabel = new System.Windows.Forms.ToolStripStatusLabel ();
+            packActionProgressBar = new System.Windows.Forms.ToolStripProgressBar ();
+            extractFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog ();
+            choosePathAnchorFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog ();
+            saveFileDialog = new System.Windows.Forms.SaveFileDialog ();
+            addDirectoryFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog ();
+            openDBFileDialog = new System.Windows.Forms.OpenFileDialog ();
+            packActionMenuStrip.SuspendLayout ();
             // ((System.ComponentModel.ISupportInitialize)(splitContainer1)).BeginInit();
-            splitContainer1.Panel1.SuspendLayout();
-            splitContainer1.SuspendLayout();
-            menuStrip.SuspendLayout();
-            statusStrip.SuspendLayout();
-            SuspendLayout();
+            splitContainer1.Panel1.SuspendLayout ();
+            splitContainer1.SuspendLayout ();
+            menuStrip.SuspendLayout ();
+            statusStrip.SuspendLayout ();
+            SuspendLayout ();
             // 
             // packTreeView
             // 
@@ -458,20 +462,20 @@ namespace PackFileManager
             packTreeView.ForeColor = System.Drawing.SystemColors.WindowText;
             packTreeView.HideSelection = false;
             packTreeView.Indent = 19;
-            packTreeView.Location = new System.Drawing.Point(0, 0);
+            packTreeView.Location = new System.Drawing.Point (0, 0);
             packTreeView.Name = "packTreeView";
-            packTreeView.Size = new System.Drawing.Size(198, 599);
+            packTreeView.Size = new System.Drawing.Size (198, 599);
             packTreeView.TabIndex = 2;
-            packTreeView.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(packTreeView_AfterLabelEdit);
-            packTreeView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(packTreeView_ItemDrag);
-            packTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(packTreeView_AfterSelect);
-            packTreeView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(packTreeView_MouseDoubleClick);
-            packTreeView.MouseDown += new System.Windows.Forms.MouseEventHandler(packTreeView_MouseDown);
-            packTreeView.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(packTreeView_PreviewKeyDown);
+            packTreeView.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler (packTreeView_AfterLabelEdit);
+            packTreeView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler (packTreeView_ItemDrag);
+            packTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler (packTreeView_AfterSelect);
+            packTreeView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler (packTreeView_MouseDoubleClick);
+            packTreeView.MouseDown += new System.Windows.Forms.MouseEventHandler (packTreeView_MouseDown);
+            packTreeView.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler (packTreeView_PreviewKeyDown);
             // 
             // packActionMenuStrip
             // 
-            packActionMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            packActionMenuStrip.Items.AddRange (new System.Windows.Forms.ToolStripItem[] {
             toolStripMenuItem1,
             toolStripMenuItem4,
             toolStripMenuItem5,
@@ -479,166 +483,166 @@ namespace PackFileManager
             toolStripMenuItem6,
             toolStripMenuItem9});
             packActionMenuStrip.Name = "packActionMenuStrip";
-            packActionMenuStrip.Size = new System.Drawing.Size(153, 142);
-            packActionMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(packActionMenuStrip_Opening);
+            packActionMenuStrip.Size = new System.Drawing.Size (153, 142);
+            packActionMenuStrip.Opening += new System.ComponentModel.CancelEventHandler (packActionMenuStrip_Opening);
             // 
             // toolStripMenuItem1
             // 
-            toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            toolStripMenuItem1.DropDownItems.AddRange (new System.Windows.Forms.ToolStripItem[] {
             toolStripMenuItem3,
             toolStripMenuItem13,
             toolStripMenuItem2,
             toolStripMenuItem14});
             toolStripMenuItem1.Name = "toolStripMenuItem1";
-            toolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            toolStripMenuItem1.Size = new System.Drawing.Size (152, 22);
             toolStripMenuItem1.Text = "Add";
             // 
             // toolStripMenuItem3
             // 
             toolStripMenuItem3.Name = "toolStripMenuItem3";
             toolStripMenuItem3.ShortcutKeyDisplayString = "Shift+Ins";
-            toolStripMenuItem3.Size = new System.Drawing.Size(185, 22);
+            toolStripMenuItem3.Size = new System.Drawing.Size (185, 22);
             toolStripMenuItem3.Text = "&Directory...";
-            toolStripMenuItem3.Click += new System.EventHandler(addDirectoryToolStripMenuItem_Click);
+            toolStripMenuItem3.Click += new System.EventHandler (addDirectoryToolStripMenuItem_Click);
             // 
             // toolStripMenuItem13
             // 
             toolStripMenuItem13.Name = "toolStripMenuItem13";
-            toolStripMenuItem13.Size = new System.Drawing.Size(185, 22);
+            toolStripMenuItem13.Size = new System.Drawing.Size (185, 22);
             toolStripMenuItem13.Text = "Empty Directory";
-            toolStripMenuItem13.Click += new System.EventHandler(emptyDirectoryToolStripMenuItem_Click);
+            toolStripMenuItem13.Click += new System.EventHandler (emptyDirectoryToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
             toolStripMenuItem2.Name = "toolStripMenuItem2";
             toolStripMenuItem2.ShortcutKeyDisplayString = "Ins";
-            toolStripMenuItem2.Size = new System.Drawing.Size(185, 22);
+            toolStripMenuItem2.Size = new System.Drawing.Size (185, 22);
             toolStripMenuItem2.Text = "&File(s)...";
-            toolStripMenuItem2.Click += new System.EventHandler(addFileToolStripMenuItem_Click);
+            toolStripMenuItem2.Click += new System.EventHandler (addFileToolStripMenuItem_Click);
             // 
             // toolStripMenuItem14
             // 
             toolStripMenuItem14.Name = "toolStripMenuItem14";
-            toolStripMenuItem14.Size = new System.Drawing.Size(185, 22);
+            toolStripMenuItem14.Size = new System.Drawing.Size (185, 22);
             toolStripMenuItem14.Text = "DB file from TSV";
-            toolStripMenuItem14.Click += new System.EventHandler(dBFileFromTSVToolStripMenuItem_Click);
+            toolStripMenuItem14.Click += new System.EventHandler (dBFileFromTSVToolStripMenuItem_Click);
             // 
             // toolStripMenuItem4
             // 
             toolStripMenuItem4.Name = "toolStripMenuItem4";
             toolStripMenuItem4.ShortcutKeyDisplayString = "Del";
-            toolStripMenuItem4.Size = new System.Drawing.Size(152, 22);
+            toolStripMenuItem4.Size = new System.Drawing.Size (152, 22);
             toolStripMenuItem4.Text = "Delete";
-            toolStripMenuItem4.Click += new System.EventHandler(deleteFileToolStripMenuItem_Click);
+            toolStripMenuItem4.Click += new System.EventHandler (deleteFileToolStripMenuItem_Click);
             // 
             // toolStripMenuItem5
             // 
             toolStripMenuItem5.Name = "toolStripMenuItem5";
-            toolStripMenuItem5.Size = new System.Drawing.Size(152, 22);
+            toolStripMenuItem5.Size = new System.Drawing.Size (152, 22);
             toolStripMenuItem5.Text = "Rename";
-            toolStripMenuItem5.Click += new System.EventHandler(renameToolStripMenuItem_Click);
+            toolStripMenuItem5.Click += new System.EventHandler (renameToolStripMenuItem_Click);
             // 
             // toolStripSeparator10
             // 
             toolStripSeparator10.Name = "toolStripSeparator10";
-            toolStripSeparator10.Size = new System.Drawing.Size(149, 6);
+            toolStripSeparator10.Size = new System.Drawing.Size (149, 6);
             // 
             // toolStripMenuItem6
             // 
-            toolStripMenuItem6.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            toolStripMenuItem6.DropDownItems.AddRange (new System.Windows.Forms.ToolStripItem[] {
             toolStripMenuItem7,
             toolStripMenuItem8});
             toolStripMenuItem6.Name = "toolStripMenuItem6";
-            toolStripMenuItem6.Size = new System.Drawing.Size(152, 22);
+            toolStripMenuItem6.Size = new System.Drawing.Size (152, 22);
             toolStripMenuItem6.Text = "Open";
             // 
             // toolStripMenuItem7
             // 
             toolStripMenuItem7.Name = "toolStripMenuItem7";
             toolStripMenuItem7.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            toolStripMenuItem7.Size = new System.Drawing.Size(199, 22);
+            toolStripMenuItem7.Size = new System.Drawing.Size (199, 22);
             toolStripMenuItem7.Text = "Open External...";
-            toolStripMenuItem7.Click += new System.EventHandler(openFileToolStripMenuItem_Click);
+            toolStripMenuItem7.Click += new System.EventHandler (openFileToolStripMenuItem_Click);
             // 
             // toolStripMenuItem8
             // 
             toolStripMenuItem8.Name = "toolStripMenuItem8";
-            toolStripMenuItem8.Size = new System.Drawing.Size(199, 22);
+            toolStripMenuItem8.Size = new System.Drawing.Size (199, 22);
             toolStripMenuItem8.Text = "Open as Text";
-            toolStripMenuItem8.Click += new System.EventHandler(openAsTextMenuItem_Click);
+            toolStripMenuItem8.Click += new System.EventHandler (openAsTextMenuItem_Click);
             // 
             // toolStripMenuItem9
             // 
-            toolStripMenuItem9.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            toolStripMenuItem9.DropDownItems.AddRange (new System.Windows.Forms.ToolStripItem[] {
             toolStripMenuItem10,
             toolStripMenuItem11,
             toolStripMenuItem12});
             toolStripMenuItem9.Name = "toolStripMenuItem9";
-            toolStripMenuItem9.Size = new System.Drawing.Size(152, 22);
+            toolStripMenuItem9.Size = new System.Drawing.Size (152, 22);
             toolStripMenuItem9.Text = "Extract";
             // 
             // toolStripMenuItem10
             // 
             toolStripMenuItem10.Name = "toolStripMenuItem10";
             toolStripMenuItem10.ShortcutKeyDisplayString = "Ctl+X";
-            toolStripMenuItem10.Size = new System.Drawing.Size(202, 22);
+            toolStripMenuItem10.Size = new System.Drawing.Size (202, 22);
             toolStripMenuItem10.Text = "Extract &Selected...";
-            toolStripMenuItem10.Click += new System.EventHandler(extractSelectedToolStripMenuItem_Click);
+            toolStripMenuItem10.Click += new System.EventHandler (extractSelectedToolStripMenuItem_Click);
             // 
             // toolStripMenuItem11
             // 
             toolStripMenuItem11.Name = "toolStripMenuItem11";
-            toolStripMenuItem11.Size = new System.Drawing.Size(202, 22);
+            toolStripMenuItem11.Size = new System.Drawing.Size (202, 22);
             toolStripMenuItem11.Text = "Extract &All...";
-            toolStripMenuItem11.Click += new System.EventHandler(extractAllToolStripMenuItem_Click);
+            toolStripMenuItem11.Click += new System.EventHandler (extractAllToolStripMenuItem_Click);
             // 
             // toolStripMenuItem12
             // 
             toolStripMenuItem12.Name = "toolStripMenuItem12";
-            toolStripMenuItem12.Size = new System.Drawing.Size(202, 22);
+            toolStripMenuItem12.Size = new System.Drawing.Size (202, 22);
             toolStripMenuItem12.Text = "Extract Unknown...";
-            toolStripMenuItem12.Click += new System.EventHandler(exportUnknownToolStripMenuItem_Click);
+            toolStripMenuItem12.Click += new System.EventHandler (exportUnknownToolStripMenuItem_Click);
             // 
             // addToolStripMenuItem
             // 
-            addToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            addToolStripMenuItem.DropDownItems.AddRange (new System.Windows.Forms.ToolStripItem[] {
             emptyDirectoryToolStripMenuItem,
             addDirectoryToolStripMenuItem,
             addFileToolStripMenuItem,
             dBFileFromTSVToolStripMenuItem});
             addToolStripMenuItem.Name = "addToolStripMenuItem";
-            addToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            addToolStripMenuItem.Size = new System.Drawing.Size (154, 22);
             addToolStripMenuItem.Text = "Add";
             // 
             // emptyDirectoryToolStripMenuItem
             // 
             emptyDirectoryToolStripMenuItem.Name = "emptyDirectoryToolStripMenuItem";
-            emptyDirectoryToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            emptyDirectoryToolStripMenuItem.Size = new System.Drawing.Size (185, 22);
             emptyDirectoryToolStripMenuItem.Text = "Empty Directory";
-            emptyDirectoryToolStripMenuItem.Click += new System.EventHandler(emptyDirectoryToolStripMenuItem_Click);
+            emptyDirectoryToolStripMenuItem.Click += new System.EventHandler (emptyDirectoryToolStripMenuItem_Click);
             // 
             // addDirectoryToolStripMenuItem
             // 
             addDirectoryToolStripMenuItem.Name = "addDirectoryToolStripMenuItem";
             addDirectoryToolStripMenuItem.ShortcutKeyDisplayString = "Shift+Ins";
-            addDirectoryToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            addDirectoryToolStripMenuItem.Size = new System.Drawing.Size (185, 22);
             addDirectoryToolStripMenuItem.Text = "&Directory...";
-            addDirectoryToolStripMenuItem.Click += new System.EventHandler(addDirectoryToolStripMenuItem_Click);
+            addDirectoryToolStripMenuItem.Click += new System.EventHandler (addDirectoryToolStripMenuItem_Click);
             // 
             // addFileToolStripMenuItem
             // 
             addFileToolStripMenuItem.Name = "addFileToolStripMenuItem";
             addFileToolStripMenuItem.ShortcutKeyDisplayString = "Ins";
-            addFileToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            addFileToolStripMenuItem.Size = new System.Drawing.Size (185, 22);
             addFileToolStripMenuItem.Text = "&File(s)...";
-            addFileToolStripMenuItem.Click += new System.EventHandler(addFileToolStripMenuItem_Click);
+            addFileToolStripMenuItem.Click += new System.EventHandler (addFileToolStripMenuItem_Click);
             // 
             // dBFileFromTSVToolStripMenuItem
             // 
             dBFileFromTSVToolStripMenuItem.Name = "dBFileFromTSVToolStripMenuItem";
-            dBFileFromTSVToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            dBFileFromTSVToolStripMenuItem.Size = new System.Drawing.Size (185, 22);
             dBFileFromTSVToolStripMenuItem.Text = "DB file from TSV";
-            dBFileFromTSVToolStripMenuItem.Click += new System.EventHandler(dBFileFromTSVToolStripMenuItem_Click);
+            dBFileFromTSVToolStripMenuItem.Click += new System.EventHandler (dBFileFromTSVToolStripMenuItem_Click);
             // 
             // packOpenFileDialog
             // 
@@ -650,35 +654,35 @@ namespace PackFileManager
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            splitContainer1.Location = new System.Drawing.Point(-2, 27);
+            splitContainer1.Location = new System.Drawing.Point (-2, 27);
             splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
             // 
-            splitContainer1.Panel1.Controls.Add(packTreeView);
-            splitContainer1.Size = new System.Drawing.Size(909, 603);
+            splitContainer1.Panel1.Controls.Add (packTreeView);
+            splitContainer1.Size = new System.Drawing.Size (909, 603);
             splitContainer1.SplitterDistance = 202;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 9;
             // 
             // menuStrip
             // 
-            menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            menuStrip.Items.AddRange (new System.Windows.Forms.ToolStripItem[] {
             fileToolStripMenuItem,
             filesMenu,
             editToolStripMenuItem,
             updateToolStripMenuItem,
             extrasToolStripMenuItem,
             helpToolStripMenuItem});
-            menuStrip.Location = new System.Drawing.Point(0, 0);
+            menuStrip.Location = new System.Drawing.Point (0, 0);
             menuStrip.Name = "menuStrip";
-            menuStrip.Size = new System.Drawing.Size(906, 24);
+            menuStrip.Size = new System.Drawing.Size (906, 24);
             menuStrip.TabIndex = 10;
             menuStrip.Text = "menuStrip1";
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            fileToolStripMenuItem.DropDownItems.AddRange (new System.Windows.Forms.ToolStripItem[] {
             newToolStripMenuItem,
             openToolStripMenuItem,
             toolStripSeparator,
@@ -691,7 +695,7 @@ namespace PackFileManager
             toolStripSeparator7,
             exitToolStripMenuItem});
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            fileToolStripMenuItem.Size = new System.Drawing.Size (37, 20);
             fileToolStripMenuItem.Text = "&File";
             // 
             // newToolStripMenuItem
@@ -699,23 +703,23 @@ namespace PackFileManager
             newToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             newToolStripMenuItem.Name = "newToolStripMenuItem";
             newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            newToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            newToolStripMenuItem.Size = new System.Drawing.Size (172, 22);
             newToolStripMenuItem.Text = "&New";
-            newToolStripMenuItem.Click += new System.EventHandler(newToolStripMenuItem_Click);
+            newToolStripMenuItem.Click += new System.EventHandler (newToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             openToolStripMenuItem.Name = "openToolStripMenuItem";
             openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            openToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            openToolStripMenuItem.Size = new System.Drawing.Size (172, 22);
             openToolStripMenuItem.Text = "&Open...";
-            openToolStripMenuItem.Click += new System.EventHandler(openToolStripMenuItem_Click);
+            openToolStripMenuItem.Click += new System.EventHandler (openToolStripMenuItem_Click);
             // 
             // toolStripSeparator
             // 
             toolStripSeparator.Name = "toolStripSeparator";
-            toolStripSeparator.Size = new System.Drawing.Size(169, 6);
+            toolStripSeparator.Size = new System.Drawing.Size (169, 6);
             // 
             // saveToolStripMenuItem
             // 
@@ -723,101 +727,121 @@ namespace PackFileManager
             saveToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            saveToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            saveToolStripMenuItem.Size = new System.Drawing.Size (172, 22);
             saveToolStripMenuItem.Text = "&Save";
-            saveToolStripMenuItem.Click += new System.EventHandler(saveToolStripMenuItem_Click);
+            saveToolStripMenuItem.Click += new System.EventHandler (saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             saveAsToolStripMenuItem.Enabled = false;
             saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            saveAsToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            saveAsToolStripMenuItem.Size = new System.Drawing.Size (172, 22);
             saveAsToolStripMenuItem.Text = "Save &As...";
-            saveAsToolStripMenuItem.Click += new System.EventHandler(saveAsToolStripMenuItem_Click);
+            saveAsToolStripMenuItem.Click += new System.EventHandler (saveAsToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new System.Drawing.Size(169, 6);
+            toolStripSeparator2.Size = new System.Drawing.Size (169, 6);
             // 
             // changePackTypeToolStripMenuItem
             // 
-            changePackTypeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            changePackTypeToolStripMenuItem.DropDownItems.AddRange (new System.Windows.Forms.ToolStripItem[] {
             bootToolStripMenuItem,
+                bootXToolStripMenuItem,
             releaseToolStripMenuItem,
             patchToolStripMenuItem,
             modToolStripMenuItem,
-            movieToolStripMenuItem});
+            movieToolStripMenuItem,
+                shaderToolStripMenuItem
+            });
             changePackTypeToolStripMenuItem.Name = "changePackTypeToolStripMenuItem";
-            changePackTypeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            changePackTypeToolStripMenuItem.Size = new System.Drawing.Size (172, 22);
             changePackTypeToolStripMenuItem.Text = "Change Pack &Type";
+            changePackTypeToolStripMenuItem.Enabled = false;
             // 
             // bootToolStripMenuItem
             // 
             bootToolStripMenuItem.CheckOnClick = true;
             bootToolStripMenuItem.Name = "bootToolStripMenuItem";
-            bootToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
+            bootToolStripMenuItem.Size = new System.Drawing.Size (113, 22);
             bootToolStripMenuItem.Text = "Boot";
-            bootToolStripMenuItem.Click += new System.EventHandler(packTypeToolStripMenuItem_Click);
-            // 
+            bootToolStripMenuItem.Click += new System.EventHandler (packTypeToolStripMenuItem_Click);
+            //
+            // bootXToolStripMenuItem
+            //
+            bootXToolStripMenuItem.CheckOnClick = true;
+            bootXToolStripMenuItem.Name = "bootXToolStripMenuItem";
+            bootXToolStripMenuItem.Size = new System.Drawing.Size (113, 22);
+            bootXToolStripMenuItem.Text = "BootX";
+            bootXToolStripMenuItem.Click += new System.EventHandler (packTypeToolStripMenuItem_Click);
+            //
             // releaseToolStripMenuItem
             // 
             releaseToolStripMenuItem.CheckOnClick = true;
             releaseToolStripMenuItem.Name = "releaseToolStripMenuItem";
-            releaseToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
+            releaseToolStripMenuItem.Size = new System.Drawing.Size (113, 22);
             releaseToolStripMenuItem.Text = "Release";
-            releaseToolStripMenuItem.Click += new System.EventHandler(packTypeToolStripMenuItem_Click);
+            releaseToolStripMenuItem.Click += new System.EventHandler (packTypeToolStripMenuItem_Click);
             // 
             // patchToolStripMenuItem
             // 
             patchToolStripMenuItem.CheckOnClick = true;
             patchToolStripMenuItem.Name = "patchToolStripMenuItem";
-            patchToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
+            patchToolStripMenuItem.Size = new System.Drawing.Size (113, 22);
             patchToolStripMenuItem.Text = "Patch";
-            patchToolStripMenuItem.Click += new System.EventHandler(packTypeToolStripMenuItem_Click);
+            patchToolStripMenuItem.Click += new System.EventHandler (packTypeToolStripMenuItem_Click);
             // 
             // modToolStripMenuItem
             // 
             modToolStripMenuItem.Name = "modToolStripMenuItem";
-            modToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
+            modToolStripMenuItem.Size = new System.Drawing.Size (113, 22);
             modToolStripMenuItem.Text = "Mod";
-            modToolStripMenuItem.Click += new System.EventHandler(packTypeToolStripMenuItem_Click);
+            modToolStripMenuItem.Click += new System.EventHandler (packTypeToolStripMenuItem_Click);
             // 
             // movieToolStripMenuItem
             // 
             movieToolStripMenuItem.CheckOnClick = true;
             movieToolStripMenuItem.Name = "movieToolStripMenuItem";
-            movieToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
+            movieToolStripMenuItem.Size = new System.Drawing.Size (113, 22);
             movieToolStripMenuItem.Text = "Movie";
-            movieToolStripMenuItem.Click += new System.EventHandler(packTypeToolStripMenuItem_Click);
-            // 
+            movieToolStripMenuItem.Click += new System.EventHandler (packTypeToolStripMenuItem_Click);
+            //
+            // shaderToolStripMenuItem
+            //
+            shaderToolStripMenuItem.CheckOnClick = true;
+            shaderToolStripMenuItem.Name = "shaderToolStripMenuItem";
+            shaderToolStripMenuItem.Size = new System.Drawing.Size (113, 22);
+            shaderToolStripMenuItem.Text = "Shader";
+            shaderToolStripMenuItem.Click += new System.EventHandler (packTypeToolStripMenuItem_Click);
+            //
             // toolStripSeparator9
             // 
             toolStripSeparator9.Name = "toolStripSeparator9";
-            toolStripSeparator9.Size = new System.Drawing.Size(169, 6);
+            toolStripSeparator9.Size = new System.Drawing.Size (169, 6);
             // 
             // exportFileListToolStripMenuItem
             // 
             exportFileListToolStripMenuItem.Name = "exportFileListToolStripMenuItem";
-            exportFileListToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            exportFileListToolStripMenuItem.Size = new System.Drawing.Size (172, 22);
             exportFileListToolStripMenuItem.Text = "Export File &List...";
-            exportFileListToolStripMenuItem.Click += new System.EventHandler(exportFileListToolStripMenuItem_Click);
+            exportFileListToolStripMenuItem.Click += new System.EventHandler (exportFileListToolStripMenuItem_Click);
             // 
             // toolStripSeparator7
             // 
             toolStripSeparator7.Name = "toolStripSeparator7";
-            toolStripSeparator7.Size = new System.Drawing.Size(169, 6);
+            toolStripSeparator7.Size = new System.Drawing.Size (169, 6);
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            exitToolStripMenuItem.Size = new System.Drawing.Size (172, 22);
             exitToolStripMenuItem.Text = "E&xit";
-            exitToolStripMenuItem.Click += new System.EventHandler(exitToolStripMenuItem_Click);
+            exitToolStripMenuItem.Click += new System.EventHandler (exitToolStripMenuItem_Click);
             // 
             // filesMenu
             // 
-            filesMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            filesMenu.DropDownItems.AddRange (new System.Windows.Forms.ToolStripItem[] {
             addToolStripMenuItem,
             deleteFileToolStripMenuItem,
             replaceFileToolStripMenuItem,
@@ -830,114 +854,114 @@ namespace PackFileManager
             searchFileToolStripMenuItem});
             filesMenu.Enabled = false;
             filesMenu.Name = "filesMenu";
-            filesMenu.Size = new System.Drawing.Size(42, 20);
+            filesMenu.Size = new System.Drawing.Size (42, 20);
             filesMenu.Text = "Files";
             // 
             // deleteFileToolStripMenuItem
             // 
             deleteFileToolStripMenuItem.Name = "deleteFileToolStripMenuItem";
             deleteFileToolStripMenuItem.ShortcutKeyDisplayString = "Del";
-            deleteFileToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            deleteFileToolStripMenuItem.Size = new System.Drawing.Size (154, 22);
             deleteFileToolStripMenuItem.Text = "Delete";
-            deleteFileToolStripMenuItem.Click += new System.EventHandler(deleteFileToolStripMenuItem_Click);
+            deleteFileToolStripMenuItem.Click += new System.EventHandler (deleteFileToolStripMenuItem_Click);
             // 
             // replaceFileToolStripMenuItem
             // 
             replaceFileToolStripMenuItem.Name = "replaceFileToolStripMenuItem";
-            replaceFileToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            replaceFileToolStripMenuItem.Size = new System.Drawing.Size (154, 22);
             replaceFileToolStripMenuItem.Text = "&Replace File...";
-            replaceFileToolStripMenuItem.Click += new System.EventHandler(replaceFileToolStripMenuItem_Click);
+            replaceFileToolStripMenuItem.Click += new System.EventHandler (replaceFileToolStripMenuItem_Click);
             // 
             // renameToolStripMenuItem
             // 
             renameToolStripMenuItem.Name = "renameToolStripMenuItem";
-            renameToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            renameToolStripMenuItem.Size = new System.Drawing.Size (154, 22);
             renameToolStripMenuItem.Text = "Rename";
             // 
             // toolStripSeparator4
             // 
             toolStripSeparator4.Name = "toolStripSeparator4";
-            toolStripSeparator4.Size = new System.Drawing.Size(151, 6);
+            toolStripSeparator4.Size = new System.Drawing.Size (151, 6);
             // 
             // openToolStripMenuItem1
             // 
-            openToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            openToolStripMenuItem1.DropDownItems.AddRange (new System.Windows.Forms.ToolStripItem[] {
             openFileToolStripMenuItem,
             openAsTextMenuItem});
             openToolStripMenuItem1.Name = "openToolStripMenuItem1";
-            openToolStripMenuItem1.Size = new System.Drawing.Size(154, 22);
+            openToolStripMenuItem1.Size = new System.Drawing.Size (154, 22);
             openToolStripMenuItem1.Text = "Open";
             // 
             // openFileToolStripMenuItem
             // 
             openFileToolStripMenuItem.Name = "openFileToolStripMenuItem";
             openFileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            openFileToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            openFileToolStripMenuItem.Size = new System.Drawing.Size (199, 22);
             openFileToolStripMenuItem.Text = "Open External...";
-            openFileToolStripMenuItem.Click += new System.EventHandler(openFileToolStripMenuItem_Click);
+            openFileToolStripMenuItem.Click += new System.EventHandler (openFileToolStripMenuItem_Click);
             // 
             // openAsTextMenuItem
             // 
             openAsTextMenuItem.Name = "openAsTextMenuItem";
-            openAsTextMenuItem.Size = new System.Drawing.Size(199, 22);
+            openAsTextMenuItem.Size = new System.Drawing.Size (199, 22);
             openAsTextMenuItem.Text = "Open as Text";
-            openAsTextMenuItem.Click += new System.EventHandler(openAsTextMenuItem_Click);
+            openAsTextMenuItem.Click += new System.EventHandler (openAsTextMenuItem_Click);
             // 
             // extractToolStripMenuItem
             // 
-            extractToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            extractToolStripMenuItem.DropDownItems.AddRange (new System.Windows.Forms.ToolStripItem[] {
             extractSelectedToolStripMenuItem,
             extractAllToolStripMenuItem,
             exportUnknownToolStripMenuItem});
             extractToolStripMenuItem.Name = "extractToolStripMenuItem";
-            extractToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            extractToolStripMenuItem.Size = new System.Drawing.Size (154, 22);
             extractToolStripMenuItem.Text = "Extract";
             // 
             // extractSelectedToolStripMenuItem
             // 
             extractSelectedToolStripMenuItem.Name = "extractSelectedToolStripMenuItem";
             extractSelectedToolStripMenuItem.ShortcutKeyDisplayString = "Ctl+X";
-            extractSelectedToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            extractSelectedToolStripMenuItem.Size = new System.Drawing.Size (202, 22);
             extractSelectedToolStripMenuItem.Text = "Extract &Selected...";
-            extractSelectedToolStripMenuItem.Click += new System.EventHandler(extractSelectedToolStripMenuItem_Click);
+            extractSelectedToolStripMenuItem.Click += new System.EventHandler (extractSelectedToolStripMenuItem_Click);
             // 
             // extractAllToolStripMenuItem
             // 
             extractAllToolStripMenuItem.Name = "extractAllToolStripMenuItem";
-            extractAllToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            extractAllToolStripMenuItem.Size = new System.Drawing.Size (202, 22);
             extractAllToolStripMenuItem.Text = "Extract &All...";
-            extractAllToolStripMenuItem.Click += new System.EventHandler(extractAllToolStripMenuItem_Click);
+            extractAllToolStripMenuItem.Click += new System.EventHandler (extractAllToolStripMenuItem_Click);
             // 
             // exportUnknownToolStripMenuItem
             // 
             exportUnknownToolStripMenuItem.Name = "exportUnknownToolStripMenuItem";
-            exportUnknownToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            exportUnknownToolStripMenuItem.Size = new System.Drawing.Size (202, 22);
             exportUnknownToolStripMenuItem.Text = "Extract Unknown...";
-            exportUnknownToolStripMenuItem.Click += new System.EventHandler(exportUnknownToolStripMenuItem_Click);
+            exportUnknownToolStripMenuItem.Click += new System.EventHandler (exportUnknownToolStripMenuItem_Click);
             // 
             // toolStripSeparator8
             // 
             toolStripSeparator8.Name = "toolStripSeparator8";
-            toolStripSeparator8.Size = new System.Drawing.Size(151, 6);
+            toolStripSeparator8.Size = new System.Drawing.Size (151, 6);
             // 
             // createReadMeToolStripMenuItem
             // 
             createReadMeToolStripMenuItem.Enabled = false;
             createReadMeToolStripMenuItem.Name = "createReadMeToolStripMenuItem";
-            createReadMeToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            createReadMeToolStripMenuItem.Size = new System.Drawing.Size (154, 22);
             createReadMeToolStripMenuItem.Text = "Create ReadMe";
-            createReadMeToolStripMenuItem.Click += new System.EventHandler(createReadMeToolStripMenuItem_Click);
+            createReadMeToolStripMenuItem.Click += new System.EventHandler (createReadMeToolStripMenuItem_Click);
             // 
             // searchFileToolStripMenuItem
             // 
             searchFileToolStripMenuItem.Name = "searchFileToolStripMenuItem";
-            searchFileToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            searchFileToolStripMenuItem.Size = new System.Drawing.Size (154, 22);
             searchFileToolStripMenuItem.Text = "Search Files...";
-            searchFileToolStripMenuItem.Click += new System.EventHandler(searchFileToolStripMenuItem_Click);
+            searchFileToolStripMenuItem.Click += new System.EventHandler (searchFileToolStripMenuItem_Click);
             // 
             // editToolStripMenuItem
             // 
-            editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            editToolStripMenuItem.DropDownItems.AddRange (new System.Windows.Forms.ToolStripItem[] {
             undoToolStripMenuItem,
             redoToolStripMenuItem,
             toolStripSeparator3,
@@ -947,7 +971,7 @@ namespace PackFileManager
             toolStripSeparator6,
             selectAllToolStripMenuItem});
             editToolStripMenuItem.Name = "editToolStripMenuItem";
-            editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
+            editToolStripMenuItem.Size = new System.Drawing.Size (39, 20);
             editToolStripMenuItem.Text = "&Edit";
             editToolStripMenuItem.Visible = false;
             // 
@@ -955,27 +979,27 @@ namespace PackFileManager
             // 
             undoToolStripMenuItem.Name = "undoToolStripMenuItem";
             undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            undoToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            undoToolStripMenuItem.Size = new System.Drawing.Size (144, 22);
             undoToolStripMenuItem.Text = "&Undo";
             // 
             // redoToolStripMenuItem
             // 
             redoToolStripMenuItem.Name = "redoToolStripMenuItem";
             redoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
-            redoToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            redoToolStripMenuItem.Size = new System.Drawing.Size (144, 22);
             redoToolStripMenuItem.Text = "&Redo";
             // 
             // toolStripSeparator3
             // 
             toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new System.Drawing.Size(141, 6);
+            toolStripSeparator3.Size = new System.Drawing.Size (141, 6);
             // 
             // cutToolStripMenuItem
             // 
             cutToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             cutToolStripMenuItem.Name = "cutToolStripMenuItem";
             cutToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-            cutToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            cutToolStripMenuItem.Size = new System.Drawing.Size (144, 22);
             cutToolStripMenuItem.Text = "Cu&t";
             // 
             // copyToolStripMenuItem
@@ -983,7 +1007,7 @@ namespace PackFileManager
             copyToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             copyToolStripMenuItem.Name = "copyToolStripMenuItem";
             copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            copyToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            copyToolStripMenuItem.Size = new System.Drawing.Size (144, 22);
             copyToolStripMenuItem.Text = "&Copy";
             // 
             // pasteToolStripMenuItem
@@ -991,94 +1015,94 @@ namespace PackFileManager
             pasteToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
             pasteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            pasteToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            pasteToolStripMenuItem.Size = new System.Drawing.Size (144, 22);
             pasteToolStripMenuItem.Text = "&Paste";
             // 
             // toolStripSeparator6
             // 
             toolStripSeparator6.Name = "toolStripSeparator6";
-            toolStripSeparator6.Size = new System.Drawing.Size(141, 6);
+            toolStripSeparator6.Size = new System.Drawing.Size (141, 6);
             // 
             // selectAllToolStripMenuItem
             // 
             selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
-            selectAllToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            selectAllToolStripMenuItem.Size = new System.Drawing.Size (144, 22);
             selectAllToolStripMenuItem.Text = "Select &All";
             // 
             // updateToolStripMenuItem
             // 
-            updateToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            updateToolStripMenuItem.DropDownItems.AddRange (new System.Windows.Forms.ToolStripItem[] {
             searchForUpdateToolStripMenuItem,
             fromXsdFileToolStripMenuItem,
             reloadToolStripMenuItem,
             saveToDirectoryToolStripMenuItem,
             updateDBFilesToolStripMenuItem});
             updateToolStripMenuItem.Name = "updateToolStripMenuItem";
-            updateToolStripMenuItem.Size = new System.Drawing.Size(102, 20);
+            updateToolStripMenuItem.Size = new System.Drawing.Size (102, 20);
             updateToolStripMenuItem.Text = "DB Descriptions";
             // 
             // searchForUpdateToolStripMenuItem
             // 
             searchForUpdateToolStripMenuItem.Name = "searchForUpdateToolStripMenuItem";
-            searchForUpdateToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            searchForUpdateToolStripMenuItem.Size = new System.Drawing.Size (221, 22);
             searchForUpdateToolStripMenuItem.Text = "Search for Update";
-            searchForUpdateToolStripMenuItem.Click += new System.EventHandler(updateToolStripMenuItem_Click);
+            searchForUpdateToolStripMenuItem.Click += new System.EventHandler (updateToolStripMenuItem_Click);
             // 
             // fromXsdFileToolStripMenuItem
             // 
             fromXsdFileToolStripMenuItem.Enabled = false;
             fromXsdFileToolStripMenuItem.Name = "fromXsdFileToolStripMenuItem";
-            fromXsdFileToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            fromXsdFileToolStripMenuItem.Size = new System.Drawing.Size (221, 22);
             fromXsdFileToolStripMenuItem.Text = "Load from xsd File";
             fromXsdFileToolStripMenuItem.Visible = false;
-            fromXsdFileToolStripMenuItem.Click += new System.EventHandler(fromXsdFileToolStripMenuItem_Click);
+            fromXsdFileToolStripMenuItem.Click += new System.EventHandler (fromXsdFileToolStripMenuItem_Click);
             // 
             // reloadToolStripMenuItem
             // 
             reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
-            reloadToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            reloadToolStripMenuItem.Size = new System.Drawing.Size (221, 22);
             reloadToolStripMenuItem.Text = "Reload from Local Directory";
             reloadToolStripMenuItem.Visible = false;
-            reloadToolStripMenuItem.Click += new System.EventHandler(reloadToolStripMenuItem_Click);
+            reloadToolStripMenuItem.Click += new System.EventHandler (reloadToolStripMenuItem_Click);
             // 
             // saveToDirectoryToolStripMenuItem
             // 
             saveToDirectoryToolStripMenuItem.Enabled = false;
             saveToDirectoryToolStripMenuItem.Name = "saveToDirectoryToolStripMenuItem";
-            saveToDirectoryToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            saveToDirectoryToolStripMenuItem.Size = new System.Drawing.Size (221, 22);
             saveToDirectoryToolStripMenuItem.Text = "Save to Directory";
-            saveToDirectoryToolStripMenuItem.Click += new System.EventHandler(saveToDirectoryToolStripMenuItem_Click);
+            saveToDirectoryToolStripMenuItem.Click += new System.EventHandler (saveToDirectoryToolStripMenuItem_Click);
             // 
             // updateDBFilesToolStripMenuItem
             // 
-            updateDBFilesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            updateDBFilesToolStripMenuItem.DropDownItems.AddRange (new System.Windows.Forms.ToolStripItem[] {
             updateCurrentToolStripMenuItem,
             updateAllToolStripMenuItem});
             updateDBFilesToolStripMenuItem.Name = "updateDBFilesToolStripMenuItem";
-            updateDBFilesToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            updateDBFilesToolStripMenuItem.Size = new System.Drawing.Size (221, 22);
             updateDBFilesToolStripMenuItem.Text = "Update DB Files";
             // 
             // updateCurrentToolStripMenuItem
             // 
             updateCurrentToolStripMenuItem.Name = "updateCurrentToolStripMenuItem";
-            updateCurrentToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            updateCurrentToolStripMenuItem.Size = new System.Drawing.Size (155, 22);
             updateCurrentToolStripMenuItem.Text = "Update Current";
-            updateCurrentToolStripMenuItem.Click += new System.EventHandler(updateCurrentToolStripMenuItem_Click);
+            updateCurrentToolStripMenuItem.Click += new System.EventHandler (updateCurrentToolStripMenuItem_Click);
             // 
             // updateAllToolStripMenuItem
             // 
             updateAllToolStripMenuItem.Name = "updateAllToolStripMenuItem";
-            updateAllToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            updateAllToolStripMenuItem.Size = new System.Drawing.Size (155, 22);
             updateAllToolStripMenuItem.Text = "Update All";
-            updateAllToolStripMenuItem.Click += new System.EventHandler(updateAllToolStripMenuItem_Click);
+            updateAllToolStripMenuItem.Click += new System.EventHandler (updateAllToolStripMenuItem_Click);
             // 
             // extrasToolStripMenuItem
             // 
-            extrasToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            extrasToolStripMenuItem.DropDownItems.AddRange (new System.Windows.Forms.ToolStripItem[] {
             cAPacksAreReadOnlyToolStripMenuItem,
             updateOnStartupToolStripMenuItem});
             extrasToolStripMenuItem.Name = "extrasToolStripMenuItem";
-            extrasToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            extrasToolStripMenuItem.Size = new System.Drawing.Size (61, 20);
             extrasToolStripMenuItem.Text = "Options";
             // 
             // cAPacksAreReadOnlyToolStripMenuItem
@@ -1087,7 +1111,7 @@ namespace PackFileManager
             cAPacksAreReadOnlyToolStripMenuItem.CheckOnClick = true;
             cAPacksAreReadOnlyToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             cAPacksAreReadOnlyToolStripMenuItem.Name = "cAPacksAreReadOnlyToolStripMenuItem";
-            cAPacksAreReadOnlyToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            cAPacksAreReadOnlyToolStripMenuItem.Size = new System.Drawing.Size (201, 22);
             cAPacksAreReadOnlyToolStripMenuItem.Text = "CA Packs Are Read Only";
             cAPacksAreReadOnlyToolStripMenuItem.ToolTipText = "If checked, the original pack files for the game can be viewed but not edited.";
             // 
@@ -1095,71 +1119,71 @@ namespace PackFileManager
             // 
             updateOnStartupToolStripMenuItem.CheckOnClick = true;
             updateOnStartupToolStripMenuItem.Name = "updateOnStartupToolStripMenuItem";
-            updateOnStartupToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            updateOnStartupToolStripMenuItem.Size = new System.Drawing.Size (201, 22);
             updateOnStartupToolStripMenuItem.Text = "Update on Startup";
-            updateOnStartupToolStripMenuItem.Click += new System.EventHandler(updateOnStartupToolStripMenuItem_Click);
+            updateOnStartupToolStripMenuItem.Click += new System.EventHandler (updateOnStartupToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
-            helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            helpToolStripMenuItem.DropDownItems.AddRange (new System.Windows.Forms.ToolStripItem[] {
             contentsToolStripMenuItem,
             indexToolStripMenuItem,
             searchToolStripMenuItem,
             toolStripSeparator5,
             aboutToolStripMenuItem});
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            helpToolStripMenuItem.Size = new System.Drawing.Size (44, 20);
             helpToolStripMenuItem.Text = "&Help";
             // 
             // contentsToolStripMenuItem
             // 
             contentsToolStripMenuItem.Name = "contentsToolStripMenuItem";
-            contentsToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            contentsToolStripMenuItem.Size = new System.Drawing.Size (122, 22);
             contentsToolStripMenuItem.Text = "&Contents";
             contentsToolStripMenuItem.Visible = false;
             // 
             // indexToolStripMenuItem
             // 
             indexToolStripMenuItem.Name = "indexToolStripMenuItem";
-            indexToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            indexToolStripMenuItem.Size = new System.Drawing.Size (122, 22);
             indexToolStripMenuItem.Text = "&Index";
             indexToolStripMenuItem.Visible = false;
             // 
             // searchToolStripMenuItem
             // 
             searchToolStripMenuItem.Name = "searchToolStripMenuItem";
-            searchToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            searchToolStripMenuItem.Size = new System.Drawing.Size (122, 22);
             searchToolStripMenuItem.Text = "&Search";
             searchToolStripMenuItem.Visible = false;
             // 
             // toolStripSeparator5
             // 
             toolStripSeparator5.Name = "toolStripSeparator5";
-            toolStripSeparator5.Size = new System.Drawing.Size(119, 6);
+            toolStripSeparator5.Size = new System.Drawing.Size (119, 6);
             toolStripSeparator5.Visible = false;
             // 
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            aboutToolStripMenuItem.Size = new System.Drawing.Size (122, 22);
             aboutToolStripMenuItem.Text = "&About...";
-            aboutToolStripMenuItem.Click += new System.EventHandler(aboutToolStripMenuItem_Click);
+            aboutToolStripMenuItem.Click += new System.EventHandler (aboutToolStripMenuItem_Click);
             // 
             // statusStrip
             // 
-            statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            statusStrip.Items.AddRange (new System.Windows.Forms.ToolStripItem[] {
             packStatusLabel,
             packActionProgressBar});
-            statusStrip.Location = new System.Drawing.Point(0, 628);
+            statusStrip.Location = new System.Drawing.Point (0, 628);
             statusStrip.Name = "statusStrip";
-            statusStrip.Size = new System.Drawing.Size(906, 22);
+            statusStrip.Size = new System.Drawing.Size (906, 22);
             statusStrip.TabIndex = 11;
             statusStrip.Text = "statusStrip1";
             // 
             // packStatusLabel
             // 
             packStatusLabel.Name = "packStatusLabel";
-            packStatusLabel.Size = new System.Drawing.Size(769, 17);
+            packStatusLabel.Size = new System.Drawing.Size (769, 17);
             packStatusLabel.Spring = true;
             packStatusLabel.Text = "Use the File menu to create a new pack file or open an existing one.";
             packStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1167,7 +1191,7 @@ namespace PackFileManager
             // packActionProgressBar
             // 
             packActionProgressBar.Name = "packActionProgressBar";
-            packActionProgressBar.Size = new System.Drawing.Size(120, 16);
+            packActionProgressBar.Size = new System.Drawing.Size (120, 16);
             // 
             // extractFolderBrowserDialog
             // 
@@ -1189,31 +1213,31 @@ namespace PackFileManager
             // 
             AutoScroll = true;
             BackColor = System.Drawing.SystemColors.ButtonFace;
-            ClientSize = new System.Drawing.Size(906, 650);
-            Controls.Add(statusStrip);
-            Controls.Add(splitContainer1);
-            Controls.Add(menuStrip);
-            Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            Location = new System.Drawing.Point(192, 114);
+            ClientSize = new System.Drawing.Size (906, 650);
+            Controls.Add (statusStrip);
+            Controls.Add (splitContainer1);
+            Controls.Add (menuStrip);
+            Font = new System.Drawing.Font ("Microsoft Sans Serif", 8F);
+            Location = new System.Drawing.Point (192, 114);
             MainMenuStrip = menuStrip;
             Name = "PackFileManagerForm";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Pack File Manager 10.0.40219.1 BETA (Total War - Shogun 2)";
             WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            Activated += new System.EventHandler(PackFileManagerForm_Activated);
-            FormClosing += new System.Windows.Forms.FormClosingEventHandler(PackFileManagerForm_FormClosing);
-            Load += new System.EventHandler(PackFileManagerForm_Load);
-            Shown += new System.EventHandler(PackFileManagerForm_Shown);
-            packActionMenuStrip.ResumeLayout(false);
-            splitContainer1.Panel1.ResumeLayout(false);
+            Activated += new System.EventHandler (PackFileManagerForm_Activated);
+            FormClosing += new System.Windows.Forms.FormClosingEventHandler (PackFileManagerForm_FormClosing);
+            Load += new System.EventHandler (PackFileManagerForm_Load);
+            Shown += new System.EventHandler (PackFileManagerForm_Shown);
+            packActionMenuStrip.ResumeLayout (false);
+            splitContainer1.Panel1.ResumeLayout (false);
             // ((System.ComponentModel.ISupportInitialize)(splitContainer1)).EndInit();
-            splitContainer1.ResumeLayout(false);
-            menuStrip.ResumeLayout(false);
-            menuStrip.PerformLayout();
-            statusStrip.ResumeLayout(false);
-            statusStrip.PerformLayout();
-            ResumeLayout(false);
-            PerformLayout();
+            splitContainer1.ResumeLayout (false);
+            menuStrip.ResumeLayout (false);
+            menuStrip.PerformLayout ();
+            statusStrip.ResumeLayout (false);
+            statusStrip.PerformLayout ();
+            ResumeLayout (false);
+            PerformLayout ();
 
         }
 
@@ -1480,18 +1504,19 @@ namespace PackFileManager
         }
 
         public PackFile CurrentPackFile {
-			get { return currentPackFile; }
-			set {
-				// unregister from previous
-				if (currentPackFile != null) {
-					currentPackFile.Modified -= currentPackFile_Modified;
-				}
-				// register previous and build tree
-				currentPackFile = value;
-				currentPackFile.Modified += currentPackFile_Modified;
-				Refresh ();
-			}
-		}
+            get { return currentPackFile; }
+            set {
+                // unregister from previous
+                if (currentPackFile != null) {
+                    currentPackFile.Modified -= currentPackFile_Modified;
+                }
+                // register previous and build tree
+                currentPackFile = value;
+                currentPackFile.Modified += currentPackFile_Modified;
+                changePackTypeToolStripMenuItem.Enabled = currentPackFile != null;
+                Refresh ();
+            }
+        }
 
         #region Open Pack
         private void newToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -1776,32 +1801,28 @@ namespace PackFileManager
             }
         }
 
-        private void packTypeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            bootToolStripMenuItem.Checked = object.ReferenceEquals(sender, bootToolStripMenuItem);
-            releaseToolStripMenuItem.Checked = object.ReferenceEquals(sender, releaseToolStripMenuItem);
-            patchToolStripMenuItem.Checked = object.ReferenceEquals(sender, patchToolStripMenuItem);
-            movieToolStripMenuItem.Checked = object.ReferenceEquals(sender, movieToolStripMenuItem);
-            modToolStripMenuItem.Checked = object.ReferenceEquals(sender, modToolStripMenuItem);
-            if (bootToolStripMenuItem.Checked)
-            {
+        private void packTypeToolStripMenuItem_Click(object sender, EventArgs e) {
+            bootToolStripMenuItem.Checked = object.ReferenceEquals (sender, bootToolStripMenuItem);
+            bootXToolStripMenuItem.Checked = object.ReferenceEquals (sender, bootXToolStripMenuItem);
+            releaseToolStripMenuItem.Checked = object.ReferenceEquals (sender, releaseToolStripMenuItem);
+            patchToolStripMenuItem.Checked = object.ReferenceEquals (sender, patchToolStripMenuItem);
+            movieToolStripMenuItem.Checked = object.ReferenceEquals (sender, movieToolStripMenuItem);
+            shaderToolStripMenuItem.Checked = object.ReferenceEquals (sender, shaderToolStripMenuItem);
+            modToolStripMenuItem.Checked = object.ReferenceEquals (sender, modToolStripMenuItem);
+            if (bootToolStripMenuItem.Checked) {
                 currentPackFile.Type = PackType.Boot;
-            }
-            else if (releaseToolStripMenuItem.Checked)
-            {
+            } else if (bootXToolStripMenuItem.Checked) {
+                currentPackFile.Type = PackType.BootX;
+            } else if (releaseToolStripMenuItem.Checked) {
                 currentPackFile.Type = PackType.Release;
-            }
-            else if (patchToolStripMenuItem.Checked)
-            {
+            } else if (patchToolStripMenuItem.Checked) {
                 currentPackFile.Type = PackType.Patch;
-            }
-            else if (movieToolStripMenuItem.Checked)
-            {
+            } else if (movieToolStripMenuItem.Checked) {
                 currentPackFile.Type = PackType.Movie;
-            } 
-            else if (modToolStripMenuItem.Checked)
-            {
+            } else if (modToolStripMenuItem.Checked) {
                 currentPackFile.Type = PackType.Mod;
+            } else if (shaderToolStripMenuItem.Checked) {
+                currentPackFile.Type = PackType.Shader;
             }
         }
         #endregion
@@ -1835,10 +1856,12 @@ namespace PackFileManager
             saveAsToolStripMenuItem.Enabled = true;
             createReadMeToolStripMenuItem.Enabled = true;
             bootToolStripMenuItem.Checked = currentPackFile.Header.Type == PackType.Boot;
+            bootXToolStripMenuItem.Checked = currentPackFile.Header.Type == PackType.BootX;
             releaseToolStripMenuItem.Checked = currentPackFile.Header.Type == PackType.Release;
             patchToolStripMenuItem.Checked = currentPackFile.Header.Type == PackType.Patch;
             movieToolStripMenuItem.Checked = currentPackFile.Header.Type == PackType.Movie;
             modToolStripMenuItem.Checked = currentPackFile.Header.Type == PackType.Mod;
+            shaderToolStripMenuItem.Checked = currentPackFile.Header.Type == PackType.Shader;
             packTreeView_AfterSelect(this, new TreeViewEventArgs(packTreeView.SelectedNode));
             refreshTitle();
             base.Refresh();
@@ -1875,15 +1898,19 @@ namespace PackFileManager
         #region Save Pack
         private bool CanWriteCurrentPack {
             get {
-                bool result = false;
+                bool result = true;
                 if (cAPacksAreReadOnlyToolStripMenuItem.Checked) {
                     switch (currentPackFile.Type) {
-                        case PackType.Mod:
+                        case PackType.Mod:                            // mod files can always be saved
                             result = true;
                             break;
                         case PackType.Movie:
+                            // exclude files named patch_moviesX.packk
                             var caMovieRe = new Regex("(patch_)?movies([0-9]*).pack");
                             result = !caMovieRe.IsMatch(Path.GetFileName(currentPackFile.Filepath));
+                            break;
+                        default:
+                            result = false;
                             break;
                     }
                 }
@@ -1900,26 +1927,34 @@ namespace PackFileManager
             };
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                new PackFileCodec().writeToFile(dialog.FileName, currentPackFile);
-                OpenExistingPackFile(dialog.FileName);
+                SaveAsFile(dialog.FileName);
             }
         }
 
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (currentPackFile.Filepath.EndsWith("Untitled.pack")) {
-                saveAsToolStripMenuItem_Click(null, null);
-            } else if (!CanWriteCurrentPack) {
-                MessageBox.Show("Won't save CA file with current Setting.");
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (currentPackFile.Filepath.EndsWith ("Untitled.pack")) {
+                // ask for a name first
+                saveAsToolStripMenuItem_Click (null, null);
             } else {
-                closeEditors();
-                string tempFile = Path.GetTempFileName();
-                new PackFileCodec().writeToFile(tempFile, currentPackFile);
-                File.Delete(currentPackFile.Filepath);
-                File.Move(tempFile, currentPackFile.Filepath);
-                OpenExistingPackFile(currentPackFile.Filepath);
+                SaveAsFile (currentPackFile.Filepath);
             }
         }
+
+        void SaveAsFile(string filename) {
+            if (!CanWriteCurrentPack) {
+                MessageBox.Show ("Won't save CA file with current Setting.");
+            } else {
+                closeEditors ();
+                string tempFile = Path.GetTempFileName ();
+                new PackFileCodec ().writeToFile (tempFile, currentPackFile);
+                if (File.Exists (filename)) {
+                    File.Delete (filename);
+                }
+                File.Move (tempFile, filename);
+                OpenExistingPackFile (filename);
+            }
+        }
+        
         #endregion
 
         private void searchFileToolStripMenuItem_Click(object sender, EventArgs e)
