@@ -33,11 +33,16 @@ namespace Common {
 				for (int i = 0; i < file.Header.FileCount; i++) {
 					uint size = reader.ReadUInt32 ();
 					sizes += size;
-					if (file.Header.Type == PackType.BootX || file.Header.Type == PackType.Shader) {
-						time = reader.ReadInt64 ();
-					} else {
-						time = -1;
-					}
+                    switch (file.Header.Type) {
+                        case PackType.BootX:
+                        case PackType.Shader1:
+                        case PackType.Shader2:
+                            time = reader.ReadInt64();
+                            break;
+                        default:
+                            time = -1;
+                            break;
+                    }
 					StringBuilder builder2 = new StringBuilder ();
 					char ch2 = reader.ReadChar ();
 					while (ch2 != '\0') {
@@ -76,6 +81,7 @@ namespace Common {
                 case 3:
                 case 4:
                 case 0x40:
+                case 0x41:
                 case 0x42:
                     break;
                 default:
@@ -119,10 +125,16 @@ namespace Common {
 					if (!file.Deleted) {
 						if (file.Size != 0) {
 							indexSize += (uint)file.FullPath.Length + 5;
-							if (packFile.Header.Type == PackType.BootX || packFile.Header.Type == PackType.Shader) {
-								// additional bytes for time
-								indexSize += 8;
-							}
+                            switch (packFile.Header.Type) {
+                                case PackType.BootX:
+                                case PackType.Shader1:
+                                case PackType.Shader2:
+                                    indexSize += 8;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            
 						}
 						toWrite.Add (file);
 					}
@@ -147,9 +159,15 @@ namespace Common {
 				foreach (PackedFile file in toWrite) {
 					if (file.Size != 0) {
 						writer.Write ((int)file.Size);
-						if (packFile.Header.Type == PackType.BootX || packFile.Header.Type == PackType.Shader) {
-							writer.Write (file.EditTime.Ticks);
-						}
+                        switch (packFile.Header.Type) {
+                            case PackType.BootX:
+                            case PackType.Shader1:
+                            case PackType.Shader2:
+                                writer.Write(file.EditTime.Ticks);
+                                break;
+                            default:
+                                break;
+                        }
 						// pack pathes use backslash, we replaced when reading
 						string packPath = file.FullPath.Replace (separatorString, "\\");
 						writer.Write (packPath.ToCharArray ());

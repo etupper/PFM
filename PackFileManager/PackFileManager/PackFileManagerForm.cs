@@ -83,6 +83,7 @@ namespace PackFileManager
         private ToolStripMenuItem modToolStripMenuItem;
         private ToolStripMenuItem movieToolStripMenuItem;
         private ToolStripMenuItem shaderToolStripMenuItem;
+        private ToolStripMenuItem shader2ToolStripMenuItem;
         private ToolStripMenuItem addToolStripMenuItem;
         private ToolStripMenuItem addFileToolStripMenuItem;
         private ToolStripMenuItem addDirectoryToolStripMenuItem;
@@ -394,7 +395,8 @@ namespace PackFileManager
             modToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
             movieToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
             shaderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
-            toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator ();
+            shader2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             exportFileListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
             toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator ();
             exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
@@ -746,14 +748,15 @@ namespace PackFileManager
             // 
             // changePackTypeToolStripMenuItem
             // 
-            changePackTypeToolStripMenuItem.DropDownItems.AddRange (new System.Windows.Forms.ToolStripItem[] {
+            changePackTypeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             bootToolStripMenuItem,
                 bootXToolStripMenuItem,
             releaseToolStripMenuItem,
             patchToolStripMenuItem,
             modToolStripMenuItem,
             movieToolStripMenuItem,
-                shaderToolStripMenuItem
+                shaderToolStripMenuItem,
+                shader2ToolStripMenuItem
             });
             changePackTypeToolStripMenuItem.Name = "changePackTypeToolStripMenuItem";
             changePackTypeToolStripMenuItem.Size = new System.Drawing.Size (172, 22);
@@ -814,6 +817,14 @@ namespace PackFileManager
             shaderToolStripMenuItem.Size = new System.Drawing.Size (113, 22);
             shaderToolStripMenuItem.Text = "Shader";
             shaderToolStripMenuItem.Click += new System.EventHandler (packTypeToolStripMenuItem_Click);
+            //
+            // shader2ToolStripMenuItem
+            //
+            shader2ToolStripMenuItem.CheckOnClick = true;
+            shader2ToolStripMenuItem.Name = "shader2ToolStripMenuItem";
+            shader2ToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
+            shader2ToolStripMenuItem.Text = "Shader2";
+            shader2ToolStripMenuItem.Click += new System.EventHandler(packTypeToolStripMenuItem_Click);
             //
             // toolStripSeparator9
             // 
@@ -1810,7 +1821,8 @@ namespace PackFileManager
             patchToolStripMenuItem.Checked = object.ReferenceEquals (sender, patchToolStripMenuItem);
             movieToolStripMenuItem.Checked = object.ReferenceEquals (sender, movieToolStripMenuItem);
             shaderToolStripMenuItem.Checked = object.ReferenceEquals (sender, shaderToolStripMenuItem);
-            modToolStripMenuItem.Checked = object.ReferenceEquals (sender, modToolStripMenuItem);
+            shader2ToolStripMenuItem.Checked = object.ReferenceEquals(sender, shader2ToolStripMenuItem);
+            modToolStripMenuItem.Checked = object.ReferenceEquals(sender, modToolStripMenuItem);
             if (bootToolStripMenuItem.Checked) {
                 currentPackFile.Type = PackType.Boot;
             } else if (bootXToolStripMenuItem.Checked) {
@@ -1824,7 +1836,9 @@ namespace PackFileManager
             } else if (modToolStripMenuItem.Checked) {
                 currentPackFile.Type = PackType.Mod;
             } else if (shaderToolStripMenuItem.Checked) {
-                currentPackFile.Type = PackType.Shader;
+                currentPackFile.Type = PackType.Shader1;
+            } else if (shader2ToolStripMenuItem.Checked) {
+                currentPackFile.Type = PackType.Shader2;
             }
         }
         #endregion
@@ -1863,7 +1877,8 @@ namespace PackFileManager
             patchToolStripMenuItem.Checked = currentPackFile.Header.Type == PackType.Patch;
             movieToolStripMenuItem.Checked = currentPackFile.Header.Type == PackType.Movie;
             modToolStripMenuItem.Checked = currentPackFile.Header.Type == PackType.Mod;
-            shaderToolStripMenuItem.Checked = currentPackFile.Header.Type == PackType.Shader;
+            shaderToolStripMenuItem.Checked = currentPackFile.Header.Type == PackType.Shader1;
+            shader2ToolStripMenuItem.Checked = currentPackFile.Header.Type == PackType.Shader2;
             packTreeView_AfterSelect(this, new TreeViewEventArgs(packTreeView.SelectedNode));
             refreshTitle();
             base.Refresh();
