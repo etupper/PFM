@@ -826,6 +826,7 @@ namespace PackFileManager
             exportFileListToolStripMenuItem.Size = new System.Drawing.Size (172, 22);
             exportFileListToolStripMenuItem.Text = "Export File &List...";
             exportFileListToolStripMenuItem.Click += new System.EventHandler (exportFileListToolStripMenuItem_Click);
+            exportFileListToolStripMenuItem.Enabled = false;
             // 
             // toolStripSeparator7
             // 
@@ -1514,6 +1515,7 @@ namespace PackFileManager
                 currentPackFile = value;
                 currentPackFile.Modified += currentPackFile_Modified;
                 changePackTypeToolStripMenuItem.Enabled = currentPackFile != null;
+                exportFileListToolStripMenuItem.Enabled = currentPackFile != null;
                 Refresh ();
             }
         }
@@ -1918,31 +1920,37 @@ namespace PackFileManager
             }
         }
 
+        static string CA_FILE_WARNING = "Will only save MOD and non-CA MOVIE files with current Setting.";
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            closeEditors();
-            var dialog = new SaveFileDialog {
-                AddExtension = true,
-                Filter = "Pack File|*.pack"
-            };
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                SaveAsFile(dialog.FileName);
+            if (!CanWriteCurrentPack) {
+                MessageBox.Show(CA_FILE_WARNING);
+            } else {
+                var dialog = new SaveFileDialog {
+                    AddExtension = true,
+                    Filter = "Pack File|*.pack"
+                };
+                if (dialog.ShowDialog() == DialogResult.OK) {
+                    SaveAsFile(dialog.FileName);
+                }
             }
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (currentPackFile.Filepath.EndsWith ("Untitled.pack")) {
-                // ask for a name first
-                saveAsToolStripMenuItem_Click (null, null);
-            } else {
-                SaveAsFile (currentPackFile.Filepath);
-            }
+            if (!CanWriteCurrentPack) {
+                MessageBox.Show(CA_FILE_WARNING);
+            } else
+                if (currentPackFile.Filepath.EndsWith("Untitled.pack")) {
+                    // ask for a name first
+                    saveAsToolStripMenuItem_Click(null, null);
+                } else {
+                    SaveAsFile(currentPackFile.Filepath);
+                }
         }
 
         void SaveAsFile(string filename) {
             if (!CanWriteCurrentPack) {
-                MessageBox.Show ("Won't save CA file with current Setting.");
+                MessageBox.Show(CA_FILE_WARNING);
             } else {
                 closeEditors ();
                 string tempFile = Path.GetTempFileName ();
