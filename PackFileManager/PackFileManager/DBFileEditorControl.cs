@@ -261,35 +261,6 @@ namespace PackFileManager {
             // TODO: Empty method?
         }
 
-        // TODO: This method is not used. Can it be removed?
-        private void dataGridView_KeyDown(object sender, KeyEventArgs e) 
-        {
-            object selectedCells = dataGridView.SelectedCells;
-            if ((ModifierKeys == Keys.Control) && (e.KeyValue == 0x63)) 
-            {
-                Clipboard.SetData(DataFormats.UnicodeText, selectedCells);
-            }
-            if ((e.Modifiers == Keys.ControlKey) && (e.KeyCode == Keys.V)) 
-            {
-                Clipboard.GetData(DataFormats.UnicodeText);
-            }
-        }
-
-        // TODO: I've decoupled this event. It did not fire. This is now fixed in the DataGridViewExtend class.  Needs to be removed. 
-        private void dataGridView_KeyPress(object sender, KeyPressEventArgs e) 
-        {
-            object selectedCells = dataGridView.SelectedCells;
-            if ((ModifierKeys == Keys.Control) && (e.KeyChar == 'c')) 
-            {
-                Clipboard.SetData(DataFormats.UnicodeText, selectedCells);
-            }
-
-            if ((ModifierKeys == Keys.Control) && (e.KeyChar == 'v')) 
-            {
-                Clipboard.GetData(DataFormats.UnicodeText);
-            }
-        }
-
         private void dataGridView_SelectionChanged(object sender, EventArgs e) 
         {
             cloneCurrentRow.Enabled = (dataGridView.SelectedRows.Count == 1) || (dataGridView.SelectedCells.Count == 1);
@@ -563,7 +534,7 @@ namespace PackFileManager {
         DataGridViewColumn createColumn(string columnName, FieldInfo fieldInfo, PackFile packFile, int fieldCount) 
         {
             DataGridViewColumn column = null;
-            if (Settings.Default.UseComboboxCells && packFile != null) 
+            if (Settings.Default.UseComboboxCells)
             {
                 try 
                 {
@@ -771,15 +742,12 @@ namespace PackFileManager {
             }
         }
 
-        private void dataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
-        {
+        private void dataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
             DataGridViewColumn newColumn = dataGridView.Columns[e.ColumnIndex];
 
-            if (e.Button == MouseButtons.Right) 
-            {
+            if (e.Button == MouseButtons.Right) {
                 var menu = new ContextMenu();
-                var item = new MenuItem("Change Column Description", delegate
-                                                                         {
+                var item = new MenuItem("Change Column Description", delegate {
                                                                              promptHeaderDescription(newColumn);
                                                                          });
                 menu.MenuItems.Add(item);
@@ -788,14 +756,10 @@ namespace PackFileManager {
                 bool ignored = Settings.Default.IsColumnIgnored(currentPackedFile.FullPath, ignoreField);
                 string itemText = ignored ? "Show Column" : "Hide Column";
 
-                item = new MenuItem(itemText, delegate
-                                                  {
-                                                      if (ignored) 
-                                                      {
+                item = new MenuItem(itemText, delegate {
+                                                      if (ignored) {
                                                           Settings.Default.UnignoreColumn(currentPackedFile.FullPath, ignoreField);
-                                                      } 
-                                                      else 
-                                                      {
+                                                      } else {
                                                           Settings.Default.IgnoreColumn(currentPackedFile.FullPath, ignoreField);
                                                       }
                                                       Settings.Default.Save();
@@ -804,16 +768,14 @@ namespace PackFileManager {
 
                 menu.MenuItems.Add(item);
 
-                item = new MenuItem("Clear Hide list for this table", delegate
-                                                                          {
+                item = new MenuItem("Clear Hide list for this table", delegate {
                                                                               Settings.Default.ResetIgnores(currentPackedFile.FullPath);
                                                                               Settings.Default.Save();
                                                                               applyColumnVisibility();
                                                                           });
 
                 menu.MenuItems.Add(item);
-                item = new MenuItem("Clear Hide list for all tables", delegate
-                                                                          {
+                item = new MenuItem("Clear Hide list for all tables", delegate {
                                                                               Settings.Default.IgnoreColumns = "";
                                                                               Settings.Default.Save();
                                                                               applyColumnVisibility();
@@ -822,29 +784,6 @@ namespace PackFileManager {
                 menu.Show(dataGridView, e.Location);
                 return;
             }
-
-            DataGridViewColumn oldColumn = dataGridView.SortedColumn;
-            ListSortDirection direction;
-            // If oldColumn is null, then the DataGridView is not sorted.
-            if (oldColumn != null) {
-                // Sort the same column again, reversing the SortOrder.
-                if (oldColumn == newColumn &&
-                    dataGridView.SortOrder == SortOrder.Ascending) {
-                    direction = ListSortDirection.Descending;
-                } else {
-                    // Sort a new column and remove the old SortGlyph.
-                    direction = ListSortDirection.Ascending;
-                    oldColumn.HeaderCell.SortGlyphDirection = SortOrder.None;
-                }
-            } else {
-                direction = ListSortDirection.Ascending;
-            }
-
-            // Sort the selected column.
-            dataGridView.Sort(newColumn, direction);
-            newColumn.HeaderCell.SortGlyphDirection =
-                direction == ListSortDirection.Ascending ?
-                SortOrder.Ascending : SortOrder.Descending;
         }
 
         private void applyColumnVisibility() 
