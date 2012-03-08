@@ -620,12 +620,10 @@
             IBindingList dataSource = base.DataGridView.DataSource as IBindingList;
             if (((dataSource != null) && dataSource.SupportsSorting) && this.AutomaticSortingEnabled)
             {
-                ListSortDirection ascending = ListSortDirection.Ascending;
-                if ((base.DataGridView.SortedColumn == base.OwningColumn) && (base.DataGridView.SortOrder == SortOrder.Ascending))
-                {
-                    ascending = ListSortDirection.Descending;
-                }
-                base.DataGridView.Sort(base.OwningColumn, ascending);
+                SortOrder newOrder = base.DataGridView.SortOrder == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+                ListSortDirection direction = newOrder == SortOrder.Ascending ? ListSortDirection.Ascending : ListSortDirection.Descending;
+                base.DataGridView.Sort(base.OwningColumn, direction);
+                base.OwningColumn.HeaderCell.SortGlyphDirection = newOrder;
             }
         }
 
