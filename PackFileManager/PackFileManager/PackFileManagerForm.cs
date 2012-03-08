@@ -131,35 +131,18 @@ namespace PackFileManager
 
         delegate bool FileFilter (PackedFile file);
 
-        public PackFileManagerForm(string[] args) {
-            InitializeComponent();
+        public PackFileManagerForm (string[] args) {
+            InitializeComponent ();
 
-            string ShogunTotalWarDirectory;
             try {
                 if (Settings.Default.UpdateOnStartup) {
-                    tryUpdate(false);
+                    tryUpdate (false);
                 }
-
-                ShogunTotalWarDirectory = IOFunctions.GetShogunTotalWarDirectory();
             } catch {
-                ShogunTotalWarDirectory = ".";
             }
-            if (string.IsNullOrEmpty(ShogunTotalWarDirectory)) {
-                if ((args.Length != 1) || !File.Exists(args[0])) {
-                    if (choosePathAnchorFolderBrowserDialog.ShowDialog() != DialogResult.OK) {
-                        throw new InvalidDataException("unable to determine path to \"Total War : Shogun 2\" directory");
-                    }
-                    extractFolderBrowserDialog.SelectedPath = choosePathAnchorFolderBrowserDialog.SelectedPath;
-                } else {
-                    choosePathAnchorFolderBrowserDialog.SelectedPath = Path.GetDirectoryName(args[0]);
-                    extractFolderBrowserDialog.SelectedPath = choosePathAnchorFolderBrowserDialog.SelectedPath;
-                }
-            } else {
-                choosePathAnchorFolderBrowserDialog.SelectedPath = Path.Combine(ShogunTotalWarDirectory, "data");
-                extractFolderBrowserDialog.SelectedPath = Path.Combine(ShogunTotalWarDirectory, "data");
-            }
-            saveFileDialog.InitialDirectory = choosePathAnchorFolderBrowserDialog.SelectedPath;
-            addDirectoryFolderBrowserDialog.SelectedPath = choosePathAnchorFolderBrowserDialog.SelectedPath;
+
+            InitializeBrowseDialogs (args);
+
             Text = string.Format("Pack File Manager {0}", Application.ProductVersion);
             if (args.Length == 1) {
                 if (!File.Exists(args[0])) {
@@ -1266,22 +1249,56 @@ namespace PackFileManager
         }
 
         private void PackFileManagerForm_GotFocus(object sender, EventArgs e) {
-            base.Activated -= new EventHandler(PackFileManagerForm_GotFocus);
+            base.Activated -= new EventHandler (PackFileManagerForm_GotFocus);
             if (openFileIsModified) {
                 openFileIsModified = false;
-                if (MessageBox.Show("Changes were made to the extracted file. Do you want to replace the packed file with the extracted file?", "Save changes?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
-                    openPackedFile.Data = (File.ReadAllBytes(openFilePath));
+                if (MessageBox.Show ("Changes were made to the extracted file. Do you want to replace the packed file with the extracted file?", "Save changes?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+                    openPackedFile.Data = (File.ReadAllBytes (openFilePath));
                 }
             }
             while (File.Exists(openFilePath)) {
                 try {
-                    File.Delete(openFilePath);
+                    File.Delete (openFilePath);
                 } catch (IOException) {
-                    if (MessageBox.Show("Unable to delete the temporary file; is it still in use by the external editor?\r\n\r\nClick Retry to try deleting it again or Cancel to leave it in the temporary directory.", "Temporary file in use", MessageBoxButtons.RetryCancel, MessageBoxIcon.Exclamation) == DialogResult.Cancel) {
+                    if (MessageBox.Show ("Unable to delete the temporary file; is it still in use by the external editor?\r\n\r\nClick Retry to try deleting it again or Cancel to leave it in the temporary directory.", "Temporary file in use", MessageBoxButtons.RetryCancel, MessageBoxIcon.Exclamation) == DialogResult.Cancel) {
                         break;
                     }
                 }
             }
+        }
+
+        /*
+         * Determine a reasonable initial directory for the open/save/extract
+         * browse dialogs.
+         */
+        void InitializeBrowseDialogs(string[] args) {
+
+            // default: current directory
+            string initialDialog = Directory.GetCurrentDirectory ();
+            try {
+
+                // try to determine the shogun install path and use the data directory below
+                initialDialog = IOFunctions.GetShogunTotalWarDirectory ();
+                if (!string.IsNullOrEmpty (initialDialog)) {
+                    initialDialog = Path.Combine (initialDialog, "data");
+                } else {
+                    // go through the arguments (interpreted as file names)
+                    // and use the first for which the directory exists
+                    foreach (string file in args) {
+                        string dir = Path.GetDirectoryName (file);
+                        if (File.Exists (dir)) {
+                            initialDialog = dir;
+                            break;
+                        }
+                    }
+                }
+            } catch {
+                // we have not set an invalid path along the way; should still be current dir here
+            }
+            // set to the dialogs
+            saveFileDialog.InitialDirectory = initialDialog;
+            addDirectoryFolderBrowserDialog.SelectedPath = initialDialog;
+            extractFolderBrowserDialog.SelectedPath = initialDialog;
         }
 
 
