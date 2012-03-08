@@ -6,7 +6,11 @@ using System.Text;
 
 namespace Common
 {
+    /*
+     * Utility class for db types.
+     */
 	public class Types {
+        // return FieldInfo corresponding to the given type name
 		public static FieldInfo FromTypeName(string typeName) {
 			switch (typeName) {
 			case "string":
@@ -29,13 +33,18 @@ namespace Common
 			}
 			return null;
 		}
+        #region factory methods
         public static FieldInfo StringType() { return new StringType() { Name = "unknown" }; }
         public static FieldInfo IntType() { return new IntType() { Name = "unknown" }; }
         public static FieldInfo BoolType() { return new BoolType() { Name = "unknown" }; }
-        public static FieldInfo OptStringType() { return new OptStringType() { Name = "unknown" }; }
+        public static FieldInfo OptStringType() { return new OptStringType() { Name = "unknown" };}
         public static FieldInfo SingleType() { return new SingleType() { Name = "unknown" }; }
+        #endregion
     }
-	
+
+    /*
+     * Base class for field information description item.
+     */
 	[System.Diagnostics.DebuggerDisplay("{Name} - {TypeName}; {Optional}")]
     public abstract class FieldInfo {
 		public string Name {
@@ -79,6 +88,9 @@ namespace Common
 		}
 	}
 
+    /*
+     * Type with variable length, containing lenght-encoded Unicode string.
+     */
 	class StringType : FieldInfo {
 		public StringType () {
 			TypeName = "string";
@@ -96,6 +108,9 @@ namespace Common
 		}
 	}
 
+    /*
+     * Base class for fields with constant encoded length.
+     */
 	abstract class FixedLengthFieldInfo : FieldInfo {
 		protected int length;
 
@@ -104,23 +119,29 @@ namespace Common
 		}
 	}
 
+    /*
+     * Signed 4 byte integer.
+     */
 	class IntType : FixedLengthFieldInfo {
 		public IntType () {
 			TypeName = "int";
 			length = 4;
 			DefaultValue = "0";
-			TypeCode = TypeCode.UInt32;
+			TypeCode = TypeCode.Int32;
 		}
 
 		public override string Decode(BinaryReader reader) {
-			return reader.ReadUInt32 ().ToString ();
+			return reader.ReadInt32 ().ToString ();
 		}
 		
 		public override void Encode(BinaryWriter writer, string val) {
-			writer.Write (uint.Parse (val));
+			writer.Write (int.Parse (val));
 		}
 	}
 
+    /*
+     * Signed 2 byte integer.
+     */
 	class ShortType : FixedLengthFieldInfo {
 		public ShortType () {
 			TypeName = "short";
@@ -130,13 +151,16 @@ namespace Common
 		}
 
 		public override string Decode(BinaryReader reader) {
-			return reader.ReadUInt16 ().ToString ();
+			return reader.ReadInt16 ().ToString ();
 		}
 		public override void Encode(BinaryWriter writer, string val) {
 			writer.Write (short.Parse (val));
 		}
 	}
 
+    /*
+     * 4 byte floating point number.
+     */
 	class SingleType : FixedLengthFieldInfo {
 		public SingleType () {
 			TypeName = "float";
@@ -153,6 +177,9 @@ namespace Common
 		}
 	}
 
+    /*
+     * 1 byte boolean (0 = false, 1 = true).
+     */
 	class BoolType : FixedLengthFieldInfo {
 		public BoolType () {
 			TypeName = "boolean";
@@ -173,6 +200,11 @@ namespace Common
 		}
 	}
 
+    /*
+     * Nullable string.
+     * Basically a string preceeded with a boolean determining whether
+     * there is a string at all.
+     */
 	class OptStringType : FieldInfo {
 		public OptStringType () {
 			TypeName = "optstring";
@@ -202,6 +234,9 @@ namespace Common
 		}
 	}
 
+    /*
+     * A number of bytes, uninterpreted.
+     */
 	class VarBytesType : FixedLengthFieldInfo {
 		public VarBytesType (int byteCount) {
 			TypeName = "unknown";
