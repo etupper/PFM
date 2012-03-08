@@ -628,7 +628,7 @@ namespace PackFileManager {
                 TypeInfo info = currentDBFile.CurrentType;
                 currentDataSet = new DataSet(info.name + "_DataSet");
                 currentDataTable = new DataTable(info.name + "_DataTable");
-                currentDataTable.Columns.Add(new DataColumn("#", Type.GetType("System.UInt32")));
+                currentDataTable.Columns.Add(new DataColumn("#", Type.GetType("System.Int32")));
                 var dataGridViewColumn = new DataGridViewTextBoxColumn { DataPropertyName = "#", Visible = false };
                 dataGridView.Columns.Add(dataGridViewColumn);
 
