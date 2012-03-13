@@ -3185,7 +3185,7 @@
     <field name='Infantry Battle Entity' type='string' />
     <field name='Animation Table' type='string' />
     <field name='Warscape Equipment Theme IDRef' type='string' />
-    <field name='unknown13' type='int' />
+    <field name='Armor Value' type='int' />
     <field name='Armor Type' type='string' />
     <field name='unknown15' type='int' />
     <field name='Horse 1' type='optstring' />
