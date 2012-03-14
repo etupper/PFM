@@ -132,7 +132,7 @@ namespace PackFileManager
         delegate bool FileFilter (PackedFile file);
 
         public PackFileManagerForm (string[] args) {
-            InitializeComponent ();
+            InitializeComponent();
 
             try {
                 if (Settings.Default.UpdateOnStartup) {
@@ -143,16 +143,20 @@ namespace PackFileManager
 
             InitializeBrowseDialogs (args);
 
+            // initialize db editor; need to do this before opening pack file
+            // to make sure the type map is initialized
+            var control = new DBFileEditorControl() {
+                Dock = DockStyle.Fill
+            };
             Text = string.Format("Pack File Manager {0}", Application.ProductVersion);
+
+            // open pack file from command line if applicable
             if (args.Length == 1) {
                 if (!File.Exists(args[0])) {
                     throw new ArgumentException("path is not a file or path does not exist");
                 }
                 OpenExistingPackFile(args[0]);
             }
-            var control = new DBFileEditorControl() {
-                Dock = DockStyle.Fill
-            };
             dbFileEditorControl = control;
         }
 
