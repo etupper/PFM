@@ -69,23 +69,26 @@ namespace PackFileManager {
                         Parent.ForeColor = Color.Red;
                     }
                     ForeColor = Color.Red;
-                } else {
-                    if (PackedFileDbCodec.readHeader(file2).EntryCount == 0) {
-                        if (NodeFont != null) {
-                            NodeFont = new Font(NodeFont, FontStyle.Strikeout);
+                } else if (file2.Data.Length != 0) {
+                    try {
+                        DBFileHeader header = PackedFileDbCodec.readHeader(file2);
+                        if (header.EntryCount == 0) {
+                            // empty db file
+                            if (NodeFont != null) {
+                                NodeFont = new Font(NodeFont, FontStyle.Strikeout);
+                            }
+                        } else if (HeaderVersionObsolete(file2)) {
+                            if (Parent != null) {
+                                Parent.BackColor = Color.Yellow;
+                            }
+                            BackColor = Color.Yellow;
                         }
-                    }
-                    if (HeaderVersionObsolete(file2)) {
-                        if (Parent != null) {
-                            Parent.BackColor = Color.Yellow;
+                        if (!Text.Contains("version")) {
+                            Text = string.Format("{0} - version {1}", Text, header.Version);
                         }
-                        BackColor = Color.Yellow;
+                    } catch (Exception e) {
+                        Console.WriteLine(e);
                     }
-                }
-
-                if (Parent != null && Parent.Text != null && !Parent.Text.Contains("version")) {
-                    DBFileHeader header = PackedFileDbCodec.readHeader(file2);
-                    Parent.Text = string.Format("{0} - version {1}", Parent.Text, header.Version);
                 }
             }
         }

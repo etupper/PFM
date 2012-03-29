@@ -177,6 +177,8 @@
     <field name='Voice Embark' type='string' version_start='4' />
     <field name='Voice Disembark' type='string' version_start='4' />
     <field name='Voice Death' type='string' version_start='4' />
+    <field name='audio_clip' type='string' version_start='5' />
+    <field name='unknown' type='string' version_start='5' />
   </table>
   <table name='aide_de_camp_speeches_tables' >
     <field name='ADC IDRef' type='string' pk='true' />
@@ -202,6 +204,7 @@
     <field name='unknown13' type='string' version_start='5' />
     <field name='unknown14' type='boolean' version_start='5' />
     <field name='unknown15' type='string' version_start='5' />
+    <field name='unknown15' type='string' version_start='6' />
   </table>
   <table name='ancillary_included_subcultures_tables' >
     <field fkey='ancillaries_tables.ID' name='Ancillary IDRef' type='string' pk='true' />
@@ -368,6 +371,8 @@
     <field name='Index' type='int' />
     <field name='Icon' type='string' />
     <field name='unknown' type='string' version_start='1' />
+    <field name='unknown' type='int' version_start='3' />
+    <field name='Product ID' type='string' version_start='3' />
   </table>
   <table name='avatar_gempei_dojos_tables' >
     <field name='Type' type='string' />
@@ -376,6 +381,10 @@
     <field name='unknown' type='int' />
     <field name='Unit ref' type='optstring' />
     <field name='unknown2' type='optstring' />
+  </table>
+  <table name='avatar_product_lookups_tables' >
+    <field name='unknown' type='string' />
+    <field name='unknown' type='string' />
   </table>
   <table name='avatar_ranks_tables' >
     <field name='unknown1' type='int' />
@@ -388,6 +397,7 @@
     <field name='unknown8' type='int' />
     <field name='unknown9' type='int' />
     <field name='unknown10' type='int' version_start='2' />
+    <field name='Product ID' type='string' version_start='3' />
   </table>
   <table name='avatar_skill_chain_lookups_tables' >
     <field name='unknown1' type='string' pk='true' />
@@ -474,6 +484,12 @@
     <field name='unknown7' type='int' version_start='3' />
     <field name='unknown8' type='boolean' version_start='4' />
     <field name='unknown9' type='string' version_start='4' />
+    <field name='unknown8' type='boolean' version_start='8' />
+    <field name='unknown9' type='optstring' version_start='8' />
+  </table>
+  <table name='avatar_unit_group_recruitment_limits_tables' >
+    <field name='unknown1' type='string' pk='true' />
+    <field name='unknown2' type='float' />
   </table>
   <table name='avatar_xp_rewards_tables' >
     <field name='unknown1' type='string' pk='true' />
@@ -715,6 +731,10 @@
     <field name='Terrain' type='optstring' />
     <field name='unknown6' type='int' version_start='1' />
     <field name='unknown7' type='int' version_start='2' />
+    <field name='unknown' type='optstring' version_start='6' />
+    <field name='unknown' type='optstring' version_start='6' />
+    <field name='unknown' type='int' version_start='6' />
+    <field name='unknown' type='boolean' version_start='6' />
   </table>
   <table name='battlefield_deployable_siege_items_tables' >
     <field name='Siege item' type='string' />
@@ -746,9 +766,18 @@
     <field name='unknown15' type='boolean' version_start='3' />
     <field name='unknown16' type='boolean' version_start='4' />
   </table>
+  <table name='battles_to_avatar_product_lookups_junctions_tables' >
+    <field name='Battle ID' type='string' />
+    <field name='Product ID' type='string' />
+  </table>
   <table name='battles_to_battle_sky_types_junctions_tables' >
-    <field name='Unknown' type='string' pk='true' />
-    <field name='Unknown' type='string' pk='true' />
+    <field name='Unknown' type='string' />
+    <field name='Unknown' type='string' />
+  </table>
+  <table name='bombardment_quality_to_artillery_support_modifiers' >
+    <field name='Unknown' type='int' />
+    <field name='Unknown' type='string' />
+    <field name='Unknown' type='float' />
   </table>
   <table name='bribe_actions_tables' >
     <field name='Bribe Action ID' type='string' pk='true' />
@@ -847,6 +876,7 @@
     <field name='unknown' type='optstring' version_start='2' />
     <field name='unknown' type='string' version_start='2' />
     <field name='unknown' type='int' version_start='2' />
+    <field name='unknown' type='optstring' version_start='3' />
   </table>
   <table name='building_research_thread_junction_tables' >
     <field fkey='building_levels_tables.Building IDRef' name='Building IDRef' type='string' pk='true' />
@@ -857,6 +887,10 @@
     <field fkey='building_levels_tables.Building IDRef' name='Building IDRef' type='string' pk='true' />
     <field name='Resource' type='string' pk='true' />
     <field name='Magnitude' type='float' />
+  </table>
+  <table name='building_to_unit_abilities_junctions_tables' >
+    <field name='unknown' type='string' />
+    <field name='unknown' type='string' />
   </table>
   <table name='building_units_allowed_tables' >
     <field fkey='building_levels_tables.Building IDRef' name='Building_IDRef' type='string' pk='true' />
@@ -971,6 +1005,25 @@
     <field name='unknown' type='string' pk='true' />
     <field name='unknown' type='string' />
   </table>
+  <table name='cai_personalities_building_synergies_tables' >
+    <field name='unknown' type='string' />
+    <field name='' type='optstring' />
+    <field name='' type='optstring' />
+    <field name='unknown' type='string' />
+    <field name='unknown' type='optstring' />
+    <field name='unknown' type='optstring' />
+    <field name='unknown' type='string' />
+    <field name='unknown' type='string' />
+  </table>
+  <table name='cai_personalities_building_synergy_levels_tables' >
+    <field name='unknown' type='int' />
+    <field name='unknown' type='string' />
+    <field name='unknown' type='int' />
+    <field name='unknown' type='float' />
+  </table>
+  <table name='cai_personalities_building_synergy_policies_tables' >
+    <field name='unknown' type='string' />
+  </table>
   <table name='cai_personalities_construction_preference_policies_tables' >
     <field name='unknown' type='string' pk='true' />
   </table>
@@ -980,6 +1033,23 @@
     <field name='unknown' type='string' />
     <field name='unknown' type='string' />
     <field name='unknown' type='float' />
+  </table>
+  <table name='cai_personalities_faction_junctions_tables' >
+    <field name='unknown' type='string' />
+    <field name='unknown' type='string' />
+    <field name='Faction ID' type='string' />
+    <field fkey='cai_personalities_random_groups_tables.ID' name='Random Group IDRef' type='string' />
+    <field fkey='cai_personalities_randomisation_policies_tables.PRPolicy ID' name='PRPolicy IDRef' type='string' />
+  </table>
+  <table name='cai_personalities_random_group_junctions_tables' >
+    <field name='Personality ID' type='string' />
+    <field name='Random Group ID' type='string' />
+  </table>
+  <table name='cai_personalities_random_groups_tables' >
+    <field name='ID' type='string' pk='true' />
+  </table>
+  <table name='cai_personalities_randomisation_policies_tables' >
+    <field name='PRPolicy ID' type='string' />
   </table>
   <table name='cai_personalities_reliability_policies_tables' >
     <field name='unknown' type='string' pk='true' />
@@ -1085,6 +1155,7 @@
     <field name='unknown6' type='boolean' />
     <field name='unknown7' type='boolean' />
     <field name='unknown8' type='optstring' version_start='2' />
+    <field name='unknown9' type='optstring' version_start='3' />
   </table>
   <table name='campaign_character_arts_tables' >
     <field name='unknown1' type='string' />
@@ -1096,6 +1167,17 @@
     <field name='unknown7' type='optstring' />
     <field name='unknown8' type='optstring' />
     <field name='unknown9' type='optstring' />
+  </table>
+  <table name='campaign_clan_level_infos_tables' >
+    <field name='unknown' type='int' />
+    <field name='unknown' type='string' />
+    <field name='unknown' type='int' />
+    <field name='unknown' type='optstring' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
   </table>
   <table name='campaign_difficulty_handicap_effects_tables' >
     <field name='Difficulty' type='int' />
@@ -1131,6 +1213,10 @@
     <field name='Unknown7' type='int' />
     <field name='Unknown8' type='int' />
   </table>
+  <table name='campaign_map_settlement_sprawl_descriptions_tables' >
+    <field name='Settlement' type='string' />
+    <field name='unknown' type='string' />
+  </table>
   <table name='campaign_map_settlements_tables' >
     <field name='Settlement ID' type='string' pk='true' />
     <field fkey='regions_tables.Name' name='Region' type='string' />
@@ -1160,6 +1246,10 @@
     <field name='Town ID' type='string' pk='true' />
     <field fkey='slots_tables.Slot ID' name='Type' type='string' />
     <field name='Name' type='string' />
+  </table>
+  <table name='campaign_unit_art_set_junctions_tables' >
+    <field name='unknown1' type='string' />
+    <field name='unknown2' type='string' />
   </table>
   <table name='campaign_variables_tables' >
     <field name='Variable' type='string' pk='true' />
@@ -1293,7 +1383,7 @@
     <field name='unknown7' type='float' />
   </table>
   <table name='cdir_unit_qualities_tables' >
-    <field fkey='campaign_ai_personalities_tables.Campaign Personality ID' name='Unknown' type='string' pk='true' />
+    <field name='Unknown' type='string' pk='true' />
     <field name='Unknown' type='string' pk='true' />
     <field name='Unknown' type='string' pk='true' />
     <field name='unknown4' type='int' />
@@ -1447,6 +1537,19 @@
     <field fkey='government_types_tables.Government ID' name='Government Type IDRef' type='string' />
     <field fkey='factions_tables.Faction IDRef' name='Faction IDRef' type='string' />
     <field name='String IDRef' type='string' />
+  </table>
+  <table name='diplomacy_negotiation_religion_override_strings_tables' >
+    <field fkey='cultures_tables.Culture ID' name='Culture ID' type='string' />
+    <field name='Government ID' type='string' />
+    <field name='Action' type='string' />
+    <field name='unknown' type='int' />
+    <field name='unknown' type='string' />
+    <field name='unknown' type='string' />
+  </table>
+  <table name='diplomacy_negotiation_string_options_tables' >
+    <field fkey='cultures_tables.Culture ID' name='Culture IDRef' type='string' />
+    <field name='unknown2' type='string' />
+    <field name='unknown3' type='string' />
   </table>
   <table name='diplomacy_negotiation_strings_tables' >
     <field name='String ID' type='string' pk='true' />
@@ -1656,8 +1759,7 @@
     <field name='B2' type='int' />
     <field name='G2' type='int' />
     <field name='R2' type='int' />
-    <field name='Unknown' type='boolean' />
-    <field name='Unknown' type='string' />
+    <field name='Unknown' type='optstring' />
     <field name='B3' type='int' />
     <field name='G3' type='int' />
     <field name='R3' type='int' />
@@ -1795,16 +1897,20 @@
     <field name='R' type='float' />
     <field name='G' type='float' />
     <field name='B' type='float' />
-    <field name='ID3' type='optstring' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='string' />
     <field name='Abreviation' type='string' />
     <field name='unknown43' type='boolean' />
     <field name='unknown44' type='boolean' />
     <field name='Names_1' type='string' />
     <field name='Names_2' type='string' />
-    <field name='unknown47' type='string' version_start='3' />
-    <field name='unknown48' type='string' version_start='3' />
+    <field name='Attacking Text' type='string' version_start='3' />
+    <field name='Defending Text' type='string' version_start='3' />
     <field name='unknown49' type='boolean' version_start='3' />
-    <field name='unknown50' type='string' version_start='5' />
+    <field name='Faction Type' type='string' version_start='5' />
+    <field name='unknown' type='string' version_start='7' />
+    <field name='unknown' type='string' version_start='7' />
+    <field name='unknown' type='string' version_start='7' />
   </table>
   <table name='family_relationship_types_tables' >
     <field name='unknown1' type='string' pk='true' />
@@ -1847,6 +1953,20 @@
     <field name='Value2' type='float' />
     <field name='Value3' type='float' />
     <field name='Value4' type='float' />
+  </table>
+  <table name='first_person_engines_tables' >
+    <field name='unknown1' type='boolean' />
+    <field name='unknown2' type='float' />
+    <field name='unknown3' type='float' />
+    <field name='unknown4' type='float' />
+    <field name='unknown5' type='float' />
+    <field name='unknown6' type='float' />
+    <field name='unknown7' type='float' />
+    <field name='Gun ID' type='string' />
+    <field name='unknown9' type='float' />
+    <field name='unknown10' type='float' />
+    <field name='unknown11' type='float' />
+    <field name='unknown12' type='float' />
   </table>
   <table name='fort_underlay_climate_jcts_tables' >
     <field fkey='battlefield_buildings_tables.Battlefield_Building_ID' name='Fort ID' type='string' />
@@ -2666,6 +2786,11 @@
     <field name='unknown23' type='optstring' />
     <field fkey='projectile_impacts_tables.Projectile IDRef' name='Impact' type='optstring' />
     <field name='unknown24' type='optstring' version_start='1' />
+    <field name='unknown' type='boolean' version_start='5' />
+    <field name='unknown' type='float' version_start='5' />
+    <field name='unknown' type='float' version_start='5' />
+    <field name='unknown' type='boolean' version_start='5' />
+    <field name='unknown' type='float' version_start='5' />
   </table>
   <table name='projectiles_explosions_tables' >
     <field name='Projectile Explosion' type='string' pk='true' />
@@ -3113,6 +3238,9 @@
   <table name='unit_category_tables' >
     <field name='Category IDRef' type='string' pk='true' />
     <field name='Unit Category String' type='optstring' version_start='1' />
+    <field name='unknown1' type='float' version_start='2' />
+    <field name='unknown2' type='float' version_start='2' />
+    <field name='unknown3' type='float' version_start='2' />
   </table>
   <table name='unit_class_tables' >
     <field name='Class ID' type='string' pk='true' />
@@ -3150,7 +3278,7 @@
   </table>
   <table name='unit_regiment_names_tables' >
     <field name='Regiment Name' type='string' />
-    <field fkey='unit_class_tables.Class ID' name='unknown' type='string' pk='true' />
+    <field name='unknown' type='string' pk='true' />
     <field name='unknown' type='string' pk='true' />
     <field name='unknown3' type='int' />
   </table>
@@ -3171,7 +3299,7 @@
     <field name='unknown10' type='boolean' version_start='5' />
     <field name='unknown11' type='float' version_start='5' />
     <field name='unknown12' type='optstring' version_start='5' />
-    <field name='unknown13' type='optstring' version_start='6' />
+    <field name='unknown13' type='boolean' version_start='6' />
   </table>
   <table name='unit_stats_land_tables' >
     <field name='Unit IDRef' type='string' />
@@ -3185,7 +3313,7 @@
     <field name='Infantry Battle Entity' type='string' />
     <field name='Animation Table' type='string' />
     <field name='Warscape Equipment Theme IDRef' type='string' />
-    <field name='Armor Value' type='int' />
+    <field name='unknown13' type='int' />
     <field name='Armor Type' type='string' />
     <field name='unknown15' type='int' />
     <field name='Horse 1' type='optstring' />
@@ -3271,9 +3399,9 @@
     <field name='Unused?' type='boolean' version_start='5' />
     <field name='Cavalry Unit? New can Dismount?' type='boolean' version_start='13' />
     <field name='New Can Shoot Wile moving?' type='boolean' version_start='13' />
-    <field name='Unused?' type='boolean' version_start='13' />
-    <field name='Unused?' type='boolean' version_start='13' />
-    <field name='Unused?' type='boolean' version_start='13' />
+    <field name='Unused?' type='optstring' version_start='13' />
+    <field name='Unused?' type='optstring' version_start='13' />
+    <field name='Unused?' type='optstring' version_start='13' />
     <field name='Unkown' type='boolean' version_start='13' />
     <field name='Unkown' type='boolean' version_start='13' />
     <field name='unknown105' type='string' version_start='13' />
@@ -3312,7 +3440,7 @@
     <field name='Morale' type='int' />
     <field name='Hull_Strength' type='int' />
     <field name='Crew_Size' type='int' />
-    <field fkey='units_tables.Unit_ID' name='Admiral_Variant' type='optstring' />
+    <field name='Admiral_Variant' type='optstring' />
     <field fkey='gun_types_tables.Gun ID' name='Cannon_Type_1' type='optstring' />
     <field fkey='gun_types_tables.Gun ID' name='Cannon_Type_2' type='optstring' />
     <field fkey='gun_types_tables.Gun ID' name='Cannon_Type_3' type='optstring' />
@@ -3335,6 +3463,7 @@
     <field name='unknown5' type='float' />
     <field name='unknown6' type='float' />
     <field name='unknown7' type='int' />
+    <field name='unknown' type='int' version_start='16' />
     <field name='unknown8' type='float' />
     <field name='unknown9' type='int' />
     <field name='unknown10' type='int' />
@@ -3426,12 +3555,28 @@
     <field name='unknown95' type='boolean' />
     <field name='unknown96' type='boolean' />
     <field name='Can_Trade' type='boolean' />
-    <field name='Manoeuverability' type='string' />
+    <field name='Manoeuverability' type='string' version_end='6' />
     <field name='Hull_Strength_Shown' type='int' />
     <field name='unknown97' type='string' version_start='2' />
     <field name='unknown' type='string' version_start='6' />
     <field name='unknown' type='int' version_start='6' />
     <field name='unknown98' type='string' version_start='6' />
+    <field name='unknown' type='int' version_start='16' />
+    <field name='unknown' type='string' version_start='16' />
+    <field name='unknown' type='string' version_start='16' />
+    <field name='unknown' type='int' version_start='16' />
+    <field name='unknown' type='optstring' version_start='16' />
+    <field name='unknown' type='string' version_start='16' />
+    <field name='unknown' type='int' version_start='16' />
+    <field name='unknown' type='int' version_start='16' />
+    <field name='unknown' type='float' version_start='16' />
+    <field name='unknown' type='string' version_start='16' />
+    <field name='unknown' type='boolean' version_start='16' />
+    <field name='unknown' type='float' version_start='16' />
+    <field name='unknown' type='float' version_start='16' />
+    <field name='unknown' type='float' version_start='16' />
+    <field name='unknown' type='float' version_start='16' />
+    <field name='unknown' type='boolean' version_start='16' />
   </table>
   <table name='unit_stats_naval_crew_tables' >
     <field name='Crew_ID' type='string' pk='true' />
@@ -3467,7 +3612,7 @@
     <field name='Crew Unit IDRef' type='string' />
     <field name='Seamen Crew Unit IDRef' type='string' />
     <field name='Gun Crew Unit IDRef' type='string' />
-    <field fkey='unit_class_tables.Class ID' name='Admiral Crew Unit IDRef' type='string' />
+    <field name='Admiral Crew Unit' type='string' />
     <field name='Commodore Crew Unit IDRef' type='string' />
     <field name='unknown7' type='int' />
     <field name='unknown8' type='int' />
@@ -3536,6 +3681,11 @@
     <field name='unknown31' type='boolean' version_start='9' />
     <field name='unknown32' type='optstring' version_start='9' />
     <field name='unknown33' type='int' version_start='9' />
+    <field name='unknown' type='boolean' version_start='13' />
+    <field name='unknown' type='int' version_start='13' />
+    <field name='unknown' type='string' version_start='13' />
+    <field name='unknown' type='string' version_start='13' />
+    <field name='unknown' type='boolean' version_start='13' />
   </table>
   <table name='units_to_exclusive_faction_permissions_tables' >
     <field fkey='units_tables.Unit_ID' name='Unit IDRef' type='string' pk='true' />
