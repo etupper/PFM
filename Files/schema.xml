@@ -3329,7 +3329,8 @@
     <field name='Cavalry Battle Entity' type='optstring' />
     <field name='Horse 3' type='optstring' />
     <field name='unknown22' type='string' version_end='5' />
-    <field name='unknown23' type='string' version_end='5' />    <field name='field17' type='int' version_start='13' />
+    <field name='unknown23' type='string' version_end='5' />
+    <field name='field17' type='int' version_start='13' />
     <field name='field18' type='int' version_start='13' />
     <field name='Carriage Battle Entity' type='optstring' />
     <field name='Ammo Train Battle Entity' type='optstring' />
