@@ -166,7 +166,17 @@ namespace Common {
             PackIdentifier = id;
             FileCount = 0;
             Version = 0;
-            ReplacedPackFileName = "";
+            ReplacedPackFileNames = new List<string>();
+        }
+
+        public int ReplacedFileNamesLength {
+            get {
+                // start with 0 byte for each name
+                int result = ReplacedPackFileNames.Count;
+                // add actual names' lengths
+                ReplacedPackFileNames.ForEach(name => result += name.Length);
+                return result;
+            }
         }
 
         // query/set identifier
@@ -195,8 +205,8 @@ namespace Common {
         public long DataStart { get; set; }
         // query/set number of contained files
         public UInt32 FileCount { get; set; }
-        // query/set name of pack file replaced by this
-        public string ReplacedPackFileName {
+        // query/set names of pack file replaced by this
+        public List<string> ReplacedPackFileNames {
             get;
             set;
         }

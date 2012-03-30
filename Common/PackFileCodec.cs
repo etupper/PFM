@@ -43,18 +43,11 @@ namespace Common {
                             time = -1;
                             break;
                     }
-					StringBuilder builder2 = new StringBuilder ();
-					char ch2 = reader.ReadChar ();
-					while (ch2 != '\0') {
-						builder2.Append (ch2);
-						ch2 = reader.ReadChar ();
-						// this is easier because we can use the Path methods
-						// under both Windows and Unix
-						if (ch2 == '\\') {
-							ch2 = Path.DirectorySeparatorChar;
-						}
-					}
-					string packedFileName = builder2.ToString ();
+                    string packedFileName = IOFunctions.readZeroTerminatedAscii(reader);
+                    // this is easier because we can use the Path methods
+                    // under both Windows and Unix
+                    packedFileName = packedFileName.Replace('\\', Path.DirectorySeparatorChar);
+
 					PackedFile packed = new PackedFile (file.Filepath, packedFileName, offset, size);
 					if (time != -1) {
 						packed.EditTime = new DateTime (time);
@@ -97,14 +90,10 @@ namespace Common {
 
 			// skip the time
 			reader.BaseStream.Seek (header.Length, SeekOrigin.Begin);
-            if (header.Version == 1) {
-                // read pack file reference
-                header.ReplacedPackFileName =
-                    new string(ASCIIEncoding.ASCII.GetChars(reader.ReadBytes(replacedPackFilenameLength - 1)));
-                // skip the null byte
-                reader.ReadByte();
-                header.DataStart += replacedPackFilenameLength;
+            for (int i = 0; i < header.Version; i++) {
+                header.ReplacedPackFileNames.Add(IOFunctions.readZeroTerminatedAscii(reader));
             }
+            header.DataStart += replacedPackFilenameLength;
 			return header;
 		}
 
@@ -113,12 +102,7 @@ namespace Common {
 				writer.Write (packFile.Header.PackIdentifier.ToCharArray ());
 				writer.Write ((int)packFile.Header.Type);
 				writer.Write ((int)packFile.Header.Version);
-				if (packFile.Header.ReplacedPackFileName.Length != 0) {
-					// if we write a string at all, account for 0 byte
-					writer.Write ((int)packFile.Header.ReplacedPackFileName.Length + 1);
-				} else {
-					writer.Write ((int)0);
-				}
+                writer.Write(packFile.Header.ReplacedFileNamesLength);
 				UInt32 indexSize = 0;
 				List<PackedFile> toWrite = new List<PackedFile> ((int)packFile.Header.FileCount);
 				foreach (PackedFile file in packFile.Files) {
@@ -134,9 +118,8 @@ namespace Common {
                                 default:
                                     break;
                             }
-                            
-						}
-						toWrite.Add (file);
+                            toWrite.Add(file);
+                        }
 					}
 				}
 				writer.Write (toWrite.Count);
@@ -149,10 +132,10 @@ namespace Common {
 				}
 
 				// Write File Names stored from opening the file
-				if (packFile.Header.ReplacedPackFileName.Length > 0) {
-					writer.Write (packFile.Header.ReplacedPackFileName.ToCharArray ());
-					writer.Write ((byte)0);
-				}
+                foreach (string replacedPack in packFile.Header.ReplacedPackFileNames) {
+                    writer.Write(replacedPack.ToCharArray());
+                    writer.Write((byte)0);
+                }
 
 				// write file list
 				string separatorString = "" + Path.DirectorySeparatorChar;

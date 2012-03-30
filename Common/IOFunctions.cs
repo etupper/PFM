@@ -74,6 +74,16 @@
             return builder.ToString();
         }
 
+        public static string readZeroTerminatedAscii(BinaryReader reader) {
+            StringBuilder builder2 = new StringBuilder();
+            char ch2 = reader.ReadChar();
+            while (ch2 != '\0') {
+                builder2.Append(ch2);
+                ch2 = reader.ReadChar();
+            }
+            return builder2.ToString();
+        }
+
         public static void writeCAString(BinaryWriter writer, string value)
         {
             writer.Write((ushort) value.Length);
