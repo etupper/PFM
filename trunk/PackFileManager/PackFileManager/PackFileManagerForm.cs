@@ -548,7 +548,6 @@ namespace PackFileManager
             // toolStripMenuItem7
             // 
             toolStripMenuItem7.Name = "toolStripMenuItem7";
-            toolStripMenuItem7.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             toolStripMenuItem7.Size = new System.Drawing.Size (199, 22);
             toolStripMenuItem7.Text = "Open External...";
             toolStripMenuItem7.Click += new System.EventHandler (openFileToolStripMenuItem_Click);
@@ -894,7 +893,6 @@ namespace PackFileManager
             // openFileToolStripMenuItem
             // 
             openFileToolStripMenuItem.Name = "openFileToolStripMenuItem";
-            openFileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             openFileToolStripMenuItem.Size = new System.Drawing.Size (199, 22);
             openFileToolStripMenuItem.Text = "Open External...";
             openFileToolStripMenuItem.Click += new System.EventHandler (openFileToolStripMenuItem_Click);
@@ -1558,7 +1556,7 @@ namespace PackFileManager
                 Type = PackType.Mod,
                 Version = 0,
                 FileCount = 0,
-                ReplacedPackFileName = "",
+                ReplacedPackFileNames = new List<string>(),
                 DataStart = 0x20
             };
             CurrentPackFile = new PackFile("Untitled.pack", header);
