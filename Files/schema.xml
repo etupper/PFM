@@ -973,7 +973,8 @@
     <field name='unknown' type='string' />
     <field name='unknown' type='string' />
     <field name='unknown' type='boolean' />
-  </table>
+    <field name='unknown' type='string' version_start='2' />  
+</table>
   <table name='cai_personalities_budget_allocation_policy_junctions_tables' >
     <field name='unknown' type='string' pk='true' />
     <field name='unknown' type='string' pk='true' />
