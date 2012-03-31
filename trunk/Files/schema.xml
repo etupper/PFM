@@ -1408,6 +1408,7 @@
     <field name='unknown2' type='string' />
     <field name='unknown3' type='int' />
     <field name='unknown4' type='float' />
+    <field name='unknown5' type='boolean' version_start='1' />
   </table>
   <table name='character_skill_node_links_tables' >
     <field name='unknown1' type='string' />
