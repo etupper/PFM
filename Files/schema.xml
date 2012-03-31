@@ -511,14 +511,14 @@
     <field fkey='battlefield_buildings_tables.Battlefield_Building_ID' name='Refined bridge' type='string' />
   </table>
   <table name='battle_cameras_tables' >
-    <field name='unknown1' type='string' pk='true' />
-    <field name='unknown2' type='float' />
-    <field name='unknown3' type='float' />
+    <field name='Battle Type' type='string' pk='true' />
+    <field name='Max Zoom Out' type='float' />
+    <field name='unknown' type='float' />
     <field name='unknown4' type='float' />
-    <field name='unknown5' type='float' />
-    <field name='unknown6' type='float' />
-    <field name='unknown7' type='float' />
-    <field name='unknown8' type='float' />
+    <field name='Min Zoom Out' type='float' />
+    <field name='Move Speed Adjust' type='float' />
+    <field name='Move at Height 0 Factor' type='float' />
+    <field name='Rotation Speed Adjust' type='float' />
     <field name='unknown9' type='float' />
   </table>
   <table name='battle_cities_tables' >
@@ -964,7 +964,7 @@
     <field name='unknown' type='string' />
     <field name='unknown' type='string' />
     <field name='unknown' type='string' />
-    <field fkey='campaign_ai_personalities_tables.Campaign Personality ID' name='unknown' type='string' />
+    <field name='unknown' type='string' />
     <field name='unknown' type='string' />
     <field name='unknown' type='string' />
     <field name='unknown' type='string' />
@@ -1918,8 +1918,8 @@
     <field name='Defending Text' type='string' version_start='3' />
     <field name='unknown49' type='boolean' version_start='3' />
     <field name='Faction Type' type='string' version_start='5' />
-    <field name='unknown' type='string' version_start='7' />
-    <field name='unknown' type='string' version_start='7' />
+    <field name='unknown' type='optstring' version_start='7' />
+    <field name='unknown' type='optstring' version_start='7' />
     <field name='unknown' type='string' version_start='7' />
   </table>
   <table name='family_relationship_types_tables' >
