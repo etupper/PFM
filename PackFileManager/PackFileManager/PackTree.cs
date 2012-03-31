@@ -89,6 +89,8 @@ namespace PackFileManager {
                     } catch (Exception e) {
                         Console.WriteLine(e);
                     }
+                } else {
+                    BackColor = Color.Red;
                 }
             }
         }

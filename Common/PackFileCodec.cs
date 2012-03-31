@@ -106,21 +106,19 @@ namespace Common {
 				UInt32 indexSize = 0;
 				List<PackedFile> toWrite = new List<PackedFile> ((int)packFile.Header.FileCount);
 				foreach (PackedFile file in packFile.Files) {
-					if (!file.Deleted) {
-						if (file.Size != 0) {
-							indexSize += (uint)file.FullPath.Length + 5;
-                            switch (packFile.Header.Type) {
-                                case PackType.BootX:
-                                case PackType.Shader1:
-                                case PackType.Shader2:
-                                    indexSize += 8;
-                                    break;
-                                default:
-                                    break;
-                            }
-                            toWrite.Add(file);
+                    if (!file.Deleted) {
+                        indexSize += (uint)file.FullPath.Length + 5;
+                        switch (packFile.Header.Type) {
+                            case PackType.BootX:
+                            case PackType.Shader1:
+                            case PackType.Shader2:
+                                indexSize += 8;
+                                break;
+                            default:
+                                break;
                         }
-					}
+                        toWrite.Add(file);
+                    }
 				}
 				writer.Write (toWrite.Count);
 				writer.Write (indexSize);
@@ -137,26 +135,27 @@ namespace Common {
                     writer.Write((byte)0);
                 }
 
-				// write file list
+                // pack entries are stored alphabetically in pack files
+                toWrite.Sort(new PackedFileNameComparer());
+
+                // write file list
 				string separatorString = "" + Path.DirectorySeparatorChar;
-				foreach (PackedFile file in toWrite) {
-					if (file.Size != 0) {
-						writer.Write ((int)file.Size);
-                        switch (packFile.Header.Type) {
-                            case PackType.BootX:
-                            case PackType.Shader1:
-                            case PackType.Shader2:
-                                writer.Write(file.EditTime.Ticks);
-                                break;
-                            default:
-                                break;
-                        }
-						// pack pathes use backslash, we replaced when reading
-						string packPath = file.FullPath.Replace (separatorString, "\\");
-						writer.Write (packPath.ToCharArray ());
-						writer.Write ('\0');
-					}
-				}
+                foreach (PackedFile file in toWrite) {
+                    writer.Write((int)file.Size);
+                    switch (packFile.Header.Type) {
+                        case PackType.BootX:
+                        case PackType.Shader1:
+                        case PackType.Shader2:
+                            writer.Write(file.EditTime.Ticks);
+                            break;
+                        default:
+                            break;
+                    }
+                    // pack pathes use backslash, we replaced when reading
+                    string packPath = file.FullPath.Replace(separatorString, "\\");
+                    writer.Write(packPath.ToCharArray());
+                    writer.Write('\0');
+                }
 				foreach (PackedFile file in toWrite) {
 					if (file.Size > 0) {
 						byte[] bytes = file.Data;
@@ -181,6 +180,14 @@ namespace Common {
                 this.PackedFileLoaded(packed);
             }
         }
+    }
 
+    /*
+     * Compares two PackedFiles by name.
+     */
+    class PackedFileNameComparer : IComparer<PackedFile> {
+        public int Compare(PackedFile a, PackedFile b) {
+            return a.FullPath.CompareTo(b.FullPath);
+        }
     }
 }
