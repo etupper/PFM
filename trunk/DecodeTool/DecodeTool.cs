@@ -13,6 +13,7 @@ namespace DecodeTool {
         int offset = 0;
         int displayIndex = 0;
         string typeName = "";
+        int newFieldVersion = -1;
 
         #region Attributes
         public byte[] Bytes {
@@ -25,6 +26,15 @@ namespace DecodeTool {
 				if (formatted.Length > maxLength) 
 					formatted = formatted.Substring (0, maxLength);
 				hexView.Text = formatted;
+
+                try {
+                    using (var stream = new MemoryStream(value)) {
+                        DBFileHeader header = PackedFileDbCodec.readHeader(stream);
+                        newFieldVersion = header.Version;
+                    }
+                } catch {
+                    newFieldVersion = -1;
+                }
 
                 showInPreview();
 			}
@@ -82,6 +92,9 @@ namespace DecodeTool {
 
         #region Type Management
         private void addType(FieldInfo type) {
+            if (newFieldVersion != -1) {
+                type.StartVersion = newFieldVersion;
+            }
             int insertAt = typeList.SelectedIndex;
             if (typeList.SelectedIndex != -1) {
                 types.Insert(typeList.SelectedIndex, type);
@@ -332,6 +345,10 @@ namespace DecodeTool {
                     exporter.export(DBTypeMap.Instance.typeMap);
                 }
             }
+        }
+
+        private void setButton_Click(object sender, EventArgs e) {
+            DBTypeMap.Instance.set(TypeName, types);
         }
     }
 }
