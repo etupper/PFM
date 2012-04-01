@@ -148,6 +148,7 @@
   <table name='agent_uniforms_tables'>
     <field name='Agent ID' type='string' pk='true' />
     <field name='Uniform' type='string' pk='true' />
+    <field name='Uniform' type='string' pk='true' version_start='2' />
   </table>
   <table name='agent_voice_events_junctions_tables'>
     <field name='Agent ID' type='string' pk='true' />
@@ -188,7 +189,7 @@
     <field name='Unkown' type='boolean' version_start='2' />
   </table>
   <table name='ancillaries_tables'>
-    <field name='ID' type='string' pk='true' />
+    <field fkey='ancillary_info_tables.Ancillary ID' name='Ancillary ID' type='string' pk='true' />
     <field fkey='ancillary_types_tables.Ancillary Type ID' name='icon' type='string' />
     <field name='ancillary type' type='string' />
     <field name='unknown' type='boolean' />
@@ -206,11 +207,11 @@
     <field name='unknown15' type='string' version_start='6' />
   </table>
   <table name='ancillary_included_subcultures_tables'>
-    <field fkey='ancillaries_tables.ID' name='Ancillary IDRef' type='string' pk='true' />
+    <field fkey='ancillary_info_tables.Ancillary ID' name='Ancillary IDRef' type='string' pk='true' />
     <field fkey='cultures_subcultures_tables.Subculture ID' name='Subculture IDRef' type='string' pk='true' />
   </table>
   <table name='ancillary_info_tables'>
-    <field fkey='ancillaries_tables.ID' name='Ancillary IDRef' type='string' />
+    <field fkey='ancillaries_tables.ID' name='Ancillary ID' type='string' />
   </table>
   <table name='ancillary_to_ability_effects_tables'>
     <field name='Unused' type='string' />
@@ -226,7 +227,7 @@
     <field name='Value' type='int' />
   </table>
   <table name='ancillary_to_effects_tables'>
-    <field fkey='ancillaries_tables.ID' name='Ancillary IDRef' type='string' pk='true' />
+    <field fkey='ancillary_info_tables.Ancillary ID' name='Ancillary IDRef' type='string' pk='true' />
     <field fkey='effects_tables.Effect ID' name='Effect IDRef' type='string' pk='true' />
     <field name='Value' type='float' />
   </table>
@@ -235,7 +236,7 @@
     <field fkey='ancillaries_tables.ID' name='Ancillary IDRef' type='string' pk='true' />
   </table>
   <table name='ancillary_to_included_agents_tables'>
-    <field fkey='ancillaries_tables.ID' name='Ancillary IDRef' type='string' pk='true' />
+    <field fkey='ancillary_info_tables.Ancillary ID' name='Ancillary IDRef' type='string' pk='true' />
     <field fkey='agents_tables.Agent ID' name='Agent IDRef' type='string' pk='true' />
   </table>
   <table name='ancillary_types_tables'>
@@ -251,23 +252,25 @@
     <field name='Skill Group' type='string' />
     <field name='skill_level' type='int' />
     <field name='bonus_skill' type='string' />
+    <field name='unknown' type='string' version_start='1' />
   </table>
   <table name='avatar_aesthetic_sets_tables'>
-    <field name='Ancillary' type='optstring' />
+    <field fkey='ancillary_info_tables.Ancillary ID' name='Ancillary IDRef' type='optstring' />
     <field name='Set Name' type='string' />
     <field name='Screen Name' type='string' />
     <field name='Unknown' type='string' />
+    <field fkey='avatar_product_lookups_tables.Product ID' name='Product IDRef' type='string' version_start='4' />
   </table>
   <table name='avatar_aesthetic_sources_tables'>
-    <field name='unknown' type='string' pk='true' />
+    <field name='Source ID' type='string' pk='true' />
   </table>
   <table name='avatar_aesthetics_tables'>
     <field name='unknown1' type='optstring' />
     <field name='unknown2' type='optstring' />
     <field name='unknown3' type='string' />
     <field name='unknown4' type='optstring' />
-    <field name='unknown5' type='optstring' />
-    <field name='unknown6' type='optstring' />
+    <field fkey='avatar_aesthetic_sources_tables.Source ID' name='Source IDRef' type='optstring' />
+    <field fkey='avatar_drop_probabilities_tables.Probability ID' name='Probability IDRef' type='optstring' />
     <field name='unknown7' type='optstring' />
     <field name='unknown8' type='string' />
     <field name='unknown9' type='string' />
@@ -277,26 +280,27 @@
     <field name='unknown13' type='boolean' />
     <field name='unknown14' type='int' />
     <field name='unknown15' type='optstring' />
+    <field name='unknown' type='string' version_start='7' />
   </table>
   <table name='avatar_aesthetics_localised_source_lookups_tables'>
     <field name='unknown1' type='string' pk='true' />
     <field name='unknown2' type='optstring' />
   </table>
   <table name='avatar_ancillaries_descriptions_tables'>
-    <field name='unknown1' type='string' pk='true' />
-    <field name='unknown2' type='int' />
+    <field fkey='ancillary_info_tables.Ancillary ID' name='Ancillary IDRef' type='string' pk='true' />
+    <field name='Level' type='int' />
   </table>
   <table name='avatar_ancillaries_localised_source_lookups_tables'>
     <field name='unknown1' type='string' pk='true' />
     <field name='unknown2' type='string' />
   </table>
   <table name='avatar_ancillaries_to_categories_juncs_tables'>
-    <field name='Ancillary ID' type='string' />
+    <field fkey='ancillary_info_tables.Ancillary ID' name='Ancillary ID' type='string' />
     <field name='Category ID' type='string' />
   </table>
   <table name='avatar_ancillaries_to_effects_junctions_tables'>
-    <field name='effect ID' type='string' />
-    <field name='anc ID' type='string' />
+    <field fkey='avatar_effects_tables.Effect ID' name='effect ID' type='string' />
+    <field fkey='ancillary_info_tables.Ancillary ID' name='Ancillary IDRef' type='string' />
     <field name='unknown3' type='float' />
     <field name='unknown4' type='boolean' />
     <field name='unknown5' type='boolean' />
@@ -313,9 +317,9 @@
     <field name='unknown' type='optstring' />
     <field name='unknown' type='optstring' />
     <field name='unknown' type='optstring' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='boolean' />
+    <field name='unknown' type='optstring' />
+    <field name='unknown' type='optstring' />
+    <field name='unknown' type='optstring' />
     <field name='unknown' type='optstring' />
     <field name='unknown' type='optstring' />
     <field name='unknown' type='optstring' />
@@ -336,6 +340,8 @@
     <field name='unknown' type='string' />
     <field name='unknown' type='optstring' />
     <field name='unknown' type='int' />
+    <field name='unknown' type='string' />
+    <field name='unknown' type='string' version_start='8' />
   </table>
   <table name='avatar_clan_specialisms_tables'>
     <field name='unknown1' type='string' pk='true' />
@@ -345,6 +351,7 @@
     <field name='unknown1' type='string' pk='true' />
     <field name='unknown2' type='string' />
     <field name='unknown3' type='optstring' />
+    <field fkey='avatar_product_lookups_tables.Product ID' name='Product IDRef' type='string' version_start='2' />
   </table>
   <table name='avatar_dojos_tables'>
     <field name='unknown1' type='string' />
@@ -353,14 +360,14 @@
     <field name='unknown4' type='int' />
     <field name='unknown5' type='optstring' />
     <field name='unknown6' type='optstring' />
-    <field name='unknown7' type='string' version_start='2' />
+    <field fkey='avatar_product_lookups_tables.Product ID' name='Product IDRef' type='string' version_start='2' />
   </table>
   <table name='avatar_drop_probabilities_tables'>
-    <field name='unknown1' type='float' />
-    <field name='unknown2' type='string' />
+    <field name='Probability' type='float' />
+    <field name='Probability ID' type='string' />
   </table>
   <table name='avatar_effects_tables'>
-    <field name='unknown1' type='string' pk='true' />
+    <field name='Effect ID' type='string' pk='true' />
   </table>
   <table name='avatar_faction_flags_tables'>
     <field name='unknown1' type='boolean' />
@@ -372,7 +379,7 @@
     <field name='Icon' type='string' />
     <field name='unknown' type='string' version_start='1' />
     <field name='unknown' type='int' version_start='3' />
-    <field name='Product ID' type='string' version_start='3' />
+    <field fkey='avatar_product_lookups_tables.Product ID' name='Product IDRef' type='string' version_start='3' />
   </table>
   <table name='avatar_gempei_dojos_tables'>
     <field name='Type' type='string' />
@@ -383,8 +390,7 @@
     <field name='unknown2' type='optstring' />
   </table>
   <table name='avatar_product_lookups_tables'>
-    <field name='unknown' type='string' />
-    <field name='unknown' type='string' />
+    <field name='Product ID' type='string' />
   </table>
   <table name='avatar_ranks_tables'>
     <field name='unknown1' type='int' />
@@ -400,19 +406,19 @@
     <field name='Product ID' type='string' version_start='3' />
   </table>
   <table name='avatar_skill_chain_lookups_tables'>
-    <field name='unknown1' type='string' pk='true' />
+    <field name='Skill Lookup ID' type='string' pk='true' />
   </table>
   <table name='avatar_skill_effects_juncs_tables'>
-    <field name='unknown1' type='string' />
+    <field fkey='avatar_effects_tables.Effect ID' name='Effect IDRef' type='string' />
     <field name='unknown2' type='float' />
-    <field name='unknown3' type='string' />
+    <field fkey='avatar_skills_tables.Skill ID' name='Skill IDRef' type='string' />
     <field name='unknown4' type='boolean' />
-    <field name='unknown5' type='optstring' version_start='3' />
+    <field fkey='avatar_unit_group_ids_tables.Unit Group ID' name='Unit Group IDRef' type='optstring' version_start='3' />
   </table>
   <table name='avatar_skill_prerequisites_tables'>
-    <field name='unknown1' type='float' />
-    <field name='unknown2' type='string' />
-    <field name='unknown3' type='string' />
+    <field name='unknown1' type='int' />
+    <field fkey='avatar_skills_tables.Skill ID' name='Prerequisite Skill IDRef' type='string' />
+    <field fkey='avatar_skills_tables.Skill ID' name='Skill IDRef' type='string' />
   </table>
   <table name='avatar_skill_sets_tables'>
     <field name='unknown1' type='string' pk='true' />
@@ -420,16 +426,16 @@
     <field name='unknown3' type='boolean' />
   </table>
   <table name='avatar_skill_tree_traits_tables'>
-    <field name='unknown1' type='string' pk='true' />
-    <field name='unknown2' type='string' />
-    <field name='unknown3' type='int' />
+    <field fkey='avatar_traits_tables.Trait ID' name='Trait IDRef' type='string' pk='true' />
+    <field fkey='avatar_skill_chain_lookups_tables.Skill Lookup ID' name='Skill Lookup IDRef' type='string' />
+    <field name='Effect' type='int' />
   </table>
   <table name='avatar_skills_tables'>
-    <field name='unknown1' type='string' pk='true' />
-    <field name='unknown2' type='int' />
-    <field name='unknown3' type='string' />
+    <field name='Skill ID' type='string' pk='true' />
+    <field name='Level' type='int' />
+    <field fkey='avatar_skill_chain_lookups_tables.Skill Lookup ID' name='Skill Lookup IDRef' type='string' />
     <field name='unknown4' type='string' />
-    <field name='unknown5' type='optstring' />
+    <field fkey='avatar_skills_tables.Skill ID' name='Prerequisite Skill IDRef' type='optstring' />
     <field name='unknown6' type='boolean' />
     <field name='unknown7' type='optstring' />
     <field name='unknown8' type='int' />
@@ -443,8 +449,8 @@
     <field name='unknown1' type='string' pk='true' />
   </table>
   <table name='avatar_skills_to_units_juncs_tables'>
-    <field name='unknown1' type='string' pk='true' />
-    <field name='unknown2' type='string' pk='true' />
+    <field fkey='avatar_skills_tables.Skill ID' name='Skill IDRef' type='string' pk='true' />
+    <field fkey='units_tables.Unit ID' name='Unit IDRef' type='string' pk='true' />
   </table>
   <table name='avatar_special_abilities_tables'>
     <field name='unknown1' type='optstring' />
@@ -452,22 +458,24 @@
     <field name='unknown3' type='string' />
   </table>
   <table name='avatar_startpos_units_tables'>
-    <field name='unknown1' type='string' pk='true' />
+    <field fkey='units_tables.Unit ID' name='Unit IDRef' type='string' pk='true' />
+    <field fkey='avatar_product_lookups_tables.Product ID' name='Product IDRef' type='string' version_start='1' />
   </table>
   <table name='avatar_traits_tables'>
-    <field name='unknown1' type='string' pk='true' />
+    <field name='Trait ID' type='string' pk='true' />
     <field name='unknown2' type='int' version_start='2' />
   </table>
   <table name='avatar_unit_group_ids_tables'>
-    <field name='unknown1' type='string' pk='true' />
+    <field name='Unit Group ID' type='string' pk='true' />
   </table>
   <table name='avatar_unit_group_recruitment_limits_tables'>
-    <field name='unknown1' type='string' pk='true' />
-    <field name='unknown2' type='float' />
+    <field name='unknown' type='int' />
+    <field name='unknown' type='string' />
+    <field fkey='avatar_unit_group_ids_tables.Unit Group ID' name='Unit Group IDRef' type='string' />
   </table>
   <table name='avatar_unit_groups_tables'>
-    <field name='unknown1' type='string' pk='true' />
-    <field name='unknown2' type='string' pk='true' />
+    <field fkey='avatar_unit_group_ids_tables.Unit Group ID' name='Unit Group IDRef' type='string' pk='true' />
+    <field fkey='units_tables.Unit ID' name='Unit IDRef' type='string' pk='true' />
   </table>
   <table name='avatar_unit_info_card_abilites_strings_tables'>
     <field name='unknown1' type='string' pk='true' />
@@ -480,30 +488,30 @@
     <field name='campaign' type='string' />
   </table>
   <table name='avatar_unit_ui_categories_tables'>
-    <field name='unknown1' type='string' pk='true' />
+    <field name='Avatar UI Category ID' type='string' pk='true' />
   </table>
   <table name='avatar_units_tables'>
-    <field name='unknown1' type='string' pk='true' />
+    <field fkey='units_tables.Unit ID' name='Unit IDRef' type='string' pk='true' />
     <field name='unknown2' type='float' />
     <field name='unknown3' type='boolean' />
     <field name='unknown4' type='int' />
-    <field name='unknown6' type='string' version_start='3' />
+    <field fkey='avatar_unit_ui_categories_tables.Avatar UI Category ID' name='Avatar UI Category IDRef' type='string' version_start='3' />
     <field name='unknown7' type='int' version_start='3' />
     <field name='unknown8' type='boolean' version_start='4' />
-    <field name='unknown9' type='string' version_start='4' />
+    <field fkey='avatar_product_lookups_tables.Product ID' name='Product IDRef' type='string' version_start='4' />
     <field name='unknown8' type='boolean' version_start='8' />
     <field name='unknown9' type='optstring' version_start='8' />
   </table>
   <table name='avatar_xp_rewards_tables'>
     <field name='unknown1' type='string' pk='true' />
     <field name='unknown2' type='float' />
-    <field name='campaign' type='string' version_start='2' />
+    <field fkey='avatar_product_lookups_tables.Product ID' name='campaign' type='string' version_start='2' />
   </table>
   <table name='battle_autoresolver_balances_tables'>
     <field name='1' type='float' />
     <field name='2' type='float' />
-    <field name='1a' type='string' />
-    <field name='1b' type='string' />
+    <field fkey='unit_class_tables.Class ID' name='1a' type='string' />
+    <field fkey='unit_class_tables.Class ID' name='1b' type='string' />
   </table>
   <table name='battle_bridge_subculture_jcts_tables'>
     <field name='Subculture IDRef' type='string' pk='true' />
@@ -701,7 +709,7 @@
   <table name='battle_type_unit_to_faction_presets_tables'>
     <field name='unknown' type='string' />
     <field name='unknown2' type='int' />
-    <field fkey='units_tables.Unit_ID' name='Unit_IDRef' type='string' />
+    <field fkey='units_tables.Unit ID' name='Unit_IDRef' type='string' />
     <field name='unknown3' type='int' />
   </table>
   <table name='battle_types_tables'>
@@ -899,7 +907,7 @@
   </table>
   <table name='building_units_allowed_tables'>
     <field fkey='building_levels_tables.Building ID' name='Building_IDRef' type='string' pk='true' />
-    <field fkey='units_tables.Unit_ID' name='Unit' type='string' pk='true' />
+    <field fkey='units_tables.Unit ID' name='Unit' type='string' pk='true' />
     <field name='Experience' type='int' />
     <field name='Unknown' type='boolean' />
     <field name='unknown5' type='int' version_start='2' />
@@ -1682,7 +1690,7 @@
   <table name='effect_bonus_value_unit_record_junctions_tables'>
     <field name='unknown1' type='string' pk='true' />
     <field fkey='effects.Effect ID' name='unknown2' type='string' pk='true' />
-    <field fkey='units_tables.Unit_ID' name='unknown3' type='string' pk='true' />
+    <field fkey='units_tables.Unit ID' name='unknown3' type='string' pk='true' />
   </table>
   <table name='effect_bundles_tables'>
     <field name='Effect Bundle ID' type='string' pk='true' />
@@ -2838,7 +2846,7 @@
   </table>
   <table name='quotes_tables'>
     <field name='Text' type='string' />
-    <field name='Author' type='string' />
+    <field fkey='quotes_people_tables.Quote Person ID' name='Quote Person IDRef' type='string' />
     <field name='Quote_ID' type='string' pk='true' />
     <field name='unknown1' type='optstring' version_start='1' />
   </table>
@@ -2858,7 +2866,7 @@
     <field name='unknown2' type='int' />
     <field name='unknown7' type='int' />
     <field name='unknown8' type='int' />
-    <field name='unknown9' type='string' />
+    <field name='Region Group ID' type='string' />
     <field name='unknown8' type='int' />
   </table>
   <table name='region_unit_resources_tables'>
@@ -2866,19 +2874,19 @@
     <field name='Screen name?' type='string' />
   </table>
   <table name='regions_tables'>
-    <field name='Name' type='string' pk='true' />
+    <field name='Region ID' type='string' pk='true' />
     <field fkey='regions_continents_tables.Continent ID' name='Continent' type='string' />
     <field name='R' type='int' />
     <field name='G' type='int' />
     <field name='B' type='int' />
-    <field name='unknown6' type='string' version_start='1' />
+    <field name='Province Name' type='string' version_start='1' />
   </table>
   <table name='regions_continents_tables'>
     <field name='Continent ID' type='string' pk='true' />
   </table>
   <table name='regions_to_region_groups_junctions_tables'>
-    <field name='unknown1' type='string' pk='true' />
-    <field name='unknown2' type='string' />
+    <field fkey='regions_tables.Region ID' name='Region IDRef' type='string' pk='true' />
+    <field fkey='region_groups_tables.Region Group ID' name='Region Group IDRef' type='string' />
   </table>
   <table name='religion_conversion_mods_tables'>
     <field name='Religion 1 IDRef' type='string' pk='true' />
@@ -2997,7 +3005,7 @@
     <field name='unknown2' type='int' />
   </table>
   <table name='stances_tables'>
-    <field name='Diplomatic_stance' type='string' pk='true' />
+    <field name='Diplomatic stance' type='string' pk='true' />
     <field name='Diplomatic_stance_behaviour_x0020__x0028__x003F__x0029_' type='string' />
   </table>
   <table name='start_pos_faction_effect_bundles_tables'>
@@ -3030,7 +3038,7 @@
     <field name='unknown6' type='int' version_start='2' />
   </table>
   <table name='subtitles_tables'>
-    <field name='unknown1' type='string' pk='true' />
+    <field name='Subtitle ID' type='string' pk='true' />
     <field name='unknown2' type='string' />
   </table>
   <table name='taxes_classes_tables'>
@@ -3054,7 +3062,7 @@
     <field name='Income_multiplier' type='int' />
   </table>
   <table name='technologies_tables'>
-    <field name='Technologies IDRef' type='string' pk='true' />
+    <field name='Technology ID' type='string' pk='true' />
     <field fkey='building_levels_tables.Building ID' name='Building IDRef' type='string' />
     <field name='Tech_Tree_Position' type='int' />
     <field name='Research_Points' type='int' />
@@ -3070,7 +3078,7 @@
     <field name='index' type='int' version_start='2' />
   </table>
   <table name='technology_categories_tables'>
-    <field name='unknown1' type='string' pk='true' />
+    <field name='Technology Category ID' type='string' pk='true' />
     <field name='unknown2' type='int' />
     <field name='unknown3' type='optstring' version_start='1' />
   </table>
@@ -3084,25 +3092,25 @@
     <field fkey='factions_tables.Faction IDRef' name='Faction IDRef' type='string' pk='true' />
   </table>
   <table name='technology_node_links_tables'>
-    <field name='unknown1' type='string' />
+    <field fkey='technology_nodes_tables.Technology Node ID' name='Node ID' type='string' />
     <field name='unknown2' type='int' />
-    <field name='unknown3' type='string' />
-    <field name='unknown4' type='int' />
+    <field fkey='technology_nodes_tables.Technology Node ID' name='Parent Node ID' type='string' />
+    <field name='unknown' type='int' />
     <field name='unknown5' type='int' />
   </table>
   <table name='technology_node_sets_tables'>
-    <field name='unknown0' type='optstring' />
+    <field fkey='cdir_campaign_junctions_tables.Campaign' name='Campaign Ref' type='optstring' />
     <field name='unknown2' type='optstring' />
     <field name='unknown3' type='string' />
-    <field name='unknown4' type='string' />
+    <field fkey='technology_categories_tables.Technology Category ID' name='Technology Category IDRef' type='string' />
   </table>
   <table name='technology_nodes_tables'>
     <field name='unknown1' type='boolean' />
     <field name='unknown2' type='boolean' />
     <field name='unknown3' type='int' />
-    <field name='unknown4' type='string' />
+    <field name='Technology Node ID' type='string' />
     <field name='unknown5' type='string' />
-    <field name='unknown6' type='string' />
+    <field fkey='technology_categories_tables.Technology Category ID' name='Technology Category IDRef' type='string' />
     <field name='unknown7' type='float' />
   </table>
   <table name='technology_required_building_levels_junctions_tables'>
@@ -3200,7 +3208,7 @@
   </table>
   <table name='trigger_effects_tables'>
     <field name='unknown' type='string' />
-    <field name='unknown' type='string' />
+    <field name='Trigger Name' type='string' />
     <field fkey='character_traits_tables.Trait ID' name='unknown' type='string' />
     <field name='unknown4' type='int' />
     <field name='unknown5' type='int' />
@@ -3210,7 +3218,7 @@
   </table>
   <table name='ui_unit_stat_to_classes_tables'>
     <field name='unknown1' type='string' pk='true' />
-    <field name='unknown2' type='string' pk='true' />
+    <field fkey='unit_class_tables.Class ID' name='Class IDRef' type='string' pk='true' />
     <field name='unknown3' type='int' />
   </table>
   <table name='ui_unit_stats_tables'>
@@ -3247,7 +3255,7 @@
     <field name='unknown8' type='optstring' version_start='3' />
   </table>
   <table name='unit_abilities_tables'>
-    <field name='Ability IDRef' type='string' pk='true' />
+    <field name='Ability ID' type='string' pk='true' />
     <field name='Unknown' type='boolean' />
     <field name='Replaced Ability IDRef' type='optstring' />
     <field name='Disabled by Default' type='boolean' />
@@ -3260,7 +3268,7 @@
     <field name='unknown2' type='optstring' />
   </table>
   <table name='unit_category_tables'>
-    <field name='Category IDRef' type='string' pk='true' />
+    <field name='Category ID' type='string' pk='true' />
     <field name='Unit Category String' type='optstring' version_start='1' />
     <field name='unknown1' type='float' version_start='2' />
     <field name='unknown2' type='float' version_start='2' />
@@ -3281,15 +3289,15 @@
     <field fkey='unit_abilities_tables.Ability IDRef' name='Unit Ability IDRef' type='string' pk='true' />
   </table>
   <table name='unit_experience_threshold_modifiers_tables'>
-    <field name='unknown1' type='string' pk='true' />
-    <field name='unknown2' type='float' />
+    <field fkey='unit_stats_land_tables.Unit IDRef' name='Unit IDRef' type='string' pk='true' />
+    <field name='Modifier' type='float' />
   </table>
   <table name='unit_experience_thresholds_tables'>
     <field name='Experience Threshold' type='string' pk='true' />
-    <field name='Value' type='int' />
+    <field name='Threshold' type='int' />
   </table>
   <table name='unit_info_card_abilities_strings_tables'>
-    <field name='Ability_String' type='string' pk='true' />
+    <field name='Ability IDRef' type='string' pk='true' />
     <field name='unknown2' type='optstring' version_start='1' />
     <field name='unknown3' type='optstring' version_start='1' />
   </table>
@@ -3307,11 +3315,11 @@
     <field name='unknown3' type='int' />
   </table>
   <table name='unit_required_technology_junctions_tables'>
-    <field fkey='units_tables.Unit_ID' name='Unit IDRef' type='string' pk='true' />
-    <field fkey='technologies_tables.Technologies IDRef' name='Tech IDRef' type='string' pk='true' />
+    <field fkey='units_tables.Unit ID' name='Unit IDRef' type='string' pk='true' />
+    <field fkey='technologies_tables.Technology ID' name='Technology IDRef' type='string' pk='true' />
   </table>
   <table name='unit_special_abilities_tables'>
-    <field name='unknown1' type='string' pk='true' />
+    <field name='Ability ID' type='string' pk='true' />
     <field name='Duration' type='float' />
     <field name='Cooldown' type='float' />
     <field name='Uses' type='int' />
@@ -3326,7 +3334,7 @@
     <field name='unknown13' type='boolean' version_start='6' />
   </table>
   <table name='unit_stats_land_tables'>
-    <field name='Unit IDRef' type='string' />
+    <field fkey='units_tables.Unit ID' name='Unit IDRef' type='string' />
     <field name='Unit Size' type='int' />
     <field name='Number of Horses' type='int' />
     <field name='Number of Artillery' type='int' />
@@ -3460,7 +3468,7 @@
     <field name='unknown' type='float' />
   </table>
   <table name='unit_stats_naval_tables'>
-    <field fkey='units_tables.Unit_ID' name='Unit IDRef' type='string' pk='true' />
+    <field fkey='units_tables.Unit ID' name='Unit IDRef' type='string' pk='true' />
     <field name='Morale' type='int' />
     <field name='Hull_Strength' type='int' />
     <field name='Crew_Size' type='int' />
@@ -3603,7 +3611,7 @@
     <field name='unknown' type='boolean' version_start='16' />
   </table>
   <table name='unit_stats_naval_crew_tables'>
-    <field name='Crew_ID' type='string' pk='true' />
+    <field name='Crew ID' type='string' pk='true' />
     <field name='unknown1' type='int' />
     <field name='Accuracy' type='int' />
     <field name='Melee_Skill' type='int' />
@@ -3633,20 +3641,13 @@
   </table>
   <table name='unit_stats_naval_crew_to_ship_categories_tables'>
     <field name='Ship Category' type='string' pk='true' />
-    <field name='Crew Unit IDRef' type='string' />
-    <field name='Seamen Crew Unit IDRef' type='string' />
-    <field name='Gun Crew Unit IDRef' type='string' />
-    <field name='Admiral Crew Unit IDRef' type='string' />
-    <field name='Commodore Crew Unit IDRef' type='string' />
-    <field name='unknown7' type='int' />
-    <field name='unknown8' type='int' />
-    <field name='unknown9' type='int' />
-    <field name='unknown10' type='int' />
-    <field name='unknown11' type='int' />
-    <field name='unknown12' type='int' />
-    <field name='unknown13' type='int' />
-    <field name='unknown14' type='boolean' />
-    <field name='unknown15' type='boolean' />
+    <field fkey='unit_stats_naval_crew_tables.Crew ID' name='Crew IDRef' type='string' />
+    <field fkey='unit_stats_naval_crew_tables.Crew ID' name='Seamen IDRef' type='string' />
+    <field fkey='unit_stats_naval_crew_tables.Crew ID' name='Gun Crew IDRef' type='string' />
+    <field fkey='unit_stats_naval_crew_tables.Crew ID' name='Admiral Unit IDRef' type='string' />
+    <field fkey='unit_stats_naval_crew_tables.Crew ID' name='Commodore IDRef' type='string' />
+    <field fkey='unit_stats_naval_crew_tables.Crew ID' name='Officer Unit IDRef' type='optstring' />
+    <field name='unknown' type='optstring' />
   </table>
   <table name='unit_stats_naval_experience_bonuses_tables'>
     <field name='Level' type='string' />
@@ -3659,8 +3660,8 @@
     <field name='unknown8' type='float' />
   </table>
   <table name='unit_to_unit_abilities_junctions_tables'>
-    <field fkey='units_tables.Unit_ID' name='Unit IDRef' type='string' pk='true' />
-    <field fkey='unit_abilities_tables.Ability IDRef' name='Unit Ability IDRef' type='string' pk='true' />
+    <field fkey='units_tables.Unit ID' name='Unit IDRef' type='string' pk='true' />
+    <field fkey='unit_abilities_tables.Ability ID' name='Ability IDRef' type='string' pk='true' />
   </table>
   <table name='unit_voice_categories_tables'>
     <field name='unknown1' type='string' pk='true' />
@@ -3672,9 +3673,9 @@
     <field name='unknown4' type='string' />
   </table>
   <table name='units_tables'>
-    <field name='Unit_ID' type='string' pk='true' />
+    <field name='Unit ID' type='string' pk='true' />
     <field name='Screen_Name' type='string' />
-    <field fkey='unit_category_tables.Category IDRef' name='Category' type='string' />
+    <field fkey='unit_category_tables.Category ID' name='Category' type='string' />
     <field fkey='unit_class_tables.Class ID' name='Class' type='string' />
     <field name='MP_Cost_Early' type='int' />
     <field name='MP_Cost_Late' type='int' version_start='2' />
@@ -3689,7 +3690,7 @@
     <field name='Localisation_Key' type='string' />
     <field name='Region_IDRef' type='optstring' />
     <field name='Unit_Limit' type='int' />
-    <field name='MP_Category' type='string' />
+    <field fkey='unit_category_tables.Category ID' name='MP_Category' type='string' />
     <field name='Early_Availability' type='boolean' />
     <field name='Related_with_x0020_Early_x0020_availability' type='boolean' />
     <field name='Late_Availability' type='boolean' />
@@ -3712,22 +3713,22 @@
     <field name='unknown' type='boolean' version_start='13' />
   </table>
   <table name='units_to_exclusive_faction_permissions_tables'>
-    <field fkey='units_tables.Unit_ID' name='Unit IDRef' type='string' pk='true' />
+    <field fkey='units_tables.Unit ID' name='Unit IDRef' type='string' pk='true' />
     <field fkey='factions_tables.Faction IDRef' name='Faction IDRef' type='string' pk='true' />
     <field name='unknown' type='boolean' />
   </table>
   <table name='units_to_gov_type_permissions_tables'>
-    <field fkey='units_tables.Unit_ID' name='Unit IDRef' type='string' />
+    <field fkey='units_tables.Unit ID' name='Unit IDRef' type='string' />
     <field fkey='government_types_tables.Government ID' name='Government IDRef' type='string' />
     <field name='unknown' type='string' />
     <field name='unknown' type='string' />
   </table>
   <table name='units_to_gov_types_conversion_jcts_tables'>
     <field name='unknown' type='string' />
-    <field fkey='units_tables.Unit_ID' name='unknown' type='string' />
+    <field fkey='units_tables.Unit ID' name='unknown' type='string' />
   </table>
   <table name='units_to_groupings_military_permissions_tables'>
-    <field fkey='units_tables.Unit_ID' name='Unit IDRef' type='string' pk='true' />
+    <field fkey='units_tables.Unit ID' name='Unit IDRef' type='string' pk='true' />
     <field fkey='groupings_military_tables.Group' name='Group' type='string' pk='true' />
   </table>
   <table name='units_to_special_editions_juncs_tables'>
@@ -3741,15 +3742,15 @@
     <field name='Unknown' type='string' />
   </table>
   <table name='videos_tables'>
-    <field name='unknown1' type='string' pk='true' />
+    <field name='Video Path' type='string' pk='true' />
     <field name='unknown2' type='string' />
     <field name='unknown3' type='int' />
   </table>
   <table name='videos_subtitles_junctions_tables'>
-    <field name='unknown1' type='string' />
+    <field fkey='videos_tables.Video Path' name='Video PathRef' type='string' />
     <field name='unknown2' type='int' />
     <field name='unknown3' type='int' />
-    <field name='unknown4' type='string' />
+    <field fkey='subtitles_tables.Subtitle ID' name='Subtitle IDRef' type='string' />
   </table>
   <table name='voice_events_tables'>
     <field name='unknown1' type='string' pk='true' />
@@ -3819,8 +3820,8 @@
     <field name='unknown4' type='int' />
   </table>
   <table name='wind_levels_tables'>
-    <field name='unknown' type='string' pk='true' />
-    <field name='unknown' type='string' />
+    <field name='Wind ID' type='string' pk='true' />
+    <field name='Wind Level' type='string' />
     <field name='unknown' type='float' />
     <field name='unknown' type='float' />
     <field name='unknown5' type='int' />
