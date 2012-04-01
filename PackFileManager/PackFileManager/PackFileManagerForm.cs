@@ -1112,6 +1112,7 @@ namespace PackFileManager
             // 
             // updateOnStartupToolStripMenuItem
             // 
+            this.updateOnStartupToolStripMenuItem.Checked = Settings.Default.UpdateOnStartup;
             this.updateOnStartupToolStripMenuItem.CheckOnClick = true;
             this.updateOnStartupToolStripMenuItem.Name = "updateOnStartupToolStripMenuItem";
             this.updateOnStartupToolStripMenuItem.Size = new System.Drawing.Size(201, 22);

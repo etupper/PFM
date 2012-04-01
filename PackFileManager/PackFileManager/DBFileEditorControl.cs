@@ -585,60 +585,65 @@ namespace PackFileManager {
                 showDBFileNotSupportedMessage("Sorry, this db file isn't supported yet.\r\n\r\nCurrently supported files:\r\n");
                 var decoder = new DecodeTool.DecodeTool { TypeName = key, Bytes = packedFile.Data };
                 decoder.ShowDialog();
-            } else {
+                if (!DBTypeMap.Instance.IsSupported(key)) {
+                    return;
+                }
+            }
+            try {
+                currentDBFile = new PackedFileDbCodec().readDbFile(packedFile);
+            } catch {
+                var decoder = new DecodeTool.DecodeTool { TypeName = key, Bytes = packedFile.Data };
+                decoder.ShowDialog();
                 try {
                     currentDBFile = new PackedFileDbCodec().readDbFile(packedFile);
                 } catch {
-                    var decoder = new DecodeTool.DecodeTool { TypeName = key, Bytes = packedFile.Data };
-                    decoder.ShowDialog();
                     return;
                 }
-
-                dataGridView.DataSource = null;
-                currentPackedFile = packedFile;
-                TypeInfo info = currentDBFile.CurrentType;
-                currentDataSet = new DataSet(info.name + "_DataSet");
-                currentDataTable = new DataTable(info.name + "_DataTable");
-                currentDataTable.Columns.Add(new DataColumn("#", Type.GetType("System.Int32")));
-                var dataGridViewColumn = new DataGridViewTextBoxColumn { DataPropertyName = "#", Visible = false };
-                dataGridView.Columns.Add(dataGridViewColumn);
-
-                int num;
-                for (num = 0; num < info.fields.Count; num++) {
-                    string columnName = num.ToString();
-                    var column = new DataColumn(columnName) {
-                        DataType =
-                            info.fields[num].TypeCode == TypeCode.Empty
-                                ? Type.GetType("System.String")
-                                : Type.GetType("System." + info.fields[num].TypeCode)
-                    };
-                    currentDataTable.Columns.Add(column);
-                    dataGridView.Columns.Add(createColumn(columnName, info.fields[num], packFile, info.fields.Count));
-                }
-
-                currentDataSet.Tables.Add(currentDataTable);
-                currentDataTable.ColumnChanged += currentDataTable_ColumnChanged;
-                currentDataTable.RowDeleting += currentDataTable_RowDeleted;
-                currentDataTable.TableNewRow += currentDataTable_TableNewRow;
-
-                for (num = 0; num < currentDBFile.Entries.Count; num++) {
-                    DataRow row = currentDataTable.NewRow();
-                    row[0] = num;
-                    for (int i = 1; i < currentDataTable.Columns.Count; i++) {
-                        int num3 = Convert.ToInt32(currentDataTable.Columns[i].ColumnName);
-                        row[i] = currentDBFile.Entries[num][num3].Value;
-                    }
-                    currentDataTable.Rows.Add(row);
-                }
-
-                dataGridView.DataSource = new BindingSource(currentDataSet, info.name + "_DataTable");
-                addNewRowButton.Enabled = true;
-                importButton.Enabled = true;
-                exportButton.Enabled = true;
-                dataGridView.Visible = true;
-                unsupportedDBErrorTextBox.Visible = false;
-                toggleFirstColumnAsRowHeader(Settings.Default.UseFirstColumnAsRowHeader);
             }
+            dataGridView.DataSource = null;
+            currentPackedFile = packedFile;
+            TypeInfo info = currentDBFile.CurrentType;
+            currentDataSet = new DataSet(info.name + "_DataSet");
+            currentDataTable = new DataTable(info.name + "_DataTable");
+            currentDataTable.Columns.Add(new DataColumn("#", Type.GetType("System.Int32")));
+            var dataGridViewColumn = new DataGridViewTextBoxColumn { DataPropertyName = "#", Visible = false };
+            dataGridView.Columns.Add(dataGridViewColumn);
+
+            int num;
+            for (num = 0; num < info.fields.Count; num++) {
+                string columnName = num.ToString();
+                var column = new DataColumn(columnName) {
+                    DataType =
+                        info.fields[num].TypeCode == TypeCode.Empty
+                            ? Type.GetType("System.String")
+                            : Type.GetType("System." + info.fields[num].TypeCode)
+                };
+                currentDataTable.Columns.Add(column);
+                dataGridView.Columns.Add(createColumn(columnName, info.fields[num], packFile, info.fields.Count));
+            }
+
+            currentDataSet.Tables.Add(currentDataTable);
+            currentDataTable.ColumnChanged += currentDataTable_ColumnChanged;
+            currentDataTable.RowDeleting += currentDataTable_RowDeleted;
+            currentDataTable.TableNewRow += currentDataTable_TableNewRow;
+
+            for (num = 0; num < currentDBFile.Entries.Count; num++) {
+                DataRow row = currentDataTable.NewRow();
+                row[0] = num;
+                for (int i = 1; i < currentDataTable.Columns.Count; i++) {
+                    int num3 = Convert.ToInt32(currentDataTable.Columns[i].ColumnName);
+                    row[i] = currentDBFile.Entries[num][num3].Value;
+                }
+                currentDataTable.Rows.Add(row);
+            }
+
+            dataGridView.DataSource = new BindingSource(currentDataSet, info.name + "_DataTable");
+            addNewRowButton.Enabled = true;
+            importButton.Enabled = true;
+            exportButton.Enabled = true;
+            dataGridView.Visible = true;
+            unsupportedDBErrorTextBox.Visible = false;
+            toggleFirstColumnAsRowHeader(Settings.Default.UseFirstColumnAsRowHeader);
         }
 
         private void pasteEvent() 
