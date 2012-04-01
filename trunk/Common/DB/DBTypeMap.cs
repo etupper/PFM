@@ -29,6 +29,20 @@ namespace Common {
             //            typeMap = new XsdParser (xsdFile).loadXsd ();
         }
 
+        public void saveToFile(string path) {
+            string filename = Path.Combine(path, SCHEMA_USER_FILE_NAME);
+            string backupName = filename + ".bak";
+            if (File.Exists(filename)) {
+                File.Copy(filename, backupName);
+            }
+            var stream = File.Create(filename);
+            new XmlExporter(stream).export(typeMap);
+            stream.Close();
+            if (File.Exists(backupName)) {
+                File.Delete(backupName);
+            }
+        }
+
         public void add(string tablename, List<TypeInfo> info) {
             //            typeMap.Add (tablename, info);
         }
