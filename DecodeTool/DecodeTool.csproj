@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -58,7 +58,9 @@
     <Compile Include="DecodeTool.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DecodeTool.Designer.cs" />
+    <Compile Include="DecodeTool.Designer.cs" >
+      <DependentUpon>DecodeTool.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="TextDisplay.cs">
       <SubType>Form</SubType>
@@ -87,5 +89,10 @@
       <Project>{9136096D-A4E5-4FF3-A041-78750164DC13}</Project>
       <Name>Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DecodeTool.resx">
+      <DependentUpon>DecodeTool.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

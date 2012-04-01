@@ -43,15 +43,8 @@ namespace Common {
             }
         }
 
-        public void add(string tablename, List<TypeInfo> info) {
-            //            typeMap.Add (tablename, info);
-        }
-
-        public void set(Dictionary<string, List<TypeInfo>> setTo) {
-            typeMap.Clear();
-            foreach (string key in setTo.Keys) {
-                add(key, setTo[key]);
-            }
+        public void set(string key, List<FieldInfo> setTo) {
+            typeMap[key] = setTo;
         }
 
         SortedDictionary<string, List<FieldInfo>> loadXmlSchema(string filename) {

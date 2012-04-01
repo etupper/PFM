@@ -28,6 +28,7 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.definitionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.more1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -53,13 +54,13 @@
             this.headerLength = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.repeatInfo = new System.Windows.Forms.Label();
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
-            //((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            //((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
@@ -106,9 +107,16 @@
             // loadToolStripMenuItem
             // 
             this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.loadToolStripMenuItem.Text = "Load";
             this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
+            // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // moreToolStripMenuItem
             // 
@@ -246,6 +254,7 @@
             // 
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.Controls.Add(this.setButton);
             this.panel2.Controls.Add(this.showTypes);
             this.panel2.Controls.Add(this.optStringType);
             this.panel2.Controls.Add(this.singleType);
@@ -260,7 +269,7 @@
             // 
             // showTypes
             // 
-            this.showTypes.Location = new System.Drawing.Point(277, 186);
+            this.showTypes.Location = new System.Drawing.Point(196, 187);
             this.showTypes.Name = "showTypes";
             this.showTypes.Size = new System.Drawing.Size(75, 23);
             this.showTypes.TabIndex = 17;
@@ -294,7 +303,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(139, 187);
+            this.button1.Location = new System.Drawing.Point(5, 187);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 13;
@@ -376,12 +385,15 @@
             this.repeatInfo.TabIndex = 9;
             this.repeatInfo.Text = "select data...";
             // 
-            // saveToolStripMenuItem
+            // setButton
             // 
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.saveToolStripMenuItem.Text = "Save";
-            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            this.setButton.Location = new System.Drawing.Point(277, 187);
+            this.setButton.Name = "setButton";
+            this.setButton.Size = new System.Drawing.Size(75, 23);
+            this.setButton.TabIndex = 18;
+            this.setButton.Text = "Set";
+            this.setButton.UseVisualStyleBackColor = true;
+            this.setButton.Click += new System.EventHandler(this.setButton_Click);
             // 
             // DecodeTool
             // 
@@ -398,11 +410,11 @@
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();
-            //((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
-            //((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
@@ -445,6 +457,7 @@
         private System.Windows.Forms.ToolStripMenuItem moreToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem more1ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.Button setButton;
 
     }
 }
