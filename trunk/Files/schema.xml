@@ -41,7 +41,7 @@
   </table>
   <table name='abilities_tables' >
     <field name='Agent Ability ID' type='string' pk='true' />
-    <field name='Associated Attribute' type='optstring' />
+    <field fkey='agent_attributes_tables.Attribute ID' name='Associated Attribute' type='optstring' />
     <field name='Type' type='string' />
     <field name='Unknown' type='boolean' />
   </table>
@@ -81,15 +81,15 @@
   </table>
   <table name='agent_attribute_situations_tables' >
     <field name='Situation' type='string' pk='true' />
-    <field fkey='agent_attributes_tables.Attribute IDRef' name='Attribute' type='string' />
+    <field fkey='agent_attributes_tables.Attribute ID' name='Attribute' type='string' />
   </table>
   <table name='agent_attributes_tables' >
-    <field name='Attribute IDRef' type='string' pk='true' />
+    <field name='Attribute ID' type='string' pk='true' />
     <field name='Pip Path' type='string' />
   </table>
   <table name='agent_culture_details_tables' >
-    <field fkey='agents_tables.Agent_ID' name='Agent IDRef' type='string' pk='true' />
-    <field name='Culture' type='string' pk='true' />
+    <field fkey='agents_tables.Agent ID' name='Agent IDRef' type='string' pk='true' />
+    <field fkey='cultures_tables.Culture ID' name='Culture' type='string' pk='true' />
     <field name='Model Path' type='string' />
     <field name='General Unit' type='optstring' />
     <field name='unknown5' type='int' version_start='3' />
@@ -99,38 +99,38 @@
     <field name='unknown9' type='optstring' version_start='3' />
   </table>
   <table name='agent_spawning_to_building_chains_tables' >
-    <field fkey='agents_tables.Agent_ID' name='Agent IDRef' type='string' pk='true' />
+    <field fkey='agents_tables.Agent ID' name='Agent IDRef' type='string' pk='true' />
     <field fkey='building_chains_tables.Building_Chain_ID' name='Building Chain IDRef' type='string' pk='true' />
     <field name='Chance' type='float' />
   </table>
   <table name='agent_spawning_to_government_types_tables' >
-    <field fkey='agents_tables.Agent_ID' name='Agent IDRef' type='string' pk='true' />
+    <field fkey='agents_tables.Agent ID' name='Agent IDRef' type='string' pk='true' />
     <field fkey='government_types_tables.Government ID' name='Government IDRef' type='string' pk='true' />
     <field name='Chance' type='float' />
   </table>
   <table name='agent_spawnings_tables' >
-    <field fkey='agents_tables.Agent_ID' name='Agent IDRef' type='string' pk='true' />
+    <field fkey='agents_tables.Agent ID' name='Agent IDRef' type='string' pk='true' />
     <field name='Chance' type='float' />
   </table>
   <table name='agent_to_agent_abilities_tables' >
-    <field fkey='agents_tables.Agent_ID' name='Agent IDRef' type='string' pk='true' />
+    <field fkey='agents_tables.Agent ID' name='Agent IDRef' type='string' pk='true' />
     <field fkey='abilities_tables.Agent Ability ID' name='Agent Ability IDRef' type='string' pk='true' />
     <field name='Unknown' type='int' />
   </table>
   <table name='agent_to_agent_attributes_tables' >
-    <field fkey='agent_attributes_tables.Attribute IDRef' name='Attribute IDRef' type='string' pk='true' />
-    <field fkey='agents_tables.Agent_ID' name='Agent IDRef' type='string' pk='true' />
+    <field fkey='agent_attributes_tables.Attribute ID' name='Attribute IDRef' type='string' pk='true' />
+    <field fkey='agents_tables.Agent ID' name='Agent IDRef' type='string' pk='true' />
     <field name='Unknown' type='int' />
     <field name='Unknown' type='boolean' />
   </table>
   <table name='agent_to_bribe_actions_tables' >
-    <field fkey='agents_tables.Agent_ID' name='Agent IDRef' type='string' pk='true' />
+    <field fkey='agents_tables.Agent ID' name='Agent IDRef' type='string' pk='true' />
     <field name='Unknown' type='string' pk='true' />
   </table>
   <table name='agent_to_building_levels_tables' >
-    <field fkey='agents_tables.Agent_ID' name='Agent IDRef' type='string' pk='true' />
+    <field fkey='agents_tables.Agent ID' name='Agent IDRef' type='string' pk='true' />
     <field name='Building Level' type='string' pk='true' />
-    <field fkey='agent_attributes_tables.Attribute IDRef' name='Attribute' type='string' />
+    <field fkey='agent_attributes_tables.Attribute ID' name='Attribute' type='string' />
     <field name='Unknown' type='int' />
   </table>
   <table name='agent_uniform_colours_tables' >
@@ -155,7 +155,7 @@
     <field name='Event' type='string' pk='true' />
   </table>
   <table name='agents_tables' >
-    <field name='Agent IDRef' type='string' />
+    <field name='Agent ID' type='string' />
     <field name='Movement Points in Campaign' type='int' />
     <field name='Unknown' type='int' />
     <field name='Unknown' type='int' />
@@ -207,7 +207,7 @@
   </table>
   <table name='ancillary_included_subcultures_tables' >
     <field fkey='ancillaries_tables.ID' name='Ancillary IDRef' type='string' pk='true' />
-    <field name='Subculture' type='string' pk='true' />
+    <field fkey='cultures_subcultures_tables.Subculture ID' name='Subculture IDRef' type='string' pk='true' />
   </table>
   <table name='ancillary_info_tables' >
     <field fkey='ancillaries_tables.ID' name='Ancillary IDRef' type='string' />
@@ -217,7 +217,7 @@
   </table>
   <table name='ancillary_to_attribute_effects_tables' >
     <field fkey='ancillaries_tables.ID' name='Ancillary IDRef' type='string' pk='true' />
-    <field fkey='agent_attributes_tables.Attribute IDRef' name='Effect IDRef' type='string' pk='true' />
+    <field fkey='agent_attributes_tables.Attribute ID' name='Effect IDRef' type='string' pk='true' />
     <field name='Value' type='int' />
   </table>
   <table name='ancillary_to_attribute_situation_effects_tables' >
@@ -236,7 +236,7 @@
   </table>
   <table name='ancillary_to_included_agents_tables' >
     <field fkey='ancillaries_tables.ID' name='Ancillary IDRef' type='string' pk='true' />
-    <field fkey='agents_tables.Agent_ID' name='Agent IDRef' type='string' pk='true' />
+    <field fkey='agents_tables.Agent ID' name='Agent IDRef' type='string' pk='true' />
   </table>
   <table name='ancillary_types_tables' >
     <field name='Ancillary Type ID' type='string' pk='true' />
@@ -522,7 +522,7 @@
     <field name='unknown9' type='float' />
   </table>
   <table name='battle_cities_tables' >
-    <field name='Culture ID' type='string' pk='true' />
+    <field name='City Culture ID' type='string' pk='true' />
     <field name='unknown' type='float' />
     <field name='unknown' type='float' />
     <field name='unknown' type='float' />
@@ -534,13 +534,13 @@
   </table>
   <table name='battle_city_buildings_tables' >
     <field name='Building IDRef' type='string' pk='true' />
-    <field name='Culture IDRef' type='string' />
+    <field fkey='battle_cities_tables.City Culture ID' name='City Culture IDRef' type='string' />
     <field name='unknown' type='int' />
     <field name='unknown' type='int' />
   </table>
   <table name='battle_city_subculture_jct_tables' >
-    <field name='Subculture IDRef' type='string' pk='true' />
-    <field name='Culture IDRef' type='string' />
+    <field fkey='cultures_subcultures_tables.Subculture ID' name='Subculture IDRef' type='string' pk='true' />
+    <field fkey='battle_cities_tables.City Culture ID' name='City Culture IDRef' type='string' />
   </table>
   <table name='battle_climate_groupings_tables' >
     <field name='Climate ID' type='string' pk='true' />
@@ -800,7 +800,7 @@
     <field name='unknown5' type='boolean' version_start='1' />
   </table>
   <table name='building_culture_gov_type_variants_tables' >
-    <field fkey='building_levels_tables.Building IDRef' name='Building_IDRef' type='string' pk='true' />
+    <field fkey='building_levels_tables.Building ID' name='Building_IDRef' type='string' pk='true' />
     <field name='Culture' type='string' pk='true' />
     <field fkey='government_types_tables.Government ID' name='Gov_Type' type='string' pk='true' />
     <field name='artpiece' type='optstring' />
@@ -809,8 +809,8 @@
     <field name='icon' type='optstring' />
   </table>
   <table name='building_culture_variants_tables' >
-    <field fkey='building_levels_tables.Building IDRef' name='Building IDRef' type='string' pk='true' />
-    <field name='Culture' type='string' pk='true' />
+    <field fkey='building_levels_tables.Building ID' name='Building IDRef' type='string' pk='true' />
+    <field fkey='cultures_table.Culture ID' name='Culture IDRef' type='string' pk='true' />
     <field name='Battle Model' type='optstring' />
     <field name='Campaign Map Model' type='optstring' />
     <field name='Campaign Map Model 2' type='optstring' />
@@ -821,19 +821,19 @@
     <field name='Building IDRef' type='string' pk='true' />
   </table>
   <table name='building_effects_junction_tables' >
-    <field fkey='building_levels_tables.Building IDRef' name='Building IDRef' type='string' pk='true' />
+    <field fkey='building_levels_tables.Building ID' name='Building IDRef' type='string' pk='true' />
     <field fkey='effects_tables.Effect ID' name='Effect IDRef' type='string' pk='true' />
     <field name='Magnitude' type='float' />
   </table>
   <table name='building_faction_variants_tables' >
-    <field fkey='building_levels_tables.Building IDRef' name='Building IDRef' type='string' pk='true' />
+    <field fkey='building_levels_tables.Building ID' name='Building IDRef' type='string' pk='true' />
     <field fkey='factions_tables.Faction IDRef' name='Faction' type='string' pk='true' />
     <field name='?Campaign Map Model' type='optstring' />
     <field name='Localised Description' type='optstring' />
     <field name='?Icon/Info Picture' type='optstring' />
   </table>
   <table name='building_factionwide_effects_junctions_tables' >
-    <field fkey='building_levels_tables.Building IDRef' name='Building IDRef' type='string' pk='true' />
+    <field fkey='building_levels_tables.Building ID' name='Building IDRef' type='string' pk='true' />
     <field fkey='effects_tables.Effect ID' name='Effect IDRef' type='string' pk='true' />
     <field name='Magnitude' type='float' />
   </table>
@@ -845,11 +845,11 @@
     <field name='unknown5' type='string' />
   </table>
   <table name='building_level_required_technology_junctions_tables' >
-    <field fkey='building_levels_tables.Building IDRef' name='Building IDRef' type='string' pk='true' />
+    <field fkey='building_levels_tables.Building ID' name='Building IDRef' type='string' pk='true' />
     <field fkey='technologies_tables.Technologies IDRef' name='Tech IDRef' type='string' pk='true' />
   </table>
   <table name='building_levels_tables' >
-    <field name='Building IDRef' type='string' pk='true' />
+    <field name='Building ID' type='string' pk='true' />
     <field fkey='building_chains_tables.Building_Chain_ID' name='Category' type='string' />
     <field name='Level' type='int' />
     <field name='Condition' type='string' />
@@ -884,12 +884,12 @@
     <field name='unknown' type='optstring' version_start='3' />
   </table>
   <table name='building_research_thread_junction_tables' >
-    <field fkey='building_levels_tables.Building IDRef' name='Building IDRef' type='string' pk='true' />
+    <field fkey='building_levels_tables.Building ID' name='Building IDRef' type='string' pk='true' />
     <field fkey='technology_threads_tables.Thread ID' name='Tree IDRef' type='string' pk='true' />
     <field name='Unknown' type='float' />
   </table>
   <table name='building_resources_junction_tables' >
-    <field fkey='building_levels_tables.Building IDRef' name='Building IDRef' type='string' pk='true' />
+    <field fkey='building_levels_tables.Building ID' name='Building IDRef' type='string' pk='true' />
     <field name='Resource' type='string' pk='true' />
     <field name='Magnitude' type='float' />
   </table>
@@ -898,7 +898,7 @@
     <field name='unknown' type='string' />
   </table>
   <table name='building_units_allowed_tables' >
-    <field fkey='building_levels_tables.Building IDRef' name='Building_IDRef' type='string' pk='true' />
+    <field fkey='building_levels_tables.Building ID' name='Building_IDRef' type='string' pk='true' />
     <field fkey='units_tables.Unit_ID' name='Unit' type='string' pk='true' />
     <field name='Experience' type='int' />
     <field name='Unknown' type='boolean' />
@@ -911,8 +911,8 @@
     <field name='unknown11' type='boolean' version_start='2' />
   </table>
   <table name='building_upgrades_junction_tables' >
-    <field fkey='building_levels_tables.Building IDRef' name='Building IDRef' type='string' pk='true' />
-    <field fkey='building_levels_tables.Building IDRef' name='Upgrade' type='string' pk='true' />
+    <field fkey='building_levels_tables.Building ID' name='Building IDRef' type='string' pk='true' />
+    <field fkey='building_levels_tables.Building ID' name='Upgrade' type='string' pk='true' />
   </table>
   <table name='cai_agent_distribution_profiles_tables' >
     <field name='profile' type='string' pk='true' />
@@ -921,30 +921,30 @@
     <field name='type' type='string' pk='true' />
   </table>
   <table name='cai_agent_record_to_cai_agent_type_junctions_tables' >
-    <field name='unknown' type='string' pk='true' />
-    <field name='unknown' type='string' />
+    <field fkey='agents_tables.Agent ID' name='Agent IDRef' type='string' pk='true' />
+    <field fkey='cai_agent_types_tables.Agent ID' name='CAI Agent IDRef' type='string' />
   </table>
   <table name='cai_agent_recruitment_profiles_tables' >
-    <field name='unknown' type='string' pk='true' />
+    <field name='Recruitment Profile ID' type='string' pk='true' />
   </table>
   <table name='cai_agent_recruitment_types_tables' >
-    <field name='unknown' type='string' pk='true' />
+    <field name='Recruitment Type ID' type='string' pk='true' />
   </table>
   <table name='cai_agent_type_distribution_profile_junctions_tables' >
-    <field name='unknown' type='string' pk='true' />
-    <field name='unknown' type='string' pk='true' />
+    <field fkey='cai_agent_types_tables.Agent ID' name='Agent IDRef' type='string' pk='true' />
+    <field fkey='cai_personalities_tables.Personality ID' name='CAI Personality IDRef' type='string' pk='true' />
     <field name='unknown' type='string' />
   </table>
   <table name='cai_agent_type_recruitment_profile_junctions_tables' >
-    <field name='unknown' type='string' pk='true' />
-    <field name='unknown' type='string' pk='true' />
-    <field name='unknown' type='string' />
+    <field fkey='cai_agent_types_tables.Agent ID' name='Agent IDRef' type='string' pk='true' />
+    <field fkey='cai_agent_recruitment_profiles_tables.Recruitment Profile ID' name='Profile IDRef' type='string' pk='true' />
+    <field fkey='cai_agent_recruitment_types_tables.Recruitment Type ID' name='Recruitment Type IDRef' type='string' />
   </table>
   <table name='cai_agent_types_tables' >
-    <field name='unknown' type='string' pk='true' />
+    <field name='Agent ID' type='string' pk='true' />
   </table>
   <table name='cai_base_building_context_values_tables' >
-    <field name='unknown' type='string' pk='true' />
+    <field fkey='building_levels_tables.Building ID' name='Building IDRef' type='string' pk='true' />
     <field name='unknown' type='float' />
     <field name='unknown' type='float' />
     <field name='unknown' type='float' />
@@ -961,7 +961,7 @@
     <field name='unknown' type='string' pk='true' />
   </table>
   <table name='cai_personalities_tables' >
-    <field name='unknown' type='string' />
+    <field name='Personality ID' type='string' />
     <field name='unknown' type='string' />
     <field name='unknown' type='string' />
     <field name='unknown' type='string' />
@@ -1499,11 +1499,11 @@
     <field name='Culture ID' type='string' pk='true' />
     <field name='Unknown' type='int' />
     <field name='Unknown' type='int' version_start='1' />
-    <field fkey='cultures_tables.Culture ID' name='Unknown' type='optstring' />
+    <field name='Unknown' type='optstring' />
   </table>
   <table name='cultures_subcultures_tables' >
-    <field name='Unknown' type='string' pk='true' />
-    <field fkey='cultures_tables.Culture ID' name='Unknown' type='string' />
+    <field name='Subculture ID' type='string' pk='true' />
+    <field fkey='cultures_tables.Culture ID' name='Culture IDRef' type='string' />
     <field name='Unknown' type='int' />
     <field name='Unknown' type='string' />
   </table>
@@ -1610,7 +1610,7 @@
   <table name='effect_bonus_value_agent_junction_tables' >
     <field fkey='effects_tables.Effect ID' name='Unknown' type='string' pk='true' />
     <field name='Type' type='string' pk='true' />
-    <field fkey='agents_tables.Agent_ID' name='Agent IDRef' type='string' pk='true' />
+    <field fkey='agents_tables.Agent ID' name='Agent IDRef' type='string' pk='true' />
   </table>
   <table name='effect_bonus_value_basic_junction_tables' >
     <field fkey='effects_tables.Effect ID' name='Effect IDRef' type='string' pk='true' />
@@ -2037,6 +2037,7 @@
     <field fkey='gun_types_tables.Gun ID' name='Gun IDRef' type='string' pk='true' />
     <field fkey='projectiles_tables.Projectile ID' name='Projectile IDRef' type='string' pk='true' />
     <field name='Muzzle Flash' type='string' />
+    <field name='unknown' type='float' version_start='1' />
   </table>
   <table name='gun_types_tables' >
     <field name='Gun ID' type='string' pk='true' />
@@ -2056,7 +2057,7 @@
     <field name='Character IDRef' type='string' pk='true' />
     <field name='Unknown1' type='boolean' />
     <field name='Genre' type='string' />
-    <field fkey='agents_tables.Agent_ID' name='Agent_ID' type='string' />
+    <field fkey='agents_tables.Agent ID' name='Agent_ID' type='string' />
     <field fkey='factions_tables.Faction IDRef' name='Faction_ID' type='string' />
     <field name='Date_Birth' type='int' />
     <field name='Date_Death' type='int' />
@@ -2924,7 +2925,7 @@
     <field name='unknown19' type='float' />
   </table>
   <table name='seasons_tables' >
-    <field name='Season_IDRef' type='string' pk='true' />
+    <field name='Season ID' type='string' pk='true' />
     <field name='Season_Name' type='string' />
     <field name='Index' type='string' />
   </table>
@@ -3041,7 +3042,7 @@
   </table>
   <table name='technologies_tables' >
     <field name='Technologies IDRef' type='string' pk='true' />
-    <field fkey='building_levels_tables.Building IDRef' name='Building IDRef' type='string' />
+    <field fkey='building_levels_tables.Building ID' name='Building IDRef' type='string' />
     <field name='Tech_Tree_Position' type='int' />
     <field name='Research_Points' type='int' />
     <field name='Icon_x0020_Name' type='string' />
@@ -3136,7 +3137,7 @@
   </table>
   <table name='trait_attribute_effects_tables' >
     <field fkey='character_trait_levels_tables.Trait Level ID' name='Trait Level IDRef' type='string' pk='true' />
-    <field fkey='agent_attributes_tables.Attribute IDRef' name='Ability' type='string' pk='true' />
+    <field fkey='agent_attributes_tables.Attribute ID' name='Ability' type='string' pk='true' />
     <field name='Magnitude' type='int' />
   </table>
   <table name='trait_attribute_situation_effects_tables' >
@@ -3165,7 +3166,7 @@
   </table>
   <table name='trait_to_included_agents_tables' >
     <field fkey='character_traits_tables.Trait ID' name='Trait IDRef' type='string' pk='true' />
-    <field fkey='agents_tables.Agent_ID' name='Agent IDRef' type='string' pk='true' />
+    <field fkey='agents_tables.Agent ID' name='Agent IDRef' type='string' pk='true' />
   </table>
   <table name='trait_triggers_tables' >
     <field name='Trait IDRef' type='string' pk='true' />
@@ -3795,7 +3796,7 @@
   </table>
   <table name='warscape_trees_tables' >
     <field fkey='trees_tables.Tree ID' name='TreeID' type='string' pk='true' />
-    <field fkey='seasons_tables.Season_IDRef' name='Season' type='string' pk='true' />
+    <field fkey='seasons_tables.Season ID' name='Season' type='string' pk='true' />
     <field name='Model_x0020_Path' type='string' />
   </table>
   <table name='warscape_underlay_textures_tables' >
