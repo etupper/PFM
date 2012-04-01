@@ -13,6 +13,7 @@ namespace PackFileManager {
     public class DBFileEditorControl : UserControl 
     {
         private enum COPIED_TYPE { NONE, ROWS, CELLS }
+        private string referenceTarget = null;
 
         #region Members
         private ToolStripButton addNewRowButton;
@@ -747,6 +748,25 @@ namespace PackFileManager {
             }
         }
 
+        private void setReferenceTarget(DataGridViewColumn column) {
+            var info = (FieldInfo)column.Tag;
+            string tableName = currentDBFile.CurrentType.name;
+            if (!tableName.EndsWith("_tables")) {
+                tableName += "_tables";
+            }
+            referenceTarget = string.Format("{0}.{1}", tableName, info.Name);
+        }
+
+        private void applyReferenceTarget(DataGridViewColumn column) {
+            var info = (FieldInfo)column.Tag;
+            if (referenceTarget != null) {
+                info.ForeignReference = referenceTarget;
+                info.Name = string.Format("{0}Ref", referenceTarget.Substring(referenceTarget.LastIndexOf('.')+1));
+            }
+            // rebuild table to see combo boxes if applicable
+            Open(currentPackedFile);
+        }
+
         private void dataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
             DataGridViewColumn newColumn = dataGridView.Columns[e.ColumnIndex];
 
@@ -756,6 +776,28 @@ namespace PackFileManager {
                                                                              promptHeaderDescription(newColumn);
                                                                          });
                 menu.MenuItems.Add(item);
+                
+                item = new MenuItem("Set as Reference Target", delegate {
+                    setReferenceTarget(newColumn);
+                });
+                menu.MenuItems.Add(item);
+
+                if (referenceTarget != null) {
+                    item = new MenuItem(string.Format("Apply Reference Target ({0})", referenceTarget), delegate {
+                        applyReferenceTarget(newColumn);
+                    });
+                    menu.MenuItems.Add(item);
+                }
+
+                var info = newColumn.Tag as FieldInfo;
+                if (info != null && info.ForeignReference != "") {
+                    item = new MenuItem(string.Format("Clear Reference Target ({0})", info.ForeignReference), delegate {
+                        info.ForeignReference = "";
+                        // rebuild table to remove combo boxes if applicable
+                        Open(currentPackedFile);
+                    });
+                    menu.MenuItems.Add(item);
+                }
 
                 string ignoreField = ((FieldInfo)newColumn.Tag).Name;
                 bool ignored = Settings.Default.IsColumnIgnored(currentPackedFile.FullPath, ignoreField);
