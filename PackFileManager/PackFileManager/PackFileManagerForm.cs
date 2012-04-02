@@ -15,12 +15,9 @@ using System.Windows.Forms;
 namespace PackFileManager
 {
     public class PackFileManagerForm : Form {
-        
+
         #region Members
         private ToolStripMenuItem aboutToolStripMenuItem;
-        private FolderBrowserDialog addDirectoryFolderBrowserDialog;
-        private FolderBrowserDialog choosePathAnchorFolderBrowserDialog;
-        private FolderBrowserDialog extractFolderBrowserDialog;
         private IContainer components;
         private ToolStripMenuItem contentsToolStripMenuItem;
         private ToolStripMenuItem copyToolStripMenuItem;
@@ -39,7 +36,6 @@ namespace PackFileManager
         private ToolStripMenuItem helpToolStripMenuItem;
         private ToolStripMenuItem indexToolStripMenuItem;
         private ToolStripMenuItem newToolStripMenuItem;
-        public OpenFileDialog openDBFileDialog;
         private bool openFileIsModified;
         private string openFilePath;
         private FileSystemWatcher openFileWatcher;
@@ -47,14 +43,12 @@ namespace PackFileManager
         private ToolStripMenuItem openToolStripMenuItem;
         private ContextMenuStrip packActionMenuStrip;
         private ToolStripProgressBar packActionProgressBar;
-        public OpenFileDialog packOpenFileDialog;
         private ToolStripStatusLabel packStatusLabel;
         public TreeView packTreeView;
         private ToolStripMenuItem pasteToolStripMenuItem;
         private ReadmeEditorControl readmeEditorControl;
         private ToolStripMenuItem redoToolStripMenuItem;
         private ToolStripMenuItem saveAsToolStripMenuItem;
-        private SaveFileDialog saveFileDialog;
         private ToolStripMenuItem saveToolStripMenuItem;
         private customMessageBox search;
         private ToolStripMenuItem searchToolStripMenuItem;
@@ -126,6 +120,7 @@ namespace PackFileManager
         private ToolStripMenuItem toolStripMenuItem13;
         private ToolStripMenuItem dBFileFromTSVToolStripMenuItem;
         private ToolStripMenuItem toolStripMenuItem14;
+        private ToolStripMenuItem showDecodeToolOnErrorToolStripMenuItem;
         private UnitVariantFileEditorControl unitVariantFileEditorControl;
         #endregion
 
@@ -133,6 +128,9 @@ namespace PackFileManager
 
         public PackFileManagerForm (string[] args) {
             InitializeComponent();
+
+            updateOnStartupToolStripMenuItem.Checked = Settings.Default.UpdateOnStartup;
+            showDecodeToolOnErrorToolStripMenuItem.Checked = Settings.Default.ShowDecodeToolOnError;
 
             try {
                 if (Settings.Default.UpdateOnStartup) {
@@ -191,15 +189,6 @@ namespace PackFileManager
 			form.ShowDialog (this);
 		}
 
-        private void cAPacksAreReadOnlyToolStripMenuItem_CheckStateChanged(object sender, EventArgs e)
-        {
-            if (cAPacksAreReadOnlyToolStripMenuItem.CheckState == CheckState.Unchecked)
-            {
-                var advisory = new caFileEditAdvisory();
-                cAPacksAreReadOnlyToolStripMenuItem.CheckState = advisory.DialogResult == DialogResult.Yes ? CheckState.Unchecked : CheckState.Checked;
-            }
-        }
-
         private void currentPackFile_Modified()
         {
             refreshTitle();
@@ -223,9 +212,12 @@ namespace PackFileManager
             if (AddTo == null) {
                 return;
             }
-            var addReplaceOpenFileDialog = new OpenFileDialog();
-            addReplaceOpenFileDialog.Multiselect = true;
+            var addReplaceOpenFileDialog = new OpenFileDialog {
+                InitialDirectory = Settings.Default.ImportExportDirectory,
+                Multiselect = true
+            };
             if (addReplaceOpenFileDialog.ShowDialog() == DialogResult.OK) {
+                Settings.Default.ImportExportDirectory = Path.GetDirectoryName(addReplaceOpenFileDialog.FileName);
                 try {
                     foreach (string file in addReplaceOpenFileDialog.FileNames) {
                         AddTo.Add(new PackedFile(file));
@@ -254,8 +246,13 @@ namespace PackFileManager
         }
 
         private void addDirectoryToolStripMenuItem_Click(object sender, EventArgs e) {
+            FolderBrowserDialog addDirectoryFolderBrowserDialog = new FolderBrowserDialog() {
+                Description = "Add which directory?",
+                SelectedPath = Settings.Default.ImportExportDirectory
+            };
             if (AddTo != null && addDirectoryFolderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 try {
+                    Settings.Default.ImportExportDirectory = addDirectoryFolderBrowserDialog.SelectedPath;
                     AddTo.Add(addDirectoryFolderBrowserDialog.SelectedPath);
                 } catch (Exception x) {
                     MessageBox.Show(string.Format("Failed to add {0}: {1}", addDirectoryFolderBrowserDialog.SelectedPath, x.Message), "Failed to add directory");
@@ -274,11 +271,14 @@ namespace PackFileManager
         }
 
         private void replaceFileToolStripMenuItem_Click(object sender, EventArgs e) {
-            OpenFileDialog addReplaceOpenFileDialog = new OpenFileDialog();
-            addReplaceOpenFileDialog.Multiselect = false;
-            if (addReplaceOpenFileDialog.ShowDialog() == DialogResult.OK) {
+            OpenFileDialog replaceFileDialog = new OpenFileDialog() {
+                InitialDirectory = Settings.Default.ImportExportDirectory,
+                Multiselect = false
+            };
+            if (replaceFileDialog.ShowDialog() == DialogResult.OK) {
+                Settings.Default.ImportExportDirectory = Path.GetDirectoryName(replaceFileDialog.FileName);
                 PackedFile tag = packTreeView.SelectedNode.Tag as PackedFile;
-                tag.Source = new FileSystemSource(addReplaceOpenFileDialog.FileName);
+                tag.Source = new FileSystemSource(replaceFileDialog.FileName);
             }
         }
         
@@ -302,7 +302,12 @@ namespace PackFileManager
         private void dBFileFromTSVToolStripMenuItem_Click(object sender, EventArgs e) {
             var dir = packTreeView.SelectedNode.Tag as VirtualDirectory;
             if (dir != null) {
+                OpenFileDialog openDBFileDialog = new OpenFileDialog {
+                    InitialDirectory = Settings.Default.ImportExportDirectory,
+                    Filter = IOFunctions.TSV_FILTER
+                };
                 if (openDBFileDialog.ShowDialog() == DialogResult.OK) {
+                    Settings.Default.ImportExportDirectory = Path.GetDirectoryName(openDBFileDialog.FileName);
                     try {
                         using (FileStream filestream = File.OpenRead(openDBFileDialog.FileName)) {
                             string filename = Path.GetFileNameWithoutExtension(openDBFileDialog.FileName);
@@ -364,7 +369,6 @@ namespace PackFileManager
             this.addDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dBFileFromTSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.packOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -431,11 +435,7 @@ namespace PackFileManager
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.packStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.packActionProgressBar = new System.Windows.Forms.ToolStripProgressBar();
-            this.extractFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            this.choosePathAnchorFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.addDirectoryFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            this.openDBFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.showDecodeToolOnErrorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packActionMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -631,10 +631,6 @@ namespace PackFileManager
             this.dBFileFromTSVToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.dBFileFromTSVToolStripMenuItem.Text = "DB file from TSV";
             this.dBFileFromTSVToolStripMenuItem.Click += new System.EventHandler(this.dBFileFromTSVToolStripMenuItem_Click);
-            // 
-            // packOpenFileDialog
-            // 
-            this.packOpenFileDialog.Filter = "Package File|*.pack|Any File|*.*";
             // 
             // splitContainer1
             // 
@@ -1095,7 +1091,8 @@ namespace PackFileManager
             // 
             this.extrasToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.cAPacksAreReadOnlyToolStripMenuItem,
-            this.updateOnStartupToolStripMenuItem});
+            this.updateOnStartupToolStripMenuItem,
+            this.showDecodeToolOnErrorToolStripMenuItem});
             this.extrasToolStripMenuItem.Name = "extrasToolStripMenuItem";
             this.extrasToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.extrasToolStripMenuItem.Text = "Options";
@@ -1106,16 +1103,15 @@ namespace PackFileManager
             this.cAPacksAreReadOnlyToolStripMenuItem.CheckOnClick = true;
             this.cAPacksAreReadOnlyToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cAPacksAreReadOnlyToolStripMenuItem.Name = "cAPacksAreReadOnlyToolStripMenuItem";
-            this.cAPacksAreReadOnlyToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.cAPacksAreReadOnlyToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
             this.cAPacksAreReadOnlyToolStripMenuItem.Text = "CA Packs Are Read Only";
             this.cAPacksAreReadOnlyToolStripMenuItem.ToolTipText = "If checked, the original pack files for the game can be viewed but not edited.";
             // 
             // updateOnStartupToolStripMenuItem
             // 
-            this.updateOnStartupToolStripMenuItem.Checked = Settings.Default.UpdateOnStartup;
             this.updateOnStartupToolStripMenuItem.CheckOnClick = true;
             this.updateOnStartupToolStripMenuItem.Name = "updateOnStartupToolStripMenuItem";
-            this.updateOnStartupToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.updateOnStartupToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
             this.updateOnStartupToolStripMenuItem.Text = "Update on Startup";
             this.updateOnStartupToolStripMenuItem.Click += new System.EventHandler(this.updateOnStartupToolStripMenuItem_Click);
             // 
@@ -1189,21 +1185,13 @@ namespace PackFileManager
             this.packActionProgressBar.Name = "packActionProgressBar";
             this.packActionProgressBar.Size = new System.Drawing.Size(120, 16);
             // 
-            // extractFolderBrowserDialog
+            // showDecodeToolOnErrorToolStripMenuItem
             // 
-            this.extractFolderBrowserDialog.Description = "Extract to what folder?";
-            // 
-            // choosePathAnchorFolderBrowserDialog
-            // 
-            this.choosePathAnchorFolderBrowserDialog.Description = "Make packed files relative to which directory?";
-            // 
-            // addDirectoryFolderBrowserDialog
-            // 
-            this.addDirectoryFolderBrowserDialog.Description = "Add which directory?";
-            // 
-            // openDBFileDialog
-            // 
-            this.openDBFileDialog.Filter = "Text CSV|*.txt|Any File|*.*";
+            this.showDecodeToolOnErrorToolStripMenuItem.CheckOnClick = true;
+            this.showDecodeToolOnErrorToolStripMenuItem.Name = "showDecodeToolOnErrorToolStripMenuItem";
+            this.showDecodeToolOnErrorToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.showDecodeToolOnErrorToolStripMenuItem.Text = "Show Decode Tool on Error";
+            this.showDecodeToolOnErrorToolStripMenuItem.Click += new System.EventHandler(this.showDecodeToolOnErrorToolStripMenuItem_Click);
             // 
             // PackFileManagerForm
             // 
@@ -1274,22 +1262,29 @@ namespace PackFileManager
          */
         void InitializeBrowseDialogs(string[] args) {
 
+            // do we have a last directory? use as default
             // default: current directory
-            string initialDialog = Directory.GetCurrentDirectory ();
+            string initialDialog = Directory.GetCurrentDirectory();
             try {
 
-                // try to determine the shogun install path and use the data directory below
-                initialDialog = IOFunctions.GetShogunTotalWarDirectory ();
-                if (!string.IsNullOrEmpty (initialDialog)) {
-                    initialDialog = Path.Combine (initialDialog, "data");
+                // use the last load/save location if we have one
+                if (!string.IsNullOrEmpty(Settings.Default.LastPackDirectory)) {
+                    initialDialog = Settings.Default.LastPackDirectory;
                 } else {
-                    // go through the arguments (interpreted as file names)
-                    // and use the first for which the directory exists
-                    foreach (string file in args) {
-                        string dir = Path.GetDirectoryName (file);
-                        if (File.Exists (dir)) {
-                            initialDialog = dir;
-                            break;
+                    // otherwise, try to determine the shogun install path and use the data directory
+                    initialDialog = IOFunctions.GetShogunTotalWarDirectory();
+                    if (!string.IsNullOrEmpty(initialDialog)) {
+                        initialDialog = Path.Combine(initialDialog, "data");
+                    } else {
+
+                        // go through the arguments (interpreted as file names)
+                        // and use the first for which the directory exists
+                        foreach (string file in args) {
+                            string dir = Path.GetDirectoryName(file);
+                            if (File.Exists(dir)) {
+                                initialDialog = dir;
+                                break;
+                            }
                         }
                     }
                 }
@@ -1297,11 +1292,8 @@ namespace PackFileManager
                 // we have not set an invalid path along the way; should still be current dir here
             }
             // set to the dialogs
-            saveFileDialog.InitialDirectory = initialDialog;
-            addDirectoryFolderBrowserDialog.SelectedPath = initialDialog;
-            extractFolderBrowserDialog.SelectedPath = initialDialog;
+            Settings.Default.LastPackDirectory = initialDialog;
         }
-
 
         private void PackFileManagerForm_Load(object sender, EventArgs e) {
             base.TopMost = true;
@@ -1313,9 +1305,13 @@ namespace PackFileManager
         #endregion
 
         private void exportFileListToolStripMenuItem_Click(object sender, EventArgs e) {
-            saveFileDialog.FileName = Path.GetFileNameWithoutExtension(currentPackFile.Filepath) + ".pack-file-list.txt";
-            if (saveFileDialog.ShowDialog() == DialogResult.OK) {
-                using (StreamWriter writer = new StreamWriter(saveFileDialog.FileName)) {
+            SaveFileDialog fileListDialog = new SaveFileDialog {
+                InitialDirectory = Settings.Default.ImportExportDirectory,
+                FileName = Path.GetFileNameWithoutExtension(currentPackFile.Filepath) + ".pack-file-list.txt"
+            };
+            if (fileListDialog.ShowDialog() == DialogResult.OK) {
+                Settings.Default.ImportExportDirectory = Path.GetDirectoryName(fileListDialog.FileName);
+                using (StreamWriter writer = new StreamWriter(fileListDialog.FileName)) {
                     foreach (PackedFile file in currentPackFile.Files) {
                         writer.WriteLine(file.FullPath);
                     }
@@ -1343,8 +1339,13 @@ namespace PackFileManager
 
         private void extractFiles(List<PackedFile> packedFiles)
         {
+            FolderBrowserDialog extractFolderBrowserDialog = new FolderBrowserDialog {
+                Description = "Extract to what folder?",
+                SelectedPath = Settings.Default.ImportExportDirectory
+            };
             if (extractFolderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
+                Settings.Default.ImportExportDirectory = extractFolderBrowserDialog.SelectedPath;
                 string selectedPath = extractFolderBrowserDialog.SelectedPath;
                 FileAlreadyExistsDialog.DefaultAction ask = FileAlreadyExistsDialog.DefaultAction.Ask;
                 packStatusLabel.Text = string.Format("Extracting file (0 of {0} files extracted, 0 skipped)", packedFiles.Count);
@@ -1562,6 +1563,10 @@ namespace PackFileManager
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e) {
+            OpenFileDialog packOpenFileDialog = new OpenFileDialog {
+                InitialDirectory = Settings.Default.LastPackDirectory,
+                Filter = IOFunctions.PACKAGE_FILTER
+            };
             if ((handlePackFileChangesWithUserInput() != DialogResult.Cancel) && (packOpenFileDialog.ShowDialog() == DialogResult.OK)) {
                 OpenExistingPackFile(packOpenFileDialog.FileName);
             }
@@ -1569,6 +1574,7 @@ namespace PackFileManager
 
         private void OpenExistingPackFile(string filepath)
         {
+            Settings.Default.LastPackDirectory = Path.GetDirectoryName(filepath);
             try
             {
                 var codec = new PackFileCodec();
@@ -1859,6 +1865,27 @@ namespace PackFileManager
                 currentPackFile.Type = PackType.Shader2;
             }
         }
+
+        private void packTreeView_ItemDrag(object sender, ItemDragEventArgs e) {
+            // Proceed with the drag-and-drop, passing the selected items for 
+            if (e.Button == MouseButtons.Left && e.Item is TreeNode && e.Item != null &&
+                ((TreeNode)e.Item).Tag is PackedFile && ((TreeNode)e.Item).Tag != null) {
+                var file = ((TreeNode)e.Item).Tag as PackedFile;
+                if (file != null) {
+                    var dataObject = new DataObject();
+                    var filesInfo = new DragFileInfo(file.FullPath, file.Size);
+
+                    using (MemoryStream infoStream = DragDropHelper.GetFileDescriptor(filesInfo),
+                                        contentStream = DragDropHelper.GetFileContents(file.Data)) {
+                        dataObject.SetData(DragDropHelper.CFSTR_FILEDESCRIPTORW, infoStream);
+                        dataObject.SetData(DragDropHelper.CFSTR_FILECONTENTS, contentStream);
+                        dataObject.SetData(DragDropHelper.CFSTR_PERFORMEDDROPEFFECT, null);
+
+                        DoDragDrop(dataObject, DragDropEffects.All);
+                    }
+                }
+            }
+        }
         #endregion
 
         public override void Refresh() {
@@ -1960,10 +1987,12 @@ namespace PackFileManager
                 MessageBox.Show(CA_FILE_WARNING);
             } else {
                 var dialog = new SaveFileDialog {
+                    InitialDirectory = Settings.Default.LastPackDirectory,
                     AddExtension = true,
-                    Filter = "Pack File|*.pack"
+                    Filter = IOFunctions.PACKAGE_FILTER
                 };
                 if (dialog.ShowDialog() == DialogResult.OK) {
+                    Settings.Default.LastPackDirectory = Path.GetDirectoryName(dialog.FileName);
                     SaveAsFile(dialog.FileName);
                 }
             }
@@ -2064,11 +2093,6 @@ namespace PackFileManager
             }
         }
 
-        private void updateOnStartupToolStripMenuItem_Click(object sender, EventArgs e) {
-            Settings.Default.UpdateOnStartup = updateOnStartupToolStripMenuItem.Checked;
-            Settings.Default.Save();
-        }
-        
         private void reloadToolStripMenuItem_Click(object sender, EventArgs e) {
             string path = Path.GetDirectoryName(Application.ExecutablePath);
             DBTypeMap.Instance.initializeTypeMap(path);
@@ -2162,32 +2186,23 @@ namespace PackFileManager
             extractFiles(packedFiles);
         }
         #endregion
-
-
-        private void packTreeView_ItemDrag(object sender, ItemDragEventArgs e)
-        {
-            // Proceed with the drag-and-drop, passing the selected items for 
-            if (e.Button == MouseButtons.Left && e.Item is TreeNode && e.Item != null &&
-                ((TreeNode) e.Item).Tag is PackedFile && ((TreeNode) e.Item).Tag != null)
-            {
-                var file = ((TreeNode) e.Item).Tag as PackedFile;
-                if (file != null)
-                {
-                    var dataObject = new DataObject();
-                    var filesInfo = new DragFileInfo(file.FullPath, file.Size);
-
-                    using (MemoryStream infoStream = DragDropHelper.GetFileDescriptor(filesInfo),
-                                        contentStream = DragDropHelper.GetFileContents(file.Data))
-                    {
-                        dataObject.SetData(DragDropHelper.CFSTR_FILEDESCRIPTORW, infoStream);
-                        dataObject.SetData(DragDropHelper.CFSTR_FILECONTENTS, contentStream);
-                        dataObject.SetData(DragDropHelper.CFSTR_PERFORMEDDROPEFFECT, null);
-
-                        DoDragDrop(dataObject, DragDropEffects.All);
-                    }
-                }
+        
+        #region Options
+        private void cAPacksAreReadOnlyToolStripMenuItem_CheckStateChanged(object sender, EventArgs e) {
+            if (cAPacksAreReadOnlyToolStripMenuItem.CheckState == CheckState.Unchecked) {
+                var advisory = new caFileEditAdvisory();
+                cAPacksAreReadOnlyToolStripMenuItem.CheckState = advisory.DialogResult == DialogResult.Yes ? CheckState.Unchecked : CheckState.Checked;
             }
         }
+
+        private void updateOnStartupToolStripMenuItem_Click(object sender, EventArgs e) {
+            Settings.Default.UpdateOnStartup = updateOnStartupToolStripMenuItem.Checked;
+        }
+
+        private void showDecodeToolOnErrorToolStripMenuItem_Click(object sender, EventArgs e) {
+            Settings.Default.ShowDecodeToolOnError = showDecodeToolOnErrorToolStripMenuItem.Checked;
+        }
+        #endregion
     }
 
     class LoadUpdater 

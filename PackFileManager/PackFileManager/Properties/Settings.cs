@@ -30,6 +30,7 @@
             set
             {
                 this["UseFirstColumnAsRowHeader"] = value;
+                Save();
             }
         }
 
@@ -43,8 +44,30 @@
             set
             {
                 this["IgnoreColumns"] = value;
+                Save();
             }
         }
+        [DefaultSettingValue(""), UserScopedSetting]
+        public string ImportExportDirectory {
+            get {
+                return (string)this["ImportExportDirectory"];
+            }
+            set {
+                this["ImportExportDirectory"] = value;
+                Save();
+            }
+        }
+        [DefaultSettingValue(""), UserScopedSetting]
+        public string LastPackDirectory {
+            get {
+                return (string)this["LastPackDirectory"];
+            }
+            set {
+                this["LastPackDirectory"] = value;
+                Save();
+            }
+        }
+
         public bool IsColumnIgnored(string key, string columnName)
         {
             SortedSet<string> list;
@@ -136,6 +159,7 @@
             set
             {
                 this["ShowAllColumns"] = value;
+                Save();
             }
         }
 
@@ -149,6 +173,7 @@
             set
             {
                 this["UseComboboxCells"] = value;
+                Save();
             }
         }
 
@@ -162,6 +187,18 @@
             set
             {
                 this["UpdateOnStartup"] = value;
+                Save();
+            }
+        }
+
+        [DebuggerNonUserCode, DefaultSettingValue("False"), UserScopedSetting]
+        public bool ShowDecodeToolOnError {
+            get {
+                return (bool)this["ShowDecodeToolOnError"];
+            }
+            set {
+                this["ShowDecodeToolOnError"] = value;
+                Save();
             }
         }
 
@@ -175,6 +212,7 @@
             set
             {
                 this["TwcThreadId"] = value;
+                Save();
             }
         }
     }
