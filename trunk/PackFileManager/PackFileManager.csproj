@@ -187,6 +187,11 @@
   <ItemGroup>
     <Content Include="Shogun2.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PackFileManager\DBFileEditorControl.resx">
+      <DependentUpon>DBFileEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>

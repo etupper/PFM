@@ -9,6 +9,9 @@
 
     public class IOFunctions
     {
+        public static string TSV_FILTER = "TSV Files (*.csv,*.tsv)|*.csv;*.tsv|Text Files (*.txt)|*.txt|All Files|*.*";
+        public static string PACKAGE_FILTER = "Package File (*.pack)|*.pack|Any File|*.*";
+
         public static string GetShogunTotalWarDirectory()
         {
             string str = null;
@@ -100,7 +103,7 @@
         public static void writeToTSVFile(List<string> strings)
         {
             SaveFileDialog dialog = new SaveFileDialog {
-                Filter = "Text TSV|*.tsv|Any File|*.*"
+                Filter = TSV_FILTER
             };
             if (dialog.ShowDialog() == DialogResult.OK)
             {
