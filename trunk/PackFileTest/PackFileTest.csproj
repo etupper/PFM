@@ -55,7 +55,7 @@
       <Name>Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Filetypes\Filetypes.csproj">
-      <Project>{D53B5102-0200-470B-81DA-B5309F7C662A}</Project>
+      <Project>{2419C2AF-48A3-40D2-980B-36AB2D81DC74}</Project>
       <Name>Filetypes</Name>
     </ProjectReference>
   </ItemGroup>
