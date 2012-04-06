@@ -31,12 +31,9 @@
             };
             if (dialog.ShowDialog() == DialogResult.OK) {
                 try {
-                    using (var stream = new FileStream(dialog.FileName, FileMode.Open)) {
-                        using (var reader = new BinaryReader(stream)) {
-                            atlasFile = new AtlasFile();
-                            atlasFile.ReadAtlasFile(reader);
-                            CreateGrid();
-                        }
+                    using (Stream stream = new FileStream(dialog.FileName, FileMode.Open)) {
+                        atlasFile = AtlasCodec.Instance.Decode(stream);
+                        CreateGrid();
                     }
                 } catch (IOException) {
                     MessageBox.Show("Error opening *.atlas file", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);

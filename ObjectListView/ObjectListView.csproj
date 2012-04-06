@@ -172,10 +172,8 @@
     <Compile Include="BrightIdeasSoftware\VirtualListVersion1DataSource.cs" />
     <Compile Include="BrightIdeasSoftware\VirtualObjectListView.cs" />
     <Compile Include="BrightIdeasSoftware\Design\EditorServiceContext.cs" />
-    <Compile Include="BrightIdeasSoftware\Design\ListViewActionList.cs" />
-    <Compile Include="BrightIdeasSoftware\Design\ListViewDesigner.cs" />
-    <Compile Include="BrightIdeasSoftware\Design\OLVColumnCollectionEditor.cs" />
     <Compile Include="BrightIdeasSoftware\Design\ObjectListViewDesigner.cs" />
     <Compile Include="BrightIdeasSoftware\Design\OverlayConverter.cs" />
+    <Compile Include="BrightIdeasSoftware\Design\ListViewDesigner.cs" />
   </ItemGroup>
 </Project>

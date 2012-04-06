@@ -8,12 +8,10 @@
     using System.Drawing;
     using System.Windows.Forms;
 
-    public class UnitVariantFileEditorControl : UserControl {
+    public class UnitVariantFileEditorControl : PackedFileEditor<UnitVariantFile> {
         private ToolStripMenuItem addReferenceToModelPartToolStripMenuItem;
         private IContainer components;
         private ContextMenuStrip contextMenuStrip1;
-        private PackedFile currentPackedFile;
-        public bool dataChanged;
         private ToolStripMenuItem exportTextToTSVToolStripMenuItem;
         private ToolStripMenuItem insertModelPartToolStripMenuItem;
         private OLVColumn olvColumn1;
@@ -34,39 +32,42 @@
         private RichTextBox richTextBox5;
         private RichTextBox richTextBox6;
         private TreeListView treeListView1;
-        private UnitVariantFile unitVariantFile;
 
-        public UnitVariantFileEditorControl() {
-            this.dataChanged = false;
+        public UnitVariantFileEditorControl() : base(UnitVariantCodec.Instance) {
+            this.DataChanged = false;
             this.components = null;
             this.InitializeComponent();
-        }
-
-        public UnitVariantFileEditorControl(PackedFile packedFile) {
-            this.dataChanged = false;
-            this.components = null;
-            this.InitializeComponent();
-            this.currentPackedFile = packedFile;
-            this.unitVariantFile = new UnitVariantFile();
-            this.unitVariantFile.setPackedFile(packedFile);
-            this.treeListView1.AddObjects(this.unitVariantFile.UnitVariantObjects);
-            this.richTextBox2.Text = this.unitVariantFile.Unknown1.ToString();
-            string str = this.unitVariantFile.B1.ToString("x2") + this.unitVariantFile.B2.ToString("x2");
-            this.richTextBox2.Text = "B1B2: " + str;
-            this.richTextBox3.Text = "B1B2 as UInt32: " + this.unitVariantFile.Unknown2.ToString();
-            this.richTextBox4.Text = "B1 as Single: " + this.unitVariantFile.B1.ToString();
-            this.richTextBox5.Text = "B2 as Single: " + this.unitVariantFile.B2.ToString();
-            this.richTextBox6.Text = this.unitVariantFile.NumEntries.ToString();
-            this.treeListView1.CanExpandGetter = x => (x is UnitVariantObject) && (((UnitVariantObject) x).Num3 != 0);
-            this.treeListView1.ChildrenGetter = delegate (object x) {
-                UnitVariantObject obj2 = (UnitVariantObject) x;
+            this.treeListView1.CanExpandGetter = x => (x is UnitVariantObject) && (((UnitVariantObject)x).EntryCount != 0);
+            this.treeListView1.ChildrenGetter = delegate(object x) {
+                UnitVariantObject obj2 = (UnitVariantObject)x;
                 ArrayList list = new ArrayList();
                 list.AddRange(obj2.MeshTextureList);
                 return list;
             };
-            this.setColumnWidth();
             this.treeListView1.CellEditFinishing += new CellEditEventHandler(this.treeListView1_CellEditFinishing);
-            this.treeListView1.Sort(this.olvColumn2, SortOrder.Ascending);
+        }
+
+        public UnitVariantFileEditorControl (PackedFile packedFile) : this() {
+			this.CurrentPackedFile = packedFile;
+        }
+
+        protected override UnitVariantFile EditedFile {
+            get { return base.EditedFile; }
+            set {
+                base.EditedFile = value;
+                if (EditedFile != null) {
+                    this.treeListView1.SetObjects(this.EditedFile.UnitVariantObjects);
+                    this.richTextBox2.Text = this.EditedFile.Unknown1.ToString();
+                    string str = this.EditedFile.B1.ToString("x2") + this.EditedFile.B2.ToString("x2");
+                    this.richTextBox2.Text = "B1B2: " + str;
+                    this.richTextBox3.Text = "B1B2 as UInt32: " + this.EditedFile.Unknown2.ToString();
+                    this.richTextBox4.Text = "B1 as Single: " + this.EditedFile.B1.ToString();
+                    this.richTextBox5.Text = "B2 as Single: " + this.EditedFile.B2.ToString();
+                    this.richTextBox6.Text = this.EditedFile.NumEntries.ToString();
+                    this.setColumnWidth();
+                    this.treeListView1.Sort(this.olvColumn2, SortOrder.Ascending);
+                }
+            }
         }
 
         private void addReference_Click(object sender, EventArgs e) {
@@ -77,9 +78,9 @@
                 entry = (UnitVariantObject) this.treeListView1.SelectedObject;
             }
             MeshTextureObject mTO = new MeshTextureObject("NEW_ENTRY", "NEW_ENTRY", false, false);
-            this.unitVariantFile.addMTO(entry, mTO);
-            this.treeListView1.RefreshObjects(this.unitVariantFile.UnitVariantObjects);
-            this.dataChanged = true;
+            this.EditedFile.addMTO(entry, mTO);
+            this.treeListView1.RefreshObjects(this.EditedFile.UnitVariantObjects);
+            this.DataChanged = true;
             this.Refresh();
         }
 
@@ -97,7 +98,7 @@
                 OLVListItem item = (OLVListItem) this.treeListView1.Items[i];
                 if (item.RowObject is UnitVariantObject) {
                     UnitVariantObject rowObject = (UnitVariantObject) item.RowObject;
-                    strings.Add(rowObject.ModelPart.ToString() + "\t" + rowObject.Num1.ToString() + "\t" + rowObject.Num2.ToString() + "\t" + rowObject.Num3.ToString() + "\t" + rowObject.Num4.ToString());
+                    strings.Add(rowObject.ModelPart.ToString() + "\t" + rowObject.Index.ToString() + "\t" + rowObject.Num2.ToString() + "\t" + rowObject.EntryCount.ToString() + "\t" + rowObject.MeshStartIndex.ToString());
                     if (rowObject.MeshTextureList != null) {
                         foreach (MeshTextureObject obj3 in rowObject.MeshTextureList) {
                             strings.Add("\t\t\t\t\t" + obj3.Mesh + "\t" + obj3.Texture + "\t" + obj3.Bool1.ToString() + "\t" + obj3.Bool2.ToString());
@@ -300,13 +301,13 @@
                 parent = (UnitVariantObject) this.treeListView1.SelectedObject;
             }
             entry.ModelPart = "NEW_ENTRY";
-            entry.Num1 = parent.Num1 + 1;
-            entry.Num4 = parent.Num4 + parent.Num3;
-            this.unitVariantFile.insertUVO(entry, (int) entry.Num1);
+            entry.Index = parent.Index + 1;
+            entry.MeshStartIndex = parent.MeshStartIndex + parent.EntryCount;
+            this.EditedFile.insertUVO(entry, (int) entry.Index);
             this.treeListView1.AddObject(entry);
-            this.treeListView1.RefreshObjects(this.unitVariantFile.UnitVariantObjects);
-            this.richTextBox6.Text = this.unitVariantFile.NumEntries.ToString();
-            this.dataChanged = true;
+            this.treeListView1.RefreshObjects(this.EditedFile.UnitVariantObjects);
+            this.richTextBox6.Text = this.EditedFile.NumEntries.ToString();
+            this.DataChanged = true;
             this.Refresh();
         }
 
@@ -317,11 +318,11 @@
             } else {
                 parent = (UnitVariantObject) this.treeListView1.SelectedObject;
             }
-            this.unitVariantFile.removeUVO((int) parent.Num1);
+            this.EditedFile.removeUVO((int) parent.Index);
             this.treeListView1.RemoveObject(this.treeListView1.SelectedObject);
-            this.treeListView1.RefreshObjects(this.unitVariantFile.UnitVariantObjects);
-            this.richTextBox6.Text = this.unitVariantFile.NumEntries.ToString();
-            this.dataChanged = true;
+            this.treeListView1.RefreshObjects(this.EditedFile.UnitVariantObjects);
+            this.richTextBox6.Text = this.EditedFile.NumEntries.ToString();
+            this.DataChanged = true;
             this.Refresh();
         }
 
@@ -329,10 +330,10 @@
             MeshTextureObject selectedObject = (MeshTextureObject) this.treeListView1.SelectedObject;
             UnitVariantObject parent = (UnitVariantObject) this.treeListView1.GetParent(this.treeListView1.SelectedObject);
             int index = this.treeListView1.IndexOf(this.treeListView1.SelectedObject) - this.treeListView1.IndexOf(this.treeListView1.GetParent(this.treeListView1.SelectedObject));
-            this.unitVariantFile.removeMTO(parent, selectedObject, index);
+            this.EditedFile.removeMTO(parent, selectedObject, index);
             this.treeListView1.RemoveObject(this.treeListView1.SelectedObject);
-            this.treeListView1.RefreshObjects(this.unitVariantFile.UnitVariantObjects);
-            this.dataChanged = true;
+            this.treeListView1.RefreshObjects(this.EditedFile.UnitVariantObjects);
+            this.DataChanged = true;
             this.Refresh();
         }
 
@@ -341,22 +342,22 @@
         }
 
         public void richTextBox3_Click(object sender, EventArgs e) {
-            this.richTextBox3.Text = this.unitVariantFile.Unknown2.ToString();
+            this.richTextBox3.Text = this.EditedFile.Unknown2.ToString();
             this.richTextBox3.SelectAll();
         }
 
         private void richTextBox3_LostFocus(object sender, EventArgs e) {
             if (this.richTextBox3.Modified) {
-                this.unitVariantFile.Unknown2 = Convert.ToUInt32(this.richTextBox3.Text);
-                byte[] bytes = BitConverter.GetBytes(this.unitVariantFile.Unknown2);
-                this.unitVariantFile.B1 = bytes[0];
-                this.unitVariantFile.B2 = bytes[1];
-                this.richTextBox4.Text = "B1 as Single: " + this.unitVariantFile.B1.ToString();
-                this.richTextBox5.Text = "B2 as Single: " + this.unitVariantFile.B2.ToString();
-                string str = this.unitVariantFile.B1.ToString("x2") + this.unitVariantFile.B2.ToString("x2");
+                this.EditedFile.Unknown2 = Convert.ToUInt32(this.richTextBox3.Text);
+                byte[] bytes = BitConverter.GetBytes(this.EditedFile.Unknown2);
+                this.EditedFile.B1 = bytes[0];
+                this.EditedFile.B2 = bytes[1];
+                this.richTextBox4.Text = "B1 as Single: " + this.EditedFile.B1.ToString();
+                this.richTextBox5.Text = "B2 as Single: " + this.EditedFile.B2.ToString();
+                string str = this.EditedFile.B1.ToString("x2") + this.EditedFile.B2.ToString("x2");
                 this.richTextBox2.Text = "B1B2: " + str;
-                this.richTextBox3.Text = "B1B2 as UInt32: " + this.unitVariantFile.Unknown2.ToString();
-                this.dataChanged = true;
+                this.richTextBox3.Text = "B1B2 as UInt32: " + this.EditedFile.Unknown2.ToString();
+                this.DataChanged = true;
             }
         }
 
@@ -365,8 +366,8 @@
         }
 
         private void richTextBox3_TextChanged(object sender, EventArgs e) {
-            this.unitVariantFile.Unknown2 = Convert.ToUInt32(this.richTextBox3.Text);
-            this.dataChanged = true;
+            this.EditedFile.Unknown2 = Convert.ToUInt32(this.richTextBox3.Text);
+            this.DataChanged = true;
         }
 
         private void richTextBox4_MouseHover(object sender, EventArgs e) {
@@ -378,7 +379,7 @@
         }
 
         public void richTextBox6_Click(object sender, EventArgs e) {
-            this.richTextBox6.Text = this.unitVariantFile.NumEntries.ToString();
+            this.richTextBox6.Text = this.EditedFile.NumEntries.ToString();
             this.richTextBox6.SelectAll();
         }
 
@@ -387,15 +388,15 @@
         }
 
         private void richTextBox6_TextChanged(object sender, EventArgs e) {
-            this.unitVariantFile.NumEntries = Convert.ToUInt32(this.richTextBox6.Text);
-            this.dataChanged = true;
+            //this.unitVariantFile.NumEntries = Convert.ToUInt32(this.richTextBox6.Text);
+            this.DataChanged = true;
         }
 
         private void setColumnWidth() {
             float width = 0f;
             float num2 = 0f;
             using (Graphics graphics = base.CreateGraphics()) {
-                foreach (UnitVariantObject obj2 in this.unitVariantFile.UnitVariantObjects) {
+                foreach (UnitVariantObject obj2 in this.EditedFile.UnitVariantObjects) {
                     if (obj2.MeshTextureList != null) {
                         foreach (MeshTextureObject obj3 in obj2.MeshTextureList) {
                             if (width < graphics.MeasureString(obj3.Mesh, this.Font).Width) {
@@ -416,10 +417,9 @@
             }
         }
 
-        public void setData()
-        {
-            this.currentPackedFile.Data = (this.unitVariantFile.GetBytes());
-            this.dataChanged = false;
+        public void SetData() {
+			this.CurrentPackedFile.Data = UnitVariantCodec.Encode (EditedFile);
+            this.DataChanged = false;
         }
 
         private void treeListView1_CellEditFinishing(object sender, CellEditEventArgs e) {
@@ -439,7 +439,7 @@
                             if (x is UnitVariantObject) {
                                 ((UnitVariantObject) x).ModelPart = (string) newValue;
                             }
-                            this.dataChanged = true;
+                            this.DataChanged = true;
                         };
                     }
                     this.olvColumn1.AspectPutter = delegate2;
@@ -449,9 +449,9 @@
                     if (delegate3 == null) {
                         delegate3 = delegate (object x, object newValue) {
                             if (x is UnitVariantObject) {
-                                ((UnitVariantObject) x).Num1 = (uint) newValue;
+                                ((UnitVariantObject) x).Index = (uint) newValue;
                             }
-                            this.dataChanged = true;
+                            this.DataChanged = true;
                         };
                     }
                     this.olvColumn2.AspectPutter = delegate3;
@@ -463,7 +463,7 @@
                             if (x is UnitVariantObject) {
                                 ((UnitVariantObject) x).Num2 = (uint) newValue;
                             }
-                            this.dataChanged = true;
+                            this.DataChanged = true;
                         };
                     }
                     this.olvColumn3.AspectPutter = delegate4;
@@ -472,10 +472,10 @@
                 case 4:
                     if (delegate5 == null) {
                         delegate5 = delegate (object x, object newValue) {
-                            if (x is UnitVariantObject) {
-                                ((UnitVariantObject) x).Num3 = (uint) newValue;
-                            }
-                            this.dataChanged = true;
+//                            if (x is UnitVariantObject) {
+//                                ((UnitVariantObject) x).EntryCount = (uint) newValue;
+//                            }
+//                            this.dataChanged = true;
                         };
                     }
                     this.olvColumn4.AspectPutter = delegate5;
@@ -485,9 +485,9 @@
                     if (delegate6 == null) {
                         delegate6 = delegate (object x, object newValue) {
                             if (x is UnitVariantObject) {
-                                ((UnitVariantObject) x).Num4 = (uint) newValue;
+                                ((UnitVariantObject) x).MeshStartIndex = (uint) newValue;
                             }
-                            this.dataChanged = true;
+                            this.DataChanged = true;
                         };
                     }
                     this.olvColumn5.AspectPutter = delegate6;
@@ -499,7 +499,7 @@
                             if (x is MeshTextureObject) {
                                 ((MeshTextureObject) x).Mesh = (string) newValue;
                             }
-                            this.dataChanged = true;
+                            this.DataChanged = true;
                         };
                     }
                     this.olvColumn6.AspectPutter = delegate7;
@@ -511,7 +511,7 @@
                             if (x is MeshTextureObject) {
                                 ((MeshTextureObject) x).Texture = (string) newValue;
                             }
-                            this.dataChanged = true;
+                            this.DataChanged = true;
                         };
                     }
                     this.olvColumn7.AspectPutter = delegate8;
@@ -523,7 +523,7 @@
                             if (x is MeshTextureObject) {
                                 ((MeshTextureObject) x).Bool1 = (bool) newValue;
                             }
-                            this.dataChanged = true;
+                            this.DataChanged = true;
                         };
                     }
                     this.olvColumn8.AspectPutter = delegate9;
@@ -535,7 +535,7 @@
                             if (x is MeshTextureObject) {
                                 ((MeshTextureObject) x).Bool2 = (bool) newValue;
                             }
-                            this.dataChanged = true;
+                            this.DataChanged = true;
                         };
                     }
                     this.olvColumn9.AspectPutter = delegate10;
@@ -558,9 +558,9 @@
             }
         }
 
-        public void updatePackedFile() {
-            if (this.dataChanged) {
-                this.setData();
+        public void Commit() {
+            if (this.DataChanged) {
+                this.SetData();
             }
         }
     }

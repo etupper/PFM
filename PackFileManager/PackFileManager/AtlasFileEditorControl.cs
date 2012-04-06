@@ -8,17 +8,15 @@
     using System.Drawing;
     using System.Windows.Forms;
 
-    public class AtlasFileEditorControl : UserControl
+    public class AtlasFileEditorControl : PackedFileEditor<AtlasFile>
     {
         private ToolStripMenuItem addAtlasEntryToolStripMenuItem;
         private ToolStripMenuItem addNewAtlasEntryToolStripMenuItem;
-        private AtlasFile atlasFile;
         private CheckBox checkBox1;
         private IContainer components;
         private ContextMenuStrip contextMenuStrip1;
         private OLVColumn CSCont1;
         private OLVColumn CSCont2;
-        private PackedFile currentPackedFile;
         private OLVColumn CX1;
         private OLVColumn CX1P;
         private OLVColumn CX2;
@@ -29,7 +27,6 @@
         private OLVColumn CY2;
         private OLVColumn CY2P;
         private OLVColumn CY3;
-        public bool dataChanged;
         private ToolStripMenuItem exportEntriesToTextFileToolStripMenuItem;
         private float imageHeight;
         private Label label1;
@@ -39,31 +36,37 @@
         private ToolStripMenuItem removeAtlasEntryToolStripMenuItem;
         private TextBox textBox1;
         private ToolStripMenuItem toolStripMenuItem1;
-
-        public AtlasFileEditorControl()
+        
+        public AtlasFileEditorControl() : base (AtlasCodec.Instance)
         {
             this.components = null;
-            this.dataChanged = false;
+            this.DataChanged = false;
             this.imageHeight = 4096f;
             this.InitializeComponent();
-        }
-
-        public AtlasFileEditorControl(PackedFile packedFile)
-        {
-            this.components = null;
-            this.dataChanged = false;
-            this.imageHeight = 4096f;
-            this.InitializeComponent();
-            this.currentPackedFile = packedFile;
             this.textBox1.Text = this.imageHeight.ToString();
-            this.atlasFile = new AtlasFile();
-            this.atlasFile.setPackedFile(packedFile);
-            this.atlasFile.setPixelUnits(this.imageHeight);
-            this.olv = this.objectListView1;
-            this.olv.AddObjects(this.atlasFile.Entries);
+            // EditedFile = AtlasCodec.Instance.Decode(packedFile);
+            // EditedFile.setPixelUnits(this.imageHeight);
             this.CSCont1.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
             this.CSCont2.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+            this.olv = this.objectListView1;
             this.olv.CellEditFinishing += new CellEditEventHandler(this.olv_CellEditFinishing);
+
+        }
+
+        public AtlasFileEditorControl(PackedFile packedFile) : this() {
+            CurrentPackedFile = packedFile;
+        }
+
+        protected override AtlasFile EditedFile {
+            get { return base.EditedFile; }
+            set {
+                if (value != null) {
+                    value.setPixelUnits(imageHeight);
+                    olv.Clear();
+                    this.olv.AddObjects(this.EditedFile.Entries);
+                }
+                base.EditedFile = value;
+            }
         }
 
         private void addAtlasEntry_Click(object sender, EventArgs e)
@@ -72,9 +75,9 @@
                 Container1 = "NEW_ENTRY",
                 Container2 = "NEW_ENTRY"
             };
-            this.atlasFile.add(newEntry);
+            EditedFile.add(newEntry);
             this.olv.AddObject(newEntry);
-            this.dataChanged = true;
+            this.DataChanged = true;
             this.olv.EnsureModelVisible(newEntry);
         }
 
@@ -348,7 +351,7 @@
                             if (x is AtlasObject)
                             {
                                 ((AtlasObject) x).Container1 = (string) newValue;
-                                this.dataChanged = true;
+                                this.DataChanged = true;
                             }
                         };
                     }
@@ -362,7 +365,7 @@
                             if (x is AtlasObject)
                             {
                                 ((AtlasObject) x).Container2 = (string) newValue;
-                                this.dataChanged = true;
+                                this.DataChanged = true;
                             }
                         };
                     }
@@ -376,8 +379,8 @@
                             if ((x is AtlasObject) && (e.Column == this.CX1))
                             {
                                 ((AtlasObject) x).X1 = Convert.ToSingle(newValue);
-                                this.atlasFile.setPixelUnits(this.imageHeight);
-                                this.dataChanged = true;
+                                EditedFile.setPixelUnits(this.imageHeight);
+                                this.DataChanged = true;
                             }
                         };
                     }
@@ -391,8 +394,8 @@
                             if ((x is AtlasObject) && (e.Column == this.CY1))
                             {
                                 ((AtlasObject) x).Y1 = Convert.ToSingle(newValue);
-                                this.atlasFile.setPixelUnits(this.imageHeight);
-                                this.dataChanged = true;
+                                EditedFile.setPixelUnits(this.imageHeight);
+                                this.DataChanged = true;
                             }
                         };
                     }
@@ -406,8 +409,8 @@
                             if ((x is AtlasObject) && (e.Column == this.CX2))
                             {
                                 ((AtlasObject) x).X2 = Convert.ToSingle(newValue);
-                                this.atlasFile.setPixelUnits(this.imageHeight);
-                                this.dataChanged = true;
+                                EditedFile.setPixelUnits(this.imageHeight);
+                                this.DataChanged = true;
                             }
                         };
                     }
@@ -421,8 +424,8 @@
                             if ((x is AtlasObject) && (e.Column == this.CY2))
                             {
                                 ((AtlasObject) x).Y2 = Convert.ToSingle(newValue);
-                                this.atlasFile.setPixelUnits(this.imageHeight);
-                                this.dataChanged = true;
+                                EditedFile.setPixelUnits(this.imageHeight);
+                                this.DataChanged = true;
                             }
                         };
                     }
@@ -436,7 +439,7 @@
                             if ((x is AtlasObject) && (e.Column == this.CX3))
                             {
                                 ((AtlasObject) x).X3 = Convert.ToSingle(newValue);
-                                this.dataChanged = true;
+                                this.DataChanged = true;
                             }
                         };
                     }
@@ -450,7 +453,7 @@
                             if ((x is AtlasObject) && (e.Column == this.CY3))
                             {
                                 ((AtlasObject) x).Y3 = Convert.ToSingle(newValue);
-                                this.dataChanged = true;
+                                this.DataChanged = true;
                             }
                         };
                     }
@@ -465,7 +468,7 @@
                             {
                                 ((AtlasObject) x).PX1 = Convert.ToSingle(newValue);
                                 ((AtlasObject) x).X1 = ((AtlasObject) x).PX1 / this.imageHeight;
-                                this.dataChanged = true;
+                                this.DataChanged = true;
                             }
                         };
                     }
@@ -480,7 +483,7 @@
                             {
                                 ((AtlasObject) x).PY1 = Convert.ToSingle(newValue);
                                 ((AtlasObject) x).Y1 = ((AtlasObject) x).PY1 / this.imageHeight;
-                                this.dataChanged = true;
+                                this.DataChanged = true;
                             }
                         };
                     }
@@ -495,7 +498,7 @@
                             {
                                 ((AtlasObject) x).PX2 = Convert.ToSingle(newValue);
                                 ((AtlasObject) x).X2 = ((AtlasObject) x).PX2 / this.imageHeight;
-                                this.dataChanged = true;
+                                this.DataChanged = true;
                             }
                         };
                     }
@@ -510,7 +513,7 @@
                             {
                                 ((AtlasObject) x).PY2 = Convert.ToSingle(newValue);
                                 ((AtlasObject) x).Y2 = ((AtlasObject) x).PY2 / this.imageHeight;
-                                this.dataChanged = true;
+                                this.DataChanged = true;
                             }
                         };
                     }
@@ -540,16 +543,10 @@
         private void removeAtlasEntry_Click(object sender, EventArgs e)
         {
             AtlasObject selectedObject = (AtlasObject) this.olv.SelectedObject;
-            this.atlasFile.removeAt(this.olv.IndexOf(this.olv.SelectedObject));
+            this.EditedFile.removeAt(this.olv.IndexOf(this.olv.SelectedObject));
             this.olv.RemoveObject(selectedObject);
-            this.olv.RefreshObjects(this.atlasFile.Entries);
-            this.dataChanged = true;
-        }
-
-        public void setData()
-        {
-            this.currentPackedFile.Data = (this.atlasFile.GetBytes());
-            this.dataChanged = false;
+            this.olv.RefreshObjects(this.EditedFile.Entries);
+            this.DataChanged = true;
         }
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
@@ -557,23 +554,15 @@
             if (this.textBox1.Modified && (e.KeyCode == Keys.Return))
             {
                 this.imageHeight = Convert.ToSingle(this.textBox1.Text);
-                this.atlasFile.setPixelUnits(this.imageHeight);
-                this.dataChanged = true;
-                this.olv.RefreshObjects(this.atlasFile.Entries);
+                this.EditedFile.setPixelUnits(this.imageHeight);
+                this.DataChanged = true;
+                this.olv.RefreshObjects(this.EditedFile.Entries);
             }
         }
 
         private void textBox1_MouseHover(object sender, EventArgs e)
         {
             new ToolTip().SetToolTip(this.textBox1, "Width of the .dds texture in Pixel Units");
-        }
-
-        public void updatePackedFile()
-        {
-            if (this.dataChanged)
-            {
-                this.setData();
-            }
         }
     }
 }

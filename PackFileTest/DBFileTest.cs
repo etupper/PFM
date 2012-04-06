@@ -4,18 +4,13 @@ using System.Collections.Generic;
 using Common;
 
 namespace PackFileTest {
-    public class DBFileTest : IComparable {
+    public class DBFileTest : PackedFileTest {
         // to conveniently set breakpoints for certain tables.
         private string debug_at = "sound_events";
 
-        public string Packfile {
-            get;
-            set;
-        }
         private bool testTsv;
 
         #region Result lists
-        public SortedSet<string> generalErrors = new SortedSet<string>();
         public SortedSet<Tuple<string, int>> supported = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
         public SortedSet<Tuple<string, int>> noDefinition = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
         public SortedSet<Tuple<string, int>> noDefForVersion = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
@@ -24,31 +19,19 @@ namespace PackFileTest {
         public SortedSet<Tuple<string, int>> tsvFails = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
         #endregion
 
-        public DBFileTest(string file, bool tsv) {
-            Packfile = file;
-            testTsv = tsv;
-        }
-
-        // tests all db files in this test's pack
-        public void testAllFiles() {
-            string currentFile = "";
-            PackFile packFile = new PackFileCodec().Open(Packfile);
-            foreach (PackedFile packed in packFile.Files) {
-                try {
-                    currentFile = packed.FullPath;
-                    if (currentFile.StartsWith("db")) {
-                        testDbFile(packed);
-                    }
-                } catch (Exception x) {
-                    generalErrors.Add(string.Format("reading {0}: {1}", packed.FullPath, x.Message));
-                }
-            }
-        }
+        public DBFileTest (string file, bool tsv) {
+			Packfile = file;
+			testTsv = tsv;
+		}
+		
+		public override bool canTest(PackedFile packed) {
+			return packed.FullPath.StartsWith("db");
+		}
 
         // test the given packed file as a database file
         // tests PackedFileCodec and the db definitions we have
-        public void testDbFile(PackedFile file) {
-            PackedFileDbCodec packedCodec = new PackedFileDbCodec();
+        public override void testFile(PackedFile file) {
+            PackedFileDbCodec packedCodec = PackedFileDbCodec.FromFilename(file.FullPath);
             string type = DBFile.typename(file.FullPath);
             DBFileHeader header = PackedFileDbCodec.readHeader(file);
             Tuple<string, int> tuple = new Tuple<string, int>(type, header.Version);
@@ -64,7 +47,7 @@ namespace PackFileTest {
                     }
                     // a wrong db definition might not cause errors,
                     // but read less entries than there are
-                    DBFile dbFile = packedCodec.readDbFile(file);
+                    DBFile dbFile = PackedFileDbCodec.Decode(file);
                     if (dbFile.Entries.Count == dbFile.Header.EntryCount) {
                         addTo = supported;
                         // only test tsv import/export if asked,
@@ -101,7 +84,7 @@ namespace PackFileTest {
                 }
                 // re-import
                 using (Stream filestream = File.OpenRead(exportPath)) {
-                    reimport = codec.readDbFile(filestream);
+                    reimport = codec.Decode(filestream);
                     // check all read values against original ones
                     for (int row = 0; row < originalFile.Entries.Count; row++) {
                         for (int column = 0; column < originalFile.CurrentType.fields.Count; column++) {
@@ -119,15 +102,64 @@ namespace PackFileTest {
             }
         }
 
-        public int CompareTo(object o) {
-            int result = 0;
-            if (o is DBFileTest) {
-                result = Packfile.CompareTo((o as DBFileTest).Packfile);
-            }
-            return result;
-        }
+         // write files that failed to filesystem individually for later inspection
+		void extractFiles(string dir, PackFile pack, ICollection<Tuple<string, int>> toExtract) {
+			if (toExtract.Count != 0) {
+				string path = Path.Combine (dir, "failed");
+				Directory.CreateDirectory (path);
+				foreach (Tuple<string, int> failed in toExtract) {
+					string failType = failed.Item1;
+					string failPath = string.Format ("db\\{0}_tables\\{0}", failType);
+					PackedFile found = null;
+					foreach (PackedFile packed in pack.Files) {
+						if (packed.FullPath.Equals (failPath)) {
+							found = packed;
+							break;
+						}
+					}
+					if (found != null) {
+						string filePath = Path.Combine (path, string.Format ("{0}_{1}", failType, failed.Item2));
+						File.WriteAllBytes (Path.Combine (dir, filePath), found.Data);
+					} else {
+						Console.WriteLine ("cant extract {0}", failPath);
+					}
+				}
+			}
+		}
 
-        // i like sorted things
+		public override void printResults() {
+			Console.WriteLine ("Database Test:");
+			Console.WriteLine ("Supported Files: {0}", supported.Count);
+			Console.WriteLine ("Empty Files: {0}", emptyTables.Count);
+			printList ("General errors", generalErrors);
+			printList ("No description", noDefinition);
+			printList ("no definition for version", noDefForVersion);
+			printList ("invalid description", invalidDefForVersion);
+			printList ("Tsv exports", tsvFails);
+			Console.WriteLine ();
+		}
+		
+         #region Print Utilities
+		static void printList(string label, ICollection<Tuple<string, int>> list) {
+			if (list.Count != 0) {
+				Console.WriteLine ("{0}: {1}", label, list.Count);
+				foreach (Tuple<string, int> tableVersion in list) {
+					Console.WriteLine ("Type {0}, Version {1}", tableVersion.Item1, tableVersion.Item2);
+				}
+			}
+		}
+
+		static void printList(string label, ICollection<Tuple<string, int, int>> list) {
+			if (list.Count != 0) {
+				Console.WriteLine ("{0}: {1}", label, list.Count);
+				foreach (Tuple<string, int, int> tableVersion in list) {
+					Console.WriteLine ("Type {0}, Version {1} downgraded {2}", tableVersion.Item1, tableVersion.Item2, tableVersion.Item3);
+				}
+			}
+		}
+        #endregion
+
+		// i like sorted things
         class TableVersionComparer : IComparer<Tuple<string, int>> {
             public int Compare(Tuple<string, int> a, Tuple<string, int> b) {
                 int result = a.Item1.CompareTo(b.Item1);

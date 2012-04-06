@@ -10,7 +10,7 @@ using System.Xml;
 
 namespace PackFileManager
 {
-    public class LocFileEditorControl : UserControl
+    public class LocFileEditorControl : PackedFileEditor<LocFile>
     {
         private ToolStripButton addNewRowButton;
         private BindingSource bindingSource;
@@ -21,62 +21,68 @@ namespace PackFileManager
         private int[] columnWidths;
         private IContainer components;
         private DataTable currentDataTable;
-        private PackedFile currentPackedFile;
-        public bool dataChanged;
         private DataGridView dataGridView;
         private ToolStripButton deleteCurrentRow;
         private ToolStripButton exportButton;
         private ToolStripButton importButton;
-        private LocFile locFile;
         public OpenFileDialog openLocFileDialog;
         private ToolStrip toolStrip;
         private ToolStripSeparator toolStripSeparator1;
 
-        public LocFileEditorControl(PackedFile packedFile)
-        {
-            int[] numArray = new int[3];
-            numArray[2] = 1;
-            this.columnTypes = numArray;
-            this.columnWidths = new int[] { 200, 400, 20 };
-            this.components = null;
-            this.InitializeComponent();
-            for (int i = 0; i < this.columnNames.Length; i++)
-            {
-                DataGridViewColumn column;
-                int num2 = this.columnTypes[i];
-                if (num2 == 1)
-                {
-                    column = new DataGridViewCheckBoxColumn();
-                }
-                else
-                {
-                    column = new DataGridViewAutoFilterTextBoxColumn();
-                }
-                column.DataPropertyName = this.columnNames[i];
-                column.HeaderText = this.columnHeaders[i];
-                column.Width = this.columnWidths[i];
-                this.dataGridView.Columns.Add(column);
-            }
-            this.currentPackedFile = packedFile;
-            this.locFile = new LocFile();
-            this.locFile.setPackedFile(this.currentPackedFile);
+        public LocFileEditorControl (PackedFile packedFile) :base (LocCodec.Instance) {
+			int[] numArray = new int[3];
+			numArray [2] = 1;
+			this.columnTypes = numArray;
+			this.columnWidths = new int[] { 200, 400, 20 };
+			this.components = null;
+			this.InitializeComponent ();
+			for (int i = 0; i < this.columnNames.Length; i++) {
+				DataGridViewColumn column;
+				int num2 = this.columnTypes [i];
+				if (num2 == 1) {
+					column = new DataGridViewCheckBoxColumn ();
+				} else {
+					column = new DataGridViewAutoFilterTextBoxColumn ();
+				}
+				column.DataPropertyName = this.columnNames [i];
+				column.HeaderText = this.columnHeaders [i];
+				column.Width = this.columnWidths [i];
+				this.dataGridView.Columns.Add (column);
+			}
+			this.CurrentPackedFile = packedFile;
             this.bindingSource = new BindingSource();
             this.currentDataTable = this.getData();
             this.bindingSource.DataSource = this.currentDataTable;
             this.dataGridView.DataSource = this.bindingSource;
         }
 
-        private void addNewRowButton_Click(object sender, EventArgs e)
-        {
-            DataRow row = this.currentDataTable.NewRow();
-            row[0] = "tag";
-            row[1] = "localised string";
-            row[2] = false;
-            this.currentDataTable.Rows.Add(row);
-            this.dataGridView.FirstDisplayedScrollingRowIndex = this.dataGridView.RowCount - 1;
-            this.dataGridView.Rows[this.dataGridView.Rows.Count - 2].Selected = true;
-            this.dataChanged = true;
-            this.currentPackedFile.Data = this.locFile.GetBytes();
+        private void addNewRowButton_Click(object sender, EventArgs e) {
+			DataRow row = this.currentDataTable.NewRow ();
+			row [0] = "tag";
+			row [1] = "localised string";
+			row [2] = false;
+			this.currentDataTable.Rows.Add (row);
+			this.dataGridView.FirstDisplayedScrollingRowIndex = this.dataGridView.RowCount - 1;
+			this.dataGridView.Rows [this.dataGridView.Rows.Count - 2].Selected = true;
+			this.DataChanged = true;
+		}
+
+        public override bool DataChanged {
+            get { return base.DataChanged; }
+            set {
+                base.DataChanged = value;
+                if (value) {
+                    this.EditedFile.Entries.Clear();
+                    for (int i = 0; i < (this.dataGridView.Rows.Count - 1); i++) {
+                        string tag = this.dataGridView.Rows[i].Cells[0].Value.ToString();
+                        string localised = this.dataGridView.Rows[i].Cells[1].Value.ToString();
+                        bool tooltip = Convert.ToBoolean(this.dataGridView.Rows[i].Cells[2].Value);
+                        LocEntry newEntry = new LocEntry(tag, localised, tooltip);
+                        this.EditedFile.Entries.Add(newEntry);
+                    }
+                    SetData();
+                }
+            }
         }
 
         private void cloneCurrentRow_Click(object sender, EventArgs e)
@@ -89,14 +95,12 @@ namespace PackFileManager
             this.currentDataTable.Rows.Add(row);
             this.dataGridView.FirstDisplayedScrollingRowIndex = this.dataGridView.RowCount - 1;
             this.dataGridView.Rows[this.dataGridView.Rows.Count - 2].Selected = true;
-            this.dataChanged = true;
-            this.currentPackedFile.Data = this.locFile.GetBytes();
+            this.DataChanged = true;
         }
 
         private void dataGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            this.dataChanged = true;
-            this.currentPackedFile.Data = (this.locFile.GetBytes());
+            this.DataChanged = true;
         }
 
         private void dataGridView_SelectionChanged(object sender, EventArgs e)
@@ -107,16 +111,14 @@ namespace PackFileManager
 
         private void dataGridView_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
-            this.dataChanged = true;
-            this.currentPackedFile.Data = (this.locFile.GetBytes());
+            this.DataChanged = true;
         }
 
         private void deleteCurrentRow_Click(object sender, EventArgs e)
         {
             int index = (this.dataGridView.SelectedRows.Count == 1) ? this.dataGridView.SelectedRows[0].Index : this.dataGridView.SelectedCells[0].RowIndex;
             this.currentDataTable.Rows.RemoveAt(index);
-            this.dataChanged = true;
-            this.currentPackedFile.Data = (this.locFile.GetBytes());
+            this.DataChanged = true;
         }
 
         protected override void Dispose(bool disposing)
@@ -132,13 +134,13 @@ namespace PackFileManager
         private void exportButton_Click(object sender, EventArgs e)
         {
             SaveFileDialog dialog = new SaveFileDialog {
-                FileName = this.locFile.name + ".tsv"
+                FileName = this.EditedFile.Name + ".tsv"
             };
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 using (StreamWriter writer = new StreamWriter(dialog.FileName))
                 {
-                    this.locFile.Export(writer);
+                    this.EditedFile.Export(writer);
                 }
             }
         }
@@ -146,7 +148,7 @@ namespace PackFileManager
         private DataTable getData()
         {
             int num;
-            if (this.locFile == null)
+            if (this.EditedFile == null)
             {
                 return null;
             }
@@ -165,12 +167,12 @@ namespace PackFileManager
                 }
                 table.Columns.Add(column);
             }
-            for (num = 0; num < this.locFile.numEntries; num++)
+            for (num = 0; num < this.EditedFile.NumEntries; num++)
             {
                 DataRow row = table.NewRow();
-                row[0] = this.locFile.Entries[num].Tag;
-                row[1] = this.locFile.Entries[num].Localised;
-                row[2] = this.locFile.Entries[num].Tooltip;
+                row[0] = this.EditedFile.Entries[num].Tag;
+                row[1] = this.EditedFile.Entries[num].Localised;
+                row[2] = this.EditedFile.Entries[num].Tooltip;
                 table.Rows.Add(row);
             }
             return table;
@@ -178,21 +180,20 @@ namespace PackFileManager
 
         private void importButton_Click(object sender, EventArgs e)
         {
-            this.openLocFileDialog.FileName = this.locFile.name + ".tsv";
+            this.openLocFileDialog.FileName = this.EditedFile.Name + ".tsv";
             if (this.openLocFileDialog.ShowDialog() == DialogResult.OK)
             {
                 using (StreamReader reader = new StreamReader(this.openLocFileDialog.FileName))
                 {
-                    this.locFile.Import(reader);
+                    this.EditedFile.Import(reader);
                     this.currentDataTable = this.getData();
                     this.bindingSource = new BindingSource();
                     this.bindingSource.DataSource = this.currentDataTable;
                     this.dataGridView.DataSource = this.bindingSource;
-                    this.dataChanged = true;
+                    this.DataChanged = true;
                 }
             }
-            this.dataChanged = true;
-            this.currentPackedFile.Data = (this.locFile.GetBytes());
+            this.DataChanged = true;
         }
 
         private void InitializeComponent()
@@ -318,29 +319,6 @@ namespace PackFileManager
             this.ResumeLayout(false);
             this.PerformLayout();
 
-        }
-
-        private void setData()
-        {
-            this.locFile.resetEntries();
-            for (int i = 0; i < (this.dataGridView.Rows.Count - 1); i++)
-            {
-                string tag = this.dataGridView.Rows[i].Cells[0].Value.ToString();
-                string localised = this.dataGridView.Rows[i].Cells[1].Value.ToString();
-                bool tooltip = Convert.ToBoolean(this.dataGridView.Rows[i].Cells[2].Value);
-                LocEntry newEntry = new LocEntry(tag, localised, tooltip);
-                this.locFile.add(newEntry);
-            }
-            this.currentPackedFile.Data = (this.locFile.GetBytes());
-        }
-
-        public void updatePackedFile()
-        {
-            if (this.dataChanged)
-            {
-                this.setData();
-            }
-            this.dataChanged = false;
         }
     }
 }
