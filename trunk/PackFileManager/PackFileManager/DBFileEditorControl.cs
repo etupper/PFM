@@ -15,6 +15,8 @@ namespace PackFileManager {
         private enum COPIED_TYPE { NONE, ROWS, CELLS }
         private string referenceTarget = null;
 
+        PackedFileDbCodec Codec;
+
         #region Members
         private ToolStripButton addNewRowButton;
         private CheckBox useFirstColumnAsRowHeader;
@@ -23,8 +25,8 @@ namespace PackFileManager {
         private ToolStripButton copyToolStripButton;
         private DataSet currentDataSet;
         private DataTable currentDataTable;
-        private DBFile currentDBFile;
-        public PackedFile currentPackedFile;
+        private DBFile EditedFile;
+        public PackedFile CurrentPackedFile;
         private DataGridViewExtended dataGridView;
         private ToolStripButton exportButton;
         private ToolStripButton importButton;
@@ -35,7 +37,7 @@ namespace PackFileManager {
         private TextBox unsupportedDBErrorTextBox;
         private CheckBox useComboBoxCells;
         private CheckBox showAllColumns;
-        private bool dataChanged;
+        private bool TableColumnChanged;
         private List<List<FieldInstance>> copiedRows = new List<List<FieldInstance>>();
         private COPIED_TYPE lastCopy = COPIED_TYPE.NONE;
         #endregion
@@ -57,7 +59,7 @@ namespace PackFileManager {
 
         private void copyPaste(object sender, KeyEventArgs arge) 
         {
-            if (currentPackedFile != null) 
+            if (CurrentPackedFile != null) 
             {
                 if (arge.Control) 
                 {
@@ -75,7 +77,7 @@ namespace PackFileManager {
 
         private void addNewRowButton_Click(object sender, EventArgs e) 
         {
-            var newEntry = currentDBFile.GetNewEntry();
+            var newEntry = EditedFile.GetNewEntry();
             int insertAtColumn = dataGridView.Rows.Count;
             if (dataGridView.CurrentCell != null) 
             {
@@ -92,7 +94,7 @@ namespace PackFileManager {
                 int num2 = Convert.ToInt32(currentDataTable.Columns[i].ColumnName);
                 row[i] = Convert.ChangeType(newEntry[num2].Value, currentDataTable.Columns[i].DataType);
             }
-            currentDBFile.Entries.Insert(index, newEntry);
+            EditedFile.Entries.Insert(index, newEntry);
             currentDataTable.Rows.InsertAt(row, index);
             dataGridView.FirstDisplayedScrollingRowIndex = index;
         }
@@ -113,8 +115,8 @@ namespace PackFileManager {
             int index = currentDataTable.Rows.IndexOf((dataGridView.Rows[num].DataBoundItem as DataRowView).Row);
 
             DataRow row = currentDataTable.NewRow();
-            List<FieldInstance> newEntry = currentDBFile.GetNewEntry();
-            List<FieldInstance> list2 = currentDBFile.Entries[index];
+            List<FieldInstance> newEntry = EditedFile.GetNewEntry();
+            List<FieldInstance> list2 = EditedFile.Entries[index];
 
             for (int i = 1; i < currentDataTable.Columns.Count; i++) 
             {
@@ -126,7 +128,7 @@ namespace PackFileManager {
                 }
             }
 
-            currentDBFile.Entries.Add(newEntry);
+            EditedFile.Entries.Add(newEntry);
             currentDataTable.Rows.Add(row);
             dataGridView.FirstDisplayedScrollingRowIndex = dataGridView.RowCount - 1;
         }
@@ -144,7 +146,7 @@ namespace PackFileManager {
 
         private void copyEvent() 
         {
-            if (currentDBFile == null)
+            if (EditedFile == null)
                 return;
 
             copiedRows = new List<List<FieldInstance>>();
@@ -153,7 +155,7 @@ namespace PackFileManager {
                 DataGridViewSelectedRowCollection selected = dataGridView.SelectedRows;
                 foreach (DataGridViewRow row in selected) 
                 {
-                    List<FieldInstance> toCopy = currentDBFile.Entries[row.Index];
+                    List<FieldInstance> toCopy = EditedFile.Entries[row.Index];
                     var copy = new List<FieldInstance>(toCopy.Count);
                     toCopy.ForEach(field => copy.Add(new FieldInstance(field.Info, field.Value)));
                     copiedRows.Add(copy);
@@ -209,11 +211,11 @@ namespace PackFileManager {
             {
                 object proposedValue = e.ProposedValue;
                 int num = Convert.ToInt32(e.Column.ColumnName);
-                List<FieldInstance> list = currentDBFile.Entries[currentDataTable.Rows.IndexOf(e.Row)];
+                List<FieldInstance> list = EditedFile.Entries[currentDataTable.Rows.IndexOf(e.Row)];
                 FieldInstance instance = list[num];
                 string str = (proposedValue == null) ? "" : proposedValue.ToString();
                 instance.Value = str;
-                currentPackedFile.Data = PackedFileDbCodec.Encode(currentDBFile);
+                CurrentPackedFile.Data = Codec.Encode(EditedFile);
             }
         }
 
@@ -221,13 +223,13 @@ namespace PackFileManager {
             if (e.Action != DataRowAction.Delete) {
                 throw new InvalidDataException("wtf?");
             }
-            currentDBFile.Entries.RemoveAt(currentDataTable.Rows.IndexOf(e.Row));
-            currentPackedFile.Data = PackedFileDbCodec.Encode(currentDBFile);
+            EditedFile.Entries.RemoveAt(currentDataTable.Rows.IndexOf(e.Row));
+            CurrentPackedFile.Data = Codec.Encode(EditedFile);
         }
 
         private void currentDataTable_TableNewRow(object sender, DataTableNewRowEventArgs e) {
             if (dataGridView.DataSource != null) {
-                currentPackedFile.Data = (PackedFileDbCodec.Encode(currentDBFile));
+                CurrentPackedFile.Data = (Codec.Encode(EditedFile));
             }
         }
 
@@ -236,7 +238,7 @@ namespace PackFileManager {
             var dataSource = dataGridView.DataSource as BindingSource;
             if (dataSource == null) throw new Exception("DataGridView has no DataSource");
 
-            if ((((currentDBFile.CurrentType.fields.Count > 1) && useFirstColumnAsRowHeader.Checked) && ((e.ColumnIndex == -1) && (e.RowIndex > -1))) && (e.RowIndex < dataSource.Count))
+            if ((((EditedFile.CurrentType.fields.Count > 1) && useFirstColumnAsRowHeader.Checked) && ((e.ColumnIndex == -1) && (e.RowIndex > -1))) && (e.RowIndex < dataSource.Count))
             {
                 var dataRowView = dataSource[e.RowIndex] as DataRowView;
                 if (dataRowView == null) throw new Exception(string.Format("No DataRowView for RowIndex {0}", e.RowIndex));
@@ -283,7 +285,7 @@ namespace PackFileManager {
         private void exportButton_Click(object sender, EventArgs e) {
             var dialog = new SaveFileDialog {
                 InitialDirectory = Settings.Default.ImportExportDirectory,
-                FileName = currentDBFile.CurrentType.name + ".tsv",
+                FileName = EditedFile.CurrentType.name + ".tsv",
                 Filter = IOFunctions.TSV_FILTER
             };
             dialog.InitialDirectory = Settings.Default.ImportExportDirectory;
@@ -292,7 +294,7 @@ namespace PackFileManager {
                 Settings.Default.ImportExportDirectory = Path.GetDirectoryName(dialog.FileName);
                 Stream stream = new FileStream (dialog.FileName, FileMode.Create);
                 try {
-                    TextDbCodec.Instance.Encode (stream, currentDBFile);
+                    TextDbCodec.Instance.Encode (stream, EditedFile);
                     stream.Close ();
                 } catch (DBFileNotSupportedException exception) {
                     showDBFileNotSupportedMessage (exception.Message);
@@ -305,22 +307,22 @@ namespace PackFileManager {
         private void importButton_Click(object sender, EventArgs e) {
             OpenFileDialog openDBFileDialog = new OpenFileDialog {
                 InitialDirectory = Settings.Default.ImportExportDirectory,
-                FileName = currentDBFile.CurrentType.name + ".tsv"
+                FileName = EditedFile.CurrentType.name + ".tsv"
             };
 
             if (openDBFileDialog.ShowDialog() == DialogResult.OK) {
                 Settings.Default.ImportExportDirectory = Path.GetDirectoryName(openDBFileDialog.FileName);
                 try {
                     using (var stream = new MemoryStream(File.ReadAllBytes(openDBFileDialog.FileName))) {
-                        currentDBFile.Import(new TextDbCodec().readDbFile(stream));
+                        EditedFile.Import(new TextDbCodec().Decode(stream));
                     }
 
                 } catch (DBFileNotSupportedException exception) {
                     showDBFileNotSupportedMessage(exception.Message);
                 }
 
-                currentPackedFile.Data = (PackedFileDbCodec.Encode(currentDBFile));
-                Open(currentPackedFile);
+                CurrentPackedFile.Data = (Codec.Encode(EditedFile));
+                Open(CurrentPackedFile);
             }
         }
 
@@ -552,9 +554,9 @@ namespace PackFileManager {
                 column = new DataGridViewAutoFilterTextBoxColumn {DataPropertyName = columnName };
             }
             column.SortMode = DataGridViewColumnSortMode.Programmatic;
-            column.HeaderText = fieldInfo.Name + (Settings.Default.IsColumnIgnored(currentPackedFile.FullPath, fieldInfo.Name) ? "*" : "");
+            column.HeaderText = fieldInfo.Name + (Settings.Default.IsColumnIgnored(CurrentPackedFile.FullPath, fieldInfo.Name) ? "*" : "");
             column.Tag = fieldInfo;
-            column.Visible = !Settings.Default.IsColumnIgnored(currentPackedFile.FullPath, fieldInfo.Name);
+            column.Visible = !Settings.Default.IsColumnIgnored(CurrentPackedFile.FullPath, fieldInfo.Name);
 
             if (column.Visible) 
             {
@@ -584,13 +586,13 @@ namespace PackFileManager {
                 }
             }
             try {
-                currentDBFile = new PackedFileDbCodec().readDbFile(packedFile);
+                EditedFile = PackedFileDbCodec.Decode(packedFile);
             } catch {
                 if (Settings.Default.ShowDecodeToolOnError) {
                     var decoder = new DecodeTool.DecodeTool { TypeName = key, Bytes = packedFile.Data };
                     decoder.ShowDialog();
                     try {
-                        currentDBFile = new PackedFileDbCodec().readDbFile(packedFile);
+                        EditedFile = PackedFileDbCodec.Decode(packedFile);
                     } catch {
                         return;
                     }
@@ -599,8 +601,9 @@ namespace PackFileManager {
                 }
             }
             dataGridView.DataSource = null;
-            currentPackedFile = packedFile;
-            TypeInfo info = currentDBFile.CurrentType;
+            CurrentPackedFile = packedFile;
+            Codec = PackedFileDbCodec.FromFilename(packedFile.FullPath);
+            TypeInfo info = EditedFile.CurrentType;
             currentDataSet = new DataSet(info.name + "_DataSet");
             currentDataTable = new DataTable(info.name + "_DataTable");
             currentDataTable.Columns.Add(new DataColumn("#", Type.GetType("System.Int32")));
@@ -625,12 +628,12 @@ namespace PackFileManager {
             currentDataTable.RowDeleting += currentDataTable_RowDeleted;
             currentDataTable.TableNewRow += currentDataTable_TableNewRow;
 
-            for (num = 0; num < currentDBFile.Entries.Count; num++) {
+            for (num = 0; num < EditedFile.Entries.Count; num++) {
                 DataRow row = currentDataTable.NewRow();
                 row[0] = num;
                 for (int i = 1; i < currentDataTable.Columns.Count; i++) {
                     int num3 = Convert.ToInt32(currentDataTable.Columns[i].ColumnName);
-                    row[i] = currentDBFile.Entries[num][num3].Value;
+                    row[i] = EditedFile.Entries[num][num3].Value;
                 }
                 currentDataTable.Rows.Add(row);
             }
@@ -678,7 +681,7 @@ namespace PackFileManager {
                         }
                     }
                 }
-                currentPackedFile.Data = (PackedFileDbCodec.Encode(currentDBFile));
+                CurrentPackedFile.Data = Codec.Encode(EditedFile);
                 dataGridView.Refresh();
             }
         }
@@ -707,7 +710,7 @@ namespace PackFileManager {
 
             if (isChecked) 
             {
-                dataGridView.TopLeftHeaderCell.Value = currentDBFile.Entries[0][0].Info.Name;
+                dataGridView.TopLeftHeaderCell.Value = EditedFile.Entries[0][0].Info.Name;
                 dataGridView.RowHeadersVisible = false;
             } 
             else 
@@ -721,10 +724,10 @@ namespace PackFileManager {
         {
             Settings.Default.UseComboboxCells = useComboBoxCells.Checked;
             Settings.Default.Save();
-            if (currentPackedFile != null) 
+            if (CurrentPackedFile != null) 
             {
                 // rebuild table
-                Open(currentPackedFile);
+                Open(CurrentPackedFile);
             }
         }
 
@@ -737,9 +740,9 @@ namespace PackFileManager {
                 info.Name = box.Input;
                 newColumn.HeaderText = info.Name;
 
-                if (!dataChanged) 
+                if (!TableColumnChanged) 
                 {
-                    dataChanged = true;
+                    TableColumnChanged = true;
                     MessageBox.Show("Don't forget to save your changes (DB Definitions->Save to Directory)");
                 }
             }
@@ -747,7 +750,7 @@ namespace PackFileManager {
 
         private void setReferenceTarget(DataGridViewColumn column) {
             var info = (FieldInfo)column.Tag;
-            string tableName = currentDBFile.CurrentType.name;
+            string tableName = EditedFile.CurrentType.name;
             if (!tableName.EndsWith("_tables")) {
                 tableName += "_tables";
             }
@@ -761,7 +764,7 @@ namespace PackFileManager {
                 info.Name = string.Format("{0}Ref", referenceTarget.Substring(referenceTarget.LastIndexOf('.')+1));
             }
             // rebuild table to see combo boxes if applicable
-            Open(currentPackedFile);
+            Open(CurrentPackedFile);
         }
 
         private void dataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
@@ -791,20 +794,20 @@ namespace PackFileManager {
                     item = new MenuItem(string.Format("Clear Reference Target ({0})", info.ForeignReference), delegate {
                         info.ForeignReference = "";
                         // rebuild table to remove combo boxes if applicable
-                        Open(currentPackedFile);
+                        Open(CurrentPackedFile);
                     });
                     menu.MenuItems.Add(item);
                 }
 
                 string ignoreField = ((FieldInfo)newColumn.Tag).Name;
-                bool ignored = Settings.Default.IsColumnIgnored(currentPackedFile.FullPath, ignoreField);
+                bool ignored = Settings.Default.IsColumnIgnored(CurrentPackedFile.FullPath, ignoreField);
                 string itemText = ignored ? "Show Column" : "Hide Column";
 
                 item = new MenuItem(itemText, delegate {
                                                       if (ignored) {
-                                                          Settings.Default.UnignoreColumn(currentPackedFile.FullPath, ignoreField);
+                                                          Settings.Default.UnignoreColumn(CurrentPackedFile.FullPath, ignoreField);
                                                       } else {
-                                                          Settings.Default.IgnoreColumn(currentPackedFile.FullPath, ignoreField);
+                                                          Settings.Default.IgnoreColumn(CurrentPackedFile.FullPath, ignoreField);
                                                       }
                                                       Settings.Default.Save();
                                                       applyColumnVisibility();
@@ -813,7 +816,7 @@ namespace PackFileManager {
                 menu.MenuItems.Add(item);
 
                 item = new MenuItem("Clear Hide list for this table", delegate {
-                                                                              Settings.Default.ResetIgnores(currentPackedFile.FullPath);
+                                                                              Settings.Default.ResetIgnores(CurrentPackedFile.FullPath);
                                                                               Settings.Default.Save();
                                                                               applyColumnVisibility();
                                                                           });
@@ -832,7 +835,7 @@ namespace PackFileManager {
 
         private void applyColumnVisibility() 
         {
-            if (currentPackedFile == null)
+            if (CurrentPackedFile == null)
                 return;
 
             for (int i = 0; i < dataGridView.ColumnCount; i++)
@@ -841,7 +844,7 @@ namespace PackFileManager {
                 if (column != null && column.Tag != null) 
                 {
                     var info = ((FieldInfo)column.Tag);
-                    bool show = !Settings.Default.IsColumnIgnored(currentPackedFile.FullPath, info.Name);
+                    bool show = !Settings.Default.IsColumnIgnored(CurrentPackedFile.FullPath, info.Name);
                     column.Visible = (Settings.Default.ShowAllColumns || show);
                     column.HeaderText = info.Name + (show ? "" : "*");
                 } 
@@ -857,7 +860,7 @@ namespace PackFileManager {
         {
             Settings.Default.ShowAllColumns = showAllColumns.Checked;
             Settings.Default.Save();
-            if (currentPackedFile != null) 
+            if (CurrentPackedFile != null) 
             {
                 applyColumnVisibility();
             }

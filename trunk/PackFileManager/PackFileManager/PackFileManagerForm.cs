@@ -311,12 +311,8 @@ namespace PackFileManager
                     try {
                         using (FileStream filestream = File.OpenRead(openDBFileDialog.FileName)) {
                             string filename = Path.GetFileNameWithoutExtension(openDBFileDialog.FileName);
-                            DBFile file = new TextDbCodec().readDbFile(filestream);
-                            byte[] data;
-                            using (var stream = new MemoryStream()) {
-                                PackedFileDbCodec.Instance.Encode(stream, file);
-                                data = stream.ToArray();
-                            }
+                            DBFile file = new TextDbCodec().Decode(filestream);
+                            byte[] data = PackedFileDbCodec.FromFilename(filename).Encode(file);
                             dir.Add(new PackedFile { Data = data, Name = filename, Parent = dir });
                         }
                     } catch (Exception x) {
@@ -1941,13 +1937,13 @@ namespace PackFileManager
 
         private void closeEditors() {
             if (locFileEditorControl != null) {
-                locFileEditorControl.updatePackedFile();
+                locFileEditorControl.Commit();
             }
             if (atlasFileEditorControl != null) {
-                atlasFileEditorControl.updatePackedFile();
+                atlasFileEditorControl.Commit();
             }
             if (unitVariantFileEditorControl != null) {
-                unitVariantFileEditorControl.updatePackedFile();
+                unitVariantFileEditorControl.Commit();
             }
             if (readmeEditorControl != null) {
                 readmeEditorControl.updatePackedFile();
@@ -2088,8 +2084,8 @@ namespace PackFileManager
         }
 
         private void updateCurrentToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (dbFileEditorControl.currentPackedFile != null) {
-                updatePackedFile(dbFileEditorControl.currentPackedFile);
+            if (dbFileEditorControl.CurrentPackedFile != null) {
+                updatePackedFile(dbFileEditorControl.CurrentPackedFile);
             }
         }
 
@@ -2139,11 +2135,12 @@ namespace PackFileManager
             try {
                 string key = DBFile.typename(packedFile.FullPath);
                 if (DBTypeMap.Instance.IsSupported(key)) {
+                    PackedFileDbCodec codec = PackedFileDbCodec.FromFilename(packedFile.FullPath);
                     int maxVersion = DBTypeMap.Instance.MaxVersion(key);
                     DBFileHeader header = PackedFileDbCodec.readHeader(packedFile);
                     if (header.Version < maxVersion) {
                         // found a more recent db definition; read data from db file
-                        DBFile updatedFile = new PackedFileDbCodec().readDbFile(packedFile);
+                        DBFile updatedFile = PackedFileDbCodec.Decode(packedFile);
 
                         // identify FieldInstances missing in db file
                         TypeInfo dbFileInfo = updatedFile.CurrentType;
@@ -2155,9 +2152,9 @@ namespace PackFileManager
                             }
                         }
                         updatedFile.Header.Version = maxVersion;
-                        packedFile.Data = PackedFileDbCodec.Encode(updatedFile);
+                        packedFile.Data = codec.Encode(updatedFile);
 
-                        if (dbFileEditorControl.currentPackedFile == packedFile) {
+                        if (dbFileEditorControl.CurrentPackedFile == packedFile) {
                             dbFileEditorControl.Open(packedFile, currentPackFile);
                         }
                     }

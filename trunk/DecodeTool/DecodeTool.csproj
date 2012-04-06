@@ -58,7 +58,7 @@
     <Compile Include="DecodeTool.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DecodeTool.Designer.cs" >
+    <Compile Include="DecodeTool.Designer.cs">
       <DependentUpon>DecodeTool.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
@@ -88,6 +88,10 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{9136096D-A4E5-4FF3-A041-78750164DC13}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Filetypes\Filetypes.csproj">
+      <Project>{D53B5102-0200-470B-81DA-B5309F7C662A}</Project>
+      <Name>Filetypes</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -6,18 +6,11 @@ using System.Text.RegularExpressions;
 
 namespace Common {
 	/*
-	 * Implemented by classes that can read and write db files.
-	 */
-	public interface DbCodec {
-		DBFile readDbFile(Stream stream);
-		void writeDbFile(Stream stream, DBFile dbFile);
-	}
-	
-	/*
 	 * A class parsing dbfiles from and to data streams in packed file format.
 	 */
     public class PackedFileDbCodec : Codec<DBFile> {
-		public static readonly PackedFileDbCodec Instance = new PackedFileDbCodec();
+		// public static readonly PackedFileDbCodec Instance = new PackedFileDbCodec();
+        string typeName;
 		
 		public delegate void EntryLoaded(FieldInfo info, string value);
 		public delegate void HeaderLoaded(DBFileHeader header);
@@ -29,37 +22,38 @@ namespace Common {
 		static UInt32 VERSION_MARKER = BitConverter.ToUInt32 (new byte[] { 0xFC, 0xFD, 0xFE, 0xFF}, 0);
 		#endregion
 
-        public static byte[] Encode(DBFile file) {
+        /*public static byte[] Encode(DBFile file) {
             using (MemoryStream stream = new MemoryStream()) {
                 PackedFileDbCodec.Instance.Encode(stream, file);
                 return stream.ToArray();
             }
+        }*/
+
+        public static DBFile Decode(PackedFile file) {
+            PackedFileDbCodec codec = FromFilename(file.FullPath);
+            return codec.Decode(file.Data);
+        }
+        public static PackedFileDbCodec FromFilename(string filename) {
+            return new PackedFileDbCodec(DBFile.typename(filename));
+        }
+
+        private PackedFileDbCodec(string type) {
+            typeName = type;
+            if (!DBTypeMap.Instance.IsSupported(typeName)) {
+                throw new DBFileNotSupportedException(string.Format("No DB definition found for {0}", typeName));
+            }
         }
 
 		#region Read
-		public DBFile readDbFile(PackedFile file) {
-			return Decode(file);
-		}
-        public DBFile Decode(PackedFile file) {
-            return readDbFile(file.FullPath, file.Data);
-        }
-
-		public DBFile readDbFile(string typeName, byte[] data) {
-			return readDbFile (typeName, new MemoryStream (data, 0, data.Length));
-		}
 		/*
 		 * Reads a db file from stream, using the version information
 		 * contained in the header read from it.
 		 */
-		public DBFile readDbFile(string filename, Stream stream) {
+		public DBFile Decode(Stream stream) {
 			BinaryReader reader = new BinaryReader (stream);
 			reader.BaseStream.Position = 0;
 			DBFileHeader header = readHeader (reader);
-            string type = DBFile.typename(filename);
-            if (!DBTypeMap.Instance.IsSupported(type)) {
-                throw new DBFileNotSupportedException(string.Format("No DB definition found for {0}", type));
-            }
-            TypeInfo realInfo = DBTypeMap.Instance[type, header.Version];
+            TypeInfo realInfo = DBTypeMap.Instance[typeName, header.Version];
 			DBFile file = new DBFile (header, realInfo);
 			reader.BaseStream.Position = header.Length;
 
@@ -76,6 +70,11 @@ namespace Common {
 			}
 			return file;
 		}
+        public DBFile Decode(byte[] data) {
+            using (MemoryStream stream = new MemoryStream(data, 0, data.Length)) {
+                return Decode(stream);
+            }
+        }
 		#endregion
 
         public static bool CanDecode(PackedFile packedFile, out string display) {
@@ -168,16 +167,18 @@ namespace Common {
 		}
 
         #region Write
-        public void writeDbFile(Stream stream, DBFile file) {
+        public void Encode(Stream stream, DBFile file) {
 			BinaryWriter writer = new BinaryWriter (stream);
             file.Header.EntryCount = (uint) file.Entries.Count;
 			writeHeader (writer, file.Header);
 			writeFields (writer, file);
 			writer.Flush ();
 		}
-
-        public void Encode(Stream stream, DBFile file) {
-            writeDbFile(stream, file);
+        public byte[] Encode(DBFile file) {
+            using (MemoryStream stream = new MemoryStream()) {
+                Encode(stream, file);
+                return stream.ToArray();
+            }
         }
 
         public void writeHeader(BinaryWriter writer, DBFileHeader header) {
@@ -218,7 +219,6 @@ namespace Common {
     public class TextDbCodec : Codec<DBFile> {
         static char[] QUOTES = { '"' };
 		static char[] TABS = { '\t' };
-		static string format = "\"{0}\"";
 
         public static readonly Codec<DBFile> Instance = new TextDbCodec();
 
@@ -229,22 +229,16 @@ namespace Common {
             }
         }
 
-        public DBFile readDbFile(Stream stream) {
+        public DBFile Decode(Stream stream) {
             return Decode (new StreamReader (stream));
-        }
-
-        public DBFile Decode(PackedFile file) {
-            using (Stream stream = new MemoryStream(file.Data)) {
-                return readDbFile(stream);
-            }
         }
 
 		// read from given stream
         public DBFile Decode(StreamReader reader) {
-            // another tool might have saved tabs and quotes around this 
-            // (at least open office does)
-            string typeInfoName = reader.ReadLine().Replace("\t", "").Trim(QUOTES);
-            string versionStr = reader.ReadLine().Replace("\t", "").Trim(QUOTES);
+			// another tool might have saved tabs and quotes around this 
+			// (at least open office does)
+			string typeInfoName = reader.ReadLine ().Replace ("\t", "").Trim (QUOTES);
+			string versionStr = reader.ReadLine ().Replace ("\t", "").Trim (QUOTES);
 			int version;
 			switch (versionStr) {
 			case "1.0":
@@ -270,11 +264,11 @@ namespace Common {
 					List<FieldInstance> item = new List<FieldInstance> ();
 					for (int i = 0; i < strArray.Length; i++) {
 						FieldInfo fieldInfo = info.fields [i];
-						string str3 = Unformat (strArray [i]);
+						string str3 = CsvUtil.Unformat (strArray [i]);
 						item.Add (new FieldInstance (fieldInfo, str3));
 					}
 					entries.Add (item);
-				} catch (Exception x) {
+				} catch {
 					// Console.WriteLine (x);
 				}
 			}
@@ -283,36 +277,27 @@ namespace Common {
 			file.Entries.AddRange (entries);
 			return file;
 		}
-		private string Format(string input) {
-			return string.Format (format, Regex.Escape (input));
-		}
-		private string Unformat(string formatted) {
-			string result = Regex.Unescape (formatted);
-            if (result.StartsWith("\"")) {
-                // remove one leading and trailing quote if present
-                result = result.Substring(1, result.Length - 2);
-            }
-            return result;
-		}
 
 		// write the given file to stream
         public void Encode(Stream stream, DBFile file) {
-            StreamWriter writer = new StreamWriter (stream);
-            writer.WriteLine (file.CurrentType.name);
+			StreamWriter writer = new StreamWriter (stream);
+			// write header
+			writer.WriteLine (file.CurrentType.name);
 			writer.WriteLine (Convert.ToString (file.Header.Version));
-            foreach (FieldInfo info2 in file.CurrentType.fields) {
-                writer.Write (info2.Name + "\t");
-            }
-            writer.WriteLine ();
-            foreach (List<FieldInstance> list in file.Entries) {
-				string str = Format(list [0].Value);
+			foreach (FieldInfo info2 in file.CurrentType.fields) {
+				writer.Write (info2.Name + "\t");
+			}
+			writer.WriteLine ();
+			// write entries
+			foreach (List<FieldInstance> list in file.Entries) {
+				string str = CsvUtil.Format (list [0].Value);
 				for (int i = 1; i < list.Count; i++) {
 					string current = list [i].Value;
-					str += "\t" + Format (current);
-                }
+					str += "\t" + CsvUtil.Format (current);
+				}
 				writer.WriteLine (str);
-            }
+			}
 			writer.Flush ();
-        }
+		}
     }
 }
