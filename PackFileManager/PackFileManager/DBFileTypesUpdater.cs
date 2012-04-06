@@ -62,7 +62,7 @@ namespace PackFileManager
                 StreamReader currentVersionReader = new StreamReader(VERSION_FILE);
                 if (int.TryParse(currentVersionReader.ReadLine(), out currentVersion))
                 {
-                    needsUpdate = (currentVersion < highestVersion);
+                    needsUpdate = (currentVersion < highestVersion) || !File.Exists(Path.Combine(targetDir, "schema.xml"));
                 }
                 currentVersionReader.Close();
             }
