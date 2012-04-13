@@ -3705,7 +3705,7 @@
     <field name='unknown30' type='optstring' version_start='9' />
     <field name='unknown31' type='boolean' version_start='9' />
     <field name='unknown32' type='optstring' version_start='9' />
-    <field name='unknown33' type='int' version_start='9' />
+    <field name='Unique ID' type='int' version_start='9' />
     <field name='unknown' type='boolean' version_start='13' />
     <field name='unknown' type='int' version_start='13' />
     <field name='unknown' type='string' version_start='13' />

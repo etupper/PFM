@@ -776,7 +776,20 @@ namespace PackFileManager {
                                                                              promptHeaderDescription(newColumn);
                                                                          });
                 menu.MenuItems.Add(item);
-                
+                var info = newColumn.Tag as FieldInfo;
+
+                // edit number items
+                if (info != null && (info.TypeCode == TypeCode.Int16 || info.TypeCode == TypeCode.UInt32 || info.TypeCode == TypeCode.Single)) {
+                    item = new MenuItem("Edit...");
+                    item.MenuItems.Add(new MenuItem("Add value to All", delegate {
+                        AddToAll(e.ColumnIndex);
+                    }));
+                    item.MenuItems.Add(new MenuItem("Renumber...", delegate {
+                        RenumberFrom(e.ColumnIndex);
+                    }));
+                    menu.MenuItems.Add(item);
+                }
+
                 item = new MenuItem("Set as Reference Target", delegate {
                     setReferenceTarget(newColumn);
                 });
@@ -789,7 +802,6 @@ namespace PackFileManager {
                     menu.MenuItems.Add(item);
                 }
 
-                var info = newColumn.Tag as FieldInfo;
                 if (info != null && info.ForeignReference != "") {
                     item = new MenuItem(string.Format("Clear Reference Target ({0})", info.ForeignReference), delegate {
                         info.ForeignReference = "";
@@ -863,6 +875,37 @@ namespace PackFileManager {
             if (CurrentPackedFile != null) 
             {
                 applyColumnVisibility();
+            }
+        }
+
+        private void AddToAll(int columnIndex) {
+            InputBox box = new InputBox { Text = "Enter number to add", Input = "0" };
+            if (box.ShowDialog() == DialogResult.OK) {
+                try {
+                    float addValue = float.Parse(box.Input);
+                    for (int i = 0; i < dataGridView.RowCount; i++) {
+                        DataRow row = currentDataTable.Rows[i];
+                        float newValue = float.Parse(row[columnIndex].ToString()) + addValue;
+                        row[columnIndex] = newValue;
+                    }
+                } catch (Exception ex) {
+                    MessageBox.Show(string.Format("Could not apply value: {0}", ex.Message), "You fail!");
+                }
+            }
+        }
+        private void RenumberFrom(int columnIndex) {
+            InputBox box = new InputBox { Text = "Enter number to start from", Input = "1" };
+            if (box.ShowDialog() == DialogResult.OK) {
+                try {
+                    int setValue = int.Parse(box.Input);
+                    for (int i = 0; i < dataGridView.RowCount; i++) {
+                        DataRow row = currentDataTable.Rows[i];
+                        int newValue = setValue + i;
+                        row[columnIndex] = newValue;
+                    }
+                } catch (Exception ex) {
+                    MessageBox.Show(string.Format("Could not apply values: {0}", ex.Message), "You fail!");
+                }
             }
         }
     }
