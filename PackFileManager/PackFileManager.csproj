@@ -1,15 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
   <PropertyGroup>
+    <ProjectType>local</ProjectType>
+    <ProjectVersion>7.10.377</ProjectVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{BED0F2F6-BD7B-4D6D-8959-98A6E9B6F88A}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <AssemblyName>PackFileManager</AssemblyName>
+    <OutputType>WinExe</OutputType>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.0</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{7A1CCA74-67D8-4560-B39C-D6F1E760461B}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
     <RootNamespace>PackFileManager</RootNamespace>
-    <AssemblyName>PackFileManager</AssemblyName>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -20,161 +22,202 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
-    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-    <ConsolePause>false</ConsolePause>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>none</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-    <ConsolePause>false</ConsolePause>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestCertificateThumbprint>EA6C6BAE56750F33A17CDC69856E8DD3EE7DB605</ManifestCertificateThumbprint>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestKeyFile>PackFileManager_TemporaryKey.pfx</ManifestKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GenerateManifests>true</GenerateManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Shogun2.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PackFileManager|AnyCPU'">
+    <OutputPath>bin\PackFileManager\</OutputPath>
+    <DebugType>none</DebugType>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EditSF|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\EditSF\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>true</CodeAnalysisFailOnMissingRules>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EditSF Release|AnyCPU'">
+    <OutputPath>bin\EditSF Release\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PFM Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\PFM Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>true</CodeAnalysisFailOnMissingRules>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PFM Release|AnyCPU'">
+    <OutputPath>bin\PFM Release\</OutputPath>
+    <DebugType>none</DebugType>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EditSF Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\EditSF Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>true</CodeAnalysisFailOnMissingRules>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <EmbeddedResource Include="PackFileManager\DBFileEditorControl.resx">
+      <DependentUpon>DBFileEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PackFileManager\InputBox.resx">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PackFileManager\LocFileEditorControl.resx">
+      <DependentUpon>LocFileEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PackFileManager\PackFileManagerForm.resx">
+      <DependentUpon>PackFileManagerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <Reference Include="ObjectListView">
+      <HintPath>..\Files\ObjectListView.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="PackFileManager\PackedFileEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ToolTipRegion.cs" />
-    <Compile Include="PackFileManager\AtlasFileEditorControl.cs">
-      <SubType>UserControl</SubType>
+    <Compile Include="PackFileManager\DataGridViewExtended.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="PackFileManager\DBFileEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PackFileManager\DBFileTypesUpdater.cs" />
-    <Compile Include="PackFileManager\FileAlreadyExistsDialog.cs">
+    <Compile Include="PackFileManager\caFileEditAdvisory.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="PackFileManager\DBFileTypesUpdater.cs" />
+    <Compile Include="PackFileManager\DragDropHelper.cs" />
+    <Compile Include="PackFileManager\DragFileInfo.cs" />
+    <Compile Include="PackFileManager\FILEDESCRIPTOR.cs" />
     <Compile Include="PackFileManager\ImageViewerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PackFileManager\InputBox.Designer.cs" />
     <Compile Include="PackFileManager\InputBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PackFileManager\LocFileEditorControl.cs">
+    <Compile Include="PackFileManager\InputBox.Designer.cs">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PackFileManager\PackedFileEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PackFileManager\PackFileManagerForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="PackFileManager\PackTree.cs" />
-    <Compile Include="PackFileManager\Program.cs" />
-    <Compile Include="PackFileManager\TextFileEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="PackFileManager\UnitVariantFileEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PackFileManager\caFileEditAdvisory.cs">
+    <Compile Include="PackFileManager\FileAlreadyExistsDialog.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ToolTipRegion.cs" />
+    <Compile Include="PackFileManager\Properties\Resources.cs" />
+    <Compile Include="PackFileManager\Program.cs" />
+    <Compile Include="PackFileManager\Properties\Settings.cs" />
+    <Compile Include="PackFileManager\LocFileEditorControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PackFileManager\customMessageBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PackFileManager\Properties\Resources.cs" />
-    <Compile Include="PackFileManager\Properties\Settings.cs" />
-    <Compile Include="PackFileManager\DataGridViewExtended.cs">
-      <SubType>Component</SubType>
+    <Compile Include="PackFileManager\TextFileEditorControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PackFileManager\DragFileInfo.cs" />
-    <Compile Include="PackFileManager\FILEDESCRIPTOR.cs" />
-    <Compile Include="PackFileManager\DragDropHelper.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="PackFileManager\InputBox.resx" />
-    <None Include="PackFileManager\LocFileEditorControl.resx" />
-    <None Include="PackFileManager\PackFileManagerForm.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="ObjectListView">
-      <HintPath>..\Files\ObjectListView.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Drawing" />
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
+    <Compile Include="PackFileManager\AtlasFileEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\Files\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{9136096D-A4E5-4FF3-A041-78750164DC13}</Project>
+      <Project>{6D23F5FB-04D4-4D7E-BDFF-FCA718309298}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DecodeTool\DecodeTool.csproj">
+      <Project>{B7E18A8E-7797-4865-97CD-97B2915AA774}</Project>
+      <Name>DecodeTool</Name>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </ProjectReference>
     <ProjectReference Include="..\Filetypes\Filetypes.csproj">
       <Project>{2419C2AF-48A3-40D2-980B-36AB2D81DC74}</Project>
       <Name>Filetypes</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Library\Library.csproj">
-      <Project>{73766474-441A-4E10-AB13-B215F90987FF}</Project>
-      <Name>Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DecodeTool\DecodeTool.csproj">
-      <Project>{24D6EBD1-5FE9-44B7-B49A-57886298EB00}</Project>
-      <Name>DecodeTool</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AutoUpdater\AutoUpdater.csproj">
-      <Project>{89BF640C-76D4-4A04-A997-98594475D60C}</Project>
-      <Name>AutoUpdater</Name>
+    <ProjectReference Include="..\Library\FreeImage\FreeImage.csproj">
+      <Project>{6598A7CD-8F27-4D3F-A675-5AE63113A7C3}</Project>
+      <Name>FreeImage</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 %28x86 und x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
@@ -185,19 +228,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Shogun2.ico" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="PackFileManager\DBFileEditorControl.resx">
-      <DependentUpon>DBFileEditorControl.cs</DependentUpon>
-    </EmbeddedResource>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
