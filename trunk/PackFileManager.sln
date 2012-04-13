@@ -1,118 +1,53 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C# Express 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{9136096D-A4E5-4FF3-A041-78750164DC13}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{6D23F5FB-04D4-4D7E-BDFF-FCA718309298}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DecodeTool", "DecodeTool\DecodeTool.csproj", "{24D6EBD1-5FE9-44B7-B49A-57886298EB00}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackFileTest", "PackFileTest\PackFileTest.csproj", "{C3A9D2C3-E35C-4160-9ED9-68B8A5BF5F9C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library", "Library\Library.csproj", "{73766474-441A-4E10-AB13-B215F90987FF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackFileManager", "PackFileManager\PackFileManager.csproj", "{7A1CCA74-67D8-4560-B39C-D6F1E760461B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackFileTest", "PackFileTest\PackFileTest.csproj", "{BCAD6365-5BA4-4AD1-8042-D156906C0EFE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoUpdater", "AutoUpdater\AutoUpdater.csproj", "{89BF640C-76D4-4A04-A997-98594475D60C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DecodeTool", "DecodeTool\DecodeTool.csproj", "{B7E18A8E-7797-4865-97CD-97B2915AA774}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filetypes", "Filetypes\Filetypes.csproj", "{2419C2AF-48A3-40D2-980B-36AB2D81DC74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackFileManager", "PackFileManager\PackFileManager.csproj", "{BED0F2F6-BD7B-4D6D-8959-98A6E9B6F88A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeImage", "Library\FreeImage\FreeImage.csproj", "{6598A7CD-8F27-4D3F-A675-5AE63113A7C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
-		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9136096D-A4E5-4FF3-A041-78750164DC13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9136096D-A4E5-4FF3-A041-78750164DC13}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9136096D-A4E5-4FF3-A041-78750164DC13}.Debug|x86.ActiveCfg = Debug|x86
-		{9136096D-A4E5-4FF3-A041-78750164DC13}.Debug|x86.Build.0 = Debug|x86
-		{9136096D-A4E5-4FF3-A041-78750164DC13}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9136096D-A4E5-4FF3-A041-78750164DC13}.Release|x86.ActiveCfg = Release|x86
-		{9136096D-A4E5-4FF3-A041-78750164DC13}.Release|x86.Build.0 = Release|x86
-		{24D6EBD1-5FE9-44B7-B49A-57886298EB00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{24D6EBD1-5FE9-44B7-B49A-57886298EB00}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{24D6EBD1-5FE9-44B7-B49A-57886298EB00}.Debug|x86.ActiveCfg = Debug|x86
-		{24D6EBD1-5FE9-44B7-B49A-57886298EB00}.Debug|x86.Build.0 = Debug|x86
-		{24D6EBD1-5FE9-44B7-B49A-57886298EB00}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{24D6EBD1-5FE9-44B7-B49A-57886298EB00}.Release|x86.ActiveCfg = Release|x86
-		{24D6EBD1-5FE9-44B7-B49A-57886298EB00}.Release|x86.Build.0 = Release|x86
-		{73766474-441A-4E10-AB13-B215F90987FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{73766474-441A-4E10-AB13-B215F90987FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{73766474-441A-4E10-AB13-B215F90987FF}.Debug|x86.ActiveCfg = Debug|x86
-		{73766474-441A-4E10-AB13-B215F90987FF}.Debug|x86.Build.0 = Debug|x86
-		{73766474-441A-4E10-AB13-B215F90987FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{73766474-441A-4E10-AB13-B215F90987FF}.Release|x86.ActiveCfg = Release|x86
-		{73766474-441A-4E10-AB13-B215F90987FF}.Release|x86.Build.0 = Release|x86
-		{7A1CCA74-67D8-4560-B39C-D6F1E760461B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7A1CCA74-67D8-4560-B39C-D6F1E760461B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7A1CCA74-67D8-4560-B39C-D6F1E760461B}.Debug|x86.ActiveCfg = Debug|x86
-		{7A1CCA74-67D8-4560-B39C-D6F1E760461B}.Debug|x86.Build.0 = Debug|x86
-		{7A1CCA74-67D8-4560-B39C-D6F1E760461B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7A1CCA74-67D8-4560-B39C-D6F1E760461B}.Release|x86.ActiveCfg = Release|x86
-		{7A1CCA74-67D8-4560-B39C-D6F1E760461B}.Release|x86.Build.0 = Release|x86
-		{BCAD6365-5BA4-4AD1-8042-D156906C0EFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BCAD6365-5BA4-4AD1-8042-D156906C0EFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BCAD6365-5BA4-4AD1-8042-D156906C0EFE}.Debug|x86.ActiveCfg = Debug|x86
-		{BCAD6365-5BA4-4AD1-8042-D156906C0EFE}.Debug|x86.Build.0 = Debug|x86
-		{BCAD6365-5BA4-4AD1-8042-D156906C0EFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BCAD6365-5BA4-4AD1-8042-D156906C0EFE}.Release|x86.ActiveCfg = Release|x86
-		{BCAD6365-5BA4-4AD1-8042-D156906C0EFE}.Release|x86.Build.0 = Release|x86
-		{89BF640C-76D4-4A04-A997-98594475D60C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{89BF640C-76D4-4A04-A997-98594475D60C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{89BF640C-76D4-4A04-A997-98594475D60C}.Debug|x86.ActiveCfg = Debug|x86
-		{89BF640C-76D4-4A04-A997-98594475D60C}.Debug|x86.Build.0 = Debug|x86
-		{89BF640C-76D4-4A04-A997-98594475D60C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{89BF640C-76D4-4A04-A997-98594475D60C}.Release|x86.ActiveCfg = Release|x86
-		{89BF640C-76D4-4A04-A997-98594475D60C}.Release|x86.Build.0 = Release|x86
+		{6D23F5FB-04D4-4D7E-BDFF-FCA718309298}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D23F5FB-04D4-4D7E-BDFF-FCA718309298}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D23F5FB-04D4-4D7E-BDFF-FCA718309298}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D23F5FB-04D4-4D7E-BDFF-FCA718309298}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3A9D2C3-E35C-4160-9ED9-68B8A5BF5F9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3A9D2C3-E35C-4160-9ED9-68B8A5BF5F9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3A9D2C3-E35C-4160-9ED9-68B8A5BF5F9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3A9D2C3-E35C-4160-9ED9-68B8A5BF5F9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7E18A8E-7797-4865-97CD-97B2915AA774}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7E18A8E-7797-4865-97CD-97B2915AA774}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7E18A8E-7797-4865-97CD-97B2915AA774}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7E18A8E-7797-4865-97CD-97B2915AA774}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2419C2AF-48A3-40D2-980B-36AB2D81DC74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2419C2AF-48A3-40D2-980B-36AB2D81DC74}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2419C2AF-48A3-40D2-980B-36AB2D81DC74}.Debug|x86.ActiveCfg = Debug|x86
-		{2419C2AF-48A3-40D2-980B-36AB2D81DC74}.Debug|x86.Build.0 = Debug|x86
 		{2419C2AF-48A3-40D2-980B-36AB2D81DC74}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2419C2AF-48A3-40D2-980B-36AB2D81DC74}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2419C2AF-48A3-40D2-980B-36AB2D81DC74}.Release|x86.ActiveCfg = Release|Any CPU
+		{BED0F2F6-BD7B-4D6D-8959-98A6E9B6F88A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BED0F2F6-BD7B-4D6D-8959-98A6E9B6F88A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BED0F2F6-BD7B-4D6D-8959-98A6E9B6F88A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BED0F2F6-BD7B-4D6D-8959-98A6E9B6F88A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6598A7CD-8F27-4D3F-A675-5AE63113A7C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6598A7CD-8F27-4D3F-A675-5AE63113A7C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6598A7CD-8F27-4D3F-A675-5AE63113A7C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6598A7CD-8F27-4D3F-A675-5AE63113A7C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = PackFileManager\PackFileManager.csproj
-		Policies = $0
-		$0.TextStylePolicy = $1
-		$1.inheritsSet = null
-		$1.scope = text/x-csharp
-		$0.CSharpFormattingPolicy = $2
-		$2.NamespaceBraceStyle = EndOfLine
-		$2.ClassBraceStyle = EndOfLine
-		$2.InterfaceBraceStyle = EndOfLine
-		$2.StructBraceStyle = EndOfLine
-		$2.EnumBraceStyle = EndOfLine
-		$2.MethodBraceStyle = EndOfLine
-		$2.ConstructorBraceStyle = EndOfLine
-		$2.DestructorBraceStyle = EndOfLine
-		$2.BeforeMethodDeclarationParentheses = False
-		$2.inheritsSet = Mono
-		$2.inheritsScope = text/x-csharp
-		$2.scope = text/x-csharp
-		$0.TextStylePolicy = $3
-		$3.FileWidth = 120
-		$3.RemoveTrailingWhitespace = True
-		$3.inheritsSet = VisualStudio
-		$3.inheritsScope = text/plain
-		$3.scope = text/plain
-		$0.TextStylePolicy = $4
-		$4.inheritsSet = null
-		$4.scope = text/microsoft-resx
-		$0.XmlFormattingPolicy = $5
-		$5.inheritsSet = null
-		$5.scope = text/microsoft-resx
-		$0.TextStylePolicy = $6
-		$6.inheritsSet = null
-		$6.scope = application/xml
-		$0.XmlFormattingPolicy = $7
-		$7.inheritsSet = Mono
-		$7.inheritsScope = application/xml
-		$7.scope = application/xml
+		StartupItem = EditSF\EditSF.csproj
 	EndGlobalSection
 EndGlobal
