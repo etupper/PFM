@@ -89,9 +89,11 @@ namespace EsfLibrary {
         
         public delegate void NodeStarting(byte typeCode, long readerPosition);
         public delegate void NodeRead(EsfNode node, long readerPosition);
+        public delegate void WriteLog(string log);
         
         public event NodeStarting NodeReadStarting;
         public event NodeRead NodeReadFinished;
+        public event WriteLog Log;
 
         protected SortedList<int, string> nodeNames;
 
@@ -248,8 +250,10 @@ namespace EsfLibrary {
                 // writeDebug = reader.BaseStream.Position > 0xd80000;
                 if (typeCode < EsfType.BOOL_ARRAY) {
                     result = ReadValueNode(reader, typeCode);
+                    if (Log != null) { Log(result.ToXml()); };
                 } else if (typeCode < EsfType.RECORD) {
                     result = ReadArrayNode(reader, typeCode);
+                    if (Log != null) { Log(result.ToXml()); };
                 } else if (typeCode == EsfType.RECORD) {
                     result = ReadRecordNode(reader, code);
                 } else if (typeCode == EsfType.RECORD_BLOCK) {
@@ -257,9 +261,9 @@ namespace EsfLibrary {
                 } else {
                     throw new InvalidDataException(string.Format("Type code {0:x} at {1:x} invalid", typeCode, reader.BaseStream.Position - 1));
                 }
-                // Debug.WriteLine(string.Format("Read node {0} / {1}", result, result.TypeCode));
+                // if (Log != null) { Log(string.Format("Read node {0} / {1}", result, result.TypeCode));
             } catch (Exception e) {
-                Debug.WriteLine(string.Format("Exception at {0:x}: {1}", reader.BaseStream.Position, e));
+                Console.WriteLine(string.Format("Exception at {0:x}: {1}", reader.BaseStream.Position, e));
                 throw e;
             }
             return result;
@@ -296,7 +300,7 @@ namespace EsfLibrary {
                     throw new NotImplementedException(string.Format("Cannot write type code {0:x} at {1:x}", node.TypeCode));
                 }
             } catch {
-                Debug.WriteLine(string.Format("failed to write node {0}", node));
+                Console.WriteLine(string.Format("failed to write node {0}", node));
                 throw;
             }
         }
@@ -360,6 +364,7 @@ namespace EsfLibrary {
             result.TypeCode = typeCode;
             return result;
         }
+
 //        protected EsfValueNode<T> CreateValueNode<T>(BinaryReader reader, ValueReader<T> ReadValue, EsfType typeCode) {
 //            return new EsfValueNode<T> { Value = ReadValue(reader), TypeCode = typeCode };
 //        }
@@ -572,8 +577,11 @@ namespace EsfLibrary {
             byte version;
             ReadRecordInfo(reader, typeCode, out name, out version);
             long targetOffset = ReadSize(reader);
+            if (Log != null) { Log(new NamedNode { Name = name, Version = version, TypeCode = EsfType.RECORD }.ToXml()); };
             List<EsfNode> childNodes = ReadToOffset(reader, targetOffset);
-            return CreateRecordNode(name, version, childNodes);
+            EsfNode result = CreateRecordNode(name, version, childNodes);
+            if (Log != null) { Log((result as NamedNode).ToXml(true)); };
+            return result;
         }
         protected virtual EsfNode CreateRecordNode(string name, byte version, List<EsfNode> childNodes) {
             return new NamedNode { Name = name, Version = version, Value = childNodes, TypeCode = EsfType.RECORD };
@@ -594,14 +602,20 @@ namespace EsfLibrary {
             ReadRecordInfo(reader, typeCode, out name, out version);
             long targetOffset = ReadSize(reader);
             int itemCount = (int)ReadSize(reader);
+            NamedNode result = new NamedNode { Name = name, Version = version, TypeCode = EsfType.RECORD_BLOCK };
+            if (Log != null) { Log(result.ToXml()); };
             List<EsfNode> containedNodes = new List<EsfNode>(itemCount);
             for (int i = 0; i < itemCount; i++) {
                 targetOffset = ReadSize(reader);
+                NamedNode contained = new NamedNode { Name = string.Format("{0} - {1}", name, i), TypeCode = EsfType.RECORD_BLOCK_ENTRY };
+                if (Log != null) { Log(contained.ToXml()); };
                 List<EsfNode> items = ReadToOffset(reader, targetOffset);
-                NamedNode contained = new NamedNode { Name = string.Format("{0} - {1}", name, i), Value = items, TypeCode = EsfType.RECORD_BLOCK_ENTRY };
+                contained.Value = items;
                 containedNodes.Add(contained);
+                if (Log != null) { Log(contained.ToXml(true)); };
             }
-            NamedNode result = new NamedNode { Name = name, Version = version, TypeCode = EsfType.RECORD_BLOCK, Value = containedNodes };
+            result.Value = containedNodes;
+            if (Log != null) { Log(result.ToXml(true)); };
             return result;
         }
 

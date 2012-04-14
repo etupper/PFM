@@ -52,6 +52,8 @@ namespace EsfLibrary {
         public virtual void FromString(string value) {
             throw new InvalidOperationException();
         }
+
+        public abstract string ToXml();
     }
 
     [DebuggerDisplay("ValueNode: {Value}")]
@@ -99,7 +101,12 @@ namespace EsfLibrary {
             }
             return result;
         }
+
+        public override string ToXml() {
+            return string.Format("<{0} Value=\"{1}\"/>", TypeCode, Value);
+        }
     }
+    #region Typed Value Nodes
     public class BoolValueNode : EsfValueNode<bool> {
         public BoolValueNode() : base(bool.Parse) {}
     }
@@ -161,7 +168,8 @@ namespace EsfLibrary {
         }
         public Coordinates3DValueNode() : base(Parse) {}
     }
-    
+    #endregion
+
     public abstract class EsfArrayNode<T> : EsfValueNode<byte[]> {
         public EsfArrayNode() {
             // Converter = new ArrayNodeConverter<T>(new PrimitiveNodeConverter<T>());
@@ -218,7 +226,12 @@ namespace EsfLibrary {
 //            }
 //            return result.TrimEnd();
         }
+
+        public override string ToXml() {
+            return string.Format("<{0} Length=\"{1}\"/>", TypeCode, Value.Length);
+        }
     }
+    #region Typed Array Nodes
     public class BoolArrayNode : EsfArrayNode<bool> {
         public BoolArrayNode() : base(bool.Parse) {}
     }
@@ -280,6 +293,7 @@ namespace EsfLibrary {
         }
         public Coordinates3DArrayNode() : base(Parse) {}
     }
+    #endregion
 
     // 0x80 - 0x81
     [DebuggerDisplay("NamedNode: {Name}")]
@@ -356,6 +370,14 @@ namespace EsfLibrary {
             if (!result) {
             }
             return result;
+        }
+
+        public override string ToXml() {
+            return ToXml(false);
+        }
+        public string ToXml(bool end) {
+            return end ? string.Format("</{0}>  <!-- {1} -->", TypeCode, Name)
+                : string.Format("<{0} Name=\"{1}\">", TypeCode, Name);
         }
     }
 
