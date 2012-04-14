@@ -84,65 +84,65 @@ namespace EsfLibrary {
         
         #region Optimized Value Writer overrides
         protected override void WriteBoolNode(BinaryWriter writer, EsfNode node) {
-            writer.Write((byte)((node as EsfValueNode<bool>).Value ? 0x12 : 0x13));
+            writer.Write((byte)((node as EsfValueNode<bool>).Value ? EsfType.BOOL_TRUE : EsfType.BOOL_FALSE));
         }
         protected override void WriteUIntNode(BinaryWriter writer, EsfNode node) {
-            byte typeCode;
+            EsfType typeCode;
             ValueWriter<uint> writeUInt;
             uint value = (node as EsfValueNode<uint>).Value;
             if (value == 0) {
-                typeCode = 0x14;
+                typeCode = EsfType.UINT32_ZERO;
                 writeUInt = WriteUIntNoop;
             } else if (value == 1) {
-                typeCode = 0x15;
+                typeCode = EsfType.UINT32_ONE;
                 writeUInt = WriteUIntNoop;
             } else if (value < 0x100) {
-                typeCode = 0x16;
+                typeCode = EsfType.UINT32_BYTE;
                 writeUInt = WriteUInt8;
             } else if (value < 0x10000) {
-                typeCode = 0x17;
+                typeCode = EsfType.UINT32_SHORT;
                 writeUInt = WriteUInt16;
             } else if (value < 0x1000000) {
-                typeCode = 0x18;
+                typeCode = EsfType.UINT32_24BIT;
                 writeUInt = WriteUInt24;
             } else {
                 // bit set in highest byte
-                typeCode = 0x08;
+                typeCode = EsfType.UINT32;
                 writeUInt = WriteUInt;
             }
-            writer.Write(typeCode);
+            writer.Write((byte)typeCode);
             writeUInt(writer, value);
         }
         protected override void WriteIntNode(BinaryWriter writer, EsfNode node) {
-            byte typeCode;
+            EsfType typeCode;
             ValueWriter<int> writeInt;
             int value = (node as EsfValueNode<int>).Value;
             int relevantBytes = RelevantBytesInt(value);
             switch(relevantBytes) {
             case 0:
-                typeCode = 0x19;
+                typeCode = EsfType.INT32_ZERO;
                 writeInt = WriteIntNoop;
                 break;
             case 1:
-                typeCode = 0x1a;
+                typeCode = EsfType.INT32_BYTE;
                 writeInt = WriteInt8;
                 break;
             case 2:
-                typeCode = 0x1b;
+                typeCode = EsfType.INT32_SHORT;
                 writeInt = WriteInt16;
                 break;
             case 3:
-                typeCode = 0x1c;
+                typeCode = EsfType.INT32_24BIT;
                 writeInt = WriteInt24;
                 break;
             case 4:
-                typeCode = 0x04;
+                typeCode = EsfType.INT32;
                 writeInt = WriteInt;
                 break;
             default:
                 throw new InvalidDataException(string.Format("Invalid number of bytes {0} for int {1}", relevantBytes, value));
             }
-            writer.Write(typeCode);
+            writer.Write((byte) typeCode);
             writeInt(writer, value);
         }
         protected override void WriteFloatNode(BinaryWriter writer, EsfNode node) {
@@ -364,10 +364,8 @@ namespace EsfLibrary {
         }
         // Size of array now reads item count instead of target position
         protected override void WriteArrayNode(BinaryWriter writer, EsfNode arrayNode) {
-            byte typeCode;
             byte[] encoded;
             // it doesn't really make sense to have length-encoded arrays of 0-byte entries
-            int minBytes = 1;
             switch (arrayNode.TypeCode) {
                 // use optimized encoding for the appropriate types
                 case EsfType.INT32_ARRAY:
@@ -474,11 +472,11 @@ namespace EsfLibrary {
             infoItems.Add(new EsfValueNode<uint> { Value = uncompressedSize, TypeCode = EsfType.UINT32, Codec = this });
             using (MemoryStream propertyStream = new MemoryStream()) {
                 encoder.WriteCoderProperties(propertyStream);
-                infoItems.Add(new SByteArrayNode { Value = propertyStream.ToArray(), TypeCode = EsfType.INT8_ARRAY, Codec = this });
+                infoItems.Add(new ByteArrayNode { Value = propertyStream.ToArray(), TypeCode = EsfType.UINT8_ARRAY, Codec = this });
             }
             // put together the items expected by the unzipper
             List<EsfNode> dataItems = new List<EsfNode>();
-            dataItems.Add(new SByteArrayNode { Value = data, TypeCode = EsfType.INT8_ARRAY, Codec = this });
+            dataItems.Add(new ByteArrayNode { Value = data, TypeCode = EsfType.UINT8_ARRAY, Codec = this });
             dataItems.Add(new NamedNode { Name = CompressedNode.INFO_TAG, Value = infoItems, TypeCode = EsfType.RECORD, Codec = this });
             NamedNode compressedNode = new NamedNode { Name = CompressedNode.TAG_NAME, Value = dataItems, TypeCode = EsfType.RECORD, Codec = this };
             

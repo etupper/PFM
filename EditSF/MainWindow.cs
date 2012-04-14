@@ -39,6 +39,7 @@ namespace EditSF {
             set {
                 Text = string.Format("EditSF - {0}", Path.GetFileName(value));
                 statusLabel.Text = value;
+                filename = value;
             }
         }
         EsfFile file;
@@ -116,8 +117,9 @@ namespace EditSF {
                     statusLabel.Text = string.Format("Loading {0}", openFilename);
                     LogFileWriter logger = null;
                     if (writeLogFileToolStripMenuItem.Checked) {
-                        logger = new LogFileWriter(openFilename + "_log");
-                        codec.NodeReadFinished += logger.WriteEntry;
+                        logger = new LogFileWriter(openFilename + ".xml");
+                        //codec.NodeReadFinished += logger.WriteEntry;
+                        codec.Log += logger.WriteLogEntry;
                     }
                     EditedFile = new EsfFile(stream, codec);
                     updater.LoadingFinished();
@@ -218,6 +220,9 @@ namespace EditSF {
         }
         public void WriteEntry(EsfNode node, long position) {
             writer.WriteLine("Entry {0} / {1:x} read at {2:x}", node, node.TypeCode, position);
+        }
+        public void WriteLogEntry(string entry) {
+            writer.WriteLine(entry);
         }
         public void Close() {
             writer.Close();

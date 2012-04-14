@@ -190,7 +190,6 @@
             this.writeLogFileToolStripMenuItem.Name = "writeLogFileToolStripMenuItem";
             this.writeLogFileToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.writeLogFileToolStripMenuItem.Text = "Write Log File";
-            this.writeLogFileToolStripMenuItem.Visible = false;
             // 
             // showNodeTypeToolStripMenuItem
             // 
@@ -209,6 +208,7 @@
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
             this.testToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.testToolStripMenuItem.Text = "Tests";
+            this.testToolStripMenuItem.Visible = false;
             // 
             // runSingleTestToolStripMenuItem
             // 
