@@ -11,6 +11,7 @@ using EsfLibrary;
 namespace EditSF {
     public partial class EditSF : Form {
         ProgressUpdater updater;
+        TreeEventHandler treeEventHandler;
         public static string FILENAME = "testfiles.txt";
 
         #region Properties
@@ -24,6 +25,7 @@ namespace EditSF {
             set {
                 esfNodeTree.Nodes.Clear();
                 EsfTreeNode rootNode = new EsfTreeNode(value as NamedNode);
+                rootNode.ShowCode = showNodeTypeToolStripMenuItem.Checked;
                 esfNodeTree.Nodes.Add(rootNode);
                 rootNode.Fill();
             }
@@ -49,6 +51,7 @@ namespace EditSF {
                 RootNode = value.RootNode;
                 saveAsToolStripMenuItem.Enabled = file != null;
                 saveToolStripMenuItem.Enabled = file != null;
+                showNodeTypeToolStripMenuItem.Enabled = file != null;
             }
         }
         #endregion
@@ -60,9 +63,9 @@ namespace EditSF {
 
             nodeValueGridView.Rows.Clear();
 
-            TreeEventHandler handler = new TreeEventHandler(nodeValueGridView);
-            esfNodeTree.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(handler.FillNode);
-            esfNodeTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(handler.NodeSelected);
+            treeEventHandler = new TreeEventHandler(nodeValueGridView);
+            esfNodeTree.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(treeEventHandler.FillNode);
+            esfNodeTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(treeEventHandler.NodeSelected);
 
             nodeValueGridView.CellValidating += new DataGridViewCellValidatingEventHandler(validateCell);
             nodeValueGridView.CellEndEdit += new DataGridViewCellEventHandler(cellEdited);
@@ -198,6 +201,13 @@ namespace EditSF {
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
             Application.Exit();
+        }
+
+        private void showNodeTypeToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (EditedFile != null) {
+                (esfNodeTree.Nodes[0] as EsfTreeNode).ShowCode = showNodeTypeToolStripMenuItem.Checked;
+                nodeValueGridView.Columns["Code"].Visible = showNodeTypeToolStripMenuItem.Checked;
+            }
         }
     }
 

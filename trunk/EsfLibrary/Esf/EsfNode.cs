@@ -180,11 +180,12 @@ namespace EsfLibrary {
             }
         }
         
-        static bool Equals<O> (O[] array1, O[] array2) {
+        static bool ArraysEqual<O> (O[] array1, O[] array2) {
             bool result = array1.Length == array2.Length;
             if (result) {
                 for (int i = 0; i < array1.Length; i++) {
-                    if (!EqualityComparer<T>.Equals (array1[i], array2[i])) {
+                    if (!EqualityComparer<O>.Default.Equals (array1[i], array2[i])) {
+                        result = false;
                         break;
                     }
                 }
@@ -196,7 +197,7 @@ namespace EsfLibrary {
         public override bool Equals(object o) {
             EsfArrayNode<T> otherNode = o as EsfArrayNode<T>;
             bool result = otherNode != null;
-            result &= Equals(Value, otherNode.Value);
+            result &= ArraysEqual(Value, otherNode.Value);
             return result;
         }
         

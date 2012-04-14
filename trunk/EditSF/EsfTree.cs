@@ -4,14 +4,26 @@ using EsfLibrary;
 
 namespace EditSF {
     public class EsfTreeNode : TreeNode {
-        public EsfTreeNode(NamedNode node) {
+        private bool showCode;
+        public bool ShowCode {
+            get { return showCode; }
+            set {
+                NamedNode node = Tag as NamedNode;
+                Text = value ? string.Format("{0} - {1}", node.Name, node.TypeCode) : node.Name;
+                showCode = value;
+                foreach (TreeNode child in Nodes) {
+                    (child as EsfTreeNode).ShowCode = value;
+                }
+            }
+        }
+        public EsfTreeNode(NamedNode node, bool showC = false) {
             Tag = node;
-            Text = node.Name;
+            ShowCode = showC;
         }
         public void Fill() {
             if (Nodes.Count == 0) {
                 foreach (NamedNode child in (Tag as NamedNode).Children) {
-                    Nodes.Add(new EsfTreeNode(child));
+                    Nodes.Add(new EsfTreeNode(child, ShowCode));
                 }
             }
         }
@@ -35,7 +47,7 @@ namespace EditSF {
             try {
                 nodeValueGridView.Rows.Clear();
                 foreach (EsfNode value in node.Values) {
-                    int index = nodeValueGridView.Rows.Add(value.ToString(), value.SystemType.ToString());
+                    int index = nodeValueGridView.Rows.Add(value.ToString(), value.SystemType.ToString(), value.TypeCode.ToString());
                     nodeValueGridView.Rows[index].Tag = value;
                 }
             } catch {
