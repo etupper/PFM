@@ -28,6 +28,7 @@
             this.nodeValueGridView = new System.Windows.Forms.DataGridView();
             this.valueColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.typeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Code = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -36,6 +37,7 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.writeLogFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showNodeTypeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runSingleTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runTestsStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -91,7 +93,8 @@
             this.nodeValueGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.nodeValueGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.valueColumn,
-            this.typeColumn});
+            this.typeColumn,
+            this.Code});
             this.nodeValueGridView.Location = new System.Drawing.Point(3, 3);
             this.nodeValueGridView.Name = "nodeValueGridView";
             this.nodeValueGridView.RowHeadersVisible = false;
@@ -110,6 +113,13 @@
             this.typeColumn.Name = "typeColumn";
             this.typeColumn.ReadOnly = true;
             this.typeColumn.Width = 56;
+            // 
+            // Code
+            // 
+            this.Code.HeaderText = "TypeCode";
+            this.Code.Name = "Code";
+            this.Code.Visible = false;
+            this.Code.Width = 81;
             // 
             // menuStrip1
             // 
@@ -138,7 +148,7 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -146,7 +156,7 @@
             // 
             this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem1_Click);
             // 
@@ -154,32 +164,42 @@
             // 
             this.saveAsToolStripMenuItem.Enabled = false;
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.writeLogFileToolStripMenuItem});
+            this.writeLogFileToolStripMenuItem,
+            this.showNodeTypeToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.optionsToolStripMenuItem.Text = "Options";
-            this.optionsToolStripMenuItem.Visible = false;
             // 
             // writeLogFileToolStripMenuItem
             // 
             this.writeLogFileToolStripMenuItem.CheckOnClick = true;
             this.writeLogFileToolStripMenuItem.Name = "writeLogFileToolStripMenuItem";
-            this.writeLogFileToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.writeLogFileToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.writeLogFileToolStripMenuItem.Text = "Write Log File";
+            this.writeLogFileToolStripMenuItem.Visible = false;
+            // 
+            // showNodeTypeToolStripMenuItem
+            // 
+            this.showNodeTypeToolStripMenuItem.CheckOnClick = true;
+            this.showNodeTypeToolStripMenuItem.Enabled = false;
+            this.showNodeTypeToolStripMenuItem.Name = "showNodeTypeToolStripMenuItem";
+            this.showNodeTypeToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.showNodeTypeToolStripMenuItem.Text = "Show Node Type";
+            this.showNodeTypeToolStripMenuItem.Click += new System.EventHandler(this.showNodeTypeToolStripMenuItem_Click);
             // 
             // testToolStripMenuItem
             // 
@@ -189,7 +209,6 @@
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
             this.testToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.testToolStripMenuItem.Text = "Tests";
-            this.testToolStripMenuItem.Visible = false;
             // 
             // runSingleTestToolStripMenuItem
             // 
@@ -290,6 +309,8 @@
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showNodeTypeToolStripMenuItem;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Code;
     }
 }
 
