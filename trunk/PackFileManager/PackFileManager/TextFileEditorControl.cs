@@ -64,7 +64,6 @@
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             base.AutoScaleDimensions = new SizeF(6f, 13f);
-            base.AutoScaleMode = AutoScaleMode.Font;
             base.Controls.Add(this.richTextBox1);
             base.Name = "TextFileEditorControl";
             base.Size = new Size(0x4a2, 0x28c);

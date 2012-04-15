@@ -12,10 +12,11 @@
     public class ReadmeEditorControl : UserControl
     {
         private ToolStripButton addEntryButton;
+        private ComponentResourceManager manager;
         private BindingSource bindingSource;
         private ToolStripButton cloneEntryButton;
         private ToolStripButton closeButton;
-        private IContainer components = null;
+        private IContainer components = new Container();
         private DataSet dataSet;
         private ToolStripButton deleteEntryButton;
         private TreeNode nodeInEdit;
@@ -175,7 +176,7 @@
         private void InitializeComponent()
         {
             this.components = new Container();
-            ComponentResourceManager manager = new ComponentResourceManager(typeof(ReadmeEditorControl));
+            this.manager = new ComponentResourceManager(typeof(ReadmeEditorControl));
             this.dataSet = new DataSet();
             this.bindingSource = new BindingSource(this.components);
             this.nodesTree = new TreeView();
@@ -206,7 +207,6 @@
             this.nodesTree.TabIndex = 1;
             this.nodesTree.AfterSelect += new TreeViewEventHandler(this.nodesTree_AfterSelect);
             this.splitContainer1.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Top;
-            this.splitContainer1.BorderStyle = BorderStyle.Fixed3D;
             this.splitContainer1.Location = new Point(10, 30);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = Orientation.Horizontal;
@@ -292,7 +292,6 @@
             this.deleteEntryButton.Text = "Delete Node Entry";
             this.deleteEntryButton.Click += new EventHandler(this.deleteEntryButton_Click);
             base.AutoScaleDimensions = new SizeF(6f, 13f);
-            base.AutoScaleMode = AutoScaleMode.Font;
             base.Controls.Add(this.toolStrip1);
             base.Controls.Add(this.splitContainer1);
             base.Name = "ReadmeEditorControl";

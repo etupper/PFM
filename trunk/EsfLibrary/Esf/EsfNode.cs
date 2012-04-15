@@ -31,21 +31,24 @@ namespace EsfLibrary {
         }
         
         // property Modified; also sets parent to new value
-        private bool modified = false;
-        public bool Modified { 
+        protected bool modified = false;
+        public virtual bool Modified {
             get {
                 return modified;
             }
             set {
                 if (modified != value) {
-                    modified = value;
-                    if (ModifiedEvent != null) {
-                        ModifiedEvent (this);
-                    }
-                    if (Parent != null) {
+                    modified = value; 
+                    RaiseModifiedEvent();
+                    if (modified && Parent != null) {
                         Parent.Modified = value;
                     }
                 }
+            }
+        }
+        protected void RaiseModifiedEvent() {
+            if (ModifiedEvent != null) {
+                ModifiedEvent(this);
             }
         }
         #endregion
@@ -85,7 +88,7 @@ namespace EsfLibrary {
         }
 
         public override void FromString(string value) {
-            val = ConvertString(value);
+            Value = ConvertString(value);
         }
         public override string ToString() {
             return val.ToString();
@@ -307,6 +310,23 @@ namespace EsfLibrary {
             set;
         }
 
+        public override bool Modified {
+            get {
+                return modified;
+            }
+            set {
+                if (modified != value) {
+                    modified = value;
+                    RaiseModifiedEvent();
+                    if (modified && Parent != null) {
+                        Parent.Modified = value;
+                    } else if (!modified) {
+                        val.ForEach(node => node.Modified = false);
+                    }
+                }
+            }
+        }
+
         List<EsfNode> val = new List<EsfNode> ();
 
         public List<EsfNode> Value {
@@ -315,7 +335,9 @@ namespace EsfLibrary {
             }
             set {
                 if (!val.Equals (value)) {
+                    val.ForEach(node => node.Parent = null);
                     val = value;
+                    val.ForEach(node => node.Parent = this);
                     Modified = true;
                 }
             }

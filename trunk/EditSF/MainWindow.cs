@@ -11,26 +11,9 @@ using EsfLibrary;
 namespace EditSF {
     public partial class EditSF : Form {
         ProgressUpdater updater;
-        TreeEventHandler treeEventHandler;
         public static string FILENAME = "testfiles.txt";
 
         #region Properties
-        public EsfNode RootNode {
-            get {
-                if (esfNodeTree.Nodes.Count == 0) {
-                    return null;
-                }
-                return (esfNodeTree.Nodes[0].FirstNode as EsfTreeNode).Tag as EsfNode;
-            }
-            set {
-                esfNodeTree.Nodes.Clear();
-                EsfTreeNode rootNode = new EsfTreeNode(value as NamedNode);
-                rootNode.ShowCode = showNodeTypeToolStripMenuItem.Checked;
-                esfNodeTree.Nodes.Add(rootNode);
-                rootNode.Fill();
-            }
-        }
-
         string filename = null;
         public string FileName {
             get {
@@ -49,7 +32,8 @@ namespace EditSF {
             }
             set {
                 file = value;
-                RootNode = value.RootNode;
+                editEsfComponent.RootNode = value.RootNode;
+                editEsfComponent.RootNode.Modified = false;
                 saveAsToolStripMenuItem.Enabled = file != null;
                 saveToolStripMenuItem.Enabled = file != null;
                 showNodeTypeToolStripMenuItem.Enabled = file != null;
@@ -62,35 +46,6 @@ namespace EditSF {
 
             updater = new ProgressUpdater(progressBar);
 
-            nodeValueGridView.Rows.Clear();
-
-            treeEventHandler = new TreeEventHandler(nodeValueGridView);
-            esfNodeTree.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(treeEventHandler.FillNode);
-            esfNodeTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(treeEventHandler.NodeSelected);
-
-            nodeValueGridView.CellValidating += new DataGridViewCellValidatingEventHandler(validateCell);
-            nodeValueGridView.CellEndEdit += new DataGridViewCellEventHandler(cellEdited);
-        }
-
-        private void validateCell(object sender, DataGridViewCellValidatingEventArgs args) {
-            EsfNode valueNode = nodeValueGridView.Rows[args.RowIndex].Tag as EsfNode;
-            if (valueNode != null) {
-                string newValue = args.FormattedValue.ToString();
-                try {
-                    if (args.ColumnIndex == 0 && newValue != valueNode.ToString()) {
-                        valueNode.FromString(newValue);
-                    }
-                } catch {
-                    Debug.WriteLine("Invalid value {0}", newValue);
-                    args.Cancel = true;
-                }
-            } else {
-                nodeValueGridView.Rows[args.RowIndex].ErrorText = "Cannot edit this value";
-                // args.Cancel = true;
-            }
-        }
-        private void cellEdited(object sender, DataGridViewCellEventArgs args) {
-            nodeValueGridView.Rows[args.RowIndex].ErrorText = String.Empty;
         }
 
         private void promptOpenFile() {
@@ -196,6 +151,7 @@ namespace EditSF {
         private void Save(string filename) {
             try {
                 EsfCodecUtil.WriteEsfFile(filename, EditedFile);
+                editEsfComponent.RootNode.Modified = false;
             } catch (Exception e) {
                 MessageBox.Show(string.Format("Could not save {0}: {1}", filename, e));
             }
@@ -206,10 +162,7 @@ namespace EditSF {
         }
 
         private void showNodeTypeToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (EditedFile != null) {
-                (esfNodeTree.Nodes[0] as EsfTreeNode).ShowCode = showNodeTypeToolStripMenuItem.Checked;
-                nodeValueGridView.Columns["Code"].Visible = showNodeTypeToolStripMenuItem.Checked;
-            }
+            editEsfComponent.showCode = true;
         }
     }
 
