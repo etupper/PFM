@@ -11,6 +11,8 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using EsfControl;
+using EsfLibrary;
 
 namespace PackFileManager
 {
@@ -28,6 +30,9 @@ namespace PackFileManager
         private readonly DBFileEditorControl dbFileEditorControl;
         private ImageViewerControl imageViewerControl;
         private LocFileEditorControl locFileEditorControl;
+        private EditEsfComponent esfEditor = new EditEsfComponent {
+            Dock = DockStyle.Fill
+        };
 
         private MenuStrip menuStrip;
         private ToolStripMenuItem editToolStripMenuItem;
@@ -422,6 +427,7 @@ namespace PackFileManager
             this.extrasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cAPacksAreReadOnlyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showDecodeToolOnErrorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.indexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -431,7 +437,6 @@ namespace PackFileManager
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.packStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.packActionProgressBar = new System.Windows.Forms.ToolStripProgressBar();
-            this.showDecodeToolOnErrorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packActionMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -468,7 +473,7 @@ namespace PackFileManager
             this.toolStripMenuItem6,
             this.toolStripMenuItem9});
             this.packActionMenuStrip.Name = "packActionMenuStrip";
-            this.packActionMenuStrip.Size = new System.Drawing.Size(153, 142);
+            this.packActionMenuStrip.Size = new System.Drawing.Size(132, 120);
             this.packActionMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.packActionMenuStrip_Opening);
             // 
             // toolStripMenuItem1
@@ -479,7 +484,7 @@ namespace PackFileManager
             this.toolStripMenuItem2,
             this.toolStripMenuItem14});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(131, 22);
             this.toolStripMenuItem1.Text = "Add";
             // 
             // toolStripMenuItem3
@@ -516,21 +521,21 @@ namespace PackFileManager
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
             this.toolStripMenuItem4.ShortcutKeyDisplayString = "Del";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(131, 22);
             this.toolStripMenuItem4.Text = "Delete";
             this.toolStripMenuItem4.Click += new System.EventHandler(this.deleteFileToolStripMenuItem_Click);
             // 
             // toolStripMenuItem5
             // 
             this.toolStripMenuItem5.Name = "toolStripMenuItem5";
-            this.toolStripMenuItem5.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(131, 22);
             this.toolStripMenuItem5.Text = "Rename";
             this.toolStripMenuItem5.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
             // 
             // toolStripSeparator10
             // 
             this.toolStripSeparator10.Name = "toolStripSeparator10";
-            this.toolStripSeparator10.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator10.Size = new System.Drawing.Size(128, 6);
             // 
             // toolStripMenuItem6
             // 
@@ -538,7 +543,7 @@ namespace PackFileManager
             this.toolStripMenuItem7,
             this.toolStripMenuItem8});
             this.toolStripMenuItem6.Name = "toolStripMenuItem6";
-            this.toolStripMenuItem6.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(131, 22);
             this.toolStripMenuItem6.Text = "Open";
             // 
             // toolStripMenuItem7
@@ -562,7 +567,7 @@ namespace PackFileManager
             this.toolStripMenuItem11,
             this.toolStripMenuItem12});
             this.toolStripMenuItem9.Name = "toolStripMenuItem9";
-            this.toolStripMenuItem9.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem9.Size = new System.Drawing.Size(131, 22);
             this.toolStripMenuItem9.Text = "Extract";
             // 
             // toolStripMenuItem10
@@ -1111,6 +1116,14 @@ namespace PackFileManager
             this.updateOnStartupToolStripMenuItem.Text = "Update on Startup";
             this.updateOnStartupToolStripMenuItem.Click += new System.EventHandler(this.updateOnStartupToolStripMenuItem_Click);
             // 
+            // showDecodeToolOnErrorToolStripMenuItem
+            // 
+            this.showDecodeToolOnErrorToolStripMenuItem.CheckOnClick = true;
+            this.showDecodeToolOnErrorToolStripMenuItem.Name = "showDecodeToolOnErrorToolStripMenuItem";
+            this.showDecodeToolOnErrorToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.showDecodeToolOnErrorToolStripMenuItem.Text = "Show Decode Tool on Error";
+            this.showDecodeToolOnErrorToolStripMenuItem.Click += new System.EventHandler(this.showDecodeToolOnErrorToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1180,14 +1193,6 @@ namespace PackFileManager
             // 
             this.packActionProgressBar.Name = "packActionProgressBar";
             this.packActionProgressBar.Size = new System.Drawing.Size(120, 16);
-            // 
-            // showDecodeToolOnErrorToolStripMenuItem
-            // 
-            this.showDecodeToolOnErrorToolStripMenuItem.CheckOnClick = true;
-            this.showDecodeToolOnErrorToolStripMenuItem.Name = "showDecodeToolOnErrorToolStripMenuItem";
-            this.showDecodeToolOnErrorToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
-            this.showDecodeToolOnErrorToolStripMenuItem.Text = "Show Decode Tool on Error";
-            this.showDecodeToolOnErrorToolStripMenuItem.Click += new System.EventHandler(this.showDecodeToolOnErrorToolStripMenuItem_Click);
             // 
             // PackFileManagerForm
             // 
@@ -1646,6 +1651,18 @@ namespace PackFileManager
                 // viewModel(packedFile);
             } else if (isTextFileType(packedFile)) {
                 openAsText(packedFile);
+            } else if (packedFile.FullPath.EndsWith(".esf")) {
+                using (var stream = new MemoryStream(packedFile.Data)) {
+                    EsfCodec codec = EsfCodecUtil.GetCodec(stream);
+                    if (codec != null) {
+                        using (BinaryReader reader = new BinaryReader(stream)) {
+                            EsfNode rootNode = codec.Parse(reader);
+                            esfEditor.RootNode = rootNode;
+                        }
+                    }
+                    esfEditor.Tag = packedFile;
+                    splitContainer1.Panel2.Controls.Add(esfEditor);
+                }
             } else if (packedFile.FullPath.StartsWith("db")) {
                 try {
                     dbFileEditorControl.Open(packedFile, currentPackFile);
@@ -1950,6 +1967,16 @@ namespace PackFileManager
             }
             if (textFileEditorControl != null) {
                 textFileEditorControl.updatePackedFile();
+            }
+            if (esfEditor.RootNode != null && esfEditor.RootNode.Modified) {
+                byte[] data;
+                var stream = new MemoryStream();
+                using (BinaryWriter writer = new BinaryWriter(stream)) {
+                    esfEditor.RootNode.Codec.EncodeRootNode(writer, esfEditor.RootNode);
+                    esfEditor.RootNode.Modified = false;
+                    data = stream.ToArray();
+                }
+                (esfEditor.Tag as PackedFile).Data = data;
             }
         }
 

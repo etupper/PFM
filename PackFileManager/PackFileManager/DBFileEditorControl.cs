@@ -20,7 +20,6 @@ namespace PackFileManager {
         #region Members
         private ToolStripButton addNewRowButton;
         private CheckBox useFirstColumnAsRowHeader;
-        private ToolStripButton cloneCurrentRow;
         private readonly IContainer components;
         private ToolStripButton copyToolStripButton;
         private DataSet currentDataSet;
@@ -262,11 +261,6 @@ namespace PackFileManager {
             // TODO: Empty method?
         }
 
-        private void dataGridView_SelectionChanged(object sender, EventArgs e) 
-        {
-            cloneCurrentRow.Enabled = (dataGridView.SelectedRows.Count == 1) || (dataGridView.SelectedCells.Count == 1);
-        }
-
         private void DBFileEditorControl_Enter(object sender, EventArgs e) 
         {
             pasteToolStripButton.Enabled = copiedRows.Count != 0;
@@ -329,7 +323,6 @@ namespace PackFileManager {
         private void InitializeComponent() {
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.addNewRowButton = new System.Windows.Forms.ToolStripButton();
-            this.cloneCurrentRow = new System.Windows.Forms.ToolStripButton();
             this.copyToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.pasteToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -349,7 +342,6 @@ namespace PackFileManager {
             // 
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addNewRowButton,
-            this.cloneCurrentRow,
             this.copyToolStripButton,
             this.pasteToolStripButton,
             this.toolStripSeparator1,
@@ -372,17 +364,6 @@ namespace PackFileManager {
             this.addNewRowButton.Text = "Add Row";
             this.addNewRowButton.ToolTipText = "Add New Row";
             this.addNewRowButton.Click += new System.EventHandler(this.addNewRowButton_Click);
-            // 
-            // cloneCurrentRow
-            // 
-            this.cloneCurrentRow.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.cloneCurrentRow.Enabled = false;
-            this.cloneCurrentRow.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.cloneCurrentRow.Name = "cloneCurrentRow";
-            this.cloneCurrentRow.Size = new System.Drawing.Size(68, 22);
-            this.cloneCurrentRow.Text = "Clone Row";
-            this.cloneCurrentRow.ToolTipText = "Clone Current Row";
-            this.cloneCurrentRow.Click += new System.EventHandler(this.cloneCurrentRow_Click);
             // 
             // copyToolStripButton
             // 

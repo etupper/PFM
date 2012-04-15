@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using Common;
 
 namespace PackFileManager {
-    public abstract class PackedFileEditor<T> : UserControl {
+    public class PackedFileEditor<T> : UserControl {
         Codec<T> codec;
         protected virtual T EditedFile { get; set; }
         PackedFile currentPacked;

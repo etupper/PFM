@@ -62,7 +62,7 @@ namespace PackFileManager {
 
             string mouseover;
             PackedFile file2 = file as PackedFile;
-            if (!file2.Deleted && file2.FullPath.StartsWith("db")) {
+            if (!file2.Deleted && file2.FullPath.StartsWith("db") && file2.Data.Length != 0) {
                 if (!PackedFileDbCodec.CanDecode(file2, out mouseover)) {
                     if (Parent != null) {
                         Parent.ToolTipText = mouseover;

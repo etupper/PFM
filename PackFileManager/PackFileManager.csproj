@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
   <PropertyGroup>
     <ProjectType>local</ProjectType>
@@ -204,6 +204,14 @@
       <Project>{B7E18A8E-7797-4865-97CD-97B2915AA774}</Project>
       <Name>DecodeTool</Name>
       <EmbedInteropTypes>False</EmbedInteropTypes>
+    </ProjectReference>
+    <ProjectReference Include="..\EsfControl\EsfControl.csproj">
+      <Project>{AD415480-8879-4271-B8A6-CB7391DEA78C}</Project>
+      <Name>EsfControl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EsfLibrary\EsfLibrary.csproj">
+      <Project>{A290E27B-4B04-4851-A17D-D0F6AEE533A2}</Project>
+      <Name>EsfLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\Filetypes\Filetypes.csproj">
       <Project>{2419C2AF-48A3-40D2-980B-36AB2D81DC74}</Project>

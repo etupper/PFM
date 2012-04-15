@@ -223,7 +223,9 @@ namespace EsfLibrary {
             reader.BaseStream.Seek(nodeNameOffset, SeekOrigin.Begin);
             ReadNodeNames(reader);
             reader.BaseStream.Seek(restorePosition, SeekOrigin.Begin);
-            return Decode(reader);
+            EsfNode result = Decode(reader);
+            result.Codec = this;
+            return result;
         }
 
         public abstract EsfHeader ReadHeader(BinaryReader reader);
