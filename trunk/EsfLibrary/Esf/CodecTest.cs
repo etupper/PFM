@@ -38,27 +38,9 @@ namespace EsfLibrary {
             testUIntNode(0x1000000);
             testUIntNode(uint.MaxValue);
         }
-//        public void testUIntArrayCodec() {
-//            uint[] array1, array2;
-//            array1 = new uint[]{ 0x10, 0x20 };
-//            array2 = new uint[]{ 0x10, 0x20 };
-//            assertEqual(new UIntArrayNode { Value = array1 }, new UIntArrayNode { Value = array2 });
-//   
-//            List<uint> arraySource = new List<uint>();
-//            uint current = 1;
-//            for (int j = 0; j < 4; j++) {
-//                //Console.WriteLine("uint[] run {0}", j);
-//                for (int i = 0; i < 20; i++) {
-//                    arraySource.Add(current);
-//                }
-//                testUIntArrayNode(arraySource.ToArray());
-//                current = current << 8;
-//                arraySource.Clear();
-//            }
-//        }
         public void testEquals() {
-            EsfNode valueNode = new EsfValueNode<int> { Value = 1 };
-            EsfNode valueNode2 = new EsfValueNode<int> { Value = 1 };
+            EsfNode valueNode = new IntNode { Value = 1 };
+            EsfNode valueNode2 = new IntNode { Value = 1 };
             assertEqual(valueNode, valueNode2);
             
             List<EsfNode> nodeList1 = new List<EsfNode>();
@@ -80,16 +62,12 @@ namespace EsfLibrary {
             assertEqual(file, file2);
         }
         
-//        private void testUIntArrayNode(uint[] array, EsfType typeCode = EsfType.UINT32_ARRAY) {
-//            EsfValueNode<uint[]> node = new UIntArrayNode { TypeCode = typeCode, Value = array };
-//            testNode<uint[]>(node);
-//        }
         private EsfValueNode<int> testIntNode(int val, EsfType expectedTypeCode = EsfType.INVALID) {
-            EsfValueNode<int> node = new EsfValueNode<int> { Value = val, TypeCode = EsfType.INT32 };
+            EsfValueNode<int> node = new OptimizedIntNode { Value = val };
             return testNode(node, expectedTypeCode);
         }
         private void testUIntNode(uint val, EsfType typeCode = EsfType.UINT32) {
-            EsfValueNode<uint> node = new EsfValueNode<uint> { Value = val, TypeCode = typeCode };
+            EsfValueNode<uint> node = new OptimizedUIntNode { Value = val, TypeCode = typeCode };
             testNode(node);
         }
         private EsfValueNode<T> testNode<T>(EsfValueNode<T> node, EsfType expectedTypeCode = EsfType.INVALID) {
@@ -98,7 +76,7 @@ namespace EsfLibrary {
             EsfValueNode<T> node2 = decoded as EsfValueNode<T>;
             assertEqual(node, node2);
             if (expectedTypeCode != EsfType.INVALID) {
-                assertTrue(node2.TypeCode == expectedTypeCode);
+                assertEqual(node2.TypeCode, expectedTypeCode);
             }
             encodeNode(node2);
             return node2;

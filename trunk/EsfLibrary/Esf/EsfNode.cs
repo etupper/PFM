@@ -4,15 +4,20 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Coordinates2D = System.Tuple<float, float>;
 using Coordinates3D = System.Tuple<float, float, float>;
+using System.IO;
 
 namespace EsfLibrary {
+    public interface ICodecNode {
+        void Decode(BinaryReader reader, EsfType readAs);
+        void Encode(BinaryWriter writer);
+    }
 
     public abstract class EsfNode {
         public delegate void Modification (EsfNode node);
         public event Modification ModifiedEvent;
 
         public EsfCodec Codec { get; set; }
-        public EsfType TypeCode { get; set; }
+        public virtual EsfType TypeCode { get; set; }
 
         #region Properties        
         public EsfNode Parent { get; set; }
@@ -60,12 +65,10 @@ namespace EsfLibrary {
     }
 
     [DebuggerDisplay("ValueNode: {Value}")]
-    public class EsfValueNode<T> : EsfNode {
+    public abstract class EsfValueNode<T> : EsfNode {
         // public NodeStringConverter<T> Converter { get; set; }
         public delegate S Converter<S>(string value);
         protected Converter<T> ConvertString;
-        
-        //static Converter<T> Invalid = delegate(string val) { throw new InvalidOperationException(); };
         
         public EsfValueNode() : this (null) {}
 
@@ -109,69 +112,19 @@ namespace EsfLibrary {
             return string.Format("<{0} Value=\"{1}\"/>", TypeCode, Value);
         }
     }
-    #region Typed Value Nodes
-    public class BoolValueNode : EsfValueNode<bool> {
-        public BoolValueNode() : base(bool.Parse) {}
-    }
-    public class ByteValueNode : EsfValueNode<byte> {
-        public ByteValueNode() : base(byte.Parse) {}
-    }
-    public class SByteValueNode : EsfValueNode<sbyte> {
-        public SByteValueNode() : base(sbyte.Parse) {}
-    }
-    public class ShortValueNode : EsfValueNode<short> {
-        public ShortValueNode() : base(short.Parse) {}
-    }
-    public class UShortValueNode : EsfValueNode<ushort> {
-        public UShortValueNode() : base(ushort.Parse) {}
-    }
-    public class IntValueNode : EsfValueNode<int> {
-        public IntValueNode() : base(int.Parse) {}
-    }
-    public class LongValueNode : EsfValueNode<long> {
-        public LongValueNode() : base(long.Parse) {}
-    }
-    public class ULongValueNode : EsfValueNode<ulong> {
-        public ULongValueNode() : base(ulong.Parse) {}
-    }
-    public class UIntValueNode : EsfValueNode<uint> {
-        public UIntValueNode() : base(uint.Parse) {}
-    }
-    public class StringValueNode : EsfValueNode<string> {
-        public StringValueNode() : base(delegate(string v) { return v; }) {}
-    }
-    public class FloatValueNode : EsfValueNode<float> {
-        public FloatValueNode() : base(float.Parse) {}
-    }   
-    public class DoubleValueNode : EsfValueNode<double> {
-        public DoubleValueNode() : base(double.Parse) {}
-    }
-    public class Coordinate2DValueNode : EsfValueNode<Coordinates2D> {
-        static Coordinates2D Parse(string value) {
-            string removedBrackets = value.Substring(1, value.Length-1);
-            string[] coords = removedBrackets.Split(',');
-            Coordinates2D result = new Coordinates2D (
-                float.Parse(coords[0].Trim()),
-                float.Parse(coords[1].Trim())
-            );
-            return result;
+
+    public abstract class CodecNode<T> : EsfValueNode<T>, ICodecNode {
+        public CodecNode(Converter<T> conv) : base(conv) { }
+        public void Decode(BinaryReader reader, EsfType readAs) {
+            Value = ReadValue(reader, readAs);
         }
-        public Coordinate2DValueNode() : base(Parse) {}
-    }
-    public class Coordinates3DValueNode : EsfValueNode<Coordinates3D> {
-        static Coordinates3D Parse(string value) {
-            string removedBrackets = value.Substring(1, value.Length-1);
-            string[] coords = removedBrackets.Split(',');
-            Coordinates3D result = new Coordinates3D (
-                float.Parse(coords[0].Trim()),
-                float.Parse(coords[1].Trim()),
-                float.Parse(coords[2].Trim())
-            );
-            return result;
+        protected abstract T ReadValue(BinaryReader reader, EsfType readAs);
+        public void Encode(BinaryWriter writer) {
+            writer.Write((byte)TypeCode);
+            WriteValue(writer);
         }
-        public Coordinates3DValueNode() : base(Parse) {}
+        protected abstract void WriteValue(BinaryWriter writer);
     }
-    #endregion
 
     public abstract class EsfArrayNode<T> : EsfValueNode<byte[]> {
         public EsfArrayNode() {
@@ -423,3 +376,4 @@ namespace EsfLibrary {
         }
     }
 }
+
