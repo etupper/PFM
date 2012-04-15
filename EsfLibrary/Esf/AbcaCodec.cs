@@ -89,7 +89,7 @@ namespace EsfLibrary {
         protected override void WriteUIntNode(BinaryWriter writer, EsfNode node) {
             EsfType typeCode;
             ValueWriter<uint> writeUInt;
-            uint value = (node as EsfValueNode<uint>).Value;
+            uint value = (node as UIntValueNode).Value;
             if (value == 0) {
                 typeCode = EsfType.UINT32_ZERO;
                 writeUInt = WriteUIntNoop;
@@ -116,7 +116,7 @@ namespace EsfLibrary {
         protected override void WriteIntNode(BinaryWriter writer, EsfNode node) {
             EsfType typeCode;
             ValueWriter<int> writeInt;
-            int value = (node as EsfValueNode<int>).Value;
+            int value = (node as IntValueNode).Value;
             int relevantBytes = RelevantBytesInt(value);
             switch(relevantBytes) {
             case 0:
@@ -333,27 +333,27 @@ namespace EsfLibrary {
                 throw new InvalidDataException(string.Format("Array {0:x} of zero-byte entries makes no sense", typeCode));
                 case EsfType.UINT32_BYTE_ARRAY:
                     result = new UIntArrayNode { Value = ReadArray(reader), ItemReader = UIntByteReader };
-                    typeCode = EsfType.UINT32_ARRAY;
+                    // typeCode = EsfType.UINT32_ARRAY;
                     break;
                 case EsfType.UINT32_SHORT_ARRAY:
                     result = new UIntArrayNode { Value = ReadArray(reader), ItemReader = UInt16Reader };
-                    typeCode = EsfType.UINT32_ARRAY;
+                    // typeCode = EsfType.UINT32_ARRAY;
                     break;
                 case EsfType.UINT32_24BIT_ARRAY:
                     result = new UIntArrayNode { Value = ReadArray(reader), ItemReader = UInt24Reader };
-                    typeCode = EsfType.UINT32_ARRAY;
+                    // typeCode = EsfType.UINT32_ARRAY;
                     break;
                 case EsfType.INT32_BYTE_ARRAY:
                     result = new IntArrayNode { Value = ReadArray(reader), ItemReader = IntByteReader };
-                    typeCode = EsfType.INT32_ARRAY;
+                    // typeCode = EsfType.INT32_ARRAY;
                     break;
                 case EsfType.INT32_SHORT_ARRAY:
                     result = new IntArrayNode { Value = ReadArray(reader), ItemReader = Int16Reader };
-                    typeCode = EsfType.INT32_ARRAY;
+                    // typeCode = EsfType.INT32_ARRAY;
                     break;
                 case EsfType.INT32_24BIT_ARRAY:
                     result = new IntArrayNode { Value = ReadArray(reader), ItemReader = Int24Reader };
-                    typeCode = EsfType.INT32_ARRAY;
+                    // typeCode = EsfType.INT32_ARRAY;
                     break;
                 default:
                     result = base.ReadArrayNode(reader, typeCode);
@@ -368,21 +368,27 @@ namespace EsfLibrary {
             // it doesn't really make sense to have length-encoded arrays of 0-byte entries
             switch (arrayNode.TypeCode) {
                 // use optimized encoding for the appropriate types
+                case EsfType.INT32_BYTE_ARRAY:
+                case EsfType.INT32_SHORT_ARRAY:
+                case EsfType.INT32_24BIT_ARRAY:
                 case EsfType.INT32_ARRAY:
-                    encoded = (arrayNode as EsfArrayNode<int>).Value;
-//                    foreach (int i in intArray) {
-//                        minBytes = Math.Max(minBytes, RelevantBytesInt(i));
-//                    }
-//                    // optimized int starts at 0x1a, then 0x1b, 0x1c; array adds 0x40
-//                    typeCode = (byte)((minBytes == 4) ? (byte) EsfType.INT32_ARRAY : (0x40 + 0x1a + minBytes - 1));
-//                    if (typeCode != (byte)EsfType.INT32_ARRAY && typeCode < (byte)EsfType.INT32_BYTE_ARRAY) {
-//                        throw new InvalidDataException();
-//                    }
-//                    ValueWriter<int> valueWriter = FromRelevantBytesInt(minBytes);
-//                    encoded = EncodeArrayNode<int>(intArray, valueWriter);
+                    encoded = (arrayNode as IntArrayNode).Value;
+                    //foreach (int i in intArray) {
+                    //    minBytes = Math.Max(minBytes, RelevantBytesInt(i));
+                    //}
+                    //// optimized int starts at 0x1a, then 0x1b, 0x1c; array adds 0x40
+                    //typeCode = (byte)((minBytes == 4) ? (byte) EsfType.INT32_ARRAY : (0x40 + 0x1a + minBytes - 1));
+                    //if (typeCode != (byte)EsfType.INT32_ARRAY && typeCode < (byte)EsfType.INT32_BYTE_ARRAY) {
+                    //    throw new InvalidDataException();
+                    //}
+                    //ValueWriter<int> valueWriter = FromRelevantBytesInt(minBytes);
+                    //encoded = EncodeArrayNode<int>(intArray, valueWriter);
                     break;
+                case EsfType.UINT32_BYTE_ARRAY:
+                case EsfType.UINT32_SHORT_ARRAY:
+                case EsfType.UINT32_24BIT_ARRAY:
                 case EsfType.UINT32_ARRAY:
-                    encoded = (arrayNode as EsfArrayNode<uint>).Value;
+                    encoded = (arrayNode as UIntArrayNode).Value;
 //                    foreach (uint i in array) {
 //                        minBytes = Math.Max(minBytes, RelevantBytesUInt(i));
 //                    }
@@ -469,7 +475,7 @@ namespace EsfLibrary {
    
             // prepare decoding information
             List<EsfNode> infoItems = new List<EsfNode>();
-            infoItems.Add(new EsfValueNode<uint> { Value = uncompressedSize, TypeCode = EsfType.UINT32, Codec = this });
+            infoItems.Add(new UIntValueNode { Value = uncompressedSize, TypeCode = EsfType.UINT32, Codec = this });
             using (MemoryStream propertyStream = new MemoryStream()) {
                 encoder.WriteCoderProperties(propertyStream);
                 infoItems.Add(new ByteArrayNode { Value = propertyStream.ToArray(), TypeCode = EsfType.UINT8_ARRAY, Codec = this });
