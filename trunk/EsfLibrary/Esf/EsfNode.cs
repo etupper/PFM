@@ -10,7 +10,7 @@ namespace EsfLibrary {
     public abstract class EsfNode {
         public delegate void Modification (EsfNode node);
         public event Modification ModifiedEvent;
-        
+
         public EsfCodec Codec { get; set; }
         public EsfType TypeCode { get; set; }
 
