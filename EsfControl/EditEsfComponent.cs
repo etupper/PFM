@@ -27,7 +27,7 @@ namespace EsfControl {
             }
         }
 
-        public bool showCode;
+        bool showCode;
         public bool ShowCode {
             get { return showCode; }
             set {

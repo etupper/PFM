@@ -98,21 +98,21 @@ namespace EsfLibrary {
         protected SortedList<int, string> nodeNames;
 
         #region Reader Methods
-        protected bool ReadBool(BinaryReader reader) { return reader.ReadBoolean(); }
-        protected sbyte ReadSbyte(BinaryReader reader) { return reader.ReadSByte(); }
-        protected short ReadShort(BinaryReader reader) { return reader.ReadInt16(); }
-        protected int ReadInt(BinaryReader reader) { return reader.ReadInt32(); }
-        protected long ReadLong(BinaryReader reader) { return reader.ReadInt64(); }
-        protected byte ReadByte(BinaryReader reader) { return reader.ReadByte(); }
-        protected ushort ReadUshort(BinaryReader reader) { return reader.ReadUInt16(); }
-        protected uint ReadUint(BinaryReader reader) { return reader.ReadUInt32(); }
-        protected ulong ReadUlong(BinaryReader reader) { return reader.ReadUInt64(); }
-        protected float ReadFloat(BinaryReader reader) { return reader.ReadSingle(); }
-        protected double ReadDouble(BinaryReader reader) { return reader.ReadDouble(); }
-        protected Coordinates2D ReadCoordinates2D(BinaryReader r) { 
+        public static bool ReadBool(BinaryReader reader) { return reader.ReadBoolean(); }
+        public static sbyte ReadSbyte(BinaryReader reader) { return reader.ReadSByte(); }
+        public static short ReadShort(BinaryReader reader) { return reader.ReadInt16(); }
+        public static int ReadInt(BinaryReader reader) { return reader.ReadInt32(); }
+        public static long ReadLong(BinaryReader reader) { return reader.ReadInt64(); }
+        public static byte ReadByte(BinaryReader reader) { return reader.ReadByte(); }
+        public static ushort ReadUshort(BinaryReader reader) { return reader.ReadUInt16(); }
+        public static uint ReadUInt(BinaryReader reader) { return reader.ReadUInt32(); }
+        public static ulong ReadUlong(BinaryReader reader) { return reader.ReadUInt64(); }
+        public static float ReadFloat(BinaryReader reader) { return reader.ReadSingle(); }
+        public static double ReadDouble(BinaryReader reader) { return reader.ReadDouble(); }
+        public static Coordinates2D ReadCoordinates2D(BinaryReader r) { 
             return new Coordinates2D(r.ReadSingle(), r.ReadSingle());
         }
-        protected Coordinates3D ReadCoordinates3D(BinaryReader r) {
+        public static Coordinates3D ReadCoordinates3D(BinaryReader r) {
             return new Coordinates3D(r.ReadSingle(), r.ReadSingle(), r.ReadSingle());
         }
         // virtual to be able to override
@@ -121,60 +121,19 @@ namespace EsfLibrary {
         #endregion
 
         #region Writer Methods
-        #region Values
-        protected virtual void WriteBool(BinaryWriter w, bool b) { w.Write(b); }
-        protected virtual void WriteInt(BinaryWriter w, int i) { w.Write(i); }
-        protected virtual void WriteSByte(BinaryWriter w, sbyte b) { w.Write(b); }
-        protected virtual void WriteShort(BinaryWriter w, short v) { w.Write(v); }
-        protected virtual void WriteUShort(BinaryWriter w, ushort v) { w.Write(v); }
-        protected virtual void WriteByte(BinaryWriter w, byte b) { w.Write(b); }
-        protected virtual void WriteLong(BinaryWriter w, long v) { w.Write(v); }
-        protected virtual void WriteULong(BinaryWriter w, ulong v) { w.Write(v); }
-        protected virtual void WriteUInt(BinaryWriter w, uint ui) { w.Write(ui); }
-        protected virtual void WriteFloat(BinaryWriter w, float ui) { w.Write(ui); }
-        protected virtual void WriteDouble(BinaryWriter w, double ui) { w.Write(ui); }
-        protected virtual void WriteCoordinates2D(BinaryWriter w, Coordinates2D t) { w.Write(t.Item1); w.Write(t.Item2); }
-        protected virtual void WriteCoordinates3D(BinaryWriter w, Coordinates3D t) { w.Write(t.Item1); w.Write(t.Item2); w.Write(t.Item3); }
-
-        protected virtual void WriteUtf16(BinaryWriter w, string s) {
-            WriteUtf16Helper (w, s);
-        }
-        protected virtual void WriteAscii(BinaryWriter w, string s) {
-            WriteAsciiHelper (w, s);
-        }
-        #endregion
-        #region Nodes
-        protected virtual void WriteBoolNode(BinaryWriter w, EsfNode node) { 
-            w.Write((byte)0x01);
-            w.Write ((node as EsfValueNode<bool>).Value);
-        }
-
-        protected void WriteSbyteNode(BinaryWriter w, EsfNode node) { w.Write((byte)0x02); w.Write((node as EsfValueNode<sbyte>).Value); }
-        protected void WriteShortNode(BinaryWriter w, EsfNode node) { w.Write((byte)0x03); w.Write((node as EsfValueNode<short>).Value); }
-        protected virtual void WriteIntNode(BinaryWriter w, EsfNode node) { w.Write ((byte)0x04); w.Write ((node as EsfValueNode<int>).Value); }
-        protected virtual void WriteUIntNode(BinaryWriter w, EsfNode node) { w.Write((byte)0x08); w.Write((node as EsfValueNode<uint>).Value); }
-        protected void WriteLongNode(BinaryWriter w, EsfNode node) { w.Write((byte)0x05); w.Write((node as EsfValueNode<long>).Value); }
-        protected void WriteByteNode(BinaryWriter w, EsfNode node) { w.Write((byte)0x06); w.Write((node as EsfValueNode<byte>).Value); }
-        protected void WriteUshortNode(BinaryWriter w, EsfNode node) { w.Write((byte)0x07); w.Write((node as EsfValueNode<ushort>).Value); }
-        protected void WriteUlongNode(BinaryWriter w, EsfNode node) { w.Write((byte)0x09); w.Write((node as EsfValueNode<ulong>).Value); }
-        protected virtual void WriteFloatNode(BinaryWriter w, EsfNode node) { w.Write((byte)0x0a); w.Write((node as EsfValueNode<float>).Value); }
-        protected void WriteDoubleNode(BinaryWriter w, EsfNode node) { w.Write((byte)0x0b); w.Write((node as EsfValueNode<double>).Value); }
-        protected void WriteCoordinates2DNode(BinaryWriter w, EsfNode node) { 
-            w.Write((byte)0x0c); 
-            WriteCoordinates2D(w, (node as EsfValueNode<Coordinates2D>).Value); 
-        }
-        protected void WriteCoordinates3DNode(BinaryWriter w, EsfNode node) {
-            w.Write ((byte)0x0d);
-            WriteCoordinates3D (w, (node as EsfValueNode<Coordinates3D>).Value);
-        }
-
-        protected void WriteUtf16Node(BinaryWriter w, EsfNode node) { w.Write((byte)0x0e); WriteUtf16(w, (node as EsfValueNode<string>).Value); }
-        protected void WriteAsciiNode(BinaryWriter w, EsfNode node) { w.Write((byte)0x0f); WriteAscii(w, (node as EsfValueNode<string>).Value); }
-
-        protected void WriteAngleNode(BinaryWriter w, EsfNode node) { w.Write((byte)0x10); w.Write((ushort)(node as EsfValueNode<ushort>).Value); }
-
-        public static readonly NodeWriter NotImplemented = delegate(BinaryWriter w, EsfNode node) { throw new NotImplementedException(); };
-        #endregion
+//        protected virtual void WriteBool(BinaryWriter w, bool b) { w.Write(b); }
+//        protected virtual void WriteInt(BinaryWriter w, int i) { w.Write(i); }
+        //protected virtual void WriteSByte(BinaryWriter w, sbyte b) { w.Write(b); }
+        //protected virtual void WriteShort(BinaryWriter w, short v) { w.Write(v); }
+        //protected virtual void WriteUShort(BinaryWriter w, ushort v) { w.Write(v); }
+        //protected virtual void WriteByte(BinaryWriter w, byte b) { w.Write(b); }
+        //protected virtual void WriteLong(BinaryWriter w, long v) { w.Write(v); }
+        //protected virtual void WriteULong(BinaryWriter w, ulong v) { w.Write(v); }
+        //protected virtual void WriteUInt(BinaryWriter w, uint ui) { w.Write(ui); }
+        //protected virtual void WriteFloat(BinaryWriter w, float ui) { w.Write(ui); }
+        //protected virtual void WriteDouble(BinaryWriter w, double ui) { w.Write(ui); }
+        //protected virtual void WriteCoordinates2D(BinaryWriter w, Coordinates2D t) { w.Write(t.Item1); w.Write(t.Item2); }
+        //protected virtual void WriteCoordinates3D(BinaryWriter w, Coordinates3D t) { w.Write(t.Item1); w.Write(t.Item2); w.Write(t.Item3); }
         #endregion
 
         #region String Readers/Writers
@@ -182,7 +141,7 @@ namespace EsfLibrary {
             ushort strLength = reader.ReadUInt16();
             return Encoding.Unicode.GetString(reader.ReadBytes(strLength * 2));
         }
-        public static void WriteUtf16Helper(BinaryWriter writer, string toWrite) {
+        public static void WriteUtf16(BinaryWriter writer, string toWrite) {
             writer.Write((ushort)toWrite.Length);
             writer.Write(Encoding.Unicode.GetBytes(toWrite));
         }
@@ -190,7 +149,7 @@ namespace EsfLibrary {
             ushort strLength = reader.ReadUInt16();
             return Encoding.ASCII.GetString(reader.ReadBytes(strLength));
         }
-        public static void WriteAsciiHelper(BinaryWriter writer, string toWrite) {
+        public static void WriteAscii(BinaryWriter writer, string toWrite) {
             writer.Write((ushort)toWrite.Length);
             writer.Write(Encoding.ASCII.GetBytes(toWrite));
         }
@@ -313,116 +272,68 @@ namespace EsfLibrary {
             EsfNode result = null;
             switch (typeCode) {
             case EsfType.BOOL:
-                result = new BoolValueNode { Value = ReadBool(reader) };
+                result = new BoolNode();
                 break;
             case EsfType.INT8:
-                result = new SByteValueNode { Value = ReadSbyte(reader) };
+                result = new SByteNode();
                 break;
             case EsfType.INT16:
-                result = new ShortValueNode { Value = ReadShort(reader) };
+                result = new ShortNode();
                 break;
             case EsfType.INT32:
-                result = new IntValueNode { Value = ReadInt(reader) };
+                result = new IntNode();
                 break;
             case EsfType.INT64:
-                result = new LongValueNode { Value = ReadLong(reader) };
+                result = new LongNode();
                 break;
             case EsfType.UINT8:
-                result = new ByteValueNode { Value = ReadByte(reader) };
+                result = new ByteNode();
                 break;
             case EsfType.UINT16:
-                result = new UShortValueNode { Value = ReadUshort(reader) };
+                result = new UShortNode();
                 break;
             case EsfType.UINT32:
-                result = new UIntValueNode { Value = ReadUint(reader) };
+                result = new UIntNode();
                 break;
             case EsfType.UINT64:
-                result = new ULongValueNode { Value = ReadUlong(reader) };
+                result = new ULongNode();
                 break;
             case EsfType.SINGLE:
-                result = new FloatValueNode { Value = ReadFloat(reader) };
+                result = new FloatNode();
                 break;
             case EsfType.DOUBLE:
-                result = new DoubleValueNode { Value = ReadDouble(reader) };
+                result = new DoubleNode();
                 break;
             case EsfType.COORD2D:
-                result = new Coordinate2DValueNode { Value = ReadCoordinates2D(reader) };
+                result = new Coordinate2DNode();
                 break;
             case EsfType.COORD3D:
-                result = new Coordinates3DValueNode { Value = ReadCoordinates3D(reader) };
+                result = new Coordinates3DNode();
                 break;
             case EsfType.UTF16:
-                result = new StringValueNode { Value = ReadUtf16String(reader) };
+                result = new StringNode(ReadUtf16, WriteUtf16);
                 break;
             case EsfType.ASCII:
-                result = new StringValueNode { Value = ReadAsciiString(reader) };
+                result = new StringNode(ReadAscii, WriteUtf16);
                 break;
             case EsfType.ANGLE:
-                result = new UShortValueNode { Value = ReadUshort(reader) };
+                result = new UShortNode();
                 break;
             default:
                 throw new InvalidDataException(string.Format("Invalid type code {0:x} at {1:x}", typeCode, reader.BaseStream.Position));
+            }
+            if (result is ICodecNode) {
+                (result as ICodecNode).Decode(reader, typeCode);
             }
             result.TypeCode = typeCode;
             return result;
         }
 
-//        protected EsfValueNode<T> CreateValueNode<T>(BinaryReader reader, ValueReader<T> ReadValue, EsfType typeCode) {
-//            return new EsfValueNode<T> { Value = ReadValue(reader), TypeCode = typeCode };
-//        }
-
         public virtual void WriteValueNode(BinaryWriter writer, EsfNode node) {
-            switch (node.TypeCode) {
-                case EsfType.BOOL:
-                    WriteBoolNode(writer, node);
-                    break;
-                case EsfType.INT8:
-                    WriteSbyteNode(writer, node);
-                    break;
-                case EsfType.INT16:
-                    WriteShortNode(writer, node);
-                    break;
-                case EsfType.INT32:
-                    WriteIntNode(writer, node);
-                    break;
-                case EsfType.INT64:
-                    WriteLongNode(writer, node);
-                    break;
-                case EsfType.UINT8:
-                    WriteByteNode(writer, node);
-                    break;
-                case EsfType.UINT16:
-                    WriteUshortNode(writer, node);
-                    break;
-                case EsfType.UINT32:
-                    WriteUIntNode(writer, node);
-                    break;
-                case EsfType.UINT64:
-                    WriteUlongNode(writer, node);
-                    break;
-                case EsfType.SINGLE:
-                    WriteFloatNode(writer, node);
-                    break;
-                case EsfType.DOUBLE:
-                    WriteDoubleNode(writer, node);
-                    break;
-                case EsfType.COORD2D:
-                    WriteCoordinates2DNode(writer, node);
-                    break;
-                case EsfType.COORD3D:
-                    WriteCoordinates3DNode(writer, node);
-                    break;
-                case EsfType.UTF16:
-                    WriteUtf16Node(writer, node);
-                    break;
-                case EsfType.ASCII:
-                    WriteAsciiNode(writer, node);
-                    break;
-                case EsfType.ANGLE:
-                    WriteAngleNode(writer, node);
-                    break;
-                default:
-                    throw new InvalidDataException(string.Format("Invalid type code {0:x} at {1:x}", node.TypeCode, writer.BaseStream.Position));
+            if (node is ICodecNode) {
+                (node as ICodecNode).Encode(writer);
+            } else {
+                throw new InvalidDataException(string.Format("Invalid type code {0:x} at {1:x}", node.TypeCode, writer.BaseStream.Position));
             }
         }
         #endregion
@@ -432,53 +343,53 @@ namespace EsfLibrary {
             EsfNode result = null;
             switch (typeCode) {
             case EsfType.BOOL_ARRAY:
-                result = new BoolArrayNode { Value = ReadArray(reader), ItemReader = ReadBool };
+                result = new BoolArrayNode { Value = ReadArray(reader) };
                     // CreateArrayNode<bool>(reader), ItemReader = ReadBool);
                 break;
             case EsfType.INT8_ARRAY:
-                result = new SByteArrayNode { Value = ReadArray(reader), ItemReader = ReadSbyte };
+                result = new SByteArrayNode { Value = ReadArray(reader) };
                 break;
             case EsfType.INT16_ARRAY:
-                result = new ShortArrayNode { Value = ReadArray(reader), ItemReader = ReadShort };
+                result = new ShortArrayNode { Value = ReadArray(reader) };
                 break;
             case EsfType.INT32_ARRAY:
-                result = new IntArrayNode { Value = ReadArray(reader), ItemReader = ReadInt };
+                result = new IntArrayNode { Value = ReadArray(reader) };
                 break;
             case EsfType.INT64_ARRAY:
-                result = new LongArrayNode { Value = ReadArray(reader), ItemReader = ReadLong };
+                result = new LongArrayNode { Value = ReadArray(reader) };
                 break;
             case EsfType.UINT8_ARRAY:
-                result = new ByteArrayNode { Value = ReadArray(reader), ItemReader = ReadByte };
+                result = new ByteArrayNode { Value = ReadArray(reader) };
                 break;
             case EsfType.UINT16_ARRAY:
-                result = new UShortArrayNode { Value = ReadArray(reader), ItemReader = ReadUshort };
+                result = new UShortArrayNode { Value = ReadArray(reader) };
                 break;
             case EsfType.UINT32_ARRAY:
-                result = new UIntArrayNode { Value = ReadArray(reader), ItemReader = ReadUint };
+                result = new UIntArrayNode { Value = ReadArray(reader) };
                 break;
             case EsfType.UINT64_ARRAY:
-                result = new ULongArrayNode { Value = ReadArray(reader), ItemReader = ReadUlong };
+                result = new ULongArrayNode { Value = ReadArray(reader) };
                 break;
             case EsfType.SINGLE_ARRAY:
-                result = new FloatArrayNode { Value = ReadArray(reader), ItemReader = ReadFloat };
+                result = new FloatArrayNode { Value = ReadArray(reader) };
                 break;
             case EsfType.DOUBLE_ARRAY:
-                result = new DoubleArrayNode { Value = ReadArray(reader), ItemReader = ReadDouble };
+                result = new DoubleArrayNode { Value = ReadArray(reader) };
                 break;
             case EsfType.COORD2D_ARRAY:
-                result = new Coordinate2DArrayNode { Value = ReadArray(reader), ItemReader = ReadCoordinates2D };
+                result = new Coordinate2DArrayNode { Value = ReadArray(reader) };
                 break;
             case EsfType.COORD3D_ARRAY:
-                result = new Coordinates3DArrayNode { Value = ReadArray(reader), ItemReader = ReadCoordinates3D };
+                result = new Coordinates3DArrayNode { Value = ReadArray(reader) };
                 break;
             case EsfType.UTF16_ARRAY:
-                result = new StringArrayNode { Value = ReadArray(reader), ItemReader = ReadUtf16String };
+                result = new StringArrayNode { Value = ReadArray(reader) };
                 break;
             case EsfType.ASCII_ARRAY:
-                result = new StringArrayNode { Value = ReadArray(reader), ItemReader = ReadAsciiString };
+                result = new StringArrayNode { Value = ReadArray(reader) };
                 break;
             case EsfType.ANGLE_ARRAY:
-                result = new UShortArrayNode { Value = ReadArray(reader), ItemReader = ReadUshort };
+                result = new UShortArrayNode { Value = ReadArray(reader) };
                 break;
             default:
                 throw new InvalidDataException(string.Format("Unknown array type code {0} at {1:x}", typeCode, reader.BaseStream.Position));
@@ -652,7 +563,7 @@ namespace EsfLibrary {
         protected virtual void WriteNodeNames(BinaryWriter writer) {
             writer.Write((short)nodeNames.Count);
             for (int i = 0; i < nodeNames.Count; i++) {
-                WriteAsciiHelper(writer, nodeNames[i]);
+                WriteAscii(writer, nodeNames[i]);
             }
         }
         
@@ -701,10 +612,6 @@ namespace EsfLibrary {
 
         #region Helpers
         // helper methods
-        protected void writeValue<T>(BinaryWriter writer, T value, ValueWriter<T> WriteValue) {
-            //writer.Write(typeCode);
-            WriteValue(writer, value);
-        }
         protected string GetNodeName(ushort nameIndex) {
             // return string.Format("Node with name index {0}", nameIndex);
             try {

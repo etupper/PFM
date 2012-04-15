@@ -54,11 +54,28 @@ namespace EsfLibrary {
         protected override string ReadAsciiString(BinaryReader reader) {
             return ReadStringReference (reader, AsciiStringList);
         }
-        protected override void WriteAscii(BinaryWriter w, string s) {
+        protected void WriteAsciiReference(BinaryWriter w, string s) {
             WriteStringReference(w, s, AsciiStringList);
         }
-        protected override void WriteUtf16(BinaryWriter w, string s) {
+        protected void WriteUtf16Reference(BinaryWriter w, string s) {
             WriteStringReference(w, s, Utf16StringList);
+        }
+
+        public override EsfNode ReadValueNode(BinaryReader reader, EsfType typeCode) {
+            StringNode result;
+            switch (typeCode) {
+                case EsfType.UTF16:
+                    result = new StringNode(ReadUtf16String, WriteUtf16Reference);
+                    break;
+                case EsfType.ASCII:
+                    result = new StringNode(ReadAsciiString, WriteAsciiReference);
+                    break;
+                default:
+                    return base.ReadValueNode(reader, typeCode);
+            }
+            result.Decode(reader, typeCode);
+            result.TypeCode = typeCode;
+            return result;
         }
 
         // override to read the two string lists after the node names
@@ -70,8 +87,8 @@ namespace EsfLibrary {
         }
         protected override void WriteNodeNames(BinaryWriter writer) {
             base.WriteNodeNames(writer);
-            WriteStringList(writer, Utf16StringList, WriteUtf16Helper);
-            WriteStringList(writer, AsciiStringList, WriteAsciiHelper);
+            WriteStringList(writer, Utf16StringList, WriteUtf16);
+            WriteStringList(writer, AsciiStringList, WriteAscii);
         }
     }
 }

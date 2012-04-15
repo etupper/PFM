@@ -162,7 +162,7 @@ namespace EditSF {
         }
 
         private void showNodeTypeToolStripMenuItem_Click(object sender, EventArgs e) {
-            editEsfComponent.showCode = true;
+            editEsfComponent.ShowCode = true;
         }
     }
 

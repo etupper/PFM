@@ -22,7 +22,6 @@ namespace EsfLibrary {
         static ValueReader<bool> FalseValue = delegate(BinaryReader reader) { return false; };
         static ValueReader<uint> UIntZero = delegate(BinaryReader reader) { return 0; };
         static ValueReader<uint> UIntOne = delegate(BinaryReader reader) { return 1; };
-        static ValueReader<int> IntZero = delegate(BinaryReader reader) { return 0; };
         static ValueReader<float> FloatZero = delegate(BinaryReader reader) { return 0; };
         static ValueReader<int> IntByteReader = delegate(BinaryReader reader) { return reader.ReadSByte(); };
         static ValueReader<int> Int16Reader = delegate(BinaryReader reader) { return reader.ReadInt16(); };
@@ -50,214 +49,29 @@ namespace EsfLibrary {
         #endregion
         #region Added Writers
         protected void WriteBoolNoop(BinaryWriter writer, bool value) { }
-        protected void WriteUIntNoop(BinaryWriter writer, uint value) { }
-        protected void WriteIntNoop(BinaryWriter writer, int value) { }
         protected void WriteFloatNoop(BinaryWriter writer, float value) { }
-        protected void WriteInt8(BinaryWriter writer, int value) { writer.Write((sbyte)value); }
-        protected void WriteInt16(BinaryWriter writer, int value) { writer.Write((short)value); }
-        protected void WriteInt24(BinaryWriter writer, int value) {
-            uint write = ((uint)Math.Abs(value));
-            if (value < 0) {
-                uint highBitSet = 0x800000u;
-                write = write + highBitSet;
-            }
-            WriteUInt24(writer, write); 
-        }
-        protected void WriteUInt8(BinaryWriter writer, uint value) { writer.Write((byte)value); }
-        protected void WriteUInt16(BinaryWriter writer, uint value) { writer.Write((ushort)value); }
-        protected void WriteUInt24(BinaryWriter writer, uint value) { 
-            byte toWrite;
-            uint mask = 0xff << 16; // mask highest byte first
-            for (int i = 16; i >= 0; i -= 8) {
-                // mask byte
-                uint masked = mask & value;
-                // shift to lowest byte and cut off last byte
-                toWrite = (byte)(masked >> i);
-                writer.Write(toWrite);
-                // mask next byte
-                mask = mask >> 8;
-            }
-        }
         #endregion
 
         public AbcaFileCodec() : base(0xABCA) {}
         
-        #region Optimized Value Writer overrides
-        protected override void WriteBoolNode(BinaryWriter writer, EsfNode node) {
-            writer.Write((byte)((node as EsfValueNode<bool>).Value ? EsfType.BOOL_TRUE : EsfType.BOOL_FALSE));
-        }
-        protected override void WriteUIntNode(BinaryWriter writer, EsfNode node) {
-            EsfType typeCode;
-            ValueWriter<uint> writeUInt;
-            uint value = (node as UIntValueNode).Value;
-            if (value == 0) {
-                typeCode = EsfType.UINT32_ZERO;
-                writeUInt = WriteUIntNoop;
-            } else if (value == 1) {
-                typeCode = EsfType.UINT32_ONE;
-                writeUInt = WriteUIntNoop;
-            } else if (value < 0x100) {
-                typeCode = EsfType.UINT32_BYTE;
-                writeUInt = WriteUInt8;
-            } else if (value < 0x10000) {
-                typeCode = EsfType.UINT32_SHORT;
-                writeUInt = WriteUInt16;
-            } else if (value < 0x1000000) {
-                typeCode = EsfType.UINT32_24BIT;
-                writeUInt = WriteUInt24;
-            } else {
-                // bit set in highest byte
-                typeCode = EsfType.UINT32;
-                writeUInt = WriteUInt;
-            }
-            writer.Write((byte)typeCode);
-            writeUInt(writer, value);
-        }
-        protected override void WriteIntNode(BinaryWriter writer, EsfNode node) {
-            EsfType typeCode;
-            ValueWriter<int> writeInt;
-            int value = (node as IntValueNode).Value;
-            int relevantBytes = RelevantBytesInt(value);
-            switch(relevantBytes) {
-            case 0:
-                typeCode = EsfType.INT32_ZERO;
-                writeInt = WriteIntNoop;
-                break;
-            case 1:
-                typeCode = EsfType.INT32_BYTE;
-                writeInt = WriteInt8;
-                break;
-            case 2:
-                typeCode = EsfType.INT32_SHORT;
-                writeInt = WriteInt16;
-                break;
-            case 3:
-                typeCode = EsfType.INT32_24BIT;
-                writeInt = WriteInt24;
-                break;
-            case 4:
-                typeCode = EsfType.INT32;
-                writeInt = WriteInt;
-                break;
-            default:
-                throw new InvalidDataException(string.Format("Invalid number of bytes {0} for int {1}", relevantBytes, value));
-            }
-            writer.Write((byte) typeCode);
-            writeInt(writer, value);
-        }
-        protected override void WriteFloatNode(BinaryWriter writer, EsfNode node) {
-            float value = (node as EsfValueNode<float>).Value;
-            if (value == 0) {
-                writer.Write((byte)0x1d);
-            } else {
-                writer.Write((byte)0x0a);
-                writer.Write(value);
-            }
-        }
-        #endregion
-        public override void WriteValueNode(BinaryWriter writer, EsfNode node) {
-            switch (node.TypeCode) {
-            case EsfType.BOOL_TRUE:
-            case EsfType.BOOL_FALSE:
-                WriteBoolNode(writer,node);
-                break;
-            case EsfType.UINT32_ZERO:
-            case EsfType.UINT32_ONE:
-            case EsfType.UINT32_BYTE:
-            case EsfType.UINT32_SHORT:
-            case EsfType.UINT32_24BIT:
-                WriteUIntNode(writer,node);
-                break;
-            case EsfType.INT32_ZERO:
-            case EsfType.INT32_BYTE:
-            case EsfType.INT32_SHORT:
-            case EsfType.INT32_24BIT:
-                WriteIntNode(writer,node);
-                break;
-            case EsfType.SINGLE_ZERO:
-                WriteFloatNode(writer,node);
-                break;
-            default:
-                base.WriteValueNode (writer, node);
-                break;
-            }
-        }
-        #region Optimized Array Helpers
-        protected ValueWriter<uint> FromRelevantBytesUInt(int minBytes) {
-            ValueWriter<uint> result;
-            switch (minBytes) {
-                case 1:
-                    result = WriteUInt8;
-                    break;
-                case 2:
-                    result = WriteUInt16;
-                    break;
-                case 3:
-                    result = WriteUInt24;
-                    break;
-                default:
-                    result = WriteUInt;
-                    break;
-            }
-            return result;
-        }
-        protected ValueWriter<int> FromRelevantBytesInt(int minBytes) {
-            ValueWriter<int> result;
-            switch (minBytes) {
-                case 1:
-                    result = WriteInt8;
-                    break;
-                case 2:
-                    result = WriteInt16;
-                    break;
-                case 3:
-                    result = WriteInt24;
-                    break;
-                default:
-                    result = WriteInt;
-                    break;
-            }
-            return result;
-        }
-        protected int RelevantBytesInt(int value) {
-            if (value == int.MinValue) {
-                return 4;
-            }
-            int result = 0;
-            // remove sign bit if applicable
-            value = Math.Abs(value);
-            if ((value & 0x7f800000) != 0) {
-                result = 4;
-            } else if ((value & 0x7f8000) != 0) {
-                result = 3;
-            } else if ((value &0x7f80) != 0) {
-                result = 2;
-            } else if (value > 0) {
-                result = 1;
-            }
-            return result;
-        }
-        protected int RelevantBytesUInt(uint value) {
-            int result = 0;
-            if (value > 0xffffff) {
-                result = 4;
-            } else if (value > 0xffff) {
-                result = 3;
-            } else if (value > 0xff) {
-                result = 2;
-            } else if (value > 1) {
-                result = 1;
-            }
-            return result;
-        }
-        #endregion
-
         public override EsfNode Decode(BinaryReader reader, byte typeCode) {
             EsfNode result;
             byte recordBit = (byte)(typeCode & RECORD_BIT);
             if (recordBit == 0 || reader.BaseStream.Position == headerLength + 1) {
-                // for non-blocks and root node, previous decoding is used
-                result = base.Decode(reader, typeCode);
+                switch ((EsfType) typeCode) {
+                    case EsfType.INT32_ZERO:
+                    case EsfType.INT32_BYTE:
+                    case EsfType.INT32_SHORT:
+                    case EsfType.INT32_24BIT:
+                    case EsfType.INT32:
+                        result = new OptimizedIntNode();
+                        (result as OptimizedIntNode).Decode(reader, (EsfType) typeCode);
+                        break;
+                    default:
+                        // for non-blocks and root node, previous decoding is used
+                        result = base.Decode(reader, typeCode);
+                        break;
+                }
             } else {
                 bool blockBit = ((typeCode & BLOCK_BIT) != 0);
                 //Debug.WriteLine(string.Format("Reading section {0}node at {1:x}", blockBit ? "block " : "", reader.BaseStream.Position-1));
@@ -271,52 +85,39 @@ namespace EsfLibrary {
   
         // Adds readers for optimized values
         public override EsfNode ReadValueNode(BinaryReader reader, EsfType typeCode) {
-            EsfNode result;
+            ICodecNode result;
             switch (typeCode) {
+            case EsfType.BOOL:
             case EsfType.BOOL_TRUE:
-                result = new BoolValueNode { Value = true };
-                break;
             case EsfType.BOOL_FALSE:
-                result = new BoolValueNode { Value = false };
+                result = new OptimizedBoolNode();
                 break;
             case EsfType.UINT32_ZERO:
-                result = new UIntValueNode { Value = 0 };
-                break;
             case EsfType.UINT32_ONE:
-                result = new UIntValueNode { Value = 1 };
-                break;
             case EsfType.UINT32_BYTE:
-                result = new UIntValueNode { Value = UIntByteReader(reader) };
-                break;
             case EsfType.UINT32_SHORT:
-                result = new UIntValueNode { Value = UInt16Reader(reader) };
-                break;
             case EsfType.UINT32_24BIT:
-                result = new UIntValueNode { Value = UInt24Reader(reader) };
+            case EsfType.UINT32:
+                result = new OptimizedUIntNode();
                 break;
             case EsfType.INT32_ZERO:
-                result = new IntValueNode { Value = 0 };
-                break;
             case EsfType.INT32_BYTE:
-                result = new IntValueNode { Value = IntByteReader(reader) };
-                break;
             case EsfType.INT32_SHORT:
-                result = new IntValueNode { Value = Int16Reader(reader) };
-                break;
             case EsfType.INT32_24BIT:
-                result = new IntValueNode { Value = Int24Reader(reader) };
+            case EsfType.INT32:
+                result = new OptimizedIntNode();
                 break;
             case EsfType.SINGLE_ZERO:
-                result = new FloatValueNode { Value = 0 };
+            case EsfType.SINGLE:
+                result = new OptimizedFloatNode();
                 break;
             default:
-                result = base.ReadValueNode(reader, typeCode);
-                break;
+                return base.ReadValueNode(reader, typeCode);
             }
-            result.TypeCode = typeCode;
-            return result;
+            result.Decode(reader, typeCode);
+            return result as EsfNode;
         }
-        
+
         #region Array Nodes
         protected override EsfNode ReadArrayNode(BinaryReader reader, EsfType typeCode) {
             EsfNode result;
@@ -475,7 +276,7 @@ namespace EsfLibrary {
    
             // prepare decoding information
             List<EsfNode> infoItems = new List<EsfNode>();
-            infoItems.Add(new UIntValueNode { Value = uncompressedSize, TypeCode = EsfType.UINT32, Codec = this });
+            infoItems.Add(new UIntNode { Value = uncompressedSize, TypeCode = EsfType.UINT32, Codec = this });
             using (MemoryStream propertyStream = new MemoryStream()) {
                 encoder.WriteCoderProperties(propertyStream);
                 infoItems.Add(new ByteArrayNode { Value = propertyStream.ToArray(), TypeCode = EsfType.UINT8_ARRAY, Codec = this });
