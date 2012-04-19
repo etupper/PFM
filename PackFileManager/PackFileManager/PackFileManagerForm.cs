@@ -133,6 +133,7 @@ namespace PackFileManager
         private ToolStripMenuItem editModMenuItem;
         private ToolStripMenuItem deleteCurrentToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator12;
+        private ToolStripMenuItem extractAllTsv;
         private UnitVariantFileEditorControl unitVariantFileEditorControl;
         #endregion
 
@@ -398,6 +399,7 @@ namespace PackFileManager
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.editModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -460,7 +462,7 @@ namespace PackFileManager
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.packStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.packActionProgressBar = new System.Windows.Forms.ToolStripProgressBar();
-            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
+            this.extractAllTsv = new System.Windows.Forms.ToolStripMenuItem();
             this.packActionMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -747,28 +749,33 @@ namespace PackFileManager
             // newModMenuItem
             // 
             this.newModMenuItem.Name = "newModMenuItem";
-            this.newModMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newModMenuItem.Size = new System.Drawing.Size(150, 22);
             this.newModMenuItem.Text = "New";
             this.newModMenuItem.Click += new System.EventHandler(this.newModMenuItem_Click);
             // 
             // toolStripSeparator11
             // 
             this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator11.Size = new System.Drawing.Size(147, 6);
             // 
             // editModMenuItem
             // 
             this.editModMenuItem.Name = "editModMenuItem";
-            this.editModMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.editModMenuItem.Size = new System.Drawing.Size(150, 22);
             this.editModMenuItem.Text = "Edit Current";
             this.editModMenuItem.Visible = false;
             // 
             // deleteCurrentToolStripMenuItem
             // 
             this.deleteCurrentToolStripMenuItem.Name = "deleteCurrentToolStripMenuItem";
-            this.deleteCurrentToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.deleteCurrentToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.deleteCurrentToolStripMenuItem.Text = "Delete Current";
             this.deleteCurrentToolStripMenuItem.Click += new System.EventHandler(this.deleteCurrentToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator12
+            // 
+            this.toolStripSeparator12.Name = "toolStripSeparator12";
+            this.toolStripSeparator12.Size = new System.Drawing.Size(147, 6);
             // 
             // toolStripSeparator
             // 
@@ -974,7 +981,8 @@ namespace PackFileManager
             this.extractToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.extractSelectedToolStripMenuItem,
             this.extractAllToolStripMenuItem,
-            this.exportUnknownToolStripMenuItem});
+            this.exportUnknownToolStripMenuItem,
+            this.extractAllTsv});
             this.extractToolStripMenuItem.Name = "extractToolStripMenuItem";
             this.extractToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.extractToolStripMenuItem.Text = "Extract";
@@ -1263,10 +1271,12 @@ namespace PackFileManager
             this.packActionProgressBar.Name = "packActionProgressBar";
             this.packActionProgressBar.Size = new System.Drawing.Size(120, 16);
             // 
-            // toolStripSeparator12
+            // extractAllTsv
             // 
-            this.toolStripSeparator12.Name = "toolStripSeparator12";
-            this.toolStripSeparator12.Size = new System.Drawing.Size(149, 6);
+            this.extractAllTsv.Name = "extractAllTsv";
+            this.extractAllTsv.Size = new System.Drawing.Size(202, 22);
+            this.extractAllTsv.Text = "Extract All as TSV...";
+            this.extractAllTsv.Click += new System.EventHandler(this.extractAllTsv_Click);
             // 
             // PackFileManagerForm
             // 
@@ -1409,135 +1419,9 @@ namespace PackFileManager
                     packedFiles.Add(node.Tag as PackedFile);
                 }
             }
-            extractFiles(packedFiles);
+            new FileExtractor(packStatusLabel, packActionProgressBar).extractFiles(packedFiles);
         }
 
-        private void extractFiles(List<PackedFile> packedFiles)
-        {
-            string exportDirectory = null;
-            if (Settings.Default.CurrentMod == "") {
-                FolderBrowserDialog extractFolderBrowserDialog = new FolderBrowserDialog {
-                    Description = "Extract to what folder?",
-                    SelectedPath = Settings.Default.LastPackDirectory
-                };
-                exportDirectory =
-                    extractFolderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK
-                    ? extractFolderBrowserDialog.SelectedPath : "";
-
-            } else {
-                exportDirectory = ModManager.Instance.CurrentModDirectory;
-            }
-            if (!string.IsNullOrEmpty(exportDirectory))
-            {
-                FileAlreadyExistsDialog.DefaultAction ask = FileAlreadyExistsDialog.DefaultAction.Ask;
-                packStatusLabel.Text = string.Format("Extracting file (0 of {0} files extracted, 0 skipped)", packedFiles.Count);
-                packActionProgressBar.Visible = true;
-                packActionProgressBar.Minimum = 0;
-                packActionProgressBar.Maximum = packedFiles.Count;
-                packActionProgressBar.Step = 1;
-                packActionProgressBar.Value = 0;
-                int num = 0;
-                int num2 = 0;
-                foreach (PackedFile file in packedFiles)
-                {
-                    string path = Path.Combine(exportDirectory, file.FullPath);
-                    if (File.Exists(path))
-                    {
-                        string str3;
-                        if (ask == FileAlreadyExistsDialog.DefaultAction.Ask)
-                        {
-                            FileAlreadyExistsDialog dialog = new FileAlreadyExistsDialog(path);
-                            dialog.ShowDialog(this);
-                            ask = dialog.NextAction;
-                            bool flag = false;
-                            switch (dialog.ChosenAction)
-                            {
-                                case FileAlreadyExistsDialog.ChoosableAction.Skip:
-                                {
-                                    num2++;
-                                    packStatusLabel.Text = string.Format("({1} of {2} files extracted, {3} skipped): extracting {0}", new object[] { file.FullPath, num, packedFiles.Count, num2 });
-                                    packActionProgressBar.PerformStep();
-                                    Application.DoEvents();
-                                    continue;
-                                }
-                                case FileAlreadyExistsDialog.ChoosableAction.RenameExisting:
-                                    str3 = path + ".bak";
-                                    while (File.Exists(str3))
-                                    {
-                                        str3 = str3 + ".bak";
-                                    }
-                                    File.Move(path, str3);
-                                    break;
-
-                                case FileAlreadyExistsDialog.ChoosableAction.RenameNew:
-                                    do
-                                    {
-                                        path = path + ".new";
-                                    }
-                                    while (File.Exists(path));
-                                    break;
-
-                                case FileAlreadyExistsDialog.ChoosableAction.Cancel:
-                                    flag = true;
-                                    break;
-                            }
-                            if (flag)
-                            {
-                                packStatusLabel.Text = "Extraction cancelled.";
-                                packActionProgressBar.Visible = false;
-                                return;
-                            }
-                            goto Label_031E;
-                        }
-                        switch (ask)
-                        {
-                            case FileAlreadyExistsDialog.DefaultAction.Overwrite:
-                                goto Label_031E;
-
-                            case FileAlreadyExistsDialog.DefaultAction.Skip:
-                            {
-                                num2++;
-                                packStatusLabel.Text = string.Format("({1} of {2} files extracted, {3} skipped): extracting {0}", new object[] { file.FullPath, num, packedFiles.Count, num2 });
-                                packActionProgressBar.PerformStep();
-                                Application.DoEvents();
-                                continue;
-                            }
-                            case FileAlreadyExistsDialog.DefaultAction.RenameExisting:
-                                str3 = path + ".bak";
-                                while (File.Exists(str3))
-                                {
-                                    str3 = str3 + ".bak";
-                                }
-                                File.Move(path, str3);
-                                goto Label_031E;
-
-                            case FileAlreadyExistsDialog.DefaultAction.RenameNew:
-                                do
-                                {
-                                    path = path + ".new";
-                                }
-                                while (File.Exists(path));
-                                goto Label_031E;
-
-                            default:
-                                goto Label_031E;
-                        }
-                    }
-                    Directory.CreateDirectory(Path.GetDirectoryName(path));
-                Label_031E:;
-                    packStatusLabel.Text = string.Format("({1} of {2} files extracted, {3} skipped): extracting {0}", new object[] { file.FullPath, num, packedFiles.Count, num2 });
-                    Application.DoEvents();
-                    using (FileStream stream = new FileStream(path, FileMode.Create))
-                    {
-                        stream.Write(file.Data, 0, (int) file.Size);
-                    }
-                    num++;
-                    packStatusLabel.Text = string.Format("({1} of {2} files extracted, {3} skipped): extracting {0}", new object[] { file.FullPath, num, packedFiles.Count, num2 });
-                    packActionProgressBar.PerformStep();
-                    Application.DoEvents();
-                }
-            }
-        }
 
         private void extractSelectedToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1550,8 +1434,34 @@ namespace PackFileManager
             {
                 packedFiles.Add(packTreeView.SelectedNode.Tag as PackedFile);
             }
-            extractFiles(packedFiles);
+            new FileExtractor(packStatusLabel, packActionProgressBar).extractFiles(packedFiles);
         }
+
+        private void exportUnknownToolStripMenuItem_Click(object sender, EventArgs e) {
+            var packedFiles = new List<PackedFile>();
+            foreach (TreeNode node in packTreeView.Nodes) {
+                if (node.Nodes.Count > 0) {
+                    getPackedFilesFromBranch(packedFiles, node.Nodes, unknownDbFormat);
+                } else {
+                    packedFiles.Add(node.Tag as PackedFile);
+                }
+            }
+            new FileExtractor(packStatusLabel, packActionProgressBar).extractFiles(packedFiles);
+        }
+
+        private void extractAllTsv_Click(object sender, EventArgs e) {
+            List<PackedFile> files = new List<PackedFile>();
+            VirtualDirectory dir = currentPackFile.Root.getSubdirectory("db");
+            foreach (VirtualDirectory subDir in dir.Subdirectories) {
+                files.AddRange(subDir.Files);
+            }
+            FileExtractor extractor = new FileExtractor(packStatusLabel, packActionProgressBar) {
+                Preprocessor = new TsvConversionPreprocessor()
+            };
+            extractor.extractFiles(files);
+        }
+
+
         #endregion
 
         protected void EnableMenuItems() {
@@ -2269,17 +2179,6 @@ namespace PackFileManager
 			return result;
 		}
 
-        private void exportUnknownToolStripMenuItem_Click(object sender, EventArgs e) {
-            var packedFiles = new List<PackedFile>();
-            foreach (TreeNode node in packTreeView.Nodes) {
-                if (node.Nodes.Count > 0) {
-                    getPackedFilesFromBranch(packedFiles, node.Nodes, unknownDbFormat);
-                } else {
-                    packedFiles.Add(node.Tag as PackedFile);
-                }
-            }
-            extractFiles(packedFiles);
-        }
         #endregion
         
         #region Options

@@ -9,7 +9,7 @@
     public class FileAlreadyExistsDialog : Form
     {
         private Button cancelButton;
-        private ChoosableAction chosenAction;
+        private Action chosenAction;
         private IContainer components = null;
         private ComboBox defaultActionComboBox;
         private Label defaultActionLabel;
@@ -29,7 +29,7 @@
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
-            this.chosenAction = ChoosableAction.Cancel;
+            this.chosenAction = Action.Cancel;
             base.Close();
         }
 
@@ -117,7 +117,7 @@
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new EventHandler(this.cancelButton_Click);
             base.AutoScaleDimensions = new SizeF(6f, 13f);
-            base.AutoScaleMode = AutoScaleMode.Font;
+//            base.AutoScaleMode = AutoScaleMode.Font;
             base.ClientSize = new Size(0x1d9, 0xad);
             base.Controls.Add(this.cancelButton);
             base.Controls.Add(this.defaultActionComboBox);
@@ -127,7 +127,7 @@
             base.Controls.Add(this.messageTextBox);
             base.Controls.Add(this.skipButton);
             base.Controls.Add(this.overwriteButton);
-            base.FormBorderStyle = FormBorderStyle.FixedDialog;
+//            base.FormBorderStyle = FormBorderStyle.FixedDialog;
             base.Name = "FileAlreadyExistsDialog";
             base.StartPosition = FormStartPosition.CenterParent;
             this.Text = "File Already Exists";
@@ -137,25 +137,25 @@
 
         private void overwriteButton_Click(object sender, EventArgs e)
         {
-            this.chosenAction = ChoosableAction.Overwrite;
+            this.chosenAction = Action.Overwrite;
             base.Close();
         }
 
         private void renameExistingButton_Click(object sender, EventArgs e)
         {
-            this.chosenAction = ChoosableAction.RenameExisting;
+            this.chosenAction = Action.RenameExisting;
             base.Close();
         }
 
         private void renameNewButton_Click(object sender, EventArgs e)
         {
-            this.chosenAction = ChoosableAction.RenameNew;
+            this.chosenAction = Action.RenameNew;
             base.Close();
         }
 
         private void skipButton_Click(object sender, EventArgs e)
         {
-            this.chosenAction = ChoosableAction.Skip;
+            this.chosenAction = Action.Skip;
             base.Close();
         }
 
@@ -187,7 +187,7 @@
             }
         }
 
-        public ChoosableAction ChosenAction
+        public Action ChosenAction
         {
             get
             {
@@ -195,16 +195,17 @@
             }
         }
 
-        public DefaultAction NextAction
+        public Action NextAction
         {
             get
             {
-                return (DefaultAction) this.defaultActionComboBox.SelectedIndex;
+                return (Action) this.defaultActionComboBox.SelectedIndex;
             }
         }
 
-        public enum ChoosableAction
+        public enum Action
         {
+            Ask,
             Overwrite,
             Skip,
             RenameExisting,
@@ -212,14 +213,14 @@
             Cancel
         }
 
-        public enum DefaultAction
-        {
-            Ask,
-            Overwrite,
-            Skip,
-            RenameExisting,
-            RenameNew
-        }
+        //public enum DefaultAction
+        //{
+        //    Ask,
+        //    Overwrite,
+        //    Skip,
+        //    RenameExisting,
+        //    RenameNew
+        //}
     }
 }
 

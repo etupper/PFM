@@ -110,6 +110,7 @@
     <Compile Include="PackFileManager\DragDropHelper.cs" />
     <Compile Include="PackFileManager\DragFileInfo.cs" />
     <Compile Include="PackFileManager\FILEDESCRIPTOR.cs" />
+    <Compile Include="PackFileManager\FileExtraction.cs" />
     <Compile Include="PackFileManager\ImageViewerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
