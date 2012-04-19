@@ -7,14 +7,13 @@ namespace EsfLibrary {
     // 0x80 - 0x81
     [DebuggerDisplay("ParentNode: {Name}")]
     public abstract class ParentNode : EsfValueNode<List<EsfNode>>, INamedNode {
-        public ParentNode() {
-            val = new List<EsfNode>();
+        public ParentNode() : base(new List<EsfNode>()) {
         }
         public ParentNode(byte code) : this() {
             originalCode = code;
         }
         
-        public string Name {
+        public virtual string Name {
             get;
             set;
         }
@@ -40,7 +39,7 @@ namespace EsfLibrary {
                     if (modified && Parent != null) {
                         Parent.Modified = value;
                     } else if (!modified) {
-                        val.ForEach(node => node.Modified = false);
+                        Value.ForEach(node => node.Modified = false);
                     }
                 }
             }
@@ -58,34 +57,35 @@ namespace EsfLibrary {
 
         public override List<EsfNode> Value {
             get {
-                return val;
+                return base.Value;
             }
             set {
-                if (!val.Equals (value)) {
+                if (!Value.Equals (value)) {
                     // remove references from children
-                    val.ForEach(node => node.Parent = null);
-                    val = value;
-                    val.ForEach(node => node.Parent = this);
+                    Value.ForEach(node => node.Parent = null);
+                    base.Value = value;
+                    //val = value;
+                    Value.ForEach(node => node.Parent = this);
                     Modified = true;
                 }
             }
         }
-        public List<EsfNode> AllNodes {
+        public virtual List<EsfNode> AllNodes {
             get {
-                return val;
+                return Value;
             }
         }
         public List<ParentNode> Children {
             get {
                 List<ParentNode> result = new List<ParentNode>();
-                val.ForEach(node => { if ((node is ParentNode)) result.Add(node as ParentNode); });
+                Value.ForEach(node => { if ((node is ParentNode)) result.Add(node as ParentNode); });
                 return result;
             }
         }
         public List<EsfNode> Values {
             get {
                 List<EsfNode> result = new List<EsfNode>();
-                val.ForEach(node => { if (!(node is ParentNode)) result.Add(node); });
+                Value.ForEach(node => { if (!(node is ParentNode)) result.Add(node); });
                 return result;
             }
         }
@@ -95,10 +95,10 @@ namespace EsfLibrary {
             ParentNode node = obj as ParentNode;
             if (node != null) {
                 result = node.Name.Equals(Name);
-                result &= node.AllNodes.Count == val.Count;
+                result &= node.AllNodes.Count == Value.Count;
                 if (result) {
                     for(int i = 0; i < node.AllNodes.Count; i++) {
-                        result &= node.AllNodes[i].Equals(val[i]);
+                        result &= node.AllNodes[i].Equals(Value[i]);
                         if (!result) {
                             break;
                         }
@@ -117,26 +117,6 @@ namespace EsfLibrary {
         public virtual string ToXml(bool end) {
             return end ? string.Format("</{0}>", TypeCode) : string.Format("<{0}\">", TypeCode);
         }
-        
-//        protected void EncodeSized(BinaryWriter writer) {
-//            long sizePosition = writer.BaseStream.Position;
-//            writer.Seek(4, SeekOrigin.Current);
-//            
-//            foreach(EsfNode node in val) {
-//                ICodecNode encoding = node as ICodecNode;
-//                if (encoding != null) {
-//                    encoding.Encode(writer);
-//                } else {
-//                    Codec.Encode(writer, node);
-//                }
-//            }
-//            long positionAfter = writer.BaseStream.Position;
-//            Size = (int)(positionAfter - (sizePosition + 4));
-//            // go back to before the encoded contents and write the size
-//            writer.BaseStream.Seek(sizePosition, SeekOrigin.Begin);
-//            Codec.WriteOffset(writer, Size);
-//            writer.BaseStream.Seek(positionAfter, SeekOrigin.Begin);
-//        }
     }
 
     [DebuggerDisplay("Record: {Name}")]
@@ -156,7 +136,7 @@ namespace EsfLibrary {
                 // ignore 
             }
         }
-        public void Decode(BinaryReader reader, EsfType unused) {
+        public virtual void Decode(BinaryReader reader, EsfType unused) {
             string outName;
             byte outVersion;
             Codec.ReadRecordInfo(reader, OriginalTypeCode, out outName, out outVersion);

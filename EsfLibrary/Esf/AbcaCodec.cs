@@ -176,13 +176,17 @@ namespace EsfLibrary {
 
         #region Record Nodes
         // Section can now be compressed
-        protected override EsfNode ReadRecordNode(BinaryReader reader, byte typeCode) {
-            RecordNode node = new RecordNode(this, typeCode);
-            node.Decode(reader, EsfType.RECORD);
-            // RecordNode result = base.ReadRecordNode(reader, typeCode) as RecordNode;
-            if (node.Name == CompressedNode.TAG_NAME) {
+        public override RecordNode ReadRecordNode(BinaryReader reader, byte typeCode, bool forceDecode = false) {
+            RecordNode node = base.ReadRecordNode(reader, typeCode, forceDecode) as RecordNode;
+            if (forceDecode && node.Name == CompressedNode.TAG_NAME) {
                 // decompress node
+                // Console.WriteLine("reading compressed node");
                 node = new CompressedNode(this, node);
+            }
+            if (node is MemoryMappedRecordNode) {
+                // we don't need to invalidate following sections because
+                // all the sizes are relative so we won't need to adjust them
+                (node as MemoryMappedRecordNode).InvalidateSiblings = false;
             }
             return node;
         }
@@ -244,9 +248,6 @@ namespace EsfLibrary {
                 name = GetNodeName(nameIndex);
                 // Debug.WriteLine(string.Format("Name {0}, version {1} (ABCA), position now {2:x}", nodeNames[nameIndex], version, reader.BaseStream.Position));
             }
-//            if (reader.BaseStream.Position > 0x39cf43 && name.Equals("CAI_MILITARY_REGION_GROUP_REGION_ANALYSIS")) {
-//                Console.WriteLine("record found");
-//            }
         }
         public override void WriteRecordInfo(BinaryWriter writer, byte typeCode, string name, byte version) {
             ushort nameIndex = GetNodeNameIndex(name);

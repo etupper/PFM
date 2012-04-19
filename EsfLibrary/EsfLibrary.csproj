@@ -107,6 +107,7 @@
     <Compile Include="Esf\ComplexNodes.cs" />
     <Compile Include="Esf\ArrayNodes.cs" />
     <Compile Include="Esf\CompressedNode.cs" />
+    <Compile Include="Esf\MemoryMappedRecordNode.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

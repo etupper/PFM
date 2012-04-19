@@ -21,17 +21,22 @@ namespace EsfLibrary {
             stream.Read(magicBuffer, 0, 4);
             using (BinaryReader reader = new BinaryReader(new MemoryStream(magicBuffer))) {
                 uint magic = reader.ReadUInt32();
-                switch (magic) {
-                    case 0xABCE:
-                        codec = new AbceCodec();
-                        break;
-                    case 0xABCF:
-                        codec = new AbcfFileCodec();
-                        break;
-                    case 0xABCA:
-                        codec = new AbcaFileCodec();
-                        break;
-                }
+                codec = CodecFromCode(magic);
+            }
+            return codec;
+        }
+        static EsfCodec CodecFromCode(uint code) {
+            EsfCodec codec = null;
+            switch (code) {
+                case 0xABCE:
+                    codec = new AbceCodec();
+                    break;
+                case 0xABCF:
+                    codec = new AbcfFileCodec();
+                    break;
+                case 0xABCA:
+                    codec = new AbcaFileCodec();
+                    break;
             }
             return codec;
         }
@@ -39,6 +44,14 @@ namespace EsfLibrary {
             using (BinaryWriter writer = new BinaryWriter(File.Create(filename))) {
                 file.Codec.EncodeRootNode(writer, file.RootNode);
             }
+        }
+        public static EsfFile LoadEsfFile(string filename) {
+            byte[] fileData = File.ReadAllBytes(filename);
+            EsfCodec codec;
+            using (var stream = new MemoryStream(fileData)) {
+                codec = GetCodec(stream);
+            }
+            return new EsfFile(codec.Parse(fileData), codec);
         }
     }
 
@@ -79,6 +92,8 @@ namespace EsfLibrary {
     #endregion
 
     public abstract class EsfCodec {
+        protected byte[] buffer = null;
+        
         public EsfCodec(uint id) {
             ID = id;
         }
@@ -174,6 +189,12 @@ namespace EsfLibrary {
         }
 
         // decodes the full stream, returning the root node
+        public virtual EsfNode Parse(byte[] data) {
+            buffer = data;
+            using (BinaryReader reader = new BinaryReader(new MemoryStream(data))) {
+                return Parse(reader);
+            }
+        }
         public EsfNode Parse(BinaryReader reader) {
             reader.BaseStream.Seek(0, SeekOrigin.Begin);
             Header = ReadHeader(reader);
@@ -431,8 +452,13 @@ namespace EsfLibrary {
 
         #region Record Nodes
         // read an identified node from the reader at its current position
-        protected virtual EsfNode ReadRecordNode(BinaryReader reader, byte typeCode) {
-            RecordNode node = new RecordNode(this);
+        public virtual RecordNode ReadRecordNode(BinaryReader reader, byte typeCode, bool forceDecode = false) {
+            RecordNode node;
+            if (!forceDecode && buffer != null) {
+                node = new MemoryMappedRecordNode(this, buffer, (int) reader.BaseStream.Position);
+            } else {
+                node = new RecordNode(this);
+            }
             node.Decode(reader, EsfType.RECORD);
             return node;
         }
@@ -560,7 +586,7 @@ namespace EsfLibrary {
         public ushort GetNodeNameIndex(string nodename) {
             return (ushort) nodeNames.IndexOfValue(nodename);
         }
-        protected NodeRead CreateEventDelegate() {
+        public NodeRead CreateEventDelegate() {
             NodeRead result = null;
             if (NodeReadFinished != null) {
                 result = delegate(EsfNode node, long position) { NodeReadFinished(node, position); };
