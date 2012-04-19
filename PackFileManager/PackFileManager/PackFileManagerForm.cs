@@ -126,6 +126,13 @@ namespace PackFileManager
         private ToolStripMenuItem dBFileFromTSVToolStripMenuItem;
         private ToolStripMenuItem toolStripMenuItem14;
         private ToolStripMenuItem showDecodeToolOnErrorToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem modsToolStripMenuItem;
+        private ToolStripMenuItem newModMenuItem;
+        private ToolStripSeparator toolStripSeparator11;
+        private ToolStripMenuItem editModMenuItem;
+        private ToolStripMenuItem deleteCurrentToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator12;
         private UnitVariantFileEditorControl unitVariantFileEditorControl;
         #endregion
 
@@ -161,6 +168,8 @@ namespace PackFileManager
                 OpenExistingPackFile(args[0]);
             }
             dbFileEditorControl = control;
+
+            ModManager.Instance.ModNames.ForEach(name => modsToolStripMenuItem.DropDownItems.Add(new ModMenuItem(name)));
         }
 
         public override sealed string Text
@@ -223,9 +232,18 @@ namespace PackFileManager
             };
             if (addReplaceOpenFileDialog.ShowDialog() == DialogResult.OK) {
                 Settings.Default.ImportExportDirectory = Path.GetDirectoryName(addReplaceOpenFileDialog.FileName);
+                // if (Path.GetDirectoryName(addReplaceOpenFileDialog.FileName).StartsWith(
                 try {
                     foreach (string file in addReplaceOpenFileDialog.FileNames) {
-                        AddTo.Add(new PackedFile(file));
+                        string addBase = "" + Path.DirectorySeparatorChar;
+                        string modDir = ModManager.Instance.CurrentModDirectory;
+                        if (!string.IsNullOrEmpty(modDir) && file.StartsWith(modDir)) {
+                            Uri baseUri = new Uri(ModManager.Instance.CurrentModDirectory);
+                            Uri createPath = baseUri.MakeRelativeUri(new Uri(file));
+                            addBase = createPath.ToString().Replace('/', Path.DirectorySeparatorChar);
+                            addBase = addBase.Remove(0, addBase.IndexOf(Path.DirectorySeparatorChar)+1);
+                        }
+                        AddTo.Add(addBase, new PackedFile(file));
                     }
                 } catch (Exception x) {
                     MessageBox.Show(x.Message, "Problem, Sir!", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -257,7 +275,6 @@ namespace PackFileManager
             };
             if (AddTo != null && addDirectoryFolderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 try {
-                    Settings.Default.ImportExportDirectory = addDirectoryFolderBrowserDialog.SelectedPath;
                     AddTo.Add(addDirectoryFolderBrowserDialog.SelectedPath);
                 } catch (Exception x) {
                     MessageBox.Show(string.Format("Failed to add {0}: {1}", addDirectoryFolderBrowserDialog.SelectedPath, x.Message), "Failed to add directory");
@@ -375,6 +392,12 @@ namespace PackFileManager
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.modsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
+            this.editModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -437,6 +460,7 @@ namespace PackFileManager
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.packStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.packActionProgressBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.packActionMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -670,6 +694,8 @@ namespace PackFileManager
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
             this.openToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.modsToolStripMenuItem,
             this.toolStripSeparator,
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
@@ -700,6 +726,49 @@ namespace PackFileManager
             this.openToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.openToolStripMenuItem.Text = "&Open...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(169, 6);
+            // 
+            // modsToolStripMenuItem
+            // 
+            this.modsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newModMenuItem,
+            this.toolStripSeparator11,
+            this.editModMenuItem,
+            this.deleteCurrentToolStripMenuItem,
+            this.toolStripSeparator12});
+            this.modsToolStripMenuItem.Name = "modsToolStripMenuItem";
+            this.modsToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.modsToolStripMenuItem.Text = "Mods";
+            // 
+            // newModMenuItem
+            // 
+            this.newModMenuItem.Name = "newModMenuItem";
+            this.newModMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newModMenuItem.Text = "New";
+            this.newModMenuItem.Click += new System.EventHandler(this.newModMenuItem_Click);
+            // 
+            // toolStripSeparator11
+            // 
+            this.toolStripSeparator11.Name = "toolStripSeparator11";
+            this.toolStripSeparator11.Size = new System.Drawing.Size(149, 6);
+            // 
+            // editModMenuItem
+            // 
+            this.editModMenuItem.Name = "editModMenuItem";
+            this.editModMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.editModMenuItem.Text = "Edit Current";
+            this.editModMenuItem.Visible = false;
+            // 
+            // deleteCurrentToolStripMenuItem
+            // 
+            this.deleteCurrentToolStripMenuItem.Name = "deleteCurrentToolStripMenuItem";
+            this.deleteCurrentToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.deleteCurrentToolStripMenuItem.Text = "Delete Current";
+            this.deleteCurrentToolStripMenuItem.Click += new System.EventHandler(this.deleteCurrentToolStripMenuItem_Click);
             // 
             // toolStripSeparator
             // 
@@ -1194,6 +1263,11 @@ namespace PackFileManager
             this.packActionProgressBar.Name = "packActionProgressBar";
             this.packActionProgressBar.Size = new System.Drawing.Size(120, 16);
             // 
+            // toolStripSeparator12
+            // 
+            this.toolStripSeparator12.Name = "toolStripSeparator12";
+            this.toolStripSeparator12.Size = new System.Drawing.Size(149, 6);
+            // 
             // PackFileManagerForm
             // 
             this.AutoScroll = true;
@@ -1340,14 +1414,21 @@ namespace PackFileManager
 
         private void extractFiles(List<PackedFile> packedFiles)
         {
-            FolderBrowserDialog extractFolderBrowserDialog = new FolderBrowserDialog {
-                Description = "Extract to what folder?",
-                SelectedPath = Settings.Default.ImportExportDirectory
-            };
-            if (extractFolderBrowserDialog.ShowDialog() == DialogResult.OK)
+            string exportDirectory = null;
+            if (Settings.Default.CurrentMod == "") {
+                FolderBrowserDialog extractFolderBrowserDialog = new FolderBrowserDialog {
+                    Description = "Extract to what folder?",
+                    SelectedPath = Settings.Default.LastPackDirectory
+                };
+                exportDirectory =
+                    extractFolderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK
+                    ? extractFolderBrowserDialog.SelectedPath : "";
+
+            } else {
+                exportDirectory = ModManager.Instance.CurrentModDirectory;
+            }
+            if (!string.IsNullOrEmpty(exportDirectory))
             {
-                Settings.Default.ImportExportDirectory = extractFolderBrowserDialog.SelectedPath;
-                string selectedPath = extractFolderBrowserDialog.SelectedPath;
                 FileAlreadyExistsDialog.DefaultAction ask = FileAlreadyExistsDialog.DefaultAction.Ask;
                 packStatusLabel.Text = string.Format("Extracting file (0 of {0} files extracted, 0 skipped)", packedFiles.Count);
                 packActionProgressBar.Visible = true;
@@ -1359,7 +1440,7 @@ namespace PackFileManager
                 int num2 = 0;
                 foreach (PackedFile file in packedFiles)
                 {
-                    string path = Path.Combine(selectedPath, file.FullPath);
+                    string path = Path.Combine(exportDirectory, file.FullPath);
                     if (File.Exists(path))
                     {
                         string str3;
@@ -1553,14 +1634,7 @@ namespace PackFileManager
 
         #region Open Pack
         private void newToolStripMenuItem_Click(object sender, EventArgs e) {
-            var header = new PFHeader("PFH3") {
-                Type = PackType.Mod,
-                Version = 0,
-                FileCount = 0,
-                ReplacedPackFileNames = new List<string>(),
-                DataStart = 0x20
-            };
-            CurrentPackFile = new PackFile("Untitled.pack", header);
+            NewMod("Untitled.pack");
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -2224,6 +2298,43 @@ namespace PackFileManager
             Settings.Default.ShowDecodeToolOnError = showDecodeToolOnErrorToolStripMenuItem.Checked;
         }
         #endregion
+
+        private void newModMenuItem_Click(object sender, EventArgs e) {
+            List<string> oldMods = ModManager.Instance.ModNames;
+            ModManager.Instance.AddMod();
+            if (Settings.Default.CurrentMod != "") {
+                ToolStrip strip = editModMenuItem.GetCurrentParent();
+                if (!oldMods.Contains(Settings.Default.CurrentMod)) {
+                    modsToolStripMenuItem.DropDownItems.Add(new ModMenuItem(Settings.Default.CurrentMod));
+                    string packName = string.Format("{0}.pack", Settings.Default.CurrentMod);
+                    NewMod(Path.Combine(ModManager.Instance.CurrentModDirectory, packName));
+                }
+            }
+        }
+
+        private void NewMod(string name) {
+            var header = new PFHeader("PFH3") {
+                Type = PackType.Mod,
+                Version = 0,
+                FileCount = 0,
+                ReplacedPackFileNames = new List<string>(),
+                DataStart = 0x20
+            };
+            CurrentPackFile = new PackFile(name, header);
+        }
+
+        private void deleteCurrentToolStripMenuItem_Click(object sender, EventArgs e) {
+            string current = Settings.Default.CurrentMod;
+            if (current != "") {
+                ModManager.Instance.DeleteCurrentMod();
+                foreach (ToolStripItem item in modsToolStripMenuItem.DropDownItems) {
+                    if (item.Text == current) {
+                        modsToolStripMenuItem.DropDownItems.Remove(item);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     class LoadUpdater 

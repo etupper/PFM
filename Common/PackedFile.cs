@@ -304,7 +304,8 @@
          */
         public void Add(string relativePath, PackedFile file) {
             char[] splitAt = { Path.DirectorySeparatorChar };
-            string[] dirs = Path.GetDirectoryName(relativePath).Split(splitAt, StringSplitOptions.RemoveEmptyEntries);
+            string baseDir = Path.GetDirectoryName(relativePath);
+            string[] dirs = baseDir != null ? baseDir.Split(splitAt, StringSplitOptions.RemoveEmptyEntries) : new string[0];
             VirtualDirectory current = this;
             if (dirs.Length > 0) {
                 foreach (string dir in dirs) {

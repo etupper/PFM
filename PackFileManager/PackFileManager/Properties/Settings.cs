@@ -1,6 +1,7 @@
 ﻿namespace PackFileManager.Properties
 {
     using System;
+    using System.IO;
     using System.Collections.Generic;
     using System.CodeDom.Compiler;
     using System.Configuration;
@@ -50,7 +51,13 @@
         [DefaultSettingValue(""), UserScopedSetting]
         public string ImportExportDirectory {
             get {
-                return (string)this["ImportExportDirectory"];
+                string result = (string)this["ImportExportDirectory"];
+                if (CurrentMod != "") {
+                    try {
+                        result = ModManager.Instance.CurrentModDirectory;
+                    } catch { }
+                }
+                return result;
             }
             set {
                 this["ImportExportDirectory"] = value;
@@ -60,7 +67,13 @@
         [DefaultSettingValue(""), UserScopedSetting]
         public string LastPackDirectory {
             get {
-                return (string)this["LastPackDirectory"];
+                string result = (string)this["LastPackDirectory"];
+                if (CurrentMod != "") {
+                    try {
+                        result = ModManager.Instance.CurrentModDirectory;
+                    } catch { }
+                }
+                return result;
             }
             set {
                 this["LastPackDirectory"] = value;
@@ -212,6 +225,28 @@
             set
             {
                 this["TwcThreadId"] = value;
+                Save();
+            }
+        }
+
+        [DefaultSettingValue(""), UserScopedSetting]
+        public string ModList {
+            get {
+                return (string)this["ModList"];
+            }
+            set {
+                this["ModList"] = value;
+                Save();
+            }
+        }
+
+        [DebuggerNonUserCode, DefaultSettingValue(""), UserScopedSetting]
+        public string CurrentMod {
+            get {
+                return (string)this["CurrentMod"];
+            }
+            set {
+                this["CurrentMod"] = value;
                 Save();
             }
         }
