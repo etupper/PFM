@@ -9,8 +9,8 @@ namespace EsfLibrary {
         public static TextWriter logWriter;        
         public static TextWriter addressLogWriter;
         public static void Main(string[] args) {
-            runTests();
-            //testFiles();
+            //runTests();
+            testFiles();
         }
         
         public static void runTests() {
@@ -43,7 +43,10 @@ namespace EsfLibrary {
                         codec.NodeReadStarting += timer.Tic;
                         codec.NodeReadFinished += timer.Toc;
                         // codec.NodeReadFinished += OutputNodeEnd;
-                        file = new EsfFile(stream, codec);
+                        file = EsfCodecUtil.LoadEsfFile(filename);
+                        forceDecode(file.RootNode);
+                        //file = new EsfFile(stream, codec);
+                        
                         timer.DumpAll();
                     }
                     Console.WriteLine("{0} read in {1} seconds", file, (DateTime.Now.Ticks - start.Ticks) / 10000000);
@@ -62,6 +65,11 @@ namespace EsfLibrary {
                 }
                 logWriter.Flush();
                 addressLogWriter.Flush();
+            }
+        }
+        static void forceDecode(EsfNode node) {
+            if (node is ParentNode) {
+                (node as ParentNode).AllNodes.ForEach(n => forceDecode(n));
             }
         }
         

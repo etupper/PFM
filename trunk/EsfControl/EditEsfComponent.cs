@@ -103,6 +103,8 @@ namespace EsfControl {
     }
 
     public class TreeEventHandler {
+        private List<ModificationColorizer> registeredEvents = new List<ModificationColorizer>();
+        
         DataGridView nodeValueGridView;
         public TreeEventHandler(DataGridView view) {
             nodeValueGridView = view;
@@ -119,11 +121,33 @@ namespace EsfControl {
             ParentNode node = args.Node.Tag as ParentNode;
             try {
                 nodeValueGridView.Rows.Clear();
+                registeredEvents.ForEach(handler => { (handler.row.Tag as EsfNode).ModifiedEvent -= handler.ChangeColor; });
+                registeredEvents.Clear();
                 foreach (EsfNode value in node.Values) {
                     int index = nodeValueGridView.Rows.Add(value.ToString(), value.SystemType.ToString(), value.TypeCode.ToString());
-                    nodeValueGridView.Rows[index].Tag = value;
+                    DataGridViewRow newRow = nodeValueGridView.Rows [index];
+                    ModificationColorizer colorizer = new ModificationColorizer(newRow);
+                    registeredEvents.Add(colorizer);
+                    foreach (DataGridViewCell cell in newRow.Cells) {
+                        cell.Style.ForeColor = value.Modified ? Color.Red : Color.Black;
+                    }
+                    value.ModifiedEvent += colorizer.ChangeColor;
+                    
+                    newRow.Tag = value;
                 }
             } catch {
+            }
+        }
+    }
+    
+    public class ModificationColorizer {
+        public DataGridViewRow row;
+        public ModificationColorizer(DataGridViewRow r) {
+            row = r;
+        }
+        public void ChangeColor(EsfNode node) {
+            foreach (DataGridViewCell cell in row.Cells) {
+                cell.Style.ForeColor = node.Modified ? Color.Red : Color.Black;
             }
         }
     }

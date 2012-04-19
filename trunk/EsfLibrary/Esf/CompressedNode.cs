@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using SevenZip.Compression;
+using SevenZip;
 
 using LzmaDecoder = SevenZip.Compression.LZMA.Decoder;
 using LzmaEncoder = SevenZip.Compression.LZMA.Encoder;
@@ -36,35 +37,36 @@ namespace EsfLibrary {
 
         // unzip contained 7zip node
         EsfNode Decompress(RecordNode compressedNode) {
-            byte[] data = (compressedNode.Values[0] as EsfValueNode<byte[]>).Value;
+            Console.WriteLine("decompressing");
+            List<EsfNode> values = compressedNode.Values;
+            byte[] data = (values[0] as EsfValueNode<byte[]>).Value;
             ParentNode infoNode = compressedNode.Children[0];
             uint size = (infoNode.Values[0] as EsfValueNode<uint>).Value;
             byte[] decodeProperties = (infoNode.Values[1] as EsfValueNode<byte[]>).Value;
             LzmaDecoder decoder = new LzmaDecoder();
             decoder.SetDecoderProperties(decodeProperties);
 
+            DecompressionCodeProgress progress = new DecompressionCodeProgress(this, Codec);
             using (Stream inStream = new MemoryStream(data, false), file = File.OpenWrite("decompressed_section.esf")) {
-                decoder.Code(inStream, file, data.Length, size, null);
+                decoder.Code(inStream, file, data.Length, size, progress);
                 file.Write(data, 0, data.Length);
             }
-
+            
             byte[] outData = new byte[size];
             using (MemoryStream inStream = new MemoryStream(data, false), outStream = new MemoryStream(outData)) {
                 decoder.Code(inStream, outStream, data.Length, size, null);
                 outData = outStream.ToArray();
             }
+            
+            Console.WriteLine("decompressed, parsing");
             EsfNode result;
             AbcaFileCodec codec = new AbcaFileCodec();
-//            NodeRead eventDelegator = CreateEventDelegate();
-//            if (eventDelegator != null) {
-//                codec.NodeReadFinished += eventDelegator;
-//            }
+
+            result = codec.Parse(outData);
+            result.ModifiedEvent += ModifiedDelegate;
             using (BinaryReader reader = new BinaryReader(new MemoryStream(outData))) {
                 result = codec.Parse(reader);
             }
-//            if (eventDelegator != null) {
-//                codec.NodeReadFinished -= eventDelegator;
-//            }
             return result;
         }
         
@@ -75,7 +77,6 @@ namespace EsfLibrary {
             MemoryStream uncompressedStream = new MemoryStream();
             using (BinaryWriter w = new BinaryWriter(uncompressedStream)) {
                 // use the node's own codec or we'll mess up the string lists
-                //Codec.EncodeRootNode(w, RootNode);
                 RootNode.Codec.EncodeRootNode(w, RootNode);
                 // (RootNode as ICodecNode).Encode(w);
                 data = uncompressedStream.ToArray();
@@ -83,12 +84,14 @@ namespace EsfLibrary {
             uint uncompressedSize = (uint) data.LongLength;
             
             // compress the encoded data
+            Console.WriteLine("compressing...");
             MemoryStream outStream = new MemoryStream();
             LzmaEncoder encoder = new LzmaEncoder();
             using (uncompressedStream = new MemoryStream(data)) {
                 encoder.Code(uncompressedStream, outStream, data.Length, long.MaxValue, null);
                 data = outStream.ToArray();
             }
+            Console.WriteLine("ok, compression done");
    
             // prepare decoding information
             List<EsfNode> infoItems = new List<EsfNode>();
@@ -105,6 +108,26 @@ namespace EsfLibrary {
             
             // and finally encode
             compressedNode.Encode(writer);
+        }
+
+        private void ModifiedDelegate(EsfNode node) {
+            //Console.WriteLine("modification!");
+            RaiseModifiedEvent();
+            Modified = node.Modified;
+        }
+    }
+    
+    public class DecompressionCodeProgress : ICodeProgress {
+        CompressedNode beingDecompressed;
+        EsfCodec codec;
+        EsfCodec.NodeRead readDelegate;
+        public DecompressionCodeProgress(CompressedNode node, EsfCodec delegateTo) {
+            beingDecompressed = node;
+            readDelegate = delegateTo.CreateEventDelegate();
+            codec = delegateTo;
+        }
+        public void SetProgress(long inPosition, long outPosition) {
+            readDelegate(beingDecompressed, inPosition);
         }
     }
 }

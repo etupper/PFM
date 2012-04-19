@@ -46,7 +46,7 @@ namespace EsfLibrary {
             }
             set {
                 if (modified != value) {
-                    modified = value; 
+                    modified = value;
                     RaiseModifiedEvent();
                     if (modified && Parent != null) {
                         Parent.Modified = value;
@@ -69,6 +69,9 @@ namespace EsfLibrary {
 
     [DebuggerDisplay("ValueNode: {TypeCode}")]
     public abstract class EsfValueNode<T> : EsfNode {
+        public EsfValueNode(T value) {
+            val = value;
+        }
         // public NodeStringConverter<T> Converter { get; set; }
         public delegate S Converter<S>(string value);
         protected Converter<T> ConvertString;
@@ -80,7 +83,7 @@ namespace EsfLibrary {
             ConvertString = converter;
         }
 
-        protected T val;
+        T val;
         public virtual T Value {
             get {
                 return val;

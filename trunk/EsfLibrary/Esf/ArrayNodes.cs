@@ -52,8 +52,8 @@ namespace EsfLibrary {
             return result.ToArray();
         }
         public override string ToString() {
-            string result = val.ToString();
-            result = string.Format("{0}{1}]", result.Substring(0, result.Length-1), val.Length);
+            string result = Value.ToString();
+            result = string.Format("{0}{1}]", result.Substring(0, result.Length-1), Value.Length);
             return result;
         }
 
@@ -67,8 +67,8 @@ namespace EsfLibrary {
         }
         public void Encode(BinaryWriter writer) {
             writer.Write ((byte) TypeCode);
-            Codec.WriteOffset(writer, val.Length);
-            writer.Write(val);
+            Codec.WriteOffset(writer, Value.Length);
+            writer.Write(Value);
         }
     }
     #region Typed Array Nodes

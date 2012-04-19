@@ -64,29 +64,28 @@ namespace EditSF {
         private void OpenFile(string openFilename) {
             string oldStatus = statusLabel.Text;
             try {
-                using (Stream stream = File.OpenRead(openFilename)) {
-                    fileToolStripMenuItem.Enabled = false;
-                    optionsToolStripMenuItem.Enabled = false;
-                    EsfCodec codec = EsfCodecUtil.GetCodec(stream);
-                    // updater.StartLoading(openFilename, codec);
-                    statusLabel.Text = string.Format("Loading {0}", openFilename);
-                    LogFileWriter logger = null;
-                    if (writeLogFileToolStripMenuItem.Checked) {
-                        logger = new LogFileWriter(openFilename + ".xml");
-                        //codec.NodeReadFinished += logger.WriteEntry;
-                        //codec.Log += logger.WriteLogEntry;
-                    }
-                    EditedFile = new EsfFile(stream, codec);
-                    //updater.LoadingFinished();
-                    FileName = openFilename;
-                    if (logger != null) {
-                        logger.Close();
-                        //codec.NodeReadFinished -= logger.WriteEntry;
-                        //codec.Log -= logger.WriteLogEntry;
-                    }
+                fileToolStripMenuItem.Enabled = false;
+                optionsToolStripMenuItem.Enabled = false;
+                // EsfCodec codec = EsfCodecUtil.GetCodec(stream);
+                // updater.StartLoading(openFilename, codec);
+                statusLabel.Text = string.Format("Loading {0}", openFilename);
+                LogFileWriter logger = null;
+                if (writeLogFileToolStripMenuItem.Checked) {
+                    logger = new LogFileWriter(openFilename + ".xml");
+                    //codec.NodeReadFinished += logger.WriteEntry;
+                    //codec.Log += logger.WriteLogEntry;
                 }
-            } catch {
+                EditedFile = EsfCodecUtil.LoadEsfFile(openFilename);
+                //updater.LoadingFinished();
+                FileName = openFilename;
+                if (logger != null) {
+                    logger.Close();
+                    //codec.NodeReadFinished -= logger.WriteEntry;
+                    //codec.Log -= logger.WriteLogEntry;
+                }
+            } catch (Exception exception) {
                 statusLabel.Text = oldStatus;
+                Console.WriteLine(exception);
             } finally {
                 fileToolStripMenuItem.Enabled = true;
                 optionsToolStripMenuItem.Enabled = true;
