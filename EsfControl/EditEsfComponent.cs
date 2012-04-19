@@ -17,7 +17,7 @@ namespace EsfControl {
             set {
                 esfNodeTree.Nodes.Clear();
                 if (value != null) {
-                    rootNode = new EsfTreeNode(value as NamedNode);
+                    rootNode = new EsfTreeNode(value as ParentNode);
                     rootNode.ShowCode = ShowCode;
                     esfNodeTree.Nodes.Add(rootNode);
                     rootNode.Fill();
@@ -76,9 +76,10 @@ namespace EsfControl {
         public bool ShowCode {
             get { return showCode; }
             set {
-                NamedNode node = Tag as NamedNode;
+                ParentNode node = Tag as ParentNode;
                 if (node != null) {
-                    Text = value ? string.Format("{0} - {1}", node.Name, node.TypeCode) : node.Name;
+                    string baseName = (node as INamedNode).GetName();
+                    Text = value ? string.Format("{0} - {1}", baseName, node.TypeCode) : baseName;
                     showCode = value;
                     foreach (TreeNode child in Nodes) {
                         (child as EsfTreeNode).ShowCode = value;
@@ -86,15 +87,15 @@ namespace EsfControl {
                 }
             }
         }
-        public EsfTreeNode(NamedNode node, bool showC = false) {
+        public EsfTreeNode(ParentNode node, bool showC = false) {
             Tag = node;
-            Text = node.Name;
+            Text = (node as INamedNode).GetName();
             node.ModifiedEvent += delegate(EsfNode n) { ForeColor = n.Modified ? Color.Red : Color.Black; };
             ShowCode = showC;
         }
         public void Fill() {
             if (Nodes.Count == 0) {
-                foreach (NamedNode child in (Tag as NamedNode).Children) {
+                foreach (ParentNode child in (Tag as ParentNode).Children) {
                     Nodes.Add(new EsfTreeNode(child, ShowCode));
                 }
             }
@@ -115,7 +116,7 @@ namespace EsfControl {
             }
         }
         public void NodeSelected(object sender, TreeViewEventArgs args) {
-            NamedNode node = args.Node.Tag as NamedNode;
+            ParentNode node = args.Node.Tag as ParentNode;
             try {
                 nodeValueGridView.Rows.Clear();
                 foreach (EsfNode value in node.Values) {
