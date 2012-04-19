@@ -1655,10 +1655,7 @@ namespace PackFileManager
                 using (var stream = new MemoryStream(packedFile.Data)) {
                     EsfCodec codec = EsfCodecUtil.GetCodec(stream);
                     if (codec != null) {
-                        using (BinaryReader reader = new BinaryReader(stream)) {
-                            EsfNode rootNode = codec.Parse(reader);
-                            esfEditor.RootNode = rootNode;
-                        }
+                        esfEditor.RootNode = codec.Parse(packedFile.Data);
                     }
                     esfEditor.Tag = packedFile;
                     splitContainer1.Panel2.Controls.Add(esfEditor);

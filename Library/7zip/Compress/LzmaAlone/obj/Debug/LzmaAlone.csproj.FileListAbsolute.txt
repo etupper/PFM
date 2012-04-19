@@ -1,5 +1,0 @@
-C:\Users\Jörn\Documents\Visual Studio 2010\Projects\PackFileManager\Library\7zip\Compress\LzmaAlone\bin\Debug\Lzma#.exe
-C:\Users\Jörn\Documents\Visual Studio 2010\Projects\PackFileManager\Library\7zip\Compress\LzmaAlone\bin\Debug\Lzma#.pdb
-C:\Users\Jörn\Documents\Visual Studio 2010\Projects\PackFileManager\Library\7zip\Compress\LzmaAlone\obj\Debug\ResolveAssemblyReference.cache
-C:\Users\Jörn\Documents\Visual Studio 2010\Projects\PackFileManager\Library\7zip\Compress\LzmaAlone\obj\Debug\Lzma#.exe
-C:\Users\Jörn\Documents\Visual Studio 2010\Projects\PackFileManager\Library\7zip\Compress\LzmaAlone\obj\Debug\Lzma#.pdb

@@ -1376,9 +1376,9 @@
     <field name='Unknown' type='optstring' />
   </table>
   <table name='cdir_unit_balance_group_qualities_tables'>
-    <field fkey='campaign_ai_personalities_tables.Campaign Personality ID' name='Unknown' type='string' pk='true' />
     <field name='Unknown' type='string' pk='true' />
-    <field name='Unknown' type='string' pk='true' />
+    <field fkey='cdir_unit_balance_groups_tables.Unknown' name='UnknownRef' type='string' pk='true' />
+    <field name='UnknownRef' type='string' pk='true' />
     <field name='unknown4' type='int' />
   </table>
   <table name='cdir_unit_balance_groups_tables'>
@@ -1391,10 +1391,10 @@
     <field name='value' type='int' />
   </table>
   <table name='cdir_unit_balances_tables'>
-    <field name='unknown1' type='string' />
+    <field fkey='cdir_unit_balance_template_junctions_tables.template' name='templateRef' type='string' />
     <field name='unknown2' type='int' />
     <field name='unknown3' type='int' />
-    <field name='unknown4' type='string' />
+    <field fkey='cdir_unit_balance_groups_tables.Unknown' name='UnknownRef' type='string' />
     <field name='unknown5' type='float' />
     <field name='unknown6' type='float' />
     <field name='unknown7' type='float' />
@@ -1414,15 +1414,15 @@
   </table>
   <table name='character_skill_level_to_effects_junctions_tables'>
     <field fkey='character_skills_tables.Skill Level ID' name='Skill Level IDRef' type='string' />
-    <field fkey='effects.Effect ID' name='unknown2' type='string' />
+    <field fkey='effects_tables.Effect ID' name='Effect IDRef' type='string' />
     <field name='unknown3' type='int' />
     <field name='unknown4' type='float' />
     <field name='unknown5' type='boolean' version_start='1' />
   </table>
   <table name='character_skill_node_links_tables'>
-    <field name='unknown1' type='string' />
+    <field fkey='character_skill_nodes_tables.Skill Node ID' name='To Skill Node IDRef' type='string' />
     <field name='unknown2' type='int' />
-    <field fkey='character_skill_nodes.Skill Node ID' name='unknown3' type='string' />
+    <field fkey='character_skill_nodes_tables.Skill Node ID' name='From Skill Node IDRef' type='string' />
     <field name='unknown4' type='int' />
     <field name='unknown5' type='int' />
   </table>
@@ -1435,8 +1435,8 @@
   </table>
   <table name='character_skill_nodes_tables'>
     <field name='unknown1' type='boolean' />
-    <field fkey='character_skills.Skill Level ID' name='unknown2' type='string' />
-    <field fkey='character_skill_node_sets.Skill Type ID' name='unknown3' type='string' />
+    <field fkey='character_skills_tables.Effect IDRef' name='Effect IDRefRef' type='string' />
+    <field fkey='character_skill_node_sets_tables.Skill Type ID' name='Skill Type IDRef' type='string' />
     <field name='unknown4' type='optstring' />
     <field name='unknown5' type='int' />
     <field name='Skill Node ID' type='string' />
@@ -1444,7 +1444,7 @@
   </table>
   <table name='character_skills_tables'>
     <field name='Skill ID' type='string' pk='true' />
-    <field name='Skill Level ID' type='string' />
+    <field name='Effect IDRef' type='string' />
     <field name='Description' type='string' />
     <field name='Name' type='string' />
     <field name='unknown5' type='optstring' />
@@ -1683,13 +1683,13 @@
     <field fkey='unit_category_tables.Category IDRef' name='String3' type='string' pk='true' />
   </table>
   <table name='effect_bonus_value_unit_class_junction_tables'>
-    <field fkey='effects.Effect ID' name='String1' type='string' pk='true' />
+    <field fkey='effects_tables.Effect ID' name='Effect IDRef' type='string' pk='true' />
     <field name='String2' type='string' />
     <field fkey='unit_class_tables.Class ID' name='String3' type='string' />
   </table>
   <table name='effect_bonus_value_unit_record_junctions_tables'>
     <field name='unknown1' type='string' pk='true' />
-    <field fkey='effects.Effect ID' name='unknown2' type='string' pk='true' />
+    <field fkey='effects_tables.Effect ID' name='Effect IDRef' type='string' pk='true' />
     <field fkey='units_tables.Unit ID' name='unknown3' type='string' pk='true' />
   </table>
   <table name='effect_bundles_tables'>
@@ -1700,7 +1700,7 @@
   </table>
   <table name='effect_bundles_to_effects_junctions_tables'>
     <field fkey='effect_bundles_tables.Effect Bundle ID' name='unknown1' type='string' pk='true' />
-    <field fkey='effects.Effect ID' name='unknown2' type='string' pk='true' />
+    <field fkey='effects_tables.Effect ID' name='Effect IDRef' type='string' pk='true' />
     <field name='unknown3' type='float' />
   </table>
   <table name='effects_tables'>
