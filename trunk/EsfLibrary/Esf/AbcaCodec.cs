@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using SevenZip.Compression;
-
-using LzmaDecoder = SevenZip.Compression.LZMA.Decoder;
-using LzmaEncoder = SevenZip.Compression.LZMA.Encoder;
 using System.Diagnostics;
 
 namespace EsfLibrary {
@@ -83,9 +79,15 @@ namespace EsfLibrary {
             return result;
         }
   
+        protected override EsfNode ReadRecordArrayNode(BinaryReader reader, byte typeCode) {
+            RecordArrayNode result = new RecordArrayNode(this, typeCode);
+            result.Decode(reader, EsfType.RECORD_BLOCK);
+            return result;
+        }
+
         // Adds readers for optimized values
         public override EsfNode ReadValueNode(BinaryReader reader, EsfType typeCode) {
-            ICodecNode result;
+            EsfNode result;
             switch (typeCode) {
             case EsfType.BOOL:
             case EsfType.BOOL_TRUE:
@@ -114,8 +116,8 @@ namespace EsfLibrary {
             default:
                 return base.ReadValueNode(reader, typeCode);
             }
-            result.Decode(reader, typeCode);
-            return result as EsfNode;
+            (result as ICodecNode).Decode(reader, typeCode);
+            return result;
         }
 
         #region Array Nodes
@@ -133,78 +135,36 @@ namespace EsfLibrary {
                 // trying to read this should result in an infinite loop
                 throw new InvalidDataException(string.Format("Array {0:x} of zero-byte entries makes no sense", typeCode));
                 case EsfType.UINT32_BYTE_ARRAY:
-                    result = new UIntArrayNode { Value = ReadArray(reader), ItemReader = UIntByteReader };
+                    result = new UIntArrayNode(this) { ItemReader = UIntByteReader };
                     // typeCode = EsfType.UINT32_ARRAY;
                     break;
                 case EsfType.UINT32_SHORT_ARRAY:
-                    result = new UIntArrayNode { Value = ReadArray(reader), ItemReader = UInt16Reader };
+                    result = new UIntArrayNode(this) { ItemReader = UInt16Reader };
                     // typeCode = EsfType.UINT32_ARRAY;
                     break;
                 case EsfType.UINT32_24BIT_ARRAY:
-                    result = new UIntArrayNode { Value = ReadArray(reader), ItemReader = UInt24Reader };
+                    result = new UIntArrayNode(this) { ItemReader = UInt24Reader };
                     // typeCode = EsfType.UINT32_ARRAY;
                     break;
                 case EsfType.INT32_BYTE_ARRAY:
-                    result = new IntArrayNode { Value = ReadArray(reader), ItemReader = IntByteReader };
+                    result = new IntArrayNode(this) { ItemReader = IntByteReader };
                     // typeCode = EsfType.INT32_ARRAY;
                     break;
                 case EsfType.INT32_SHORT_ARRAY:
-                    result = new IntArrayNode { Value = ReadArray(reader), ItemReader = Int16Reader };
+                    result = new IntArrayNode(this) { ItemReader = Int16Reader };
                     // typeCode = EsfType.INT32_ARRAY;
                     break;
                 case EsfType.INT32_24BIT_ARRAY:
-                    result = new IntArrayNode { Value = ReadArray(reader), ItemReader = Int24Reader };
+                    result = new IntArrayNode(this) { ItemReader = Int24Reader };
                     // typeCode = EsfType.INT32_ARRAY;
                     break;
                 default:
                     result = base.ReadArrayNode(reader, typeCode);
-                    break;
+                    return result;
             }
+            (result as ICodecNode).Decode(reader, typeCode);
             result.TypeCode = (EsfType) typeCode;
             return result;
-        }
-        // Size of array now reads item count instead of target position
-        protected override void WriteArrayNode(BinaryWriter writer, EsfNode arrayNode) {
-            byte[] encoded;
-            // it doesn't really make sense to have length-encoded arrays of 0-byte entries
-            switch (arrayNode.TypeCode) {
-                // use optimized encoding for the appropriate types
-                case EsfType.INT32_BYTE_ARRAY:
-                case EsfType.INT32_SHORT_ARRAY:
-                case EsfType.INT32_24BIT_ARRAY:
-                case EsfType.INT32_ARRAY:
-                    encoded = (arrayNode as IntArrayNode).Value;
-                    //foreach (int i in intArray) {
-                    //    minBytes = Math.Max(minBytes, RelevantBytesInt(i));
-                    //}
-                    //// optimized int starts at 0x1a, then 0x1b, 0x1c; array adds 0x40
-                    //typeCode = (byte)((minBytes == 4) ? (byte) EsfType.INT32_ARRAY : (0x40 + 0x1a + minBytes - 1));
-                    //if (typeCode != (byte)EsfType.INT32_ARRAY && typeCode < (byte)EsfType.INT32_BYTE_ARRAY) {
-                    //    throw new InvalidDataException();
-                    //}
-                    //ValueWriter<int> valueWriter = FromRelevantBytesInt(minBytes);
-                    //encoded = EncodeArrayNode<int>(intArray, valueWriter);
-                    break;
-                case EsfType.UINT32_BYTE_ARRAY:
-                case EsfType.UINT32_SHORT_ARRAY:
-                case EsfType.UINT32_24BIT_ARRAY:
-                case EsfType.UINT32_ARRAY:
-                    encoded = (arrayNode as UIntArrayNode).Value;
-//                    foreach (uint i in array) {
-//                        minBytes = Math.Max(minBytes, RelevantBytesUInt(i));
-//                    }
-//                    // optimized uint starts at 0x16, then 0x17, 0x18; array adds 0x40
-//                    typeCode = (byte)((minBytes == 4) ? (byte)EsfType.UINT32_ARRAY : (0x40 + 0x16 + minBytes - 1));
-//                    ValueWriter<uint> uintWriter = FromRelevantBytesUInt(minBytes);
-//                    encoded = EncodeArrayNode<uint>(array, uintWriter);
-                    break;
-                default:
-                    base.WriteArrayNode(writer, arrayNode);
-                    return;
-            }
-            writer.Write((byte)arrayNode.TypeCode);
-            WriteSize(writer, encoded.Length);
-            writer.Write(encoded);
         }
         
         protected override byte[] ReadArray(BinaryReader reader) {
@@ -216,124 +176,20 @@ namespace EsfLibrary {
 
         #region Record Nodes
         // Section can now be compressed
-        protected override EsfNode CreateRecordNode(string name, byte version, List<EsfNode> childNodes) {
-            NamedNode result = base.CreateRecordNode(name, version, childNodes) as NamedNode;
-            if (name == CompressedNode.TAG_NAME) {
+        protected override EsfNode ReadRecordNode(BinaryReader reader, byte typeCode) {
+            RecordNode node = new RecordNode(this, typeCode);
+            node.Decode(reader, EsfType.RECORD);
+            // RecordNode result = base.ReadRecordNode(reader, typeCode) as RecordNode;
+            if (node.Name == CompressedNode.TAG_NAME) {
                 // decompress node
-                result = Decompress(result) as NamedNode;
+                node = new CompressedNode(this, node);
             }
-            return result;
-        }
-        protected override void WriteRecordNode(BinaryWriter writer, EsfNode node) {
-            if (node is CompressedNode) {
-                Compress(writer, node as CompressedNode);
-            } else {
-                base.WriteRecordNode(writer, node);
-            }
-        }
-        #endregion
-  
-        #region Record Block Nodes
-        protected override void WriteRecordArrayNode(BinaryWriter writer, EsfNode node) {
-            NamedNode recordBlockNode = node as NamedNode;
-            // Debug.WriteLine(string.Format("Writing record array node {0}", node));
-            ushort nameIndex = (ushort)nodeNames.IndexOfValue(recordBlockNode.Name);
-            WriteRecordInfo(writer, 0x81, nameIndex, recordBlockNode.Version);
-            byte[] encodedContents;
-            MemoryStream stream = new MemoryStream();
-            using (BinaryWriter w = new BinaryWriter(stream)) {
-                foreach (EsfNode child in recordBlockNode.AllNodes) {
-                    EncodeSized(w, (child as NamedNode).AllNodes);
-                }
-                encodedContents = stream.ToArray();
-            }
-            WriteSize(writer, encodedContents.LongLength);
-            WriteSize(writer, recordBlockNode.AllNodes.Count);
-            writer.Write(encodedContents);
-        }
-        #endregion
-
-        #region Compression
-        //re-compress node
-        void Compress(BinaryWriter writer, CompressedNode node) {
-            // encode the node into bytes
-            byte[] data;
-            MemoryStream uncompressedStream = new MemoryStream();
-            using (BinaryWriter w = new BinaryWriter(uncompressedStream)) {
-                // use the node's own codec or we'll mess up the string lists
-                node.Codec.EncodeRootNode(w, node.RootNode);
-                data = uncompressedStream.ToArray();
-            }
-            uint uncompressedSize = (uint) data.LongLength;
-            
-            // compress the encoded data
-            MemoryStream outStream = new MemoryStream();
-            LzmaEncoder encoder = new LzmaEncoder();
-            using (uncompressedStream = new MemoryStream(data)) {
-                encoder.Code(uncompressedStream, outStream, data.Length, long.MaxValue, null);
-                data = outStream.ToArray();
-            }
-   
-            // prepare decoding information
-            List<EsfNode> infoItems = new List<EsfNode>();
-            infoItems.Add(new UIntNode { Value = uncompressedSize, TypeCode = EsfType.UINT32, Codec = this });
-            using (MemoryStream propertyStream = new MemoryStream()) {
-                encoder.WriteCoderProperties(propertyStream);
-                infoItems.Add(new ByteArrayNode { Value = propertyStream.ToArray(), TypeCode = EsfType.UINT8_ARRAY, Codec = this });
-            }
-            // put together the items expected by the unzipper
-            List<EsfNode> dataItems = new List<EsfNode>();
-            dataItems.Add(new ByteArrayNode { Value = data, TypeCode = EsfType.UINT8_ARRAY, Codec = this });
-            dataItems.Add(new NamedNode { Name = CompressedNode.INFO_TAG, Value = infoItems, TypeCode = EsfType.RECORD, Codec = this });
-            NamedNode compressedNode = new NamedNode { Name = CompressedNode.TAG_NAME, Value = dataItems, TypeCode = EsfType.RECORD, Codec = this };
-            
-            // and finally encode
-            Encode(writer, compressedNode);
-        }
-
-        // unzip contained 7zip node
-        EsfNode Decompress(NamedNode compressedNode) {
-            byte[] data = (compressedNode.Values[0] as EsfValueNode<byte[]>).Value;
-            NamedNode infoNode = compressedNode.Children[0];
-            uint size = (infoNode.Values[0] as EsfValueNode<uint>).Value;
-            byte[] decodeProperties = (infoNode.Values[1] as EsfValueNode<byte[]>).Value;
-            LzmaDecoder decoder = new LzmaDecoder();
-            decoder.SetDecoderProperties(decodeProperties);
-
-            using (Stream inStream = new MemoryStream(data, false), file = File.OpenWrite("decompressed_section.esf")) {
-                decoder.Code(inStream, file, data.Length, size, null);
-                file.Write(data, 0, data.Length);
-            }
-
-            byte[] outData = new byte[size];
-            using (MemoryStream inStream = new MemoryStream(data, false), outStream = new MemoryStream(outData)) {
-                decoder.Code(inStream, outStream, data.Length, size, null);
-                outData = outStream.ToArray();
-            }
-            EsfNode result;
-            AbcaFileCodec codec = new AbcaFileCodec();
-            NodeRead eventDelegator = CreateEventDelegate();
-            if (eventDelegator != null) {
-                codec.NodeReadFinished += eventDelegator;
-            }
-            using (BinaryReader reader = new BinaryReader(new MemoryStream(outData))) {
-                result = codec.Parse(reader);
-            }
-            if (eventDelegator != null) {
-                codec.NodeReadFinished -= eventDelegator;
-            }
-            return new CompressedNode { 
-                Name = CompressedNode.TAG_NAME, 
-                RootNode = result, 
-                TypeCode = EsfType.RECORD, 
-                Version = compressedNode.Version,
-                Codec = codec
-            };
+            return node;
         }
         #endregion
   
         #region Version-dependent overridables ABCA
-        protected override long ReadSize(BinaryReader reader) {
+        public override int ReadSize(BinaryReader reader) {
             byte read = reader.ReadByte();
             long result = 0;
             while ((read & 0x80) != 0) {
@@ -342,9 +198,12 @@ namespace EsfLibrary {
             }
             result = (result << 7) + (read & (byte)0x7f);
             // Debug.WriteLine(string.Format("size is {0}, end of size at {1:x}", result, reader.BaseStream.Position));
-            return result;
+            return (int) result;
         }
-        protected override void WriteSize(BinaryWriter writer, long size) {
+        public override int ReadCount(BinaryReader reader) {
+            return ReadSize(reader);
+        }
+        public override void WriteSize(BinaryWriter writer, long size) {
             if (size == 0) {
                 writer.Write((byte)0);
                 return;
@@ -368,12 +227,12 @@ namespace EsfLibrary {
                 writer.Write(write);
             }
         }
-        protected override void WriteOffset(BinaryWriter writer, long offset) {
+        public override void WriteOffset(BinaryWriter writer, long offset) {
             WriteSize(writer, offset);
         }
 
         // allow de/encoding of short info (2 byte)
-        protected override void ReadRecordInfo(BinaryReader reader, byte encoded, out string name, out byte version) {
+        public override void ReadRecordInfo(BinaryReader reader, byte encoded, out string name, out byte version) {
             // root node (and only root node) is stored with long name/version info...
             if (reader.BaseStream.Position == headerLength + 1 || (encoded & LONG_INFO) != 0) {
                 base.ReadRecordInfo(reader, encoded, out name, out version);
@@ -389,7 +248,8 @@ namespace EsfLibrary {
 //                Console.WriteLine("record found");
 //            }
         }
-        protected override void WriteRecordInfo(BinaryWriter writer, byte typeCode, ushort nameIndex, byte version) {
+        public override void WriteRecordInfo(BinaryWriter writer, byte typeCode, string name, byte version) {
+            ushort nameIndex = GetNodeNameIndex(name);
             // always encode root node with long (4 byte) info
             bool canUseShort = nameIndex != 0;
             // we only have 9 bits for type in short encoding
@@ -412,7 +272,7 @@ namespace EsfLibrary {
                 default:
                     throw new InvalidDataException(string.Format("Trying to encode record info for wrong type code {0}", typeCode));
                 }
-                base.WriteRecordInfo (writer, typeCode, nameIndex, version);
+                base.WriteRecordInfo (writer, typeCode, name, version);
             }
         }
         public static ushort encodeShortRecordInfo(byte typeCode, ushort nameIndex, byte version) {
@@ -423,21 +283,22 @@ namespace EsfLibrary {
             return shortInfo;
         }
 
-        // all offsets are now relative sizes
-        protected override List<EsfNode> ReadToOffset(BinaryReader reader, long targetOffset) {
-            return base.ReadToOffset(reader, reader.BaseStream.Position + targetOffset);
-        }
-        protected override void EncodeSized(BinaryWriter writer, List<EsfNode> nodes) {
+        public override void EncodeSized(BinaryWriter writer, List<EsfNode> nodes, bool writeCount = false) {
             byte[] encoded;
             MemoryStream bufferStream = new MemoryStream();
             using (BinaryWriter w = new BinaryWriter(bufferStream)) {
-            foreach (EsfNode node in nodes) {
-                Encode(w, node);
-            }
+                foreach (EsfNode node in nodes) {
+                    Encode(w, node);
+                }
                 encoded = bufferStream.ToArray();
             }
             WriteSize(writer, encoded.LongLength);
+            if (writeCount) {
+                WriteSize(writer, nodes.Count);
+            }
             writer.Write(encoded);
+            encoded = null;
+            GC.Collect();
         }
         #endregion
     }

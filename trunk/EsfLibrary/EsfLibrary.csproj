@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -88,9 +88,6 @@
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>
@@ -107,12 +104,9 @@
     <Compile Include="Esf\CodecTest.cs" />
     <Compile Include="Esf\NodeStringConverter.cs" />
     <Compile Include="Esf\TypeCodes.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Library\7zip\7Zip.csproj">
-      <Project>{FF1EE66E-779C-4239-9C9E-1D319C88F14F}</Project>
-      <Name>7Zip</Name>
-    </ProjectReference>
+    <Compile Include="Esf\ComplexNodes.cs" />
+    <Compile Include="Esf\ArrayNodes.cs" />
+    <Compile Include="Esf\CompressedNode.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -123,4 +117,10 @@
   </Target>
   -->
   <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Library\7zip\7Zip.csproj">
+      <Project>{FF1EE66E-779C-4239-9C9E-1D319C88F14F}</Project>
+      <Name>7Zip</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

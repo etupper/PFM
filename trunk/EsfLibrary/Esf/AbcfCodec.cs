@@ -7,8 +7,8 @@ namespace EsfLibrary {
         protected int headerLength = 16;
 
         #region String Lookup lists
-        protected Dictionary<string, int> Utf16StringList;
-        protected Dictionary<string, int> AsciiStringList;
+        protected Dictionary<string, int> Utf16StringList = new Dictionary<string, int>();
+        protected Dictionary<string, int> AsciiStringList = new Dictionary<string, int>();
         #endregion
 
         #region String Reference Functions

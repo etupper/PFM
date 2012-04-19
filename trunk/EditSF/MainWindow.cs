@@ -68,20 +68,21 @@ namespace EditSF {
                     fileToolStripMenuItem.Enabled = false;
                     optionsToolStripMenuItem.Enabled = false;
                     EsfCodec codec = EsfCodecUtil.GetCodec(stream);
-                    updater.StartLoading(openFilename, codec);
+                    // updater.StartLoading(openFilename, codec);
                     statusLabel.Text = string.Format("Loading {0}", openFilename);
                     LogFileWriter logger = null;
                     if (writeLogFileToolStripMenuItem.Checked) {
                         logger = new LogFileWriter(openFilename + ".xml");
                         //codec.NodeReadFinished += logger.WriteEntry;
-                        codec.Log += logger.WriteLogEntry;
+                        //codec.Log += logger.WriteLogEntry;
                     }
                     EditedFile = new EsfFile(stream, codec);
-                    updater.LoadingFinished();
+                    //updater.LoadingFinished();
                     FileName = openFilename;
                     if (logger != null) {
                         logger.Close();
-                        codec.NodeReadFinished -= logger.WriteEntry;
+                        //codec.NodeReadFinished -= logger.WriteEntry;
+                        //codec.Log -= logger.WriteLogEntry;
                     }
                 }
             } catch {
@@ -172,7 +173,10 @@ namespace EditSF {
             writer = File.CreateText(logFileName);
         }
         public void WriteEntry(EsfNode node, long position) {
-            writer.WriteLine("Entry {0} / {1:x} read at {2:x}", node, node.TypeCode, position);
+            //ParentNode
+            if (node is RecordNode) {
+            }
+            //writer.WriteLine("Entry {0} / {1:x} read at {2:x}", node, node.TypeCode, position);
         }
         public void WriteLogEntry(string entry) {
             writer.WriteLine(entry);
@@ -200,7 +204,7 @@ namespace EditSF {
             } catch { }
         }
         void Update(EsfNode ignored, long position) {
-            if (ignored is NamedNode) {
+            if (ignored is ParentNode) {
                 try {
                     if ((int)position <= progress.Maximum) {
                         progress.Value = (int)position;

@@ -9,8 +9,8 @@ namespace EsfLibrary {
         public static TextWriter logWriter;        
         public static TextWriter addressLogWriter;
         public static void Main(string[] args) {
-            //runTests();
-            testFiles();
+            runTests();
+            //testFiles();
         }
         
         public static void runTests() {

@@ -18,13 +18,14 @@ namespace EditSF {
                 try {
                     EsfCodec codec = EsfCodecUtil.GetCodec(File.OpenRead(file));
                     if (codec != null) {
-                        updater.StartLoading(file, codec);
+                        //updater.StartLoading(file, codec);
                         TestsRun++;
                         EsfFile esfFile = new EsfFile(s, codec);
                         string testFileName = file + "_test";
-                        using (BinaryWriter writer = new BinaryWriter(File.Create(testFileName))) {
-                            codec.EncodeRootNode(writer, esfFile.RootNode);
-                        }
+                        EsfCodecUtil.WriteEsfFile(testFileName, esfFile);
+//                        using (BinaryWriter writer = new BinaryWriter(File.Create(testFileName))) {
+//                            codec.EncodeRootNode(writer, esfFile.RootNode);
+//                        }
                         statusLabel.Text = string.Format("Saving file {0}", Path.GetFileName(file));
                         Application.DoEvents();
                         using (Stream reloadStream = File.OpenRead(testFileName)) {
@@ -45,7 +46,7 @@ namespace EditSF {
                     result = string.Format("FAIL Test of {0}: {1}", file, e);
                 }
                 s.Close();
-                updater.LoadingFinished();
+                //updater.LoadingFinished();
             }
             statusLabel.Text = originalTitle;
             return result;
