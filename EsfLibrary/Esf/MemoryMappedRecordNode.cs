@@ -14,7 +14,8 @@ namespace EsfLibrary {
         
         public override List<EsfNode> Value {
             get {
-                return Decoded.Value;
+                List<EsfNode> values = Decoded.Value;
+                return values;
             }
             set {
                 Decoded.Value = value;
