@@ -53,6 +53,10 @@ namespace EsfLibrary {
             }
             return new EsfFile(codec.Parse(fileData), codec);
         }
+        
+        public static void LogReadNode(EsfNode node, long position) {
+            Console.WriteLine("{1:x}: read {0}", node, position);
+        }
     }
 
     public class EsfFile {
@@ -244,8 +248,10 @@ namespace EsfLibrary {
                 } else {
                     throw new InvalidDataException(string.Format("Type code {0:x} at {1:x} invalid", typeCode, reader.BaseStream.Position - 1));
                 }
-                //Console.WriteLine("read {0} at {1:x}", result, position);
                 // if (Log != null) { Log(string.Format("Read node {0} / {1}", result, result.TypeCode));
+                if (NodeReadFinished != null) {
+                    NodeReadFinished(result, position);
+                }
             } catch (Exception e) {
                 Console.WriteLine(string.Format("Exception at {0:x}: {1}", reader.BaseStream.Position, e));
                 throw e;
@@ -453,11 +459,12 @@ namespace EsfLibrary {
         #region Record Nodes
         // read an identified node from the reader at its current position
         public virtual RecordNode ReadRecordNode(BinaryReader reader, byte typeCode, bool forceDecode = false) {
+            long position = reader.BaseStream.Position;
             RecordNode node;
             if (!forceDecode && buffer != null) {
                 node = new MemoryMappedRecordNode(this, buffer, (int) reader.BaseStream.Position);
             } else {
-                node = new RecordNode(this);
+                node = new RecordNode(this, typeCode);
             }
             node.Decode(reader, EsfType.RECORD);
             return node;

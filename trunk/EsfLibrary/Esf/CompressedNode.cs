@@ -43,9 +43,9 @@ namespace EsfLibrary {
             ParentNode infoNode = compressedNode.Children[0];
             uint size = (infoNode.Values[0] as EsfValueNode<uint>).Value;
             byte[] decodeProperties = (infoNode.Values[1] as EsfValueNode<byte[]>).Value;
+
             LzmaDecoder decoder = new LzmaDecoder();
             decoder.SetDecoderProperties(decodeProperties);
-
             DecompressionCodeProgress progress = new DecompressionCodeProgress(this, Codec);
             using (Stream inStream = new MemoryStream(data, false), file = File.OpenWrite("decompressed_section.esf")) {
                 decoder.Code(inStream, file, data.Length, size, progress);
@@ -74,6 +74,7 @@ namespace EsfLibrary {
         public override void Encode(BinaryWriter writer) {
             // encode the node into bytes
             byte[] data;
+            Console.WriteLine("encoding...");
             MemoryStream uncompressedStream = new MemoryStream();
             using (BinaryWriter w = new BinaryWriter(uncompressedStream)) {
                 // use the node's own codec or we'll mess up the string lists

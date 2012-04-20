@@ -95,7 +95,8 @@ namespace EsfControl {
         }
         public void Fill() {
             if (Nodes.Count == 0) {
-                foreach (ParentNode child in (Tag as ParentNode).Children) {
+                ParentNode parentNode = (Tag as ParentNode);
+                foreach (ParentNode child in parentNode.Children) {
                     Nodes.Add(new EsfTreeNode(child, ShowCode));
                 }
             }

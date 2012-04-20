@@ -70,7 +70,7 @@ namespace EsfLibrary {
                 }
             }
         }
-        public virtual List<EsfNode> AllNodes {
+        public List<EsfNode> AllNodes {
             get {
                 return Value;
             }
@@ -86,6 +86,17 @@ namespace EsfLibrary {
             get {
                 List<EsfNode> result = new List<EsfNode>();
                 Value.ForEach(node => { if (!(node is ParentNode)) result.Add(node); });
+                return result;
+            }
+        }
+  
+        public ParentNode this[string key] {
+            get {
+                ParentNode result = null;
+                Children.ForEach(child => { if (child.Name == key) { result = child; return; }});
+                if (result == null) {
+                    throw new IndexOutOfRangeException(string.Format("Unknown child {0}", key));
+                }
                 return result;
             }
         }
