@@ -139,22 +139,6 @@ namespace EsfLibrary {
         protected virtual string ReadAsciiString(BinaryReader reader) { return ReadAscii (reader); }
         #endregion
 
-        #region Writer Methods
-//        protected virtual void WriteBool(BinaryWriter w, bool b) { w.Write(b); }
-//        protected virtual void WriteInt(BinaryWriter w, int i) { w.Write(i); }
-        //protected virtual void WriteSByte(BinaryWriter w, sbyte b) { w.Write(b); }
-        //protected virtual void WriteShort(BinaryWriter w, short v) { w.Write(v); }
-        //protected virtual void WriteUShort(BinaryWriter w, ushort v) { w.Write(v); }
-        //protected virtual void WriteByte(BinaryWriter w, byte b) { w.Write(b); }
-        //protected virtual void WriteLong(BinaryWriter w, long v) { w.Write(v); }
-        //protected virtual void WriteULong(BinaryWriter w, ulong v) { w.Write(v); }
-        //protected virtual void WriteUInt(BinaryWriter w, uint ui) { w.Write(ui); }
-        //protected virtual void WriteFloat(BinaryWriter w, float ui) { w.Write(ui); }
-        //protected virtual void WriteDouble(BinaryWriter w, double ui) { w.Write(ui); }
-        //protected virtual void WriteCoordinates2D(BinaryWriter w, Coordinates2D t) { w.Write(t.Item1); w.Write(t.Item2); }
-        //protected virtual void WriteCoordinates3D(BinaryWriter w, Coordinates3D t) { w.Write(t.Item1); w.Write(t.Item2); w.Write(t.Item3); }
-        #endregion
-
         #region String Readers/Writers
         public static string ReadUtf16(BinaryReader reader) {
             ushort strLength = reader.ReadUInt16();
