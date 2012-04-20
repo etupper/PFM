@@ -11,6 +11,18 @@ namespace Common {
      * I guess we could generalize to streams, but not much point to that for now.
      */
     public class PackFileCodec {
+        #region Timestamp
+        static DateTime UNIX_BASE = new System.DateTime (1970, 1, 1, 0, 0, 0, 0);
+
+        public static DateTime GetTime(uint stamp) {
+            return new DateTime (UNIX_BASE.Ticks).AddSeconds (stamp);
+        }
+
+        public static uint GetTimestamp(DateTime time) {
+            return (uint)time.Subtract (UNIX_BASE).TotalSeconds;
+        }
+        #endregion
+
         public delegate void HeaderLoadedEvent(PFHeader header);
         public delegate void PackedFileLoadedEvent(PackedFile packed);
         public delegate void PackFileLoadedEvent(PackFile pack);
@@ -98,72 +110,74 @@ namespace Common {
 		}
 
         public void writeToFile(string FullPath, PackFile packFile) {
-			using (BinaryWriter writer = new BinaryWriter(new FileStream(FullPath, FileMode.Create), Encoding.ASCII)) {
-				writer.Write (packFile.Header.PackIdentifier.ToCharArray ());
-				writer.Write ((int)packFile.Header.Type);
-				writer.Write ((int)packFile.Header.Version);
-                writer.Write(packFile.Header.ReplacedFileNamesLength);
-				UInt32 indexSize = 0;
-				List<PackedFile> toWrite = new List<PackedFile> ((int)packFile.Header.FileCount);
-				foreach (PackedFile file in packFile.Files) {
+            using (BinaryWriter writer = new BinaryWriter(new FileStream(FullPath, FileMode.Create), Encoding.ASCII)) {
+                writer.Write (packFile.Header.PackIdentifier.ToCharArray ());
+                writer.Write ((int)packFile.Header.Type);
+                writer.Write ((int)packFile.Header.Version);
+                writer.Write (packFile.Header.ReplacedFileNamesLength);
+                UInt32 indexSize = 0;
+                List<PackedFile> toWrite = new List<PackedFile> ((int)packFile.Header.FileCount);
+                foreach (PackedFile file in packFile.Files) {
                     if (!file.Deleted) {
                         indexSize += (uint)file.FullPath.Length + 5;
                         switch (packFile.Header.Type) {
-                            case PackType.BootX:
-                            case PackType.Shader1:
-                            case PackType.Shader2:
-                                indexSize += 8;
-                                break;
-                            default:
-                                break;
-                        }
-                        toWrite.Add(file);
-                    }
-				}
-				writer.Write (toWrite.Count);
-				writer.Write (indexSize);
-
-				// File Time
-				if (packFile.Header.PackIdentifier == "PFH2" || packFile.Header.PackIdentifier == "PFH3") {
-					Int64 fileTime = DateTime.Now.ToFileTimeUtc ();
-					writer.Write (fileTime);
-				}
-
-				// Write File Names stored from opening the file
-                foreach (string replacedPack in packFile.Header.ReplacedPackFileNames) {
-                    writer.Write(replacedPack.ToCharArray());
-                    writer.Write((byte)0);
-                }
-
-                // pack entries are stored alphabetically in pack files
-                toWrite.Sort(new PackedFileNameComparer());
-
-                // write file list
-				string separatorString = "" + Path.DirectorySeparatorChar;
-                foreach (PackedFile file in toWrite) {
-                    writer.Write((int)file.Size);
-                    switch (packFile.Header.Type) {
                         case PackType.BootX:
                         case PackType.Shader1:
                         case PackType.Shader2:
-                            writer.Write(file.EditTime.Ticks);
+                            indexSize += 8;
                             break;
                         default:
                             break;
+                        }
+                        toWrite.Add (file);
+                    }
+                }
+                writer.Write (toWrite.Count);
+                writer.Write (indexSize);
+
+                // File Time
+                if (packFile.Header.PackIdentifier == "PFH2" || packFile.Header.PackIdentifier == "PFH3") {
+                    Int64 fileTime = DateTime.Now.ToFileTimeUtc ();
+                    writer.Write (fileTime);
+                }
+
+                // Write File Names stored from opening the file
+                foreach (string replacedPack in packFile.Header.ReplacedPackFileNames) {
+                    writer.Write (replacedPack.ToCharArray ());
+                    writer.Write ((byte)0);
+                }
+
+                // pack entries are stored alphabetically in pack files
+                toWrite.Sort (new PackedFileNameComparer ());
+
+                // write file list
+                string separatorString = "" + Path.DirectorySeparatorChar;
+                foreach (PackedFile file in toWrite) {
+                    writer.Write ((int)file.Size);
+                    switch (packFile.Header.Type) {
+                    case PackType.BootX:
+                    case PackType.Shader1:
+                    case PackType.Shader2:
+                        // writer.Write(file.EditTime.Ticks);
+                        writer.Write (0);
+                        writer.Write (GetTimestamp(DateTime.Now));
+                        break;
+                    default:
+                        break;
                     }
                     // pack pathes use backslash, we replaced when reading
-                    string packPath = file.FullPath.Replace(separatorString, "\\");
-                    writer.Write(packPath.ToCharArray());
-                    writer.Write('\0');
+                    string packPath = file.FullPath.Replace (separatorString, "\\");
+                    writer.Write (packPath.ToCharArray ());
+                    writer.Write ('\0');
                 }
-				foreach (PackedFile file in toWrite) {
-					if (file.Size > 0) {
-						byte[] bytes = file.Data;
-						writer.Write (bytes);
-					}
-				}
-			}
-		}
+                foreach (PackedFile file in toWrite) {
+                    if (file.Size > 0) {
+                        byte[] bytes = file.Data;
+                        writer.Write (bytes);
+                    }
+                }
+            }
+        }
 
         private void OnHeaderLoaded(PFHeader header) {
             if (this.HeaderLoaded != null) {
