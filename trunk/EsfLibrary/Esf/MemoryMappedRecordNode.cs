@@ -3,13 +3,8 @@ using System.IO;
 using System.Collections.Generic;
 
 namespace EsfLibrary {
-    public class MemoryMappedRecordNode : RecordNode {
-        byte[] buffer;
-        private int mapStart;
-        private int byteCount;
-        
-        public bool InvalidateSiblings {
-            get; set;
+    public abstract class DelegatingNode : RecordNode {
+        protected DelegatingNode(EsfCodec codec, byte originalCode = 0) : base(codec, originalCode) {
         }
         
         public override List<EsfNode> Value {
@@ -21,6 +16,49 @@ namespace EsfLibrary {
                 Decoded.Value = value;
             }
         }
+        protected RecordNode decoded;
+        protected RecordNode Decoded {
+            get {
+                if (decoded == null) {
+                    decoded = DecodeDelegate();
+                    decoded.Parent = this;
+                    decoded.Modified = false;
+                    decoded.ModifiedEvent += ModifiedDelegate;
+                }
+                return decoded;
+            }
+        }
+        protected abstract RecordNode DecodeDelegate();
+
+        private void ModifiedDelegate(EsfNode node) {
+            Console.WriteLine("mapped node {1} received modification from {0}", node, this);
+            Modified = node.Modified;
+            // RaiseModifiedEvent();
+        }
+    }
+ 
+    /**
+     * A record node that keeps track where in memory it was loaded from
+     * and only evaluates that data when its child nodes are requested.
+     */
+    public class MemoryMappedRecordNode : DelegatingNode {
+        byte[] buffer;
+        private int mapStart;
+        private int byteCount;
+
+        public MemoryMappedRecordNode (EsfCodec codec, byte[] bytes, int start) : base(codec, bytes[start-1]) {
+            Codec = codec;
+            buffer = bytes;
+            mapStart = start-1;
+            // byteCount = count;
+        }
+        
+        // if this is set, the siblings following this node will also be invalidated
+        // when a modification of this node occurs
+        public bool InvalidateSiblings {
+            get; set;
+        }
+
         protected bool invalid = false;
         public override bool Modified {
             get {
@@ -44,29 +82,17 @@ namespace EsfLibrary {
             }
         }
 
-        private RecordNode decoded = null;
-        private RecordNode Decoded {
-            get {
-                if (decoded == null) {
-                    using (var reader = new BinaryReader(new MemoryStream(buffer))) {
-                        reader.BaseStream.Seek(mapStart+1, SeekOrigin.Begin);
-                        decoded = Codec.ReadRecordNode(reader, OriginalTypeCode, true);
-                    }
-                    decoded.ModifiedEvent += ModifiedDelegate;
-                    decoded.Modified = false;
-                }
-                return decoded;
+        protected override RecordNode DecodeDelegate() {
+            RecordNode result;
+            using (var reader = new BinaryReader(new MemoryStream(buffer))) {
+                reader.BaseStream.Seek(mapStart+1, SeekOrigin.Begin);
+                result = Codec.ReadRecordNode(reader, OriginalTypeCode, true);
             }
-        }
-
-        public MemoryMappedRecordNode (EsfCodec codec, byte[] bytes, int start) : base(codec, bytes[start-1]) {
-            Codec = codec;
-            buffer = bytes;
-            mapStart = start-1;
-            // byteCount = count;
+            return result;
         }
 
         public override void Decode(BinaryReader reader, EsfType type) {
+            // we need to keep track of the original data to give it to the actual parser later
             string name;
             byte remember;
             Codec.ReadRecordInfo(reader, OriginalTypeCode, out name, out remember);
@@ -75,22 +101,15 @@ namespace EsfLibrary {
             int size = Codec.ReadSize(reader);
             int infoSize = (int)(reader.BaseStream.Position - mapStart);
             byteCount = size + infoSize;
-            //mapStart = (int) reader.BaseStream.Position;
             reader.BaseStream.Seek(size, SeekOrigin.Current);
         }
 
         public override void Encode(BinaryWriter writer) {
-            if (decoded == null && !invalid) {
-                writer.Write(buffer, mapStart, byteCount);
-            } else {
+            if (invalid) {
                 Decoded.Encode(writer);
+            } else {
+                writer.Write(buffer, mapStart, byteCount);
             }
-        }
-        
-        private void ModifiedDelegate(EsfNode node) {
-            //Console.WriteLine("modification!");
-            RaiseModifiedEvent();
-            Modified = node.Modified;
         }
     }
 }
