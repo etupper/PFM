@@ -11,18 +11,6 @@ namespace Common {
      * I guess we could generalize to streams, but not much point to that for now.
      */
     public class PackFileCodec {
-        #region Timestamp
-        static DateTime UNIX_BASE = new System.DateTime (1970, 1, 1, 0, 0, 0, 0);
-
-        public static DateTime GetTime(uint stamp) {
-            return new DateTime (UNIX_BASE.Ticks).AddSeconds (stamp);
-        }
-
-        public static uint GetTimestamp(DateTime time) {
-            return (uint)time.Subtract (UNIX_BASE).TotalSeconds;
-        }
-        #endregion
-
         public delegate void HeaderLoadedEvent(PFHeader header);
         public delegate void PackedFileLoadedEvent(PackedFile packed);
         public delegate void PackFileLoadedEvent(PackFile pack);
@@ -40,8 +28,6 @@ namespace Common {
 				OnHeaderLoaded (header);
 
 				long offset = file.Header.DataStart;
-				// I'm guessing... they year doesn't seem to make sense though.
-				long time = -1;
 				for (int i = 0; i < file.Header.FileCount; i++) {
 					uint size = reader.ReadUInt32 ();
 					sizes += size;
@@ -49,10 +35,9 @@ namespace Common {
                         case PackType.BootX:
                         case PackType.Shader1:
                         case PackType.Shader2:
-                            time = reader.ReadInt64();
+                            header.AdditionalInfo = reader.ReadInt64();
                             break;
                         default:
-                            time = -1;
                             break;
                     }
                     string packedFileName = IOFunctions.readZeroTerminatedAscii(reader);
@@ -61,9 +46,6 @@ namespace Common {
                     packedFileName = packedFileName.Replace('\\', Path.DirectorySeparatorChar);
 
 					PackedFile packed = new PackedFile (file.Filepath, packedFileName, offset, size);
-					if (time != -1) {
-						packed.EditTime = new DateTime (time);
-					}
 					file.Add (packedFileName, packed);
 					offset += size;
 					this.OnPackedFileLoaded (packed);
@@ -158,9 +140,7 @@ namespace Common {
                     case PackType.BootX:
                     case PackType.Shader1:
                     case PackType.Shader2:
-                        // writer.Write(file.EditTime.Ticks);
-                        writer.Write (0);
-                        writer.Write (GetTimestamp(DateTime.Now));
+                        writer.Write(packFile.Header.AdditionalInfo);
                         break;
                     default:
                         break;

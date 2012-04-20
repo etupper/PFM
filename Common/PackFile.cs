@@ -230,6 +230,9 @@ namespace Common {
                 return result;
             }
         }
+        public long AdditionalInfo {
+            get; set;
+        }
     }
 
     public enum PackType {
