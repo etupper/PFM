@@ -8,35 +8,23 @@ using LzmaDecoder = SevenZip.Compression.LZMA.Decoder;
 using LzmaEncoder = SevenZip.Compression.LZMA.Encoder;
 
 namespace EsfLibrary {
-    public class CompressedNode : RecordNode {
+    public class CompressedNode : DelegatingNode {
         public CompressedNode(EsfCodec codec, RecordNode rootNode) : base(codec) {
             Name = TAG_NAME;
-            RootNode = Decompress(rootNode);
+            compressedNode = rootNode;
         }
-
+        
+        private RecordNode compressedNode;
+        
         public static readonly string TAG_NAME = "COMPRESSED_DATA";
         public static readonly string INFO_TAG = "COMPRESSED_DATA_INFO";
-        public byte[] EncodeProperties { get; set; }
-        public EsfNode RootNode {
-            get { return AllNodes[0]; }
-            set { AllNodes.Clear(); AllNodes.Add(value); }
-        }
-        public override bool Equals(object obj) {
-            bool result = false;
-            CompressedNode compressed = obj as CompressedNode;
-            if (compressed != null) {
-                result = compressed.RootNode.Equals(RootNode);
-            }
-            if (!result) {
-            }
-            return result;
-        }
+
         public void Decode(BinaryReader reader) {
-            throw new NotImplementedException ();
+            // nothing to do
         }
 
         // unzip contained 7zip node
-        EsfNode Decompress(RecordNode compressedNode) {
+        protected override RecordNode DecodeDelegate() {
             Console.WriteLine("decompressing");
             List<EsfNode> values = compressedNode.Values;
             byte[] data = (values[0] as EsfValueNode<byte[]>).Value;
@@ -63,11 +51,10 @@ namespace EsfLibrary {
             AbcaFileCodec codec = new AbcaFileCodec();
 
             result = codec.Parse(outData);
-            result.ModifiedEvent += ModifiedDelegate;
             using (BinaryReader reader = new BinaryReader(new MemoryStream(outData))) {
                 result = codec.Parse(reader);
             }
-            return result;
+            return result as RecordNode;
         }
         
         //re-compress node
@@ -78,8 +65,7 @@ namespace EsfLibrary {
             MemoryStream uncompressedStream = new MemoryStream();
             using (BinaryWriter w = new BinaryWriter(uncompressedStream)) {
                 // use the node's own codec or we'll mess up the string lists
-                RootNode.Codec.EncodeRootNode(w, RootNode);
-                // (RootNode as ICodecNode).Encode(w);
+                Decoded.Codec.EncodeRootNode(w, Decoded);
                 data = uncompressedStream.ToArray();
             }
             uint uncompressedSize = (uint) data.LongLength;
@@ -109,12 +95,6 @@ namespace EsfLibrary {
             
             // and finally encode
             compressedNode.Encode(writer);
-        }
-
-        private void ModifiedDelegate(EsfNode node) {
-            //Console.WriteLine("modification!");
-            RaiseModifiedEvent();
-            Modified = node.Modified;
         }
     }
     
