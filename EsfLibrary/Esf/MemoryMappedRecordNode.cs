@@ -31,9 +31,7 @@ namespace EsfLibrary {
         protected abstract RecordNode DecodeDelegate();
 
         private void ModifiedDelegate(EsfNode node) {
-            Console.WriteLine("mapped node {1} received modification from {0}", node, this);
             Modified = node.Modified;
-            // RaiseModifiedEvent();
         }
     }
  
