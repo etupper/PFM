@@ -51,18 +51,34 @@ namespace PackFileManager {
                         Name = modName,
                         BaseDirectory = dialog.SelectedPath
                     };
+
+                    // create new mod file to start off with
+                    result = Path.Combine(mod.BaseDirectory, string.Format("{0}.pack", modName));
+                    if (Directory.Exists(mod.BaseDirectory) && !File.Exists(result)) {
+                        var header = new PFHeader("PFH3") {
+                            Type = PackType.Mod,
+                            Version = 0,
+                            FileCount = 0,
+                            ReplacedPackFileNames = new List<string>(),
+                            DataStart = 0x20
+                        };
+                        PackFile newFile = new PackFile(result, header);
+                        new PackFileCodec().writeToFile(result, newFile);
+                    }
+
                     SetMod(mod);
 
                     // open existing CA pack or create new pack
-                    OpenFileDialog packOpenFileDialog = new OpenFileDialog {
-                        InitialDirectory = Path.Combine(IOFunctions.GetShogunTotalWarDirectory(), "data"),
-                        Filter = IOFunctions.PACKAGE_FILTER,
-                        Title = "Open pack to extract basic data from"
-                    };
-                    if (packOpenFileDialog.ShowDialog() == DialogResult.OK) {
-                        result = packOpenFileDialog.FileName;
-                    } else {
-                        result = string.Format("{0}.pack", Settings.Default.CurrentMod);
+                    string shogunPath = IOFunctions.GetShogunTotalWarDirectory();
+                    if (shogunPath != null && Directory.Exists(shogunPath)) {
+                        OpenFileDialog packOpenFileDialog = new OpenFileDialog {
+                            InitialDirectory = Path.Combine(shogunPath, "data"),
+                            Filter = IOFunctions.PACKAGE_FILTER,
+                            Title = "Open pack to extract basic data from"
+                        };
+                        if (packOpenFileDialog.ShowDialog() == DialogResult.OK) {
+                            result = packOpenFileDialog.FileName;
+                        }
                     }
                 }
             }
