@@ -76,16 +76,39 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <EmbeddedResource Include="PackFileManager\DBFileEditorControl.resx">
+    <Compile Include="caFileEditAdvisory.cs" />
+    <Compile Include="customMessageBox.cs" />
+    <Compile Include="DataGridViewExtended.cs" />
+    <Compile Include="DBFileEditorControl.cs" />
+    <Compile Include="DBFileTypesUpdater.cs" />
+    <Compile Include="DragDropHelper.cs" />
+    <Compile Include="DragFileInfo.cs" />
+    <Compile Include="FileAlreadyExistsDialog.cs" />
+    <Compile Include="FILEDESCRIPTOR.cs" />
+    <Compile Include="FileExtraction.cs" />
+    <Compile Include="ImageViewerControl.cs" />
+    <Compile Include="InputBox.cs" />
+    <Compile Include="InputBox.Designer.cs">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LocFileEditorControl.cs" />
+    <Compile Include="Mods.cs" />
+    <Compile Include="PackedFileEditor.cs" />
+    <Compile Include="PackFileManagerForm.cs" />
+    <Compile Include="PackTree.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="TextFileEditorControl.cs" />
+    <Compile Include="UnitVariantFileEditorControl.cs" />
+    <EmbeddedResource Include="DBFileEditorControl.resx">
       <DependentUpon>DBFileEditorControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PackFileManager\InputBox.resx">
+    <EmbeddedResource Include="InputBox.resx">
       <DependentUpon>InputBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PackFileManager\LocFileEditorControl.resx">
+    <EmbeddedResource Include="LocFileEditorControl.resx">
       <DependentUpon>LocFileEditorControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PackFileManager\PackFileManagerForm.resx">
+    <EmbeddedResource Include="PackFileManagerForm.resx">
       <DependentUpon>PackFileManagerForm.cs</DependentUpon>
     </EmbeddedResource>
     <Reference Include="ObjectListView">
@@ -97,61 +120,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="PackFileManager\DataGridViewExtended.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="PackFileManager\DBFileEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PackFileManager\caFileEditAdvisory.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="PackFileManager\DBFileTypesUpdater.cs" />
-    <Compile Include="PackFileManager\DragDropHelper.cs" />
-    <Compile Include="PackFileManager\DragFileInfo.cs" />
-    <Compile Include="PackFileManager\FILEDESCRIPTOR.cs" />
-    <Compile Include="PackFileManager\FileExtraction.cs" />
-    <Compile Include="PackFileManager\ImageViewerControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PackFileManager\InputBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="PackFileManager\InputBox.Designer.cs">
-      <DependentUpon>InputBox.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PackFileManager\PackedFileEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PackFileManager\PackFileManagerForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="PackFileManager\PackTree.cs" />
-    <Compile Include="PackFileManager\Mods.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="PackFileManager\UnitVariantFileEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PackFileManager\FileAlreadyExistsDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="AtlasFileEditorControl.cs" />
+    <Compile Include="Properties\Resources.cs" />
+    <Compile Include="Properties\Settings.cs" />
     <Compile Include="ToolTipRegion.cs" />
-    <Compile Include="PackFileManager\Properties\Resources.cs" />
-    <Compile Include="PackFileManager\Program.cs" />
-    <Compile Include="PackFileManager\Properties\Settings.cs" />
-    <Compile Include="PackFileManager\LocFileEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PackFileManager\customMessageBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="PackFileManager\TextFileEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PackFileManager\AtlasFileEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\Files\ICSharpCode.SharpZipLib.dll</HintPath>

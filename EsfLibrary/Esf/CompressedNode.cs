@@ -35,10 +35,6 @@ namespace EsfLibrary {
             LzmaDecoder decoder = new LzmaDecoder();
             decoder.SetDecoderProperties(decodeProperties);
             DecompressionCodeProgress progress = new DecompressionCodeProgress(this, Codec);
-            using (Stream inStream = new MemoryStream(data, false), file = File.OpenWrite("decompressed_section.esf")) {
-                decoder.Code(inStream, file, data.Length, size, progress);
-                file.Write(data, 0, data.Length);
-            }
             
             byte[] outData = new byte[size];
             using (MemoryStream inStream = new MemoryStream(data, false), outStream = new MemoryStream(outData)) {
