@@ -1748,9 +1748,10 @@
   </table>
   <table name='event_log_descriptions_tables'>
     <field name='unknown1' type='string' pk='true' />
-    <field name='unknown2' type='boolean' />
-    <field name='unknown3' type='string' />
-    <field name='unknown4' type='boolean' />
+    <field name='unknown' type='optstring' version_start='2' />
+    <field name='unknown' type='boolean' version_start='2' />
+    <field name='unknown' type='string' version_start='2' />
+    <field name='unknown' type='boolean' version_start='2' />
   </table>
   <table name='events_tables'>
     <field name='Event ID' type='string' pk='true' />
@@ -3664,12 +3665,12 @@
     <field fkey='unit_abilities_tables.Ability ID' name='Ability IDRef' type='string' pk='true' />
   </table>
   <table name='unit_voice_categories_tables'>
-    <field name='unknown1' type='string' pk='true' />
+    <field name='Unit Voice Category ID' type='string' pk='true' />
   </table>
   <table name='unit_voice_events_junctions_tables'>
-    <field name='unknown1' type='string' />
-    <field name='unknown2' type='string' />
-    <field name='unknown3' type='string' />
+    <field fkey='unit_voice_categories_tables.Unit Voice Category ID' name='Unit Voice Category IDRef' type='string' />
+    <field fkey='voice_types_tables.Voice Type ID' name='Voice Type IDRef' type='string' />
+    <field fkey='voice_events_tables.Voice Event ID' name='Voice Event IDRef' type='string' />
     <field name='unknown4' type='string' />
   </table>
   <table name='units_tables'>
@@ -3753,10 +3754,10 @@
     <field fkey='subtitles_tables.Subtitle ID' name='Subtitle IDRef' type='string' />
   </table>
   <table name='voice_events_tables'>
-    <field name='unknown1' type='string' pk='true' />
+    <field name='Voice Event ID' type='string' pk='true' />
   </table>
   <table name='voice_types_tables'>
-    <field name='unknown1' type='string' pk='true' />
+    <field name='Voice Type ID' type='string' pk='true' />
   </table>
   <table name='warscape_animated_tables'>
     <field name='unknown' type='string' pk='true' />
