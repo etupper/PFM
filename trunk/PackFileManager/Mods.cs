@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,22 @@ using System.Windows.Forms;
 using PackFileManager.Properties;
 
 namespace PackFileManager {
+    public class ModMenuItem : ToolStripMenuItem {
+        public ModMenuItem(string title, string modName)
+            : base(title) {
+            string currentMod = Settings.Default.CurrentMod;
+            Checked = currentMod == modName;
+            ModManager.Instance.CurrentModChanged += CheckSelection;
+            Tag = modName;
+        }
+        protected override void OnClick(EventArgs e) {
+            ModManager.Instance.SetCurrentMod(Tag as string);
+        }
+        private void CheckSelection(string mod) {
+            Checked = mod == (Tag as string);
+        }
+    }
+
     public class Mod {
         public string Name { get; set; }
         public string BaseDirectory { get; set; }
@@ -21,9 +38,10 @@ namespace PackFileManager {
             mods = decodeMods(Settings.Default.ModList);
         }
         private Dictionary<string, string> mods;
-        public void AddMod() {
+        public string AddMod() {
+            string result = null;
             InputBox box = new InputBox { Text = "Enter Mod Name:", Input = "my_mod" };
-            if (box.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+            if (box.ShowDialog() == System.Windows.Forms.DialogResult.OK && box.Input.Trim() != "") {
                 string modName = box.Input;
                 FolderBrowserDialog dialog = new FolderBrowserDialog {
                     SelectedPath = Settings.Default.LastPackDirectory
@@ -34,8 +52,21 @@ namespace PackFileManager {
                         BaseDirectory = dialog.SelectedPath
                     };
                     SetMod(mod);
+
+                    // open existing CA pack or create new pack
+                    OpenFileDialog packOpenFileDialog = new OpenFileDialog {
+                        InitialDirectory = Path.Combine(IOFunctions.GetShogunTotalWarDirectory(), "data"),
+                        Filter = IOFunctions.PACKAGE_FILTER,
+                        Title = "Open pack to extract basic data from"
+                    };
+                    if (packOpenFileDialog.ShowDialog() == DialogResult.OK) {
+                        result = packOpenFileDialog.FileName;
+                    } else {
+                        result = string.Format("{0}.pack", Settings.Default.CurrentMod);
+                    }
                 }
             }
+            return result;
         }
         public List<string> ModNames {
             get {
@@ -84,19 +115,6 @@ namespace PackFileManager {
                 result += string.Format("{0}{1}{2}{3}", key, Path.PathSeparator, mods[key], "@@@");
             }
             return result;
-        }
-    }
-
-    public class ModMenuItem : ToolStripMenuItem {
-        public ModMenuItem(string modName) : base(modName) {
-            Checked = Settings.Default.CurrentMod == modName;
-            ModManager.Instance.CurrentModChanged += CheckSelection;
-        }
-        protected override void OnClick(EventArgs e) {
-            ModManager.Instance.SetCurrentMod(Text);
-        }
-        private void CheckSelection(string mod) {
-            Checked = mod == Text;
         }
     }
 }

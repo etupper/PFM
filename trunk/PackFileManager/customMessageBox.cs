@@ -224,8 +224,8 @@
             this.txtSearch.TabIndex = 4;
             this.txtSearch.Click += new EventHandler(this.txtSearch_Click);
             base.AcceptButton = this.btnSearch;
-            base.AutoScaleDimensions = new SizeF(6f, 13f);
-            base.AutoScaleMode = AutoScaleMode.Font;
+//            base.AutoScaleDimensions = new SizeF(6f, 13f);
+//            base.AutoScaleMode = AutoScaleMode.Font;
             base.ClientSize = new Size(0x170, 0x9c);
             base.Controls.Add(this.txtSearch);
             base.Controls.Add(this.btnPrev);
