@@ -2642,16 +2642,10 @@
     <field name='unknown2' type='string' pk='true' />
     <field name='unknown3' type='float' />
     <field name='unknown4' type='int' />
-    <field name='unknown5' type='int' />
-    <field name='unknown6' type='int' />
-    <field name='unknown7' type='int' />
-    <field name='unknown8' type='int' />
-    <field name='unknown9' type='int' />
-    <field name='unknown10' type='int' />
-    <field name='unknown11' type='int' />
-    <field name='unknown12' type='int' />
-    <field name='unknown13' type='float' />
-    <field name='unknown14' type='float' />
+    <field name='unknown5' type='string' />
+    <field name='unknown6' type='string' />
+    <field name='unknown7' type='float' />
+    <field name='unknown8' type='float' />
   </table>
   <table name='mp_force_gen_upgrade_probabilities_tables'>
     <field name='unknown1' type='float' />
