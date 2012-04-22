@@ -116,6 +116,7 @@ namespace Common {
         private void EntryAdded(PackEntry file) {
             file.ModifiedEvent += EntryModified;
             file.RenameEvent += EntryRenamed;
+            IsModified = true;
         }
         // Unregister modified and rename handlers
         private void EntryRemoved(PackEntry entry) {

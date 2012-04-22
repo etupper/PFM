@@ -259,7 +259,8 @@ namespace PackFileManager
                 // if (Path.GetDirectoryName(addReplaceOpenFileDialog.FileName).StartsWith(
                 try {
                     foreach (string file in addReplaceOpenFileDialog.FileNames) {
-                        string addBase = GetPathRelativeToMod(file);
+                        string addBase = (Settings.Default.CurrentMod != "") 
+                            ? GetPathRelativeToMod(file) : Path.GetFileName(file);
                         AddTo.Add(addBase, new PackedFile(file));
                     }
                 } catch (Exception x) {
@@ -1566,7 +1567,9 @@ namespace PackFileManager
 
         #region Open Pack
         private void newToolStripMenuItem_Click(object sender, EventArgs e) {
-            NewMod("Untitled.pack");
+            if (handlePackFileChangesWithUserInput() == System.Windows.Forms.DialogResult.No) {
+                NewMod("Untitled.pack");
+            }
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e) {
