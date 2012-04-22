@@ -923,7 +923,7 @@
     <field fkey='building_levels_tables.Building ID' name='Upgrade' type='string' pk='true' />
   </table>
   <table name='cai_agent_distribution_profiles_tables'>
-    <field name='profile' type='string' pk='true' />
+    <field name='Agent Distribution Profile ID' type='string' pk='true' />
   </table>
   <table name='cai_agent_distribution_types_tables'>
     <field name='type' type='string' pk='true' />
@@ -933,7 +933,7 @@
     <field fkey='cai_agent_types_tables.Agent ID' name='CAI Agent IDRef' type='string' />
   </table>
   <table name='cai_agent_recruitment_profiles_tables'>
-    <field name='Recruitment Profile ID' type='string' pk='true' />
+    <field name='Agent Recruitment Profile ID' type='string' pk='true' />
   </table>
   <table name='cai_agent_recruitment_types_tables'>
     <field name='Recruitment Type ID' type='string' pk='true' />
@@ -963,30 +963,30 @@
     <field name='unknown' type='float' />
   </table>
   <table name='cai_military_aggressiveness_policies_tables'>
-    <field name='unknown' type='string' pk='true' />
+    <field name='Military Aggressiveness ID' type='string' pk='true' />
   </table>
   <table name='cai_military_behaviour_policies_tables'>
-    <field name='unknown' type='string' pk='true' />
+    <field name='Military Behavior Policy ID' type='string' pk='true' />
   </table>
   <table name='cai_personalities_tables'>
+    <field fkey='cai_agent_distribution_profiles_tables.Agent Distribution Profile ID' name='Agent Distribution Profile IDRef' type='string' />
+    <field fkey='cai_agent_recruitment_profiles_tables.Agent Recruitment Profile ID' name='Agent Recruitment Profile IDRef' type='string' />
+    <field fkey='cai_personalities_budget_policies_tables.Budget Policy' name='Budget PolicyRef' type='string' />
+    <field name='unknown' type='string' />
+    <field fkey='cai_personalities_construction_preference_policies_tables.Construction Preference Policy ID' name='Construction Preference Policy IDRef' type='string' />
     <field name='Personality ID' type='string' />
-    <field name='unknown' type='string' />
-    <field name='unknown' type='string' />
-    <field name='unknown' type='string' />
-    <field name='unknown' type='string' />
-    <field name='unknown' type='string' />
-    <field name='unknown' type='string' />
-    <field name='unknown' type='string' />
-    <field name='unknown' type='string' />
-    <field name='unknown' type='string' />
+    <field fkey='cai_military_aggressiveness_policies_tables.Military Aggressiveness ID' name='Military Aggressiveness IDRef' type='string' />
+    <field fkey='cai_military_behaviour_policies_tables.Military Behavior Policy ID' name='Military Behavior Policy IDRef' type='string' />
+    <field fkey='cai_personalities_reliability_policies_tables.Reliability Policy ID' name='Reliability Policy IDRef' type='string' />
+    <field fkey='cai_personalities_religious_conversion_policies_tables.Conversion Policy' name='Conversion PolicyRef' type='string' />
     <field name='unknown' type='string' />
     <field name='unknown' type='boolean' />
     <field name='unknown' type='string' version_start='2' />
   </table>
   <table name='cai_personalities_budget_allocation_policy_junctions_tables'>
-    <field name='unknown' type='string' pk='true' />
-    <field name='unknown' type='string' pk='true' />
-    <field name='unknown' type='string' />
+    <field name='Budget Personality ID' type='string' pk='true' />
+    <field fkey='cai_personalities_budget_context_types_tables.Budget Allocation Policy ID' name='Budget Allocation Policy IDRef' type='string' pk='true' />
+    <field fkey='cai_personalities_budget_policies_tables.Budget Policy' name='Budget PolicyRef' type='string' />
     <field name='unknown4' type='int' />
   </table>
   <table name='cai_personalities_budget_allocations_tables'>
@@ -1013,44 +1013,44 @@
     <field name='unknown' type='int' />
   </table>
   <table name='cai_personalities_budget_context_types_tables'>
-    <field name='unknown' type='string' pk='true' />
+    <field name='Budget Allocation Policy ID' type='string' pk='true' />
   </table>
   <table name='cai_personalities_budget_policies_tables'>
-    <field name='unknown' type='string' pk='true' />
-    <field name='unknown' type='string' />
+    <field name='Budget Personality ID' type='string' pk='true' />
+    <field name='Budget Policy' type='string' />
   </table>
   <table name='cai_personalities_building_synergies_tables'>
     <field name='unknown' type='string' />
-    <field name='' type='optstring' />
-    <field name='' type='optstring' />
+    <field fkey='building_levels_tables.Building ID' name='Building 1 IDRef' type='optstring' />
+    <field fkey='building_levels_tables.Building ID' name='Building 2 IDRef' type='optstring' />
     <field name='unknown' type='string' />
-    <field name='unknown' type='optstring' />
-    <field name='unknown' type='optstring' />
-    <field name='unknown' type='string' />
-    <field name='unknown' type='string' />
+    <field fkey='building_levels_tables.Building ID' name='Building 3 IDRef' type='optstring' />
+    <field fkey='building_levels_tables.Building ID' name='Building 4 IDRef' type='optstring' />
+    <field fkey='cai_personalities_building_synergy_levels_tables.Synergy Level ID' name='Synergy Level IDRef' type='string' />
+    <field fkey='cai_personalities_building_synergy_policies_tables.Synergy Policy ID' name='Synergy Policy IDRef' type='string' />
   </table>
   <table name='cai_personalities_building_synergy_levels_tables'>
     <field name='unknown' type='int' />
-    <field name='unknown' type='string' />
+    <field name='Synergy Level ID' type='string' />
     <field name='unknown' type='int' />
     <field name='unknown' type='float' />
   </table>
   <table name='cai_personalities_building_synergy_policies_tables'>
-    <field name='unknown' type='string' />
+    <field name='Synergy Policy ID' type='string' />
   </table>
   <table name='cai_personalities_construction_preference_policies_tables'>
-    <field name='unknown' type='string' pk='true' />
+    <field name='Construction Preference Policy ID' type='string' pk='true' />
   </table>
   <table name='cai_personalities_construction_preference_policy_building_junctions_tables'>
     <field name='unknown' type='string' />
     <field name='unknown' type='string' />
-    <field name='unknown' type='string' />
-    <field name='unknown' type='string' />
+    <field name='Building ID' type='string' />
+    <field name='Construction Preference Policy ID' type='string' />
     <field name='unknown' type='float' />
     <field name='unknown' type='int' version_start='2' />
   </table>
   <table name='cai_personalities_faction_junctions_tables'>
-    <field name='unknown' type='string' />
+    <field fkey='cdir_campaign_junctions_tables.Campaign' name='CampaignRef' type='string' />
     <field name='unknown' type='string' />
     <field name='Faction ID' type='string' />
     <field fkey='cai_personalities_random_groups_tables.ID' name='Random Group IDRef' type='string' />
@@ -1058,7 +1058,7 @@
   </table>
   <table name='cai_personalities_random_group_junctions_tables'>
     <field name='Personality ID' type='string' />
-    <field name='Random Group ID' type='string' />
+    <field fkey='cai_personalities_random_groups_tables.ID' name='IDRef' type='string' />
   </table>
   <table name='cai_personalities_random_groups_tables'>
     <field name='ID' type='string' pk='true' />
@@ -1067,10 +1067,10 @@
     <field name='PRPolicy ID' type='string' />
   </table>
   <table name='cai_personalities_reliability_policies_tables'>
-    <field name='unknown' type='string' pk='true' />
+    <field name='Reliability Policy ID' type='string' pk='true' />
   </table>
   <table name='cai_personalities_religious_conversion_policies_tables'>
-    <field name='unknown' type='string' pk='true' />
+    <field name='Conversion Policy' type='string' pk='true' />
   </table>
   <table name='campaign_ai_character_skill_tree_distribution_junctions_tables'>
     <field name='unknown' type='string' pk='true' />
@@ -1891,10 +1891,10 @@
     <field name='Rebels' type='boolean' />
     <field name='Early_Availability' type='boolean' />
     <field name='Late_Availability' type='boolean' />
-    <field name='Icon' type='string' />
-    <field name='Flag1' type='string' />
+    <field name='unknown' type='string' />
+    <field name='Faction Icons' type='string' />
     <field name='Flag2' type='optstring' />
-    <field name='Flag3' type='optstring' />
+    <field name='unknown' type='optstring' />
     <field name='R1' type='float' />
     <field name='G1' type='float' />
     <field name='B1' type='float' />
@@ -2701,13 +2701,13 @@
   </table>
   <table name='naval_uniforms_tables'>
     <field name='unknown1' type='optstring' />
-    <field name='unknown2' type='string' />
+    <field name='unit_variant set' type='string' />
     <field name='unknown3' type='boolean' />
     <field name='unknown4' type='boolean' />
     <field name='unknown5' type='optstring' />
     <field name='unknown6' type='boolean' />
-    <field name='unknown7' type='string' />
-    <field name='unknown8' type='string' />
+    <field name='Uniform ID' type='string' />
+    <field name='Unit ID' type='string' />
     <field name='unknown9' type='optstring' />
   </table>
   <table name='particle_effects_tables'>
@@ -3232,26 +3232,26 @@
   <table name='uniform_to_faction_colours_tables'>
     <field name='Uniform IDRef' type='string' pk='true' />
     <field name='unknown2' type='string' version_end='1' />
-    <field name='unknown5' type='boolean' version_start='2' />
-    <field name='unknown3' type='int' />
-    <field name='unknown4' type='int' />
-    <field name='unknown5' type='int' />
-    <field name='unknown6' type='int' />
-    <field name='unknown7' type='int' />
-    <field name='unknown8' type='int' />
-    <field name='unknown9' type='int' />
-    <field name='unknown10' type='int' />
-    <field name='unknown11' type='int' />
-    <field name='unknown12' type='string' version_start='2' />
+    <field name='unknown' type='boolean' version_start='2' />
+    <field name='R1' type='int' />
+    <field name='G1' type='int' />
+    <field name='B1' type='int' />
+    <field name='R2' type='int' />
+    <field name='G2' type='int' />
+    <field name='B2' type='int' />
+    <field name='R3' type='int' />
+    <field name='G3' type='int' />
+    <field name='B3' type='int' />
+    <field name='Apply to which part of the unit?' type='string' version_start='2' />
   </table>
   <table name='uniforms_tables'>
-    <field name='Uniforms IDRef' type='string' pk='true' />
-    <field name='Faction' type='optstring' version_start='3' />
+    <field name='Uniforms ID' type='string' pk='true' />
+    <field name='Faction ID' type='optstring' version_start='3' />
     <field name='Uniform Variant' type='string' version_end='1' />
-    <field name='Unit IDRef' type='string' />
-    <field name='Unknown' type='string' />
-    <field name='Unknown' type='optstring' version_start='3' />
-    <field name='Unknown' type='optstring' version_start='3' />
+    <field name='Soldier unit_variant' type='string' />
+    <field name='Unit ID' type='string' />
+    <field name='Officer unit_variant' type='optstring' version_start='3' />
+    <field name='Standard Bearer unit_variant' type='optstring' version_start='3' />
     <field name='Unknown' type='optstring' version_start='3' />
     <field name='unknown8' type='optstring' version_start='3' />
   </table>
@@ -3436,7 +3436,7 @@
     <field name='UNKNOWN_BOS' type='optstring' version_start='13' />
     <field name='UNKNOWN_BOS' type='optstring' version_start='13' />
     <field name='Unkown' type='boolean' version_start='13' />
-    <field name='Unkown' type='boolean' version_start='13' />
+    <field name='Deployable outside standard deployment area?' type='boolean' version_start='13' />
     <field name='unknown105' type='string' version_start='13' />
     <field name='unknown106' type='string' version_start='13' />
     <field name='unknown107' type='string' version_start='13' />
@@ -3702,7 +3702,7 @@
     <field name='unknown26' type='boolean' version_start='4' />
     <field name='unknown27' type='string' version_start='9' />
     <field name='unknown28' type='optstring' version_start='9' />
-    <field name='unknown29' type='optstring' version_start='9' />
+    <field name='Religion ID' type='optstring' version_start='9' />
     <field name='unknown30' type='optstring' version_start='9' />
     <field name='unknown31' type='boolean' version_start='9' />
     <field name='unknown32' type='optstring' version_start='9' />
