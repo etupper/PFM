@@ -61,7 +61,6 @@ namespace PackFileManager
         private SplitContainer splitContainer1;
         private StatusStrip statusStrip;
         private TextFileEditorControl textFileEditorControl;
-        private ToolStripSeparator toolStripSeparator;
         private ToolStripSeparator toolStripSeparator2;
         private ToolStripSeparator toolStripSeparator3;
         private ToolStripSeparator toolStripSeparator5;
@@ -127,14 +126,13 @@ namespace PackFileManager
         private ToolStripMenuItem toolStripMenuItem14;
         private ToolStripMenuItem showDecodeToolOnErrorToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem extractAllTsv;
         private ToolStripMenuItem modsToolStripMenuItem;
         private ToolStripMenuItem newModMenuItem;
         private ToolStripSeparator toolStripSeparator11;
         private ToolStripMenuItem editModMenuItem;
         private ToolStripMenuItem deleteCurrentToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator12;
-        private ToolStripMenuItem extractAllTsv;
-        private ModMenuItem noneToolStripMenuItem;
         private UnitVariantFileEditorControl unitVariantFileEditorControl;
         #endregion
 
@@ -171,7 +169,18 @@ namespace PackFileManager
             }
             dbFileEditorControl = control;
 
+            modsToolStripMenuItem.DropDownItems.Add(new ModMenuItem("None", ""));
             ModManager.Instance.ModNames.ForEach(name => modsToolStripMenuItem.DropDownItems.Add(new ModMenuItem(name, name)));
+            ModManager.Instance.CurrentModChanged += delegate(string newMod) { OpenCurrentModPack(); };
+            OpenCurrentModPack();
+        }
+        private void OpenCurrentModPack() {
+            try {
+                string modPath = Path.Combine(ModManager.Instance.CurrentModDirectory, Settings.Default.CurrentMod + ".pack");
+                if (Settings.Default.CurrentMod != "" && File.Exists(modPath)) {
+                    OpenExistingPackFile(modPath);
+                }
+            } catch { }
         }
 
         public override sealed string Text
@@ -224,6 +233,19 @@ namespace PackFileManager
             }
         }
 
+        // removes the part of the given path up to the current mod directory
+        string GetPathRelativeToMod(string file) {
+            string addBase = "" + Path.DirectorySeparatorChar;
+            string modDir = ModManager.Instance.CurrentModDirectory;
+            if (!string.IsNullOrEmpty(modDir) && file.StartsWith(modDir)) {
+                Uri baseUri = new Uri(ModManager.Instance.CurrentModDirectory);
+                Uri createPath = baseUri.MakeRelativeUri(new Uri(file));
+                addBase = createPath.ToString().Replace('/', Path.DirectorySeparatorChar);
+                addBase = addBase.Remove(0, addBase.IndexOf(Path.DirectorySeparatorChar) + 1);
+            }
+            return addBase;
+        }
+
         private void addFileToolStripMenuItem_Click(object sender, EventArgs e) {
             if (AddTo == null) {
                 return;
@@ -237,14 +259,7 @@ namespace PackFileManager
                 // if (Path.GetDirectoryName(addReplaceOpenFileDialog.FileName).StartsWith(
                 try {
                     foreach (string file in addReplaceOpenFileDialog.FileNames) {
-                        string addBase = "" + Path.DirectorySeparatorChar;
-                        string modDir = ModManager.Instance.CurrentModDirectory;
-                        if (!string.IsNullOrEmpty(modDir) && file.StartsWith(modDir)) {
-                            Uri baseUri = new Uri(ModManager.Instance.CurrentModDirectory);
-                            Uri createPath = baseUri.MakeRelativeUri(new Uri(file));
-                            addBase = createPath.ToString().Replace('/', Path.DirectorySeparatorChar);
-                            addBase = addBase.Remove(0, addBase.IndexOf(Path.DirectorySeparatorChar)+1);
-                        }
+                        string addBase = GetPathRelativeToMod(file);
                         AddTo.Add(addBase, new PackedFile(file));
                     }
                 } catch (Exception x) {
@@ -255,6 +270,9 @@ namespace PackFileManager
 
         private void deleteFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (packTreeView.SelectedNode == null) {
+                return;
+            }
             var packedFiles = new List<PackedFile>();
             if ((packTreeView.SelectedNode == packTreeView.Nodes[0]) || (packTreeView.SelectedNode.Nodes.Count > 0))
             {
@@ -277,7 +295,17 @@ namespace PackFileManager
             };
             if (AddTo != null && addDirectoryFolderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 try {
-                    AddTo.Add(addDirectoryFolderBrowserDialog.SelectedPath);
+                    string basePath = addDirectoryFolderBrowserDialog.SelectedPath;
+                    VirtualDirectory addToBase = AddTo;
+                    if (Settings.Default.CurrentMod != "" && basePath.StartsWith(ModManager.Instance.CurrentModDirectory)) {
+                        string relativePath = GetPathRelativeToMod(basePath);
+                        addToBase = CurrentPackFile.Root;
+                        foreach (string pathElement in relativePath.Split(Path.DirectorySeparatorChar)) {
+                            addToBase = addToBase.getSubdirectory(pathElement);
+                        }
+                        addToBase = addToBase.Parent as VirtualDirectory;
+                    }
+                    addToBase.Add(addDirectoryFolderBrowserDialog.SelectedPath);
                 } catch (Exception x) {
                     MessageBox.Show(string.Format("Failed to add {0}: {1}", addDirectoryFolderBrowserDialog.SelectedPath, x.Message), "Failed to add directory");
                 }
@@ -307,7 +335,7 @@ namespace PackFileManager
         }
         
         private void emptyDirectoryToolStripMenuItem_Click(object sender, EventArgs e) {
-            VirtualDirectory dir = packTreeView.SelectedNode.Tag as VirtualDirectory;
+            VirtualDirectory dir = packTreeView.SelectedNode != null ? packTreeView.SelectedNode.Tag as VirtualDirectory : CurrentPackFile.Root;
             if (dir != null) {
                 try {
                     VirtualDirectory newDir = new VirtualDirectory() { Name = "empty" };
@@ -395,13 +423,6 @@ namespace PackFileManager
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.modsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
-            this.editModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -418,6 +439,12 @@ namespace PackFileManager
             this.exportFileListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
+            this.editModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.filesMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.replaceFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -464,7 +491,6 @@ namespace PackFileManager
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.packStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.packActionProgressBar = new System.Windows.Forms.ToolStripProgressBar();
-            this.noneToolStripMenuItem = new ModMenuItem("None", "");
             this.packActionMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -682,6 +708,7 @@ namespace PackFileManager
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.modsToolStripMenuItem,
             this.filesMenu,
             this.editToolStripMenuItem,
             this.updateToolStripMenuItem,
@@ -699,8 +726,6 @@ namespace PackFileManager
             this.newToolStripMenuItem,
             this.openToolStripMenuItem,
             this.toolStripSeparator1,
-            this.modsToolStripMenuItem,
-            this.toolStripSeparator,
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
             this.toolStripSeparator2,
@@ -735,55 +760,6 @@ namespace PackFileManager
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(169, 6);
-            // 
-            // modsToolStripMenuItem
-            // 
-            this.modsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newModMenuItem,
-            this.toolStripSeparator11,
-            this.editModMenuItem,
-            this.deleteCurrentToolStripMenuItem,
-            this.toolStripSeparator12,
-            this.noneToolStripMenuItem});
-            this.modsToolStripMenuItem.Name = "modsToolStripMenuItem";
-            this.modsToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.modsToolStripMenuItem.Text = "Mods";
-            // 
-            // newModMenuItem
-            // 
-            this.newModMenuItem.Name = "newModMenuItem";
-            this.newModMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.newModMenuItem.Text = "New";
-            this.newModMenuItem.Click += new System.EventHandler(this.newModMenuItem_Click);
-            // 
-            // toolStripSeparator11
-            // 
-            this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(149, 6);
-            // 
-            // editModMenuItem
-            // 
-            this.editModMenuItem.Name = "editModMenuItem";
-            this.editModMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.editModMenuItem.Text = "Edit Current";
-            this.editModMenuItem.Visible = false;
-            // 
-            // deleteCurrentToolStripMenuItem
-            // 
-            this.deleteCurrentToolStripMenuItem.Name = "deleteCurrentToolStripMenuItem";
-            this.deleteCurrentToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.deleteCurrentToolStripMenuItem.Text = "Delete Current";
-            this.deleteCurrentToolStripMenuItem.Click += new System.EventHandler(this.deleteCurrentToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator12
-            // 
-            this.toolStripSeparator12.Name = "toolStripSeparator12";
-            this.toolStripSeparator12.Size = new System.Drawing.Size(149, 6);
-            // 
-            // toolStripSeparator
-            // 
-            this.toolStripSeparator.Name = "toolStripSeparator";
-            this.toolStripSeparator.Size = new System.Drawing.Size(169, 6);
             // 
             // saveToolStripMenuItem
             // 
@@ -911,6 +887,49 @@ namespace PackFileManager
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
+            // modsToolStripMenuItem
+            // 
+            this.modsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newModMenuItem,
+            this.toolStripSeparator11,
+            this.editModMenuItem,
+            this.deleteCurrentToolStripMenuItem,
+            this.toolStripSeparator12});
+            this.modsToolStripMenuItem.Name = "modsToolStripMenuItem";
+            this.modsToolStripMenuItem.Size = new System.Drawing.Size(69, 20);
+            this.modsToolStripMenuItem.Text = "My Mods";
+            // 
+            // newModMenuItem
+            // 
+            this.newModMenuItem.Name = "newModMenuItem";
+            this.newModMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newModMenuItem.Text = "New";
+            this.newModMenuItem.Click += new System.EventHandler(this.newModMenuItem_Click);
+            // 
+            // toolStripSeparator11
+            // 
+            this.toolStripSeparator11.Name = "toolStripSeparator11";
+            this.toolStripSeparator11.Size = new System.Drawing.Size(149, 6);
+            // 
+            // editModMenuItem
+            // 
+            this.editModMenuItem.Name = "editModMenuItem";
+            this.editModMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.editModMenuItem.Text = "Edit Current";
+            this.editModMenuItem.Visible = false;
+            // 
+            // deleteCurrentToolStripMenuItem
+            // 
+            this.deleteCurrentToolStripMenuItem.Name = "deleteCurrentToolStripMenuItem";
+            this.deleteCurrentToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.deleteCurrentToolStripMenuItem.Text = "Delete Current";
+            this.deleteCurrentToolStripMenuItem.Click += new System.EventHandler(this.deleteCurrentToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator12
+            // 
+            this.toolStripSeparator12.Name = "toolStripSeparator12";
+            this.toolStripSeparator12.Size = new System.Drawing.Size(149, 6);
             // 
             // filesMenu
             // 
@@ -1280,12 +1299,6 @@ namespace PackFileManager
             // 
             this.packActionProgressBar.Name = "packActionProgressBar";
             this.packActionProgressBar.Size = new System.Drawing.Size(120, 16);
-            // 
-            // noneToolStripMenuItem
-            // 
-            this.noneToolStripMenuItem.Name = "noneToolStripMenuItem";
-            this.noneToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.noneToolStripMenuItem.Text = "None";
             // 
             // PackFileManagerForm
             // 
@@ -2222,6 +2235,7 @@ namespace PackFileManager
                     OpenExistingPackFile(packFileName);
                 } else {
                     NewMod(Path.Combine(ModManager.Instance.CurrentModDirectory, packFileName));
+                    OpenExistingPackFile(Path.Combine(ModManager.Instance.CurrentModDirectory, packFileName));
                 }
             }
         }

@@ -38,6 +38,7 @@ namespace PackFileManager {
         private CheckBox showAllColumns;
         private bool TableColumnChanged;
         private List<List<FieldInstance>> copiedRows = new List<List<FieldInstance>>();
+        private ToolStripButton cloneRowsButton;
         private COPIED_TYPE lastCopy = COPIED_TYPE.NONE;
         #endregion
 
@@ -54,6 +55,8 @@ namespace PackFileManager {
                 // TODO: Should not need to swallow an exception.
             }
             dataGridView.KeyUp += copyPaste;
+            dataGridView.SelectionChanged += new EventHandler(delegate(object sender, EventArgs args) 
+                { cloneRowsButton.Enabled = dataGridView.SelectedRows.Count > 0; });
         }
 
         private void copyPaste(object sender, KeyEventArgs arge) 
@@ -145,58 +148,42 @@ namespace PackFileManager {
 
         private void copyEvent() 
         {
-            if (EditedFile == null)
+            if (EditedFile == null || dataGridView.SelectedCells.Count == 0) {
                 return;
-
-            copiedRows = new List<List<FieldInstance>>();
-            if (dataGridView.SelectedRows.Count != 0) 
-            {
-                DataGridViewSelectedRowCollection selected = dataGridView.SelectedRows;
-                foreach (DataGridViewRow row in selected) 
-                {
-                    List<FieldInstance> toCopy = EditedFile.Entries[row.Index];
-                    var copy = new List<FieldInstance>(toCopy.Count);
-                    toCopy.ForEach(field => copy.Add(new FieldInstance(field.Info, field.Value)));
-                    copiedRows.Add(copy);
-                    lastCopy = COPIED_TYPE.ROWS;
-                }
-            } 
-            else 
-            {
-                DataGridViewSelectedCellCollection cells = dataGridView.SelectedCells;
-                copiedRows = new List<List<FieldInstance>>();
-                int minColumn = dataGridView.ColumnCount;
-                int maxColumn = -1;
-                int minRow = dataGridView.RowCount;
-                int maxRow = -1;
-
-                foreach (DataGridViewCell cell in cells) 
-                {
-                    minColumn = Math.Min(minColumn, cell.ColumnIndex);
-                    maxColumn = Math.Max(maxColumn, cell.ColumnIndex);
-                    minRow = Math.Min(minRow, cell.RowIndex);
-                    maxRow = Math.Max(maxRow, cell.RowIndex);
-                }
-
-                for (int j = minRow; j <= maxRow; j++) 
-                {
-                    var dataRowView = dataGridView.Rows[j].DataBoundItem as DataRowView;
-                    var copy = new List<FieldInstance>(maxColumn - minColumn);
-
-                    for (int i = minColumn; i <= maxColumn; i++) 
-                    {
-                        var info = (FieldInfo)dataGridView.Columns[i].Tag;
-                        if (dataRowView != null)
-                        {
-                            Console.WriteLine("{1}: {0}", dataRowView[i], info.TypeName);
-                            copy.Add(new FieldInstance(info, dataRowView[i].ToString()));
-                        }
-                    }
-                    copiedRows.Add(copy);
-                }
-                lastCopy = COPIED_TYPE.CELLS;
             }
-            pasteToolStripButton.Enabled = copiedRows.Count != 0;
+
+            string encoded = "";
+            // copiedRows = new List<List<FieldInstance>>();
+            DataGridViewSelectedCellCollection cells = dataGridView.SelectedCells;
+            copiedRows = new List<List<FieldInstance>>();
+            int minColumn = dataGridView.ColumnCount;
+            int maxColumn = -1;
+            int minRow = dataGridView.RowCount;
+            int maxRow = -1;
+
+            foreach (DataGridViewCell cell in cells) 
+            {
+                minColumn = Math.Min(minColumn, cell.ColumnIndex);
+                maxColumn = Math.Max(maxColumn, cell.ColumnIndex);
+                minRow = Math.Min(minRow, cell.RowIndex);
+                maxRow = Math.Max(maxRow, cell.RowIndex);
+            }
+
+            for (int j = minRow; j <= maxRow; j++) 
+            {
+                var dataRowView = dataGridView.Rows[j].DataBoundItem as DataRowView;
+                // var copy = new List<FieldInstance>(maxColumn - minColumn);
+
+                string line = "";
+                for (int i = minColumn; i <= maxColumn; i++) 
+                {
+                    line += dataRowView[i].ToString() + "\t";
+                }
+                encoded += line + "\n";
+            }
+            // lastCopy = COPIED_TYPE.CELLS;
+            Clipboard.SetText(encoded);
+            pasteToolStripButton.Enabled = encoded.Length > 2;
         }
 
         private void copyToolStripButton_Click(object sender, EventArgs e) 
@@ -334,6 +321,7 @@ namespace PackFileManager {
             this.showAllColumns = new System.Windows.Forms.CheckBox();
             this.useComboBoxCells = new System.Windows.Forms.CheckBox();
             this.dataGridView = new PackFileManager.DataGridViewExtended();
+            this.cloneRowsButton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
@@ -342,6 +330,7 @@ namespace PackFileManager {
             // 
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addNewRowButton,
+            this.cloneRowsButton,
             this.copyToolStripButton,
             this.pasteToolStripButton,
             this.toolStripSeparator1,
@@ -368,7 +357,7 @@ namespace PackFileManager {
             // copyToolStripButton
             // 
             this.copyToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.copyToolStripButton.Enabled = false;
+            this.copyToolStripButton.Enabled = true;
             this.copyToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.copyToolStripButton.Name = "copyToolStripButton";
             this.copyToolStripButton.Size = new System.Drawing.Size(39, 22);
@@ -485,6 +474,17 @@ namespace PackFileManager {
             this.dataGridView.Size = new System.Drawing.Size(876, 641);
             this.dataGridView.TabIndex = 1;
             this.dataGridView.VirtualMode = true;
+            // 
+            // cloneRowsButton
+            // 
+            this.cloneRowsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.cloneRowsButton.Enabled = false;
+            this.cloneRowsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.cloneRowsButton.Name = "cloneRowsButton";
+            this.cloneRowsButton.Size = new System.Drawing.Size(81, 22);
+            this.cloneRowsButton.Text = "Clone Row(s)";
+            this.cloneRowsButton.ToolTipText = "Add New Row";
+            this.cloneRowsButton.Click += new System.EventHandler(this.cloneRowsButton_Click);
             // 
             // DBFileEditorControl
             // 
@@ -630,41 +630,22 @@ namespace PackFileManager {
 
         private void pasteEvent() 
         {
-            List<List<FieldInstance>> rows = copiedRows;
-            int insertAtRow = dataGridView.CurrentCell.RowIndex;
-            
-            if (lastCopy == COPIED_TYPE.ROWS) 
-            {
-                insertAtRow++;
-                foreach (List<FieldInstance> copied in rows)
-                    createRow(copied, insertAtRow);
-            } 
-            else if (lastCopy == COPIED_TYPE.CELLS) 
-            {
-                int insertAtColumn = dataGridView.CurrentCell.ColumnIndex;
-                for (int j = 0; j < copiedRows.Count; j++) 
-                {
-                    int row = insertAtRow + j;
-                    DataRow dataRow = currentDataTable.Rows[row];
-                    for (int i = 0; i < copiedRows[j].Count; i++) 
-                    {
-                        int col = insertAtColumn + i;
-                        string val = copiedRows[j][i].Value;
-                        
-                        try 
-                        {
-                            if (copiedRows[j][i] != null)
-                                dataRow[col] = val;
-                        } 
-                        catch (Exception e) 
-                        {
-                            MessageBox.Show(string.Format("Could not set {0}/{1} to '{2}': {3}", col, row, val, e));
-                        }
-                    }
-                }
-                CurrentPackedFile.Data = Codec.Encode(EditedFile);
-                dataGridView.Refresh();
+            string encoded = Clipboard.GetText();
+            string[] lines = encoded.Split(new char[] {'\n'}, StringSplitOptions.RemoveEmptyEntries);
+            string[][] values = new string[lines.Length][];
+            for (int i = 0; i < lines.Length; i++) {
+                string[] line = lines[i].Split(new char[]{ '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                values[i] = line;
             }
+            DataGridViewSelectedCellCollection selectedCells = dataGridView.SelectedCells;
+            foreach (DataGridViewCell cell in selectedCells) {
+                int rowIndex = cell.RowIndex % values.Length;
+                int columnIndex = cell.ColumnIndex % values[rowIndex].Length;
+                cell.Value = values[rowIndex][columnIndex];
+            }
+
+            CurrentPackedFile.Data = Codec.Encode(EditedFile);
+            dataGridView.Refresh();
         }
 
         private void pasteToolStripButton_Click(object sender, EventArgs e) 
@@ -887,6 +868,20 @@ namespace PackFileManager {
                 } catch (Exception ex) {
                     MessageBox.Show(string.Format("Could not apply values: {0}", ex.Message), "You fail!");
                 }
+            }
+        }
+
+        private void cloneRowsButton_Click(object sender, EventArgs e) {
+            DataGridViewSelectedRowCollection selectedRows = dataGridView.SelectedRows;
+            if (selectedRows.Count != 0) {
+                foreach (DataGridViewRow row in selectedRows) {
+                    List<FieldInstance> toCopy = EditedFile.Entries[row.Index];
+                    var copy = new List<FieldInstance>(toCopy.Count);
+                    toCopy.ForEach(field => copy.Add(new FieldInstance(field.Info, field.Value)));
+                    createRow(copy, row.Index);
+                }
+            } else {
+                MessageBox.Show("Please select the Row(s) to Clone!", "Please select Rows", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
     }
