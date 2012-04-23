@@ -94,6 +94,12 @@
     <Compile Include="Editors\DBFileEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Editors\GroupformationEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editors\GroupformationEditorControl.Designer.cs">
+      <DependentUpon>GroupformationEditorControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Editors\LocFileEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -130,6 +136,9 @@
     <Compile Include="Program.cs" />
     <EmbeddedResource Include="Editors\DBFileEditorControl.resx">
       <DependentUpon>DBFileEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editors\GroupformationEditorControl.resx">
+      <DependentUpon>GroupformationEditorControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editors\LocFileEditorControl.resx">
       <DependentUpon>LocFileEditorControl.cs</DependentUpon>
