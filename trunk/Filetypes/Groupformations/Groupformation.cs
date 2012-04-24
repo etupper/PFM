@@ -18,6 +18,8 @@ namespace Filetypes {
                     formation.Purpose = (Purpose) reader.ReadUInt32();
                     formation.Minima = ReadList<Minimum>(reader, ReadMinimum);
                     formation.Factions = ReadList<string>(reader, IOFunctions.readCAString);
+                    formation.Unknown1 = reader.ReadInt32();
+                    formation.Unknown2 = reader.ReadInt32();
                     formation.Lines = ReadLines(reader);
                 }
             }
@@ -73,7 +75,7 @@ namespace Filetypes {
             writer.Write(minimum.Percent);
         }
         #endregion
-  
+
         #region Read/Write Priority-Class Pairs
         PriorityClassPair ReadPriorityClassPair(BinaryReader reader) {
             PriorityClassPair pair = new PriorityClassPair { Priority = reader.ReadSingle() };
@@ -85,7 +87,7 @@ namespace Filetypes {
             writer.Write(pair.UnitClass.ClassIndex);
         }
         #endregion
-        
+
         #region Read/Write Lines
         List<Line> ReadLines(BinaryReader reader) {
             int lineCount = reader.ReadInt32();
@@ -156,7 +158,7 @@ namespace Filetypes {
         }
         #endregion
     }
-    
+
     public class GroupformationFile {
         public List<Groupformation> Formations {
             get; set;
@@ -169,6 +171,8 @@ namespace Filetypes {
         public Purpose Purpose { get; set; }
         public List<Minimum> Minima { get; set; }
         public List<string> Factions { get; set; }
+        public int Unknown1 { get; set; }
+        public int Unknown2 { get; set; }
         public List<Line> Lines { get; set; }
     }
 
