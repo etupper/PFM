@@ -9,12 +9,13 @@ namespace PackFileTest {
         // just to keep track of what's available in testAll:
 		// -db: test db files; -t: tsv test for db files
 		// -uv: unit variant files
-        private static string[] OPTIONS = { "-t", "-db", "uv" };
+        private static string[] OPTIONS = { "-t", "-db", "uv", "gf" };
 #pragma warning restore 414
 
 		bool testDbFiles = false;
 		bool testTsvExport = false;
 		bool testUnitVariants = false;
+        bool testGroupformations = false;
 
 		private static string OPTIONS_FILENAME = "testoptions.txt";
 
@@ -40,6 +41,11 @@ namespace PackFileTest {
 					} else if (dir.Equals ("-uv")) {
 						Console.WriteLine ("Unit Variant Test enabled");
 						testUnitVariants = true;
+                    } else if (dir.StartsWith("-gf")) {
+                        Console.WriteLine("Group formations test enabled");
+                        testGroupformations = true;
+                        GroupformationTest test = new GroupformationTest();
+                        test.testFile(dir.Split(" ".ToCharArray())[1].Trim());
 					} else {
 						ICollection<PackedFileTest> tests = testAllPacks (dir, testTsvExport);
 						Console.WriteLine ("Dir: {0}\nTests Run:{1}", dir, tests.Count);

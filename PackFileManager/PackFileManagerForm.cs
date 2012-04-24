@@ -1669,6 +1669,9 @@ namespace PackFileManager
                     esfEditor.Tag = packedFile;
                     splitContainer1.Panel2.Controls.Add(esfEditor);
                 }
+            } else if (packedFile.FullPath.Contains("groupformations.bin")) {
+                GroupformationEditor gfEditor = new GroupformationEditor(packedFile);
+                splitContainer1.Panel2.Controls.Add(gfEditor);
             } else if (packedFile.FullPath.StartsWith("db")) {
                 try {
                     dbFileEditorControl.Open(packedFile, currentPackFile);
