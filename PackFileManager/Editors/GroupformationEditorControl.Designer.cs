@@ -1,4 +1,4 @@
-﻿namespace PackFileManager.Editors {
+﻿namespace PackFileManager {
     partial class GroupformationEditorControl {
         /// <summary> 
         /// Erforderliche Designervariable.
@@ -123,6 +123,7 @@
             this.addFactionButton.TabIndex = 1;
             this.addFactionButton.Text = "Add";
             this.addFactionButton.UseVisualStyleBackColor = true;
+            this.addFactionButton.Click += new System.EventHandler(addFactionButton_Click);
             // 
             // factionList
             // 

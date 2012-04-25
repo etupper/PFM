@@ -20,6 +20,9 @@ namespace PackFileManager {
 
         public PackedFile CurrentPackedFile {
             set {
+                if (currentPacked != null && value.FullPath.Equals(currentPacked.FullPath)) {
+                    return;
+                }
                 if (value != null) {
                     byte[]data = value.Data;
                     using (MemoryStream stream = new MemoryStream(data, 0, data.Length)) {
