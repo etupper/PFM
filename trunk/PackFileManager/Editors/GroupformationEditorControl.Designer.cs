@@ -28,28 +28,29 @@
             this.deleteFactionButton = new System.Windows.Forms.Button();
             this.addFactionButton = new System.Windows.Forms.Button();
             this.factionList = new System.Windows.Forms.ListBox();
-            this.maxThresholdInput = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.minThresholdInput = new System.Windows.Forms.TextBox();
             this.purposeComboBox = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.priorityInput = new System.Windows.Forms.TextBox();
+            this.nameInput = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.lineGroup = new System.Windows.Forms.GroupBox();
             this.relativeToInput = new System.Windows.Forms.TextBox();
+            this.relativeToLabel = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.previewButton = new System.Windows.Forms.Button();
             this.editUnitPriorityButton = new System.Windows.Forms.Button();
             this.deleteUnitPriorityButton = new System.Windows.Forms.Button();
             this.addUnitPriorityButton = new System.Windows.Forms.Button();
             this.unitPriorityList = new System.Windows.Forms.ListBox();
-            this.relativeToLabel = new System.Windows.Forms.Label();
+            this.maxThresholdInput = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.minThresholdInput = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.yInput = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.priorityInput = new System.Windows.Forms.TextBox();
-            this.nameInput = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.xInput = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.crescOffsetInput = new System.Windows.Forms.TextBox();
-            this.xInput = new System.Windows.Forms.TextBox();
-            this.lineGroup = new System.Windows.Forms.GroupBox();
             this.label8 = new System.Windows.Forms.Label();
             this.spacingInput = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -68,8 +69,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             this.lineGroup.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -106,6 +107,7 @@
             // 
             this.deleteFactionButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.deleteFactionButton.Enabled = false;
             this.deleteFactionButton.Location = new System.Drawing.Point(180, 50);
             this.deleteFactionButton.Name = "deleteFactionButton";
             this.deleteFactionButton.Size = new System.Drawing.Size(84, 23);
@@ -117,13 +119,14 @@
             // 
             this.addFactionButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.addFactionButton.Enabled = false;
             this.addFactionButton.Location = new System.Drawing.Point(180, 20);
             this.addFactionButton.Name = "addFactionButton";
             this.addFactionButton.Size = new System.Drawing.Size(84, 23);
             this.addFactionButton.TabIndex = 1;
             this.addFactionButton.Text = "Add";
             this.addFactionButton.UseVisualStyleBackColor = true;
-            this.addFactionButton.Click += new System.EventHandler(addFactionButton_Click);
+            this.addFactionButton.Click += new System.EventHandler(this.addFactionButton_Click);
             // 
             // factionList
             // 
@@ -134,29 +137,6 @@
             this.factionList.Name = "factionList";
             this.factionList.Size = new System.Drawing.Size(168, 69);
             this.factionList.TabIndex = 0;
-            // 
-            // maxThresholdInput
-            // 
-            this.maxThresholdInput.Location = new System.Drawing.Point(377, 208);
-            this.maxThresholdInput.Name = "maxThresholdInput";
-            this.maxThresholdInput.Size = new System.Drawing.Size(100, 20);
-            this.maxThresholdInput.TabIndex = 23;
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(282, 211);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(77, 13);
-            this.label11.TabIndex = 22;
-            this.label11.Text = "Max Threshold";
-            // 
-            // minThresholdInput
-            // 
-            this.minThresholdInput.Location = new System.Drawing.Point(171, 208);
-            this.minThresholdInput.Name = "minThresholdInput";
-            this.minThresholdInput.Size = new System.Drawing.Size(100, 20);
-            this.minThresholdInput.TabIndex = 21;
             // 
             // purposeComboBox
             // 
@@ -177,97 +157,6 @@
             this.purposeComboBox.Name = "purposeComboBox";
             this.purposeComboBox.Size = new System.Drawing.Size(177, 21);
             this.purposeComboBox.TabIndex = 21;
-            // 
-            // relativeToInput
-            // 
-            this.relativeToInput.Location = new System.Drawing.Point(377, 48);
-            this.relativeToInput.Name = "relativeToInput";
-            this.relativeToInput.Size = new System.Drawing.Size(100, 20);
-            this.relativeToInput.TabIndex = 26;
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.editUnitPriorityButton);
-            this.groupBox2.Controls.Add(this.deleteUnitPriorityButton);
-            this.groupBox2.Controls.Add(this.addUnitPriorityButton);
-            this.groupBox2.Controls.Add(this.unitPriorityList);
-            this.groupBox2.Location = new System.Drawing.Point(90, 234);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(441, 160);
-            this.groupBox2.TabIndex = 24;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Unit Priorities";
-            // 
-            // editUnitPriorityButton
-            // 
-            this.editUnitPriorityButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.editUnitPriorityButton.Location = new System.Drawing.Point(357, 80);
-            this.editUnitPriorityButton.Name = "editUnitPriorityButton";
-            this.editUnitPriorityButton.Size = new System.Drawing.Size(78, 23);
-            this.editUnitPriorityButton.TabIndex = 3;
-            this.editUnitPriorityButton.Text = "Edit";
-            this.editUnitPriorityButton.UseVisualStyleBackColor = true;
-            // 
-            // deleteUnitPriorityButton
-            // 
-            this.deleteUnitPriorityButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.deleteUnitPriorityButton.Location = new System.Drawing.Point(357, 50);
-            this.deleteUnitPriorityButton.Name = "deleteUnitPriorityButton";
-            this.deleteUnitPriorityButton.Size = new System.Drawing.Size(78, 23);
-            this.deleteUnitPriorityButton.TabIndex = 2;
-            this.deleteUnitPriorityButton.Text = "Delete";
-            this.deleteUnitPriorityButton.UseVisualStyleBackColor = true;
-            // 
-            // addUnitPriorityButton
-            // 
-            this.addUnitPriorityButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.addUnitPriorityButton.Location = new System.Drawing.Point(357, 20);
-            this.addUnitPriorityButton.Name = "addUnitPriorityButton";
-            this.addUnitPriorityButton.Size = new System.Drawing.Size(78, 23);
-            this.addUnitPriorityButton.TabIndex = 1;
-            this.addUnitPriorityButton.Text = "Add";
-            this.addUnitPriorityButton.UseVisualStyleBackColor = true;
-            // 
-            // unitPriorityList
-            // 
-            this.unitPriorityList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.unitPriorityList.FormattingEnabled = true;
-            this.unitPriorityList.Location = new System.Drawing.Point(0, 19);
-            this.unitPriorityList.Name = "unitPriorityList";
-            this.unitPriorityList.Size = new System.Drawing.Size(351, 134);
-            this.unitPriorityList.TabIndex = 0;
-            // 
-            // relativeToLabel
-            // 
-            this.relativeToLabel.AutoSize = true;
-            this.relativeToLabel.Location = new System.Drawing.Point(282, 51);
-            this.relativeToLabel.Name = "relativeToLabel";
-            this.relativeToLabel.Size = new System.Drawing.Size(57, 13);
-            this.relativeToLabel.TabIndex = 25;
-            this.relativeToLabel.Text = "relative To";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(90, 211);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(74, 13);
-            this.label12.TabIndex = 20;
-            this.label12.Text = "Min Threshold";
-            // 
-            // yInput
-            // 
-            this.yInput.Location = new System.Drawing.Point(377, 173);
-            this.yInput.Name = "yInput";
-            this.yInput.Size = new System.Drawing.Size(100, 20);
-            this.yInput.TabIndex = 19;
             // 
             // label3
             // 
@@ -292,15 +181,6 @@
             this.nameInput.Size = new System.Drawing.Size(177, 20);
             this.nameInput.TabIndex = 17;
             // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(282, 176);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(14, 13);
-            this.label9.TabIndex = 18;
-            this.label9.Text = "Y";
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
@@ -309,29 +189,6 @@
             this.label2.Size = new System.Drawing.Size(41, 13);
             this.label2.TabIndex = 18;
             this.label2.Text = "Priority:";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(90, 176);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(14, 13);
-            this.label10.TabIndex = 16;
-            this.label10.Text = "X";
-            // 
-            // crescOffsetInput
-            // 
-            this.crescOffsetInput.Location = new System.Drawing.Point(377, 138);
-            this.crescOffsetInput.Name = "crescOffsetInput";
-            this.crescOffsetInput.Size = new System.Drawing.Size(100, 20);
-            this.crescOffsetInput.TabIndex = 15;
-            // 
-            // xInput
-            // 
-            this.xInput.Location = new System.Drawing.Point(171, 173);
-            this.xInput.Name = "xInput";
-            this.xInput.Size = new System.Drawing.Size(100, 20);
-            this.xInput.TabIndex = 17;
             // 
             // lineGroup
             // 
@@ -372,6 +229,166 @@
             this.lineGroup.TabStop = false;
             this.lineGroup.Text = "Lines";
             // 
+            // relativeToInput
+            // 
+            this.relativeToInput.Location = new System.Drawing.Point(377, 48);
+            this.relativeToInput.Name = "relativeToInput";
+            this.relativeToInput.Size = new System.Drawing.Size(100, 20);
+            this.relativeToInput.TabIndex = 26;
+            // 
+            // relativeToLabel
+            // 
+            this.relativeToLabel.AutoSize = true;
+            this.relativeToLabel.Location = new System.Drawing.Point(282, 51);
+            this.relativeToLabel.Name = "relativeToLabel";
+            this.relativeToLabel.Size = new System.Drawing.Size(57, 13);
+            this.relativeToLabel.TabIndex = 25;
+            this.relativeToLabel.Text = "relative To";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.previewButton);
+            this.groupBox2.Controls.Add(this.editUnitPriorityButton);
+            this.groupBox2.Controls.Add(this.deleteUnitPriorityButton);
+            this.groupBox2.Controls.Add(this.addUnitPriorityButton);
+            this.groupBox2.Controls.Add(this.unitPriorityList);
+            this.groupBox2.Location = new System.Drawing.Point(90, 234);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(441, 160);
+            this.groupBox2.TabIndex = 24;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Unit Priorities";
+            // 
+            // previewButton
+            // 
+            this.previewButton.Location = new System.Drawing.Point(358, 129);
+            this.previewButton.Name = "previewButton";
+            this.previewButton.Size = new System.Drawing.Size(75, 23);
+            this.previewButton.TabIndex = 4;
+            this.previewButton.Text = "Preview";
+            this.previewButton.UseVisualStyleBackColor = true;
+            this.previewButton.Click += new System.EventHandler(this.preview_Click);
+            // 
+            // editUnitPriorityButton
+            // 
+            this.editUnitPriorityButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.editUnitPriorityButton.Enabled = false;
+            this.editUnitPriorityButton.Location = new System.Drawing.Point(357, 80);
+            this.editUnitPriorityButton.Name = "editUnitPriorityButton";
+            this.editUnitPriorityButton.Size = new System.Drawing.Size(78, 23);
+            this.editUnitPriorityButton.TabIndex = 3;
+            this.editUnitPriorityButton.Text = "Edit";
+            this.editUnitPriorityButton.UseVisualStyleBackColor = true;
+            // 
+            // deleteUnitPriorityButton
+            // 
+            this.deleteUnitPriorityButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.deleteUnitPriorityButton.Enabled = false;
+            this.deleteUnitPriorityButton.Location = new System.Drawing.Point(357, 50);
+            this.deleteUnitPriorityButton.Name = "deleteUnitPriorityButton";
+            this.deleteUnitPriorityButton.Size = new System.Drawing.Size(78, 23);
+            this.deleteUnitPriorityButton.TabIndex = 2;
+            this.deleteUnitPriorityButton.Text = "Delete";
+            this.deleteUnitPriorityButton.UseVisualStyleBackColor = true;
+            // 
+            // addUnitPriorityButton
+            // 
+            this.addUnitPriorityButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.addUnitPriorityButton.Enabled = false;
+            this.addUnitPriorityButton.Location = new System.Drawing.Point(357, 20);
+            this.addUnitPriorityButton.Name = "addUnitPriorityButton";
+            this.addUnitPriorityButton.Size = new System.Drawing.Size(78, 23);
+            this.addUnitPriorityButton.TabIndex = 1;
+            this.addUnitPriorityButton.Text = "Add";
+            this.addUnitPriorityButton.UseVisualStyleBackColor = true;
+            // 
+            // unitPriorityList
+            // 
+            this.unitPriorityList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.unitPriorityList.FormattingEnabled = true;
+            this.unitPriorityList.Location = new System.Drawing.Point(0, 19);
+            this.unitPriorityList.Name = "unitPriorityList";
+            this.unitPriorityList.Size = new System.Drawing.Size(351, 134);
+            this.unitPriorityList.TabIndex = 0;
+            // 
+            // maxThresholdInput
+            // 
+            this.maxThresholdInput.Location = new System.Drawing.Point(377, 208);
+            this.maxThresholdInput.Name = "maxThresholdInput";
+            this.maxThresholdInput.Size = new System.Drawing.Size(100, 20);
+            this.maxThresholdInput.TabIndex = 23;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(282, 211);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(77, 13);
+            this.label11.TabIndex = 22;
+            this.label11.Text = "Max Threshold";
+            // 
+            // minThresholdInput
+            // 
+            this.minThresholdInput.Location = new System.Drawing.Point(171, 208);
+            this.minThresholdInput.Name = "minThresholdInput";
+            this.minThresholdInput.Size = new System.Drawing.Size(100, 20);
+            this.minThresholdInput.TabIndex = 21;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(90, 211);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(74, 13);
+            this.label12.TabIndex = 20;
+            this.label12.Text = "Min Threshold";
+            // 
+            // yInput
+            // 
+            this.yInput.Location = new System.Drawing.Point(377, 173);
+            this.yInput.Name = "yInput";
+            this.yInput.Size = new System.Drawing.Size(100, 20);
+            this.yInput.TabIndex = 19;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(282, 176);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(14, 13);
+            this.label9.TabIndex = 18;
+            this.label9.Text = "Y";
+            // 
+            // xInput
+            // 
+            this.xInput.Location = new System.Drawing.Point(171, 173);
+            this.xInput.Name = "xInput";
+            this.xInput.Size = new System.Drawing.Size(100, 20);
+            this.xInput.TabIndex = 17;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(90, 176);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(14, 13);
+            this.label10.TabIndex = 16;
+            this.label10.Text = "X";
+            // 
+            // crescOffsetInput
+            // 
+            this.crescOffsetInput.Location = new System.Drawing.Point(377, 138);
+            this.crescOffsetInput.Name = "crescOffsetInput";
+            this.crescOffsetInput.Size = new System.Drawing.Size(100, 20);
+            this.crescOffsetInput.TabIndex = 15;
+            // 
             // label8
             // 
             this.label8.AutoSize = true;
@@ -400,6 +417,7 @@
             // crescBackRadioButton
             // 
             this.crescBackRadioButton.AutoSize = true;
+            this.crescBackRadioButton.Enabled = false;
             this.crescBackRadioButton.Location = new System.Drawing.Point(285, 105);
             this.crescBackRadioButton.Name = "crescBackRadioButton";
             this.crescBackRadioButton.Size = new System.Drawing.Size(78, 17);
@@ -411,6 +429,7 @@
             // crescFrontRadioButton
             // 
             this.crescFrontRadioButton.AutoSize = true;
+            this.crescFrontRadioButton.Enabled = false;
             this.crescFrontRadioButton.Location = new System.Drawing.Point(285, 82);
             this.crescFrontRadioButton.Name = "crescFrontRadioButton";
             this.crescFrontRadioButton.Size = new System.Drawing.Size(75, 17);
@@ -422,6 +441,7 @@
             // columnRadioButton
             // 
             this.columnRadioButton.AutoSize = true;
+            this.columnRadioButton.Enabled = false;
             this.columnRadioButton.Location = new System.Drawing.Point(171, 105);
             this.columnRadioButton.Name = "columnRadioButton";
             this.columnRadioButton.Size = new System.Drawing.Size(59, 17);
@@ -433,6 +453,7 @@
             // lineRadioButton
             // 
             this.lineRadioButton.AutoSize = true;
+            this.lineRadioButton.Enabled = false;
             this.lineRadioButton.Location = new System.Drawing.Point(171, 82);
             this.lineRadioButton.Name = "lineRadioButton";
             this.lineRadioButton.Size = new System.Drawing.Size(41, 17);
@@ -469,6 +490,7 @@
             // spanningRadioButton
             // 
             this.spanningRadioButton.AutoSize = true;
+            this.spanningRadioButton.Enabled = false;
             this.spanningRadioButton.Location = new System.Drawing.Point(377, 20);
             this.spanningRadioButton.Name = "spanningRadioButton";
             this.spanningRadioButton.Size = new System.Drawing.Size(68, 17);
@@ -480,6 +502,7 @@
             // relativeRadioButton
             // 
             this.relativeRadioButton.AutoSize = true;
+            this.relativeRadioButton.Enabled = false;
             this.relativeRadioButton.Location = new System.Drawing.Point(285, 20);
             this.relativeRadioButton.Name = "relativeRadioButton";
             this.relativeRadioButton.Size = new System.Drawing.Size(59, 17);
@@ -491,6 +514,7 @@
             // absoluteButton
             // 
             this.absoluteButton.AutoSize = true;
+            this.absoluteButton.Enabled = false;
             this.absoluteButton.Location = new System.Drawing.Point(171, 20);
             this.absoluteButton.Name = "absoluteButton";
             this.absoluteButton.Size = new System.Drawing.Size(65, 17);
@@ -537,9 +561,9 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.groupBox1.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
             this.lineGroup.ResumeLayout(false);
             this.lineGroup.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -589,6 +613,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ListBox linesList;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button previewButton;
 
 
 

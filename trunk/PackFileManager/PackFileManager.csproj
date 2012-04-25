@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
   <PropertyGroup>
     <ProjectType>local</ProjectType>
@@ -97,6 +97,9 @@
     <Compile Include="Editors\DBFileEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Editors\FormationPreview.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Editors\GroupformationEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -170,7 +173,9 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
-    <Compile Include="Editors\GroupformationEditor.cs" />
+    <Compile Include="Editors\GroupformationEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
