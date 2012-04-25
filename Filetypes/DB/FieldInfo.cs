@@ -109,15 +109,15 @@ namespace Common
 			TypeName = "int";
 			length = 4;
 			DefaultValue = "0";
-			TypeCode = TypeCode.UInt32;
+			TypeCode = TypeCode.Int32;
 		}
 
 		public override string Decode(BinaryReader reader) {
-			return reader.ReadUInt32 ().ToString ();
+			return reader.ReadInt32 ().ToString ();
 		}
 		
 		public override void Encode(BinaryWriter writer, string val) {
-			writer.Write (uint.Parse (val));
+			writer.Write (int.Parse (val));
 		}
 	}
 
