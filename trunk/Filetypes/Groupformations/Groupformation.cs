@@ -9,18 +9,18 @@ namespace Filetypes {
         public GroupformationFile Decode(Stream stream) {
             List<Groupformation> formations;
             using (BinaryReader reader = new BinaryReader(stream)) {
-                Groupformation formation = new Groupformation();
                 uint formationCount = reader.ReadUInt32();
                 formations = new List<Groupformation>((int) formationCount);
                 for (int j = 0; j < formationCount; j++) {
+                    Groupformation formation = new Groupformation();
                     formation.Name = IOFunctions.readCAString(reader);
                     formation.Priority = reader.ReadSingle();
                     formation.Purpose = (Purpose) reader.ReadUInt32();
+                    // Console.WriteLine("reading formation {0}, purpose {1}", formation.Name, formation.Purpose);
                     formation.Minima = ReadList<Minimum>(reader, ReadMinimum);
                     formation.Factions = ReadList<string>(reader, IOFunctions.readCAString);
-                    formation.Unknown1 = reader.ReadInt32();
-                    formation.Unknown2 = reader.ReadInt32();
-                    formation.Lines = ReadLines(reader);
+                    formation.Lines = ReadList<Line>(reader, ReadLine);
+                    formations.Add(formation);
                 }
             }
             GroupformationFile formationFile = new GroupformationFile { Formations = formations };
@@ -93,10 +93,6 @@ namespace Filetypes {
             int lineCount = reader.ReadInt32();
             List<Line> result = new List<Line>(lineCount);
             for (int i = 0; i < lineCount; i++) {
-                if (i != 0) {
-                    // skip current line's index...
-                    reader.ReadInt32();
-                }
                 result.Add(ReadLine(reader));
             }
             return result;
@@ -110,7 +106,9 @@ namespace Filetypes {
 
         Line ReadLine(BinaryReader reader) {
             Line line;
+            int id = reader.ReadInt32();
             LineType lineType = (LineType) reader.ReadUInt32();
+            //Console.WriteLine("reading line type {0} at {1}", lineType, reader.BaseStream.Position);
             if (lineType == LineType.spanning) {
                 line = new SpanningLine {
                     Blocks = ReadList<uint>(reader, delegate(BinaryReader r) { return r.ReadUInt32(); })
@@ -133,6 +131,7 @@ namespace Filetypes {
             } else {
                 throw new InvalidDataException("unknown line type " + lineType);
             }
+            line.Id = id;
             return line;
         }
 
@@ -162,6 +161,9 @@ namespace Filetypes {
     public class GroupformationFile {
         public List<Groupformation> Formations {
             get; set;
+        }
+        public override string ToString() {
+            return string.Format("[GroupformationFile: {0} formations]", Formations.Count);
         }
     }
 
@@ -205,7 +207,7 @@ namespace Filetypes {
                     ClassIndex < nameReference.Length 
                     ? nameReference[ClassIndex] 
                     : "unknown";
-                return string.Format("#{0} ({1}", ClassIndex, name);
+                return string.Format("{0} ({1})", ClassIndex, name);
             }
             set { 
                 for(int i = 0; i < nameReference.Length; i++) {
@@ -225,6 +227,7 @@ namespace Filetypes {
         public UnitClass UnitClass { 
             get { return unitClass; }
         }
+        public string Display { get { return string.Format("{0} - {1}", Priority, UnitClass.ClassName); }}
     }
 
     public class Minimum {
@@ -242,6 +245,10 @@ namespace Filetypes {
     public abstract class Line {
         public LineType Type { get; private set; }
         public Line(LineType type) { Type = type; }
+        public int Id { get; set; }
+        public string Display {
+            get { return string.Format("{0} - {1}", Id, Type); }
+        }
     }
     public class BasicLine : Line {
         static readonly string[] SHAPES = new string[]{
@@ -256,7 +263,7 @@ namespace Filetypes {
         public string ShapeName { 
             get { 
                 string name = Shape < SHAPES.Length ? SHAPES[Shape] : "unknown"; 
-                return string.Format("{0} ({1}", Shape, name);
+                return string.Format("{0} ({1})", Shape, name);
             }
         }
         public float Spacing { get; set; }

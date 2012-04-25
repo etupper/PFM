@@ -33,6 +33,7 @@ namespace PackFileManager
         private EditEsfComponent esfEditor = new EditEsfComponent {
             Dock = DockStyle.Fill
         };
+        GroupformationEditor gfEditor = new GroupformationEditor();
 
         private MenuStrip menuStrip;
         private ToolStripMenuItem editToolStripMenuItem;
@@ -1633,7 +1634,7 @@ namespace PackFileManager
                 openWith(openFilePath, verb);
             }
         }
-
+        
         private void OpenPackedFile(object tag) {
             PackedFile packedFile = tag as PackedFile;
             if (packedFile.FullPath == "readme.xml") {
@@ -1670,8 +1671,10 @@ namespace PackFileManager
                     splitContainer1.Panel2.Controls.Add(esfEditor);
                 }
             } else if (packedFile.FullPath.Contains("groupformations.bin")) {
-                GroupformationEditor gfEditor = new GroupformationEditor(packedFile);
-                splitContainer1.Panel2.Controls.Add(gfEditor);
+                gfEditor.CurrentPackedFile = packedFile;
+                if (!splitContainer1.Panel2.Controls.Contains(gfEditor)) {
+                    splitContainer1.Panel2.Controls.Add(gfEditor);
+                }
             } else if (packedFile.FullPath.StartsWith("db")) {
                 try {
                     dbFileEditorControl.Open(packedFile, currentPackFile);
