@@ -51,7 +51,7 @@
 			this.CurrentPackedFile = packedFile;
         }
 
-        protected override UnitVariantFile EditedFile {
+        public override UnitVariantFile EditedFile {
             get { return base.EditedFile; }
             set {
                 base.EditedFile = value;

@@ -6,7 +6,7 @@ using Common;
 namespace PackFileManager {
     public class PackedFileEditor<T> : UserControl {
         Codec<T> codec;
-        protected virtual T EditedFile { get; set; }
+        public virtual T EditedFile { get; set; }
         PackedFile currentPacked;
 
         public virtual bool DataChanged {

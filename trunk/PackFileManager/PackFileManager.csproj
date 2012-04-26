@@ -98,7 +98,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Editors\FormationPreview.cs">
-      <SubType>Component</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Editors\GroupformationEditorControl.cs">
       <SubType>UserControl</SubType>
@@ -142,6 +142,9 @@
     <Compile Include="Program.cs" />
     <EmbeddedResource Include="Editors\DBFileEditorControl.resx">
       <DependentUpon>DBFileEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editors\FormationPreview.resx">
+      <DependentUpon>FormationPreview.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editors\GroupformationEditorControl.resx">
       <DependentUpon>GroupformationEditorControl.cs</DependentUpon>

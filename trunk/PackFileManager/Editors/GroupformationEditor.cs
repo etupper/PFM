@@ -11,7 +11,7 @@ namespace PackFileManager {
             Multiline = true
         };
         
-        protected override GroupformationFile EditedFile {
+        public override GroupformationFile EditedFile {
             get {
                 return base.EditedFile;
             }
@@ -24,7 +24,8 @@ namespace PackFileManager {
                 foreach (Groupformation formation in EditedFile.Formations) {
                     // Console.WriteLine("adding tab {0}", formation.Name);
                     TabPage tabPage = new TabPage(formation.Name) {
-                        Dock = DockStyle.Fill
+                        Dock = DockStyle.Fill,
+                        AutoScroll = true
                     };
                     GroupformationEditorControl editor = new GroupformationEditorControl {
                         Dock = DockStyle.Fill,
