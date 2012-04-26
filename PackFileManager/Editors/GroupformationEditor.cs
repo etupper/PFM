@@ -27,6 +27,7 @@ namespace PackFileManager {
                         Dock = DockStyle.Fill
                     };
                     GroupformationEditorControl editor = new GroupformationEditorControl {
+                        Dock = DockStyle.Fill,
                         EditedFormation = formation
                     };
                     tabPage.Controls.Add(editor);

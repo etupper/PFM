@@ -169,7 +169,17 @@ namespace Filetypes {
 
     public class Groupformation {
         public String Name { get; set; }
-        public float Priority { get; set; }
+        float priority;
+        public float Priority { 
+            get { 
+                return priority; 
+                // Console.WriteLine("retrieving priority of {0}", Name);
+            }
+            set { 
+                priority = value;
+                // Console.WriteLine("changing priority of {1} to {0}", value, Name);
+            }
+        }
         public Purpose Purpose { get; set; }
         public List<Minimum> Minima { get; set; }
         public List<string> Factions { get; set; }
@@ -258,7 +268,17 @@ namespace Filetypes {
         protected BasicLine(LineType type) : base(type) {
             PriorityClassPairs = new List<PriorityClassPair>();
         }
-        public float Priority { get; set; }
+        float priority;
+        public float Priority { 
+            get { 
+                return priority; 
+//                Console.WriteLine("retrieving priority of {0}", Id);
+            }
+            set { 
+                // Console.WriteLine("changing priority of {1} from {2} to {0}", value, Id, priority);
+                priority = value;
+            }
+        }
         public int Shape { get; set; }
         public string ShapeName { 
             get { 

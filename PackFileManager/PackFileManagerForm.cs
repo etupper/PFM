@@ -33,7 +33,9 @@ namespace PackFileManager
         private EditEsfComponent esfEditor = new EditEsfComponent {
             Dock = DockStyle.Fill
         };
-        GroupformationEditor gfEditor = new GroupformationEditor();
+        GroupformationEditor gfEditor = new GroupformationEditor {
+            Dock = DockStyle.Fill
+        };
 
         private MenuStrip menuStrip;
         private ToolStripMenuItem editToolStripMenuItem;
