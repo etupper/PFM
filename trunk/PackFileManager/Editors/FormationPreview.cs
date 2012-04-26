@@ -11,6 +11,11 @@ using Filetypes;
 
 namespace PackFileManager {
     public partial class FormationPreview : Panel {
+        Dictionary<Line, RectangleF> basicLines = new Dictionary<Line,RectangleF>();
+        Dictionary<Line, RectangleF> spanningLines = new Dictionary<Line, RectangleF>();
+        RectangleF fullRegion = new RectangleF();
+        const int ItemSize = 2;
+
         Groupformation formation;
         public Groupformation Formation {
             get { return formation; }
@@ -23,23 +28,39 @@ namespace PackFileManager {
                     RectangleF rect = GetRectangle(line);
                     fullRegion = RectangleF.Union(fullRegion, rect);
                 }
-                Console.WriteLine("full region is {0}", fullRegion);
+                Invalidate();
+                //Console.WriteLine("full region is {0}", fullRegion);
             }
         }
-        static Pen BLUE_PEN = new Pen(Color.Blue, 1.0f);
-        static Pen RED_PEN = new Pen(Color.Red, 1.0f);
 
         public FormationPreview() {
             Paint += new PaintEventHandler(PaintFormations);
+            Resize += new EventHandler(delegate(object o, EventArgs args) { Console.WriteLine("size now {0}/{1}", Size.Width, Size.Height); });
             ResizeRedraw = true;
         }
-        Dictionary<Line, RectangleF> basicLines = new Dictionary<Line,RectangleF>();
-        Dictionary<Line, RectangleF> spanningLines = new Dictionary<Line, RectangleF>();
-        RectangleF fullRegion = new RectangleF();
+        
+        Line selectedLine;
+        public Line SelectedLine {
+            get { return selectedLine; }
+            set {
+                selectedLine = value;
+                Invalidate();
+            }
+        }
 
         private void PaintFormations(object sender, PaintEventArgs args) {
             Control c = sender as Control;
             Graphics g = args.Graphics;
+   
+//            g.FillRectangle(new SolidBrush(Color.Green), args.ClipRectangle);
+//            string eins = "1";
+//            if ("1".Equals (eins)) return;
+            if (Formation == null) {
+                Console.WriteLine("nothing to paint");
+                g.FillRectangle(new SolidBrush(Color.Green), args.ClipRectangle);
+                return;
+            }
+            Console.WriteLine("painting at {2}/{3}, {0}x{1}", c.Width, c.Height, c.Location.X, c.Location.Y);
 
             Brush b = new SolidBrush(Color.Black);
             Matrix transform = g.Transform;
@@ -54,7 +75,7 @@ namespace PackFileManager {
 
             Font f = new Font(FontFamily.GenericSansSerif, 1f);
 
-            Pen pen = new Pen(Color.Red, 1/(Math.Max(widthScale, heightScale)));
+            Pen pen = new Pen(Color.Red, 1/(Math.Min(widthScale, heightScale)));
             if (spanningLines.Count != 0) {
                 g.DrawRectangles(pen, spanningLines.Values.ToArray());
             }
@@ -63,6 +84,12 @@ namespace PackFileManager {
             foreach (Line l in basicLines.Keys) {
                 RectangleF r = basicLines[l];
                 g.DrawString(l.Id.ToString(), f, b, r.X, r.Y);
+            }
+            if (SelectedLine != null) {
+                pen.Color = Color.Yellow;
+                Dictionary<Line, RectangleF> lookup = (SelectedLine is SpanningLine) ? spanningLines : basicLines;
+                RectangleF toPaint = lookup[SelectedLine];
+                g.DrawRectangles(pen, new RectangleF[] { toPaint });
             }
         }
         List<Rectangle> inverted(ICollection<Rectangle> toInvert) {
@@ -73,11 +100,9 @@ namespace PackFileManager {
             return result;
         }
 
-        const int ItemSize = 2;
-
         // create the extension of the given line
         RectangleF GetRectangle(Line line) {
-            Console.WriteLine("retrieving rect for {0}", line.Id);
+            //Console.WriteLine("retrieving rect for {0}", line.Id);
             if (basicLines.ContainsKey(line)) {
                 return basicLines[line];
             } else if (spanningLines.ContainsKey(line)) {
@@ -103,12 +128,7 @@ namespace PackFileManager {
             } else {
                 basicLines.Add(line, result);
             }
-//            result.Y = -result.Y;
-            //if (basicLines.ContainsValue(result) || spanningLines.ContainsValue(result)) {
-            //    Console.WriteLine("oh-oh, in already");
-            //}
-            //lineToRect.Add(line, result);
-            Console.WriteLine("rect for {1} is {0}", result, line.Id);
+            //Console.WriteLine("rect for {1} is {0}", result, line.Id);
             return result;
         }
     }

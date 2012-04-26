@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -8,17 +9,50 @@ using System.Windows.Forms;
 using Filetypes;
 
 namespace PackFileManager {
-    public partial class GroupformationEditorControl : UserControl {
+    public delegate T Parser<T>(string parse);
+    
+    interface ILineEditor {
+        void SetLine(BasicLine line);
+    }
+    public interface IModifiable {
+        void SetModified(bool val);
+    }
+
+    public partial class GroupformationEditorControl : UserControl, IModifiable {
+        static Form PreviewWindow = new Form {
+            Size = new Size(300, 300)
+        };
+        
+        public bool Modified { get; set; }
+        
         public delegate string ListItemRenderer<T>(T o);
         public static readonly ListItemRenderer<object> ToStringRenderer = delegate(object o) { return o.ToString(); };
-
+        
+        List<ILineEditor> bindings = new List<ILineEditor>();
+  
+        delegate void PropertySetter(TextBox box);
         public GroupformationEditorControl() {
             InitializeComponent();
 
             linesList.DisplayMember = "Display";
             unitPriorityList.DisplayMember = "Display";
-        }
 
+            // create all the text bindings
+            bindings.Add(new TextBinding<uint>(relativeToInput, uint.Parse, "RelativeTo", this));
+            bindings.Add(new TextBinding<float>(linePriorityInput, float.Parse, "Priority", this));
+            bindings.Add(new TextBinding<float>(spacingInput, float.Parse, "Spacing", this));
+            bindings.Add(new TextBinding<float>(crescOffsetInput, float.Parse, "Crescent_Y_Offset", this));
+            bindings.Add(new TextBinding<float>(xInput, float.Parse, "X", this));
+            bindings.Add(new TextBinding<float>(yInput, float.Parse, "Y", this));
+            bindings.Add(new TextBinding<int>(minThresholdInput, int.Parse, "MinThreshold", this));
+            bindings.Add(new TextBinding<int>(maxThresholdInput, int.Parse, "MaxThreshold", this));
+        }
+        public void SetModified(bool val) {
+            Modified = val;
+            formationPreview.Formation = EditedFormation;
+            formationPreview.Invalidate();
+        }
+        
         private Groupformation formation;
         public Groupformation EditedFormation {
             get {
@@ -26,7 +60,6 @@ namespace PackFileManager {
             }
             set {
                 formation = value;
-                Console.WriteLine("setting formation to {0}", formation.Name);
                 nameInput.Text = formation.Name;
                 purposeComboBox.Text = ((int)formation.Purpose).ToString();
                 FillListBox(factionList, formation.Factions);
@@ -34,74 +67,33 @@ namespace PackFileManager {
                 priorityInput.Text = formation.Priority.ToString();
 
                 linesList.SelectedIndexChanged += new EventHandler(LineSelected);
-
-                linePriorityInput.Validating += new CancelEventHandler(ValidateFloat);
-                spacingInput.Validating += new CancelEventHandler(ValidateFloat);
-                crescOffsetInput.Validating += new CancelEventHandler(ValidateFloat);
-                xInput.Validating += new CancelEventHandler(ValidateFloat);
-                yInput.Validating += new CancelEventHandler(ValidateFloat);
-                minThresholdInput.Validating += new CancelEventHandler(ValidateInt);
-                maxThresholdInput.Validating += new CancelEventHandler(ValidateInt);
+                
+                formationPreview.Formation = formation;
             }
         }
-
-        #region Input Validation
-        void ValidateFloat(object sender, CancelEventArgs args) {
-            float fl;
-            if (SelectedLine != null && !float.TryParse((sender as Control).Text, out fl)) {
-                args.Cancel = true;
-                Console.WriteLine("validation for {1} cancelled with {0}", (sender as Control).Text, SelectedLine);
-            }
-        }
-        void ValidateInt(object sender, CancelEventArgs args) {
-            int i;
-            if (SelectedLine != null && !int.TryParse((sender as Control).Text, out i)) {
-                args.Cancel = true;
-                Console.WriteLine("validation for {1} cancelled with {0}", (sender as Control).Text, SelectedLine);
-            }
-        }
-        #endregion
 
         #region Setting Edited Line
         void LineSelected(object sender, EventArgs args) {
-            // Console.WriteLine("line selected");
             SelectedLine = linesList.SelectedItem as Line;
         }
-
+        
         Line selectedLine;
         public Line SelectedLine {
             get { return selectedLine; }
             set {
-                selectedLine = value;
-                RelativeLine relativeLine = selectedLine as RelativeLine;
-                relativeToInput.Enabled = relativeLine != null;
-                relativeToInput.DataBindings.Clear();
-                if (relativeLine != null) {
-                    Rebind(relativeToInput, "RelativeTo");
+                BasicLine relativeLine = value as BasicLine;
+                foreach(ILineEditor editor in bindings) {
+                    editor.SetLine(relativeLine);
                 }
-                Rebind(linePriorityInput, "Priority");
-                Rebind(spacingInput, "Spacing");
-                Rebind(crescOffsetInput, "Crescent_Y_Offset");
-                Rebind(maxThresholdInput, "MaxThreshold");
-                Rebind(minThresholdInput, "MinThreshold");
-                Rebind(xInput, "X");
-                Rebind(yInput, "Y");
+
+                selectedLine = value;
                 if (selectedLine is BasicLine) {
                     BasicLine line = selectedLine as BasicLine;
                     FillListBox(unitPriorityList, line.PriorityClassPairs);
                 } else if (selectedLine is SpanningLine) {
                     FillListBox(unitPriorityList, (selectedLine as SpanningLine).Blocks);
                 }
-            }
-        }
-
-        void Rebind(TextBox box, string bindTo) {
-            box.DataBindings.Clear();
-            box.Enabled = SelectedLine is BasicLine;
-            if (SelectedLine is BasicLine) {
-                box.DataBindings.Add("Text", SelectedLine, bindTo);
-            } else {
-                box.Text = "";
+                formationPreview.SelectedLine = value;
             }
         }
         #endregion
@@ -143,5 +135,94 @@ namespace PackFileManager {
             previewForm.Controls.Add(drawPanel);
             previewForm.ShowDialog();
         }
-    }        
+    }
+
+    /*
+     * Class implementing the binding of text box to a Relative Line's property.
+     * Need to do this manually because the mono implementation doesn't seem to respect the
+     * DataBindings.Clear() and will still set values to past objects.
+     */
+    public class TextBinding<T> : ILineEditor {
+        Parser<T> Parse;
+        TextBox TextBox;
+        PropertyInfo Info;
+        BasicLine line;
+        IModifiable NotificationTarget;
+        
+        // create an instance, bound to the given text box, using the given parser
+        // to set the given property.
+        public TextBinding(TextBox box, Parser<T> parser, string propertyName, IModifiable notify) {
+            Parse = parser;
+            Info = typeof(RelativeLine).GetProperty(propertyName);
+            if (Info == null) {
+                throw new ArgumentException(string.Format("property {0} not valid", propertyName));
+            }
+            TextBox = box;
+            box.LostFocus += delegate(object sender, EventArgs args) { SetValue(); };
+            box.Validating += Validator;
+            NotificationTarget = notify;
+        }
+
+        // the line for which to edit the property
+        public BasicLine Line { 
+            get {
+                return line;
+            }
+            set {
+                SetValue ();
+                line = value;
+                try {
+                if (line != null) {
+                    object val = Info.GetValue(line, null);
+                    TextBox.Text = val.ToString();
+                    TextBox.Enabled = true;
+                } else {
+                    TextBox.Text = "";
+                    TextBox.Enabled = false;
+                }
+                } catch {
+                    TextBox.Text = "";
+                    TextBox.Enabled = false;
+                }
+            }
+        }
+        
+        // implement ILineEditor
+        public void SetLine(BasicLine l) {
+            Line = l;
+        }
+        
+        // helper method, called from Line property and LostFocus event
+        void SetValue() {
+            if (line as BasicLine != null && TextBox.Enabled) {
+                try {
+                    T newValue = Parse(TextBox.Text);
+                    T oldValue = (T) Info.GetValue(line, null);
+                    
+                    if (Comparer<T>.Default.Compare(oldValue, newValue) != 0) {
+                        Info.SetValue(line, Parse(TextBox.Text), null);
+                        if (NotificationTarget != null) {
+                            NotificationTarget.SetModified(true);
+                        }
+                    }
+                } catch (Exception e) {
+                    Console.WriteLine(string.Format("setting value {0} to {1} failed: {2}", Info.Name, TextBox.Text, e));
+                }
+            }
+        }
+        
+        // validates the box by trying to parse its text with the parser
+        // cancels upon exception
+        void Validator(object sender, CancelEventArgs args) {
+            try {
+                if (line != null && TextBox.Enabled) {
+                    Parse((sender as TextBox).Text);
+                }
+            } catch {
+                Console.WriteLine("Failed validation of {0} for {1}", Info.Name, TextBox.Text);
+                args.Cancel = true;
+            }
+        }
+    }
+    
 }
