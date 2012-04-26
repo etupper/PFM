@@ -57,7 +57,7 @@
             CurrentPackedFile = packedFile;
         }
 
-        protected override AtlasFile EditedFile {
+        public override AtlasFile EditedFile {
             get { return base.EditedFile; }
             set {
                 if (value != null) {
