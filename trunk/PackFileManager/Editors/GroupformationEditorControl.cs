@@ -19,7 +19,17 @@ namespace PackFileManager {
     }
 
     public partial class GroupformationEditorControl : UserControl, IModifiable {
-        public bool Modified { get; set; }
+        bool modified = false;
+        public bool Modified {
+            get { return modified; }
+            set {
+                modified = value;
+                if (modified) {
+                    formationPreview.Formation = EditedFormation;
+                    formationPreview.Invalidate();
+                }
+            }
+        }
         
         public delegate string ListItemRenderer<T>(T o);
         public static readonly ListItemRenderer<object> ToStringRenderer = delegate(object o) { return o.ToString(); };
@@ -67,8 +77,6 @@ namespace PackFileManager {
         
         public void SetModified(bool val) {
             Modified = val;
-            formationPreview.Formation = EditedFormation;
-            formationPreview.Invalidate();
         }
 
         private Groupformation formation;
@@ -165,10 +173,6 @@ namespace PackFileManager {
         }
         #endregion
 
-        private void addLineButton_Click(object sender, EventArgs e) {
-
-        }
-  
         #region Unit Priority / Spanned Lines
         private void addUnitPriorityButton_Click(object sender, EventArgs e) {
             Console.WriteLine("adding priority");
@@ -178,6 +182,22 @@ namespace PackFileManager {
                     unitPriorityList.Items.Add(pair);
                     (SelectedLine as BasicLine).PriorityClassPairs.Add(pair);
                     SetModified(true);
+                }
+            } else if (SelectedLine is SpanningLine) {
+                InputBox box = new InputBox();
+                SpanningLine spanningLine = SelectedLine as SpanningLine;
+                if (box.ShowDialog() == DialogResult.OK) {
+                    int add;
+                    if (int.TryParse(box.Input, out add)) {
+                        if (!spanningLine.Blocks.Contains(add)) {
+                            spanningLine.Blocks.Add(add);
+                            unitPriorityList.Items.Add(add);
+                            Modified = true;
+                        }
+                    } else {
+                        MessageBox.Show("Invalid input");
+                        return;
+                    }
                 }
             }
         }
@@ -246,6 +266,25 @@ namespace PackFileManager {
             };
             previewForm.Controls.Add(drawPanel);
             previewForm.ShowDialog();
+        }
+
+        private void addLineButton_Click(object sender, EventArgs e) {
+            Line newLine = new RelativeLine {
+                Id = linesList.Items.Count,
+                RelativeTo = 0
+            };
+            AddLine(newLine);
+        }
+
+        private void addSpanButton_Click(object sender, EventArgs e) {
+            AddLine(new SpanningLine {
+                Id = linesList.Items.Count
+            });
+        }
+        private void AddLine(Line newLine) {
+            linesList.Items.Add(newLine);
+            EditedFormation.Lines.Add(newLine);
+            Modified = true;
         }
     }
 

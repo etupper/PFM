@@ -313,7 +313,9 @@ namespace Filetypes {
         public uint RelativeTo { get; set; }
     }
     public class SpanningLine : Line {
-        public SpanningLine() : base (LineType.spanning) {}
+        public SpanningLine() : base (LineType.spanning) {
+            Blocks = new List<int>();
+        }
         public List<int> Blocks { get; set; }
     }
     #endregion
