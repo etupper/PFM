@@ -1982,6 +1982,9 @@ namespace PackFileManager
             if (textFileEditorControl != null) {
                 textFileEditorControl.updatePackedFile();
             }
+            if (gfEditor != null) {
+                gfEditor.Commit();
+            }
             if (esfEditor.RootNode != null && esfEditor.RootNode.Modified) {
                 byte[] data;
                 var stream = new MemoryStream();

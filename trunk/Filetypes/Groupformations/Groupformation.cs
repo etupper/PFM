@@ -15,7 +15,7 @@ namespace Filetypes {
                     Groupformation formation = new Groupformation();
                     formation.Name = IOFunctions.readCAString(reader);
                     formation.Priority = reader.ReadSingle();
-                    formation.Purpose = (Purpose) reader.ReadUInt32();
+                    formation.Purpose = reader.ReadUInt32();
                     // Console.WriteLine("reading formation {0}, purpose {1}", formation.Name, formation.Purpose);
                     formation.Minima = ReadList<Minimum>(reader, ReadMinimum);
                     formation.Factions = ReadList<string>(reader, IOFunctions.readCAString);
@@ -28,6 +28,7 @@ namespace Filetypes {
         }
 
         public void Encode(Stream encodeTo, GroupformationFile file) {
+            Console.WriteLine("encoding formation file");
             using (BinaryWriter writer = new BinaryWriter(encodeTo)) {
                 writer.Write ((uint) file.Formations.Count);
                 foreach(Groupformation formation in file.Formations) {
@@ -36,7 +37,7 @@ namespace Filetypes {
                     writer.Write((uint) formation.Purpose);
                     WriteList(writer, formation.Minima, WriteMinimum);
                     WriteList(writer, formation.Factions, IOFunctions.writeCAString);
-                    
+                    WriteList(writer, formation.Lines, WriteLine);
                     ///////
                 }
             }
@@ -111,7 +112,7 @@ namespace Filetypes {
             //Console.WriteLine("reading line type {0} at {1}", lineType, reader.BaseStream.Position);
             if (lineType == LineType.spanning) {
                 line = new SpanningLine {
-                    Blocks = ReadList<uint>(reader, delegate(BinaryReader r) { return r.ReadUInt32(); })
+                    Blocks = ReadList<int>(reader, delegate(BinaryReader r) { return r.ReadInt32(); })
                 };
             } else if (lineType == LineType.absolute || lineType == LineType.relative) {
                 BasicLine basicLine = (lineType == LineType.absolute) ? new BasicLine() : new RelativeLine();
@@ -136,9 +137,10 @@ namespace Filetypes {
         }
 
         void WriteLine(BinaryWriter writer, Line line) {
+            writer.Write(line.Id);
             writer.Write((uint) line.Type);
             if (line.Type == LineType.spanning) {
-                WriteList<uint>(writer, (line as SpanningLine).Blocks, delegate(BinaryWriter w, uint u) { w.Write(u); });
+                WriteList<int>(writer, (line as SpanningLine).Blocks, delegate(BinaryWriter w, int u) { w.Write(u); });
             } else {
                 BasicLine basicLine = line as BasicLine;
                 writer.Write(basicLine.Priority);
@@ -168,6 +170,13 @@ namespace Filetypes {
     }
 
     public class Groupformation {
+        public Groupformation() {
+            Lines = new List<Line>();
+            Lines.Add(new BasicLine());
+            Minima = new List<Minimum>();
+            Factions = new List<string>();
+        }
+        
         public String Name { get; set; }
         float priority;
         public float Priority { 
@@ -180,7 +189,7 @@ namespace Filetypes {
                 // Console.WriteLine("changing priority of {1} to {0}", value, Name);
             }
         }
-        public Purpose Purpose { get; set; }
+        public uint Purpose { get; set; }
         public List<Minimum> Minima { get; set; }
         public List<string> Factions { get; set; }
         public int Unknown1 { get; set; }
@@ -256,7 +265,7 @@ namespace Filetypes {
         public LineType Type { get; private set; }
         public Line(LineType type) { Type = type; }
         public int Id { get; set; }
-        public string Display {
+        public virtual string Display {
             get { return string.Format("{0} - {1}", Id, Type); }
         }
     }
@@ -267,6 +276,11 @@ namespace Filetypes {
         public BasicLine() : this(LineType.absolute) {}
         protected BasicLine(LineType type) : base(type) {
             PriorityClassPairs = new List<PriorityClassPair>();
+        }
+        public override string Display {
+            get {
+                return string.Format("{0} ({1})", base.Display, ShapeName);
+            }
         }
         float priority;
         public float Priority { 
@@ -282,8 +296,8 @@ namespace Filetypes {
         public int Shape { get; set; }
         public string ShapeName { 
             get { 
-                string name = Shape < SHAPES.Length ? SHAPES[Shape] : "unknown"; 
-                return string.Format("{0} ({1})", Shape, name);
+                return Shape < SHAPES.Length ? SHAPES[Shape] : "unknown";
+                // return string.Format("{0} ({1})", Shape, name);
             }
         }
         public float Spacing { get; set; }
@@ -300,7 +314,7 @@ namespace Filetypes {
     }
     public class SpanningLine : Line {
         public SpanningLine() : base (LineType.spanning) {}
-        public List<uint> Blocks { get; set; }
+        public List<int> Blocks { get; set; }
     }
     #endregion
 

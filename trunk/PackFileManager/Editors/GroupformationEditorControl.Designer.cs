@@ -59,18 +59,18 @@
             this.typeGroup = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.infoGroup = new System.Windows.Forms.GroupBox();
-            this.purposeComboBox = new System.Windows.Forms.ComboBox();
+            this.purposeComboBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.priorityInput = new System.Windows.Forms.TextBox();
             this.nameInput = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.deleteFactionButton = new System.Windows.Forms.Button();
-            this.addFactionButton = new System.Windows.Forms.Button();
+            this.deleteLineButton = new System.Windows.Forms.Button();
+            this.addLineButton = new System.Windows.Forms.Button();
             this.factionList = new System.Windows.Forms.ListBox();
             this.formationPreview = new PackFileManager.FormationPreview();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            // ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -188,6 +188,7 @@
             this.editUnitPriorityButton.TabIndex = 3;
             this.editUnitPriorityButton.Text = "Edit";
             this.editUnitPriorityButton.UseVisualStyleBackColor = true;
+            this.editUnitPriorityButton.Click += new System.EventHandler(editUnitPriorityButton_Click);
             // 
             // deleteUnitPriorityButton
             // 
@@ -200,6 +201,7 @@
             this.deleteUnitPriorityButton.TabIndex = 2;
             this.deleteUnitPriorityButton.Text = "Delete";
             this.deleteUnitPriorityButton.UseVisualStyleBackColor = true;
+            this.deleteUnitPriorityButton.Click += new System.EventHandler(deleteUnitPriorityButton_Click);
             // 
             // addUnitPriorityButton
             // 
@@ -211,6 +213,7 @@
             this.addUnitPriorityButton.TabIndex = 1;
             this.addUnitPriorityButton.Text = "Add";
             this.addUnitPriorityButton.UseVisualStyleBackColor = true;
+            this.addUnitPriorityButton.Click += new System.EventHandler(addUnitPriorityButton_Click);
             // 
             // unitPriorityList
             // 
@@ -480,19 +483,19 @@
             // 
             // purposeComboBox
             // 
-            this.purposeComboBox.FormattingEnabled = true;
-            this.purposeComboBox.Items.AddRange(new object[] {
-            "attack",
-            "defend",
-            "attack / defend",
-            "",
-            "river attack",
-            "naval",
-            "attack / ?",
-            "defend / ?",
-            "attack / defend / ?",
-            "ambush / ?",
-            "naval / ?"});
+            // this.purposeComboBox.FormattingEnabled = true;
+//            this.purposeComboBox.Items.AddRange(new object[] {
+//            "attack",
+//            "defend",
+//            "attack / defend",
+//            "",
+//            "river attack",
+//            "naval",
+//            "attack / ?",
+//            "defend / ?",
+//            "attack / defend / ?",
+//            "ambush / ?",
+//            "naval / ?"});
             this.purposeComboBox.Location = new System.Drawing.Point(67, 90);
             this.purposeComboBox.Name = "purposeComboBox";
             this.purposeComboBox.Size = new System.Drawing.Size(177, 21);
@@ -542,8 +545,8 @@
             // groupBox1
             // 
             this.groupBox1.AutoSize = true;
-            this.groupBox1.Controls.Add(this.deleteFactionButton);
-            this.groupBox1.Controls.Add(this.addFactionButton);
+            this.groupBox1.Controls.Add(this.deleteLineButton);
+            this.groupBox1.Controls.Add(this.addLineButton);
             this.groupBox1.Controls.Add(this.factionList);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Right;
             this.groupBox1.Location = new System.Drawing.Point(250, 0);
@@ -556,26 +559,28 @@
             // 
             // deleteFactionButton
             // 
-            this.deleteFactionButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.deleteFactionButton.Enabled = false;
-            this.deleteFactionButton.Location = new System.Drawing.Point(193, 50);
-            this.deleteFactionButton.MinimumSize = new System.Drawing.Size(50, 0);
-            this.deleteFactionButton.Name = "deleteFactionButton";
-            this.deleteFactionButton.Size = new System.Drawing.Size(50, 23);
-            this.deleteFactionButton.TabIndex = 2;
-            this.deleteFactionButton.Text = "Delete";
-            this.deleteFactionButton.UseVisualStyleBackColor = true;
+            this.deleteLineButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.deleteLineButton.Enabled = false;
+            this.deleteLineButton.Location = new System.Drawing.Point(193, 50);
+            this.deleteLineButton.MinimumSize = new System.Drawing.Size(50, 0);
+            this.deleteLineButton.Name = "deleteFactionButton";
+            this.deleteLineButton.Size = new System.Drawing.Size(50, 23);
+            this.deleteLineButton.TabIndex = 2;
+            this.deleteLineButton.Text = "Delete";
+            this.deleteLineButton.UseVisualStyleBackColor = true;
+            this.deleteLineButton.Click += new System.EventHandler(deleteLineButton_Click);
             // 
             // addFactionButton
             // 
-            this.addFactionButton.Enabled = false;
-            this.addFactionButton.Location = new System.Drawing.Point(193, 20);
-            this.addFactionButton.MinimumSize = new System.Drawing.Size(50, 0);
-            this.addFactionButton.Name = "addFactionButton";
-            this.addFactionButton.Size = new System.Drawing.Size(50, 23);
-            this.addFactionButton.TabIndex = 1;
-            this.addFactionButton.Text = "Add";
-            this.addFactionButton.UseVisualStyleBackColor = true;
+            this.addLineButton.Enabled = true;
+            this.addLineButton.Location = new System.Drawing.Point(193, 20);
+            this.addLineButton.MinimumSize = new System.Drawing.Size(50, 0);
+            this.addLineButton.Name = "addFactionButton";
+            this.addLineButton.Size = new System.Drawing.Size(50, 23);
+            this.addLineButton.TabIndex = 1;
+            this.addLineButton.Text = "Add";
+            this.addLineButton.UseVisualStyleBackColor = true;
+            this.addLineButton.Click += new System.EventHandler(addLineButton_Click);
             // 
             // factionList
             // 
@@ -608,7 +613,7 @@
             this.Size = new System.Drawing.Size(961, 596);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            // ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.lineGroup.ResumeLayout(false);
             this.lineGroup.PerformLayout();
@@ -665,15 +670,15 @@
         private System.Windows.Forms.GroupBox shapeGroup;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.GroupBox infoGroup;
-        private System.Windows.Forms.ComboBox purposeComboBox;
+        private System.Windows.Forms.TextBox purposeComboBox;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox priorityInput;
         private System.Windows.Forms.TextBox nameInput;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button deleteFactionButton;
-        private System.Windows.Forms.Button addFactionButton;
+        private System.Windows.Forms.Button deleteLineButton;
+        private System.Windows.Forms.Button addLineButton;
         private System.Windows.Forms.ListBox factionList;
 
         //private PackFileManager.FormationPreview formationPreview;

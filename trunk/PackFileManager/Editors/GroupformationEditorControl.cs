@@ -11,24 +11,21 @@ using Filetypes;
 namespace PackFileManager {
     public delegate T Parser<T>(string parse);
     
-    interface ILineEditor {
-        void SetLine(BasicLine line);
+    interface IDataBind {
+        void BindTo(object line);
     }
     public interface IModifiable {
         void SetModified(bool val);
     }
 
     public partial class GroupformationEditorControl : UserControl, IModifiable {
-        static Form PreviewWindow = new Form {
-            Size = new Size(300, 300)
-        };
-        
         public bool Modified { get; set; }
         
         public delegate string ListItemRenderer<T>(T o);
         public static readonly ListItemRenderer<object> ToStringRenderer = delegate(object o) { return o.ToString(); };
         
-        List<ILineEditor> bindings = new List<ILineEditor>();
+        List<IDataBind> boundLines = new List<IDataBind>();
+        List<IDataBind> formationBind = new List<IDataBind>();
   
         delegate void PropertySetter(TextBox box);
         public GroupformationEditorControl() {
@@ -36,23 +33,44 @@ namespace PackFileManager {
 
             linesList.DisplayMember = "Display";
             unitPriorityList.DisplayMember = "Display";
+            
+            formationBind.Add(new TextBinding<Groupformation, string>(nameInput, delegate(string s) {return s;}, "Name", this));
+            formationBind.Add(new TextBinding<Groupformation, float>(priorityInput, float.Parse, "Priority", this));
+            formationBind.Add(new TextBinding<Groupformation, uint>(purposeComboBox, uint.Parse, "Purpose", this));
 
             // create all the text bindings
-            bindings.Add(new TextBinding<uint>(relativeToInput, uint.Parse, "RelativeTo", this));
-            bindings.Add(new TextBinding<float>(linePriorityInput, float.Parse, "Priority", this));
-            bindings.Add(new TextBinding<float>(spacingInput, float.Parse, "Spacing", this));
-            bindings.Add(new TextBinding<float>(crescOffsetInput, float.Parse, "Crescent_Y_Offset", this));
-            bindings.Add(new TextBinding<float>(xInput, float.Parse, "X", this));
-            bindings.Add(new TextBinding<float>(yInput, float.Parse, "Y", this));
-            bindings.Add(new TextBinding<int>(minThresholdInput, int.Parse, "MinThreshold", this));
-            bindings.Add(new TextBinding<int>(maxThresholdInput, int.Parse, "MaxThreshold", this));
+            boundLines.Add(new TextBinding<RelativeLine, uint>(relativeToInput, uint.Parse, "RelativeTo", this));
+            boundLines.Add(new TextBinding<RelativeLine, float>(linePriorityInput, float.Parse, "Priority", this));
+            boundLines.Add(new TextBinding<RelativeLine, float>(spacingInput, float.Parse, "Spacing", this));
+            boundLines.Add(new TextBinding<RelativeLine, float>(crescOffsetInput, float.Parse, "Crescent_Y_Offset", this));
+            boundLines.Add(new TextBinding<RelativeLine, float>(xInput, float.Parse, "X", this));
+            boundLines.Add(new TextBinding<RelativeLine, float>(yInput, float.Parse, "Y", this));
+            boundLines.Add(new TextBinding<RelativeLine, int>(minThresholdInput, int.Parse, "MinThreshold", this));
+            boundLines.Add(new TextBinding<RelativeLine, int>(maxThresholdInput, int.Parse, "MaxThreshold", this));
+            
+            boundLines.Add(new ShapeRadioButtonBinding(lineRadioButton, 0, this));
+            boundLines.Add(new ShapeRadioButtonBinding(columnRadioButton, 1, this));
+            boundLines.Add(new ShapeRadioButtonBinding(crescFrontRadioButton, 2, this));
+            boundLines.Add(new ShapeRadioButtonBinding(crescBackRadioButton, 3, this));
+            
+            linesList.SelectedIndexChanged += new EventHandler(LineSelected);
+            linesList.SelectedIndexChanged += new EventHandler(delegate(object sender, EventArgs args) { 
+                deleteUnitPriorityButton.Enabled = false;
+                editUnitPriorityButton.Enabled = false;
+            });
+            unitPriorityList.SelectedIndexChanged += new EventHandler(PrioritySelected);
         }
+        void PrioritySelected(object sender, EventArgs args) {
+            deleteUnitPriorityButton.Enabled = unitPriorityList.SelectedIndex != -1;
+            //editUnitPriorityButton.Enabled = unitPriorityList.SelectedIndex != -1;
+        }
+        
         public void SetModified(bool val) {
             Modified = val;
             formationPreview.Formation = EditedFormation;
             formationPreview.Invalidate();
         }
-        
+
         private Groupformation formation;
         public Groupformation EditedFormation {
             get {
@@ -60,15 +78,18 @@ namespace PackFileManager {
             }
             set {
                 formation = value;
-                nameInput.Text = formation.Name;
-                purposeComboBox.Text = ((int)formation.Purpose).ToString();
-                FillListBox(factionList, formation.Factions);
-                FillListBox(linesList, formation.Lines);
-                priorityInput.Text = formation.Priority.ToString();
-
-                linesList.SelectedIndexChanged += new EventHandler(LineSelected);
-                
-                formationPreview.Formation = formation;
+                if (formation != null) {
+                    nameInput.Text = formation.Name;
+                    // purposeComboBox.Text = ((int)formation.Purpose).ToString();
+                    FillListBox(factionList, formation.Factions);
+                    FillListBox(linesList, formation.Lines);
+                    priorityInput.Text = formation.Priority.ToString();
+    
+                    formationPreview.Formation = formation;
+                    
+                    //Console.WriteLine("binding {0} fields", formationBind.Count);
+                    formationBind.ForEach(b => b.BindTo(formation));
+                }
             }
         }
 
@@ -82,8 +103,8 @@ namespace PackFileManager {
             get { return selectedLine; }
             set {
                 BasicLine relativeLine = value as BasicLine;
-                foreach(ILineEditor editor in bindings) {
-                    editor.SetLine(relativeLine);
+                foreach(IDataBind editor in boundLines) {
+                    editor.BindTo(relativeLine);
                 }
 
                 selectedLine = value;
@@ -94,34 +115,125 @@ namespace PackFileManager {
                     FillListBox(unitPriorityList, (selectedLine as SpanningLine).Blocks);
                 }
                 formationPreview.SelectedLine = value;
+                
+                // can't delete main line
+                deleteLineButton.Enabled = CanDeleteLine(SelectedLine);
+                addUnitPriorityButton.Enabled = SelectedLine != null;
             }
         }
         #endregion
-
+        
         void FillListBox<T>(ListBox listbox, List<T> list) {
             listbox.Items.Clear();
             list.ForEach(val => { listbox.Items.Add(val); });
         }
-
-        private void addFactionButton_Click(object sender, EventArgs e) {
-
+  
+        #region Line Delete
+        private void deleteLineButton_Click(object sender, EventArgs e) {
+            if (SelectedLine != null) {
+                EditedFormation.Lines.Remove(SelectedLine);
+                linesList.Items.Remove(SelectedLine);
+                linesList.SelectedIndex = linesList.Items.Count - 1;
+                SetModified(true);
+            }
         }
 
-        private void deleteFactionButton_Click(object sender, EventArgs e) {
+        bool CanDeleteLine(Line line) {
+            bool result = line != null;
+            if (result) {
+                result &= line.Id == linesList.Items.Count-1;
+                result &= line.Type != LineType.absolute;
+                // can't delete lines used as reference for relative position
+                // or lines contained in a spanned line
+                if (result) {
+                    EditedFormation.Lines.ForEach(l => result &= !RelatesTo (line, l) && !ContainsAsSpan(line, l));
+                }
+            }
+            return result;
+        }
+        static bool RelatesTo(Line line, Line targetCandidate) {
+            bool result = false;
+            if (targetCandidate is RelativeLine) {
+                result = (targetCandidate as RelativeLine).RelativeTo == line.Id;
+            }
+            return result;
+        }
+        static bool ContainsAsSpan(Line line, Line spanCandidate) {
+            SpanningLine span = spanCandidate as SpanningLine;
+            bool result = (span != null) && span.Blocks.Contains(line.Id);
+            return result;
+        }
+        #endregion
+
+        private void addLineButton_Click(object sender, EventArgs e) {
 
         }
-
+  
+        #region Unit Priority / Spanned Lines
         private void addUnitPriorityButton_Click(object sender, EventArgs e) {
-
-        }
-
-        private void deleteUnitPriorityButton_Click(object sender, EventArgs e) {
-
+            Console.WriteLine("adding priority");
+            if (SelectedLine is BasicLine) {
+                PriorityClassPair pair = PromptPriorityClassPair();
+                if (pair != null) {
+                    unitPriorityList.Items.Add(pair);
+                    (SelectedLine as BasicLine).PriorityClassPairs.Add(pair);
+                    SetModified(true);
+                }
+            }
         }
 
         private void editUnitPriorityButton_Click(object sender, EventArgs e) {
-
+            if (SelectedLine is BasicLine) {
+                PriorityClassPair edited = unitPriorityList.SelectedItem as PriorityClassPair;
+                PriorityClassPair entered = PromptPriorityClassPair(edited);
+                if (edited.Priority != entered.Priority && edited.UnitClass.ClassIndex != entered.UnitClass.ClassIndex) {
+                    Console.WriteLine("changed prio/unit pair");
+                    edited.Priority = entered.Priority;
+                    edited.UnitClass.ClassIndex = entered.UnitClass.ClassIndex;
+                    Modified = true;
+                }
+            }
         }
+        
+        PriorityClassPair PromptPriorityClassPair(PriorityClassPair original = null) {
+            PriorityClassPair result = null;
+            string defaultPriority = (original != null) ? original.Priority.ToString() : "1";
+            InputBox box = new InputBox {
+                Input = defaultPriority
+            };
+            if (box.ShowDialog() == DialogResult.OK) {
+                float priority;
+                int classIndex;
+                if (float.TryParse(box.Input, out priority)) {
+                    box.Input = (original != null) ? original.UnitClass.ClassIndex.ToString() : "0";
+                    if (box.ShowDialog() == DialogResult.OK) {
+                        if (int.TryParse(box.Input, out classIndex)) {
+                            result = new PriorityClassPair {
+                                Priority = priority
+                            };
+                            result.UnitClass.ClassIndex = classIndex;
+                        } else {
+                            MessageBox.Show("Invalid input");
+                        }
+                    }
+                } else {
+                    MessageBox.Show("Invalid input");
+                }
+            }
+            return result;
+        }
+
+        private void deleteUnitPriorityButton_Click(object sender, EventArgs e) {
+            int deleteAt = unitPriorityList.SelectedIndex;
+            if (SelectedLine is BasicLine) {
+                (SelectedLine as BasicLine).PriorityClassPairs.RemoveAt(deleteAt);
+            } else {
+                (SelectedLine as SpanningLine).Blocks.RemoveAt(deleteAt);
+            }
+            SetModified(true);
+            unitPriorityList.Items.RemoveAt(deleteAt);
+        }
+        #endregion
 
         private void preview_Click(object sender, EventArgs e) {
             Console.WriteLine("showing preview");
@@ -142,18 +254,18 @@ namespace PackFileManager {
      * Need to do this manually because the mono implementation doesn't seem to respect the
      * DataBindings.Clear() and will still set values to past objects.
      */
-    public class TextBinding<T> : ILineEditor {
-        Parser<T> Parse;
+    public class TextBinding<T, D> : IDataBind {
+        Parser<D> Parse;
         TextBox TextBox;
         PropertyInfo Info;
-        BasicLine line;
+        object bindTarget;
         IModifiable NotificationTarget;
         
         // create an instance, bound to the given text box, using the given parser
         // to set the given property.
-        public TextBinding(TextBox box, Parser<T> parser, string propertyName, IModifiable notify) {
+        public TextBinding(TextBox box, Parser<D> parser, string propertyName, IModifiable notify) {
             Parse = parser;
-            Info = typeof(RelativeLine).GetProperty(propertyName);
+            Info = typeof(T).GetProperty(propertyName);
             if (Info == null) {
                 throw new ArgumentException(string.Format("property {0} not valid", propertyName));
             }
@@ -164,16 +276,16 @@ namespace PackFileManager {
         }
 
         // the line for which to edit the property
-        public BasicLine Line { 
+        public object Target { 
             get {
-                return line;
+                return bindTarget;
             }
             set {
                 SetValue ();
-                line = value;
+                bindTarget = value;
                 try {
-                if (line != null) {
-                    object val = Info.GetValue(line, null);
+                if (bindTarget != null) {
+                    object val = Info.GetValue(bindTarget, null);
                     TextBox.Text = val.ToString();
                     TextBox.Enabled = true;
                 } else {
@@ -188,19 +300,19 @@ namespace PackFileManager {
         }
         
         // implement ILineEditor
-        public void SetLine(BasicLine l) {
-            Line = l;
+        public void BindTo(object l) {
+            Target = l;
         }
         
         // helper method, called from Line property and LostFocus event
         void SetValue() {
-            if (line as BasicLine != null && TextBox.Enabled) {
+            if (bindTarget is T && TextBox.Enabled) {
                 try {
-                    T newValue = Parse(TextBox.Text);
-                    T oldValue = (T) Info.GetValue(line, null);
+                    D newValue = Parse(TextBox.Text);
+                    D oldValue = (D) Info.GetValue(bindTarget, null);
                     
-                    if (Comparer<T>.Default.Compare(oldValue, newValue) != 0) {
-                        Info.SetValue(line, Parse(TextBox.Text), null);
+                    if (Comparer<D>.Default.Compare(oldValue, newValue) != 0) {
+                        Info.SetValue(bindTarget, Parse(TextBox.Text), null);
                         if (NotificationTarget != null) {
                             NotificationTarget.SetModified(true);
                         }
@@ -215,7 +327,7 @@ namespace PackFileManager {
         // cancels upon exception
         void Validator(object sender, CancelEventArgs args) {
             try {
-                if (line != null && TextBox.Enabled) {
+                if (bindTarget != null && TextBox.Enabled) {
                     Parse((sender as TextBox).Text);
                 }
             } catch {
@@ -224,5 +336,33 @@ namespace PackFileManager {
             }
         }
     }
-    
+
+    public class ShapeRadioButtonBinding : IDataBind {
+        private RadioButton Button;
+        private int Shape;
+        BasicLine Line;
+        IModifiable NotifyTarget;
+
+        public ShapeRadioButtonBinding(RadioButton button, int shape, IModifiable toNotify) {
+            Button = button;
+            Shape = shape;
+            NotifyTarget = toNotify;
+            
+            Button.Click += new EventHandler(delegate (object sender, EventArgs args) { if (Line != null && Line.Shape != Shape) {
+                    Line.Shape = Shape;
+                    NotifyTarget.SetModified(true);
+                }});
+        }
+        
+        public void BindTo(object o) {
+            if (o == null) {
+                Button.Checked = false;
+                Button.Enabled = false;
+            } else {
+                Line = (BasicLine) o;
+                Button.Checked = Line.Shape == Shape;
+                Button.Enabled = true;
+            }
+        }
+    }
 }
