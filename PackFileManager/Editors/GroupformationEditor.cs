@@ -50,6 +50,7 @@ namespace PackFileManager {
                 tabControl.TabPages.Add(addPage);
 
                 tabControl.Selecting += new TabControlCancelEventHandler(SelectedAddTab);
+                tabControl.Click += new EventHandler(RightClickTab);
                 
                 base.ResumeLayout(true);
             }
@@ -68,7 +69,24 @@ namespace PackFileManager {
             Editors.Add(editor);
             return tabPage;
         }
-        
+
+        void RightClickTab(object sender, EventArgs args) {
+            MouseEventArgs mouseArgs = args as MouseEventArgs;
+            if ((mouseArgs.Button & System.Windows.Forms.MouseButtons.Right) != 0) {
+                int tabIndex = -1;
+                for(int i = 0; i < tabControl.TabPages.Count; i++) {
+                    if (tabControl.GetTabRect(i).Contains(mouseArgs.Location)) {
+                        tabIndex = i;
+                        break;
+                    }
+                }
+                if (MessageBox.Show(string.Format("Do you want to delete formation {0}?", tabControl.TabPages[tabIndex].Text)) 
+                    == DialogResult.OK) {
+                        tabControl.TabPages.RemoveAt(tabIndex);
+                }
+            }
+        }
+
         void SelectedAddTab(object sender, TabControlCancelEventArgs args) {
             if (args.TabPage.Name == "+") {
                 Console.WriteLine("adding!");

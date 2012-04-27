@@ -54,25 +54,21 @@ namespace PackFileManager {
             Control c = sender as Control;
             Graphics g = args.Graphics;
    
-            //g.FillRectangle(new SolidBrush(Color.Green), args.ClipRectangle);
-            //string eins = "1";
-            //if ("1".Equals (eins)) return;
             if (Formation == null) {
-                //Console.WriteLine("nothing to paint");
                 g.FillRectangle(new SolidBrush(Color.Green), args.ClipRectangle);
                 return;
             }
-            //Console.WriteLine("painting at {2}/{3}, {0}x{1}", c.Width, c.Height, c.Location.X, c.Location.Y);
 
             Brush b = new SolidBrush(Color.Black);
             Matrix transform = g.Transform;
 
-            float xTranslate = c.Width / 2 - ItemSize; // -2 * ItemSize; // -fullRegion.X - ItemSize;
-            float yTranslate = c.Height / 2; // -fullRegion.Y - ItemSize;
-            transform.Translate(xTranslate, yTranslate);
-            float heightScale = Math.Abs((c.Height/1.1f) / (fullRegion.Height-fullRegion.Y));
-            float widthScale = Math.Abs((c.Width/1.1f) / (fullRegion.Width-fullRegion.X));
+            float heightScale = c.Height / 1.1f / fullRegion.Height;
+            float widthScale = c.Width / 1.1f / fullRegion.Width;
             transform.Scale(widthScale, heightScale);
+
+            float xTranslate = -fullRegion.X;
+            float yTranslate = -fullRegion.Y;
+            transform.Translate(xTranslate, yTranslate);
             g.Transform = transform;
 
             Font f = new Font(FontFamily.GenericSansSerif, 1f);
@@ -84,13 +80,13 @@ namespace PackFileManager {
             pen.Color = Color.Blue;
             g.DrawRectangles(pen, basicLines.Values.ToArray());
             foreach (Line l in basicLines.Keys) {
-                RectangleF r = basicLines[l];
+                RectangleF r = GetRectangle(l);
                 g.DrawString(l.Id.ToString(), f, b, r.X, r.Y);
             }
             if (SelectedLine != null) {
                 pen.Color = Color.Yellow;
                 Dictionary<Line, RectangleF> lookup = (SelectedLine is SpanningLine) ? spanningLines : basicLines;
-                RectangleF toPaint = lookup[SelectedLine];
+                RectangleF toPaint = GetRectangle(SelectedLine);
                 g.DrawRectangles(pen, new RectangleF[] { toPaint });
                 if (SelectedLine is RelativeLine) {
                     int reference = (int)(SelectedLine as RelativeLine).RelativeTo;
@@ -147,6 +143,8 @@ namespace PackFileManager {
                 spanningLines.Add(line, result);
                 //result = new Rectangle(minX, minY, Math.Abs(maxX - minX), Math.Abs(maxY - minY));
             } else {
+                BasicLine baseLine = line as BasicLine;
+                result = new RectangleF(baseLine.X, baseLine.Y, ItemSize, ItemSize);
                 basicLines.Add(line, result);
             }
             //Console.WriteLine("rect for {1} is {0}", result, line.Id);
