@@ -37,7 +37,7 @@ namespace PackFileManager {
 
         public FormationPreview() {
             Paint += new PaintEventHandler(PaintFormations);
-            Resize += new EventHandler(delegate(object o, EventArgs args) { Console.WriteLine("size now {0}/{1}", Size.Width, Size.Height); });
+            //Resize += new EventHandler(delegate(object o, EventArgs args) { Console.WriteLine("size now {0}/{1}", Size.Width, Size.Height); });
             ResizeRedraw = true;
         }
         
@@ -62,7 +62,7 @@ namespace PackFileManager {
                 g.FillRectangle(new SolidBrush(Color.Green), args.ClipRectangle);
                 return;
             }
-            Console.WriteLine("painting at {2}/{3}, {0}x{1}", c.Width, c.Height, c.Location.X, c.Location.Y);
+            //Console.WriteLine("painting at {2}/{3}, {0}x{1}", c.Width, c.Height, c.Location.X, c.Location.Y);
 
             Brush b = new SolidBrush(Color.Black);
             Matrix transform = g.Transform;
@@ -140,7 +140,7 @@ namespace PackFileManager {
             } else if (line is SpanningLine) {
                 SpanningLine sl = line as SpanningLine;
                 formation.Lines.ForEach(l => {
-                    if (sl.Blocks.Contains((uint)l.Id)) {
+                    if (sl.Blocks.Contains(l.Id)) {
                         result = RectangleF.Union(result, GetRectangle(l));
                     }
                 });
