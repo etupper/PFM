@@ -3588,7 +3588,7 @@
     <field name='unknown' type='string' version_start='6' />
     <field name='unknown' type='int' version_start='6' />
     <field name='unknown98' type='string' version_start='6' />
-    <field name='unknown' type='int' version_start='16' />
+    <field name='Hull_Strength' type='int' version_start='16' />
     <field name='unknown' type='string' version_start='16' />
     <field name='unknown' type='string' version_start='16' />
     <field name='unknown' type='int' version_start='16' />
