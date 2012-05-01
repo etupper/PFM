@@ -910,7 +910,7 @@
     <field fkey='units_tables.Unit ID' name='Unit' type='string' pk='true' />
     <field name='Experience' type='int' />
     <field name='Unknown' type='boolean' />
-    <field name='unknown5' type='int' version_start='2' />
+    <field name='Unique ID' type='int' version_start='2' />
     <field name='unknown6' type='boolean' version_start='2' />
     <field name='unknown7' type='boolean' version_start='2' />
     <field name='unknown8' type='boolean' version_start='2' />
@@ -1400,9 +1400,9 @@
     <field name='unknown7' type='float' />
   </table>
   <table name='cdir_unit_qualities_tables'>
-    <field name='Unknown' type='string' pk='true' />
-    <field name='Unknown' type='string' pk='true' />
-    <field name='Unknown' type='string' pk='true' />
+    <field name='Clan/Group' type='string' pk='true' />
+    <field name='Unit Type' type='string' pk='true' />
+    <field name='Unit ID' type='string' pk='true' />
     <field name='unknown4' type='int' />
   </table>
   <table name='character_experience_skill_tiers_tables'>
@@ -3247,7 +3247,7 @@
     <field name='Officer unit_variant' type='optstring' version_start='3' />
     <field name='Standard Bearer unit_variant' type='optstring' version_start='3' />
     <field name='Unknown' type='optstring' version_start='3' />
-    <field name='unknown8' type='optstring' version_start='3' />
+    <field name='Uniform Soldier Group' type='optstring' version_start='3' />
   </table>
   <table name='unit_abilities_tables'>
     <field name='Ability ID' type='string' pk='true' />
@@ -3356,7 +3356,7 @@
     <field name='Artillery 1' type='optstring' />
     <field name='Has Artillery 2?' type='boolean' />
     <field name='Gun IDRef' type='optstring' />
-    <field name='unknown36' type='optstring' />
+    <field name='Missile Weapon Type' type='optstring' />
     <field name='Accuracy' type='int' />
     <field name='Reloading Skill' type='int' />
     <field name='unknown39' type='string' />
@@ -3694,7 +3694,7 @@
     <field name='MP_Unit_Limit' type='int' version_start='2' />
     <field name='unknown25' type='optstring' version_start='4' />
     <field name='unknown26' type='boolean' version_start='4' />
-    <field name='unknown27' type='string' version_start='9' />
+    <field name='Units Soldier Group' type='string' version_start='9' />
     <field name='unknown28' type='optstring' version_start='9' />
     <field name='Religion ID' type='optstring' version_start='9' />
     <field name='unknown30' type='optstring' version_start='9' />
@@ -3710,7 +3710,7 @@
   <table name='units_to_exclusive_faction_permissions_tables'>
     <field fkey='units_tables.Unit ID' name='Unit IDRef' type='string' pk='true' />
     <field fkey='factions_tables.Faction IDRef' name='Faction IDRef' type='string' pk='true' />
-    <field name='unknown' type='boolean' />
+    <field name='Can Recruit' type='boolean' />
   </table>
   <table name='units_to_gov_type_permissions_tables'>
     <field fkey='units_tables.Unit ID' name='Unit IDRef' type='string' />
