@@ -20,7 +20,7 @@ namespace EditSF {
                 return filename;
             }
             set {
-                Text = string.Format("EditSF - {0}", Path.GetFileName(value));
+                Text = string.Format("{0} - EditSF {1}", Path.GetFileName(value), Application.ProductVersion);
                 statusLabel.Text = value;
                 filename = value;
             }
@@ -46,6 +46,7 @@ namespace EditSF {
 
             updater = new ProgressUpdater(progressBar);
 
+            Text = string.Format("EditSF {0}", Application.ProductVersion);
         }
 
         private void promptOpenFile() {
@@ -83,6 +84,7 @@ namespace EditSF {
                     //codec.NodeReadFinished -= logger.WriteEntry;
                     //codec.Log -= logger.WriteLogEntry;
                 }
+                Text = string.Format("{0} - EditSF {1}", Path.GetFileName(openFilename), Application.ProductVersion);
             } catch (Exception exception) {
                 statusLabel.Text = oldStatus;
                 Console.WriteLine(exception);
