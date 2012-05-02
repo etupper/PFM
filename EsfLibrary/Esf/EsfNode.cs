@@ -51,14 +51,14 @@ namespace EsfLibrary {
                 return modified;
             }
             set {
-                if (modified != value) {
+//                if (modified != value) {
                     modified = value;
                     RaiseModifiedEvent();
                     if (modified && Parent != null) {
                         Parent.Modified = value;
                     }
                 }
-            }
+//            }
         }
         protected void RaiseModifiedEvent() {
             if (ModifiedEvent != null) {

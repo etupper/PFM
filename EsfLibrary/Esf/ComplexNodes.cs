@@ -33,14 +33,9 @@ namespace EsfLibrary {
                 return modified;
             }
             set {
-                if (modified != value) {
-                    modified = value;
-                    RaiseModifiedEvent();
-                    if (modified && Parent != null) {
-                        Parent.Modified = value;
-                    } else if (!modified) {
-                        Value.ForEach(node => node.Modified = false);
-                    }
+                base.Modified = value;
+                if (!Modified) {
+                    Value.ForEach(node => node.Modified = false);
                 }
             }
         }

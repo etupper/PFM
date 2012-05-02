@@ -28,6 +28,18 @@ namespace EsfLibrary {
                 return decoded;
             }
         }
+        public override bool Modified {
+            get {
+                return base.Modified;
+            }
+            set {
+                // don't set modified if we haven't decoded our delegate yet
+                // so we don't decode it now without the value having changed
+                if (decoded != null) {
+                    base.Modified = value;
+                }
+            }
+        }
         protected abstract RecordNode DecodeDelegate();
 
         private void ModifiedDelegate(EsfNode node) {
