@@ -64,9 +64,14 @@ namespace EsfLibrary {
             }
             set {
                 base.Modified = value;
-                invalid = Modified;
+                
+                // if we are invalidated already, stay so; we will need to
+                // encode fully because we may have been set to not modified
+                // in the meantime, and overwrite the changes in between
+                invalid |= Modified;
                 if (Modified && InvalidateSiblings) {
                     bool invalidate = false;
+
                     // invalidate all nodes after this one
                     // because they have their addresses invalidated
                     (Parent as ParentNode).AllNodes.ForEach(node => {

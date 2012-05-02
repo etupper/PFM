@@ -22,8 +22,14 @@ namespace EsfLibrary {
         public EsfCodec Codec { get; set; }
         public virtual EsfType TypeCode { get; set; }
 
-        #region Properties        
-        public EsfNode Parent { get; set; }
+        #region Properties
+        private EsfNode parent;
+        public EsfNode Parent { 
+            get { return parent; }
+            set {
+                parent = value;
+            }
+        }
         public Type SystemType { get; set; }
         
         // property Deleted; also sets Modified
