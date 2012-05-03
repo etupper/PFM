@@ -104,6 +104,92 @@ namespace PackFileManager {
             Settings.Default.ModList = encodeMods(mods);
             SetCurrentMod("");
         }
+
+        public void InstallCurrentMod() {
+            string targetDir = IOFunctions.GetShogunTotalWarDirectory();
+            if (targetDir == null) {
+                throw new FileNotFoundException(string.Format("Shogun install directory not found"));
+            }
+            targetDir = Path.Combine(targetDir, "data");
+            string targetFile = Path.Combine(targetDir, Settings.Default.CurrentMod);
+            if (File.Exists(FullModPath) && Directory.Exists(targetDir)) {
+                
+                // copy to data directory
+                File.Copy(FullModPath, targetFile, true);
+                
+                // add entry to user.script.txt if it's a mod file
+                using(BinaryReader reader = new BinaryReader(File.OpenRead(targetFile))) {
+                    PFHeader header = new PackFileCodec().readHeader(reader);
+                    if (header.Type == PackType.Mod) {
+                        string modEntry = ModScriptFileEntry;
+                        string scriptFile = GetUserScriptPath();
+                        List<string> linesToWrite = new List<string>();
+                        if (File.Exists(scriptFile)) {
+                            // retain all other mods in the script file; will add our mod afterwards
+                            foreach(string line in File.ReadAllLines(scriptFile, Encoding.Unicode)) {
+                                if (!line.Contains(modEntry)) {
+                                    linesToWrite.Add(line);
+                                }
+                            }
+                        }
+                        if (!linesToWrite.Contains(modEntry)) {
+                            linesToWrite.Add(modEntry);
+                        }
+                        File.WriteAllLines(scriptFile, linesToWrite, Encoding.Unicode);
+                    }
+                }
+            }
+        }
+
+        public void UninstallCurrentMod() {
+            string targetDir = IOFunctions.GetShogunTotalWarDirectory();
+            if (targetDir == null) {
+                throw new FileNotFoundException(string.Format("Shogun install directory not found"));
+            }
+
+            string targetFile = Path.Combine(targetDir, "data", ModPackName);
+            if (File.Exists(targetFile)) {
+                File.Move(targetFile, string.Format("{0}.old", targetFile));
+            }
+
+            string modEntry = ModScriptFileEntry;
+            string scriptFile = GetUserScriptPath();
+            List<string> linesToWrite = new List<string>();
+            if (File.Exists(scriptFile)) {
+                // retain all other mods in the script file
+                foreach(string line in File.ReadAllLines(scriptFile, Encoding.Unicode)) {
+                    if (!line.Contains(modEntry)) {
+                        linesToWrite.Add(line);
+                    } else {
+                        linesToWrite.Add(string.Format("#{0}", modEntry));
+                    }
+                }
+                File.WriteAllLines(scriptFile, linesToWrite, Encoding.Unicode);
+            }
+        }
+        
+        string ModScriptFileEntry {
+            get {
+                return string.Format("mod \"{0}.pack\";", Settings.Default.CurrentMod);
+            }
+        }
+        public string ModPackName {
+            get {
+                return string.Format("{0}.pack", Settings.Default.CurrentMod);
+            }
+        }
+        public string FullModPath {
+            get {
+                return Path.Combine(CurrentModDirectory, ModPackName);
+            }
+        }
+        
+        string GetUserScriptPath() {
+            string scriptFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            scriptFile = Path.Combine(scriptFile, "The Creative Assembly", "Shogun2", "scripts", "user.script.txt");
+            return scriptFile;
+        }
+        
         public void SetMod(Mod mod) {
             mods[mod.Name] = mod.BaseDirectory;
             Settings.Default.ModList = encodeMods(mods);

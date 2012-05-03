@@ -48,6 +48,7 @@ namespace PackFileManager
         private string openFilePath;
         private FileSystemWatcher openFileWatcher;
         private PackedFile openPackedFile;
+        private ToolStripMenuItem openCAToolStripMenuItem;
         private ToolStripMenuItem openToolStripMenuItem;
         private ContextMenuStrip packActionMenuStrip;
         private ToolStripProgressBar packActionProgressBar;
@@ -134,6 +135,8 @@ namespace PackFileManager
         private ToolStripMenuItem newModMenuItem;
         private ToolStripSeparator toolStripSeparator11;
         private ToolStripMenuItem editModMenuItem;
+        private ToolStripMenuItem installModMenuItem;
+        private ToolStripMenuItem uninstallModMenuItem;
         private ToolStripMenuItem deleteCurrentToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator12;
         private UnitVariantFileEditorControl unitVariantFileEditorControl;
@@ -175,8 +178,29 @@ namespace PackFileManager
             modsToolStripMenuItem.DropDownItems.Add(new ModMenuItem("None", ""));
             ModManager.Instance.ModNames.ForEach(name => modsToolStripMenuItem.DropDownItems.Add(new ModMenuItem(name, name)));
             ModManager.Instance.CurrentModChanged += delegate(string newMod) { OpenCurrentModPack(); };
-            OpenCurrentModPack();
+            if (args.Length == 0) {
+                OpenCurrentModPack();
+            }
+            
+            string shogunPath = IOFunctions.GetShogunTotalWarDirectory();
+            if (shogunPath != null) {
+                shogunPath = Path.Combine(shogunPath, "data");
+                List<string> packFiles = new List<string> (Directory.GetFiles(shogunPath, "*.pack"));
+                packFiles.Sort();
+                packFiles.ForEach(file => openCAToolStripMenuItem.DropDownItems.Add(
+                    new ToolStripMenuItem(Path.GetFileName(file), null, 
+                                     delegate(object s, EventArgs a) { OpenExistingPackFile(file); })));
+            }
+            
+            ModManager.ModChangeEvent enableMenuItem = delegate(string newMod) {
+                bool enabled = newMod != "";
+                enabled &= IOFunctions.GetShogunTotalWarDirectory() != null;
+                installModMenuItem.Enabled = uninstallModMenuItem.Enabled = enabled;
+            };
+            enableMenuItem(Settings.Default.CurrentMod);
+            ModManager.Instance.CurrentModChanged += enableMenuItem;
         }
+
         private void OpenCurrentModPack() {
             try {
                 string modPath = Path.Combine(ModManager.Instance.CurrentModDirectory, Settings.Default.CurrentMod + ".pack");
@@ -426,6 +450,7 @@ namespace PackFileManager
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openCAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -447,6 +472,8 @@ namespace PackFileManager
             this.newModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.editModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.installModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uninstallModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.filesMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -729,6 +756,7 @@ namespace PackFileManager
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
             this.openToolStripMenuItem,
+            this.openCAToolStripMenuItem,
             this.toolStripSeparator1,
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
@@ -759,6 +787,14 @@ namespace PackFileManager
             this.openToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.openToolStripMenuItem.Text = "&Open...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // openCaToolStripMenuItem
+            // 
+            this.openCAToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.openCAToolStripMenuItem.Name = "openCAToolStripMenuItem";
+            this.openCAToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.openCAToolStripMenuItem.Text = "Open CA pack...";
+            this.openCAToolStripMenuItem.Enabled = false;
             // 
             // toolStripSeparator1
             // 
@@ -898,6 +934,8 @@ namespace PackFileManager
             this.newModMenuItem,
             this.toolStripSeparator11,
             this.editModMenuItem,
+            this.installModMenuItem,
+            this.uninstallModMenuItem,
             this.deleteCurrentToolStripMenuItem,
             this.toolStripSeparator12});
             this.modsToolStripMenuItem.Name = "modsToolStripMenuItem";
@@ -922,6 +960,20 @@ namespace PackFileManager
             this.editModMenuItem.Size = new System.Drawing.Size(152, 22);
             this.editModMenuItem.Text = "Edit Current";
             this.editModMenuItem.Visible = false;
+            // 
+            // installModMenuItem
+            // 
+            this.installModMenuItem.Name = "installModMenuItem";
+            this.installModMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.installModMenuItem.Text = "Install Current";
+            this.installModMenuItem.Click += new EventHandler(this.installModMenuItem_Click);
+            // 
+            // uninstallModMenuItem
+            // 
+            this.uninstallModMenuItem.Name = "uninstallModMenuItem";
+            this.uninstallModMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.uninstallModMenuItem.Text = "Uninstall Current";
+            this.uninstallModMenuItem.Click += new EventHandler(this.uninstallModMenuItem_Click);
             // 
             // deleteCurrentToolStripMenuItem
             // 
@@ -1486,12 +1538,9 @@ namespace PackFileManager
             };
             extractor.extractFiles(files);
         }
-
-
         #endregion
 
         protected void EnableMenuItems() {
-            saveToDirectoryToolStripMenuItem.Enabled = currentPackFile != null && !CanWriteCurrentPack && CurrentPackFile.IsModified;
             createReadMeToolStripMenuItem.Enabled = !CanWriteCurrentPack;
         }
 
@@ -2233,14 +2282,14 @@ namespace PackFileManager
             Settings.Default.ShowDecodeToolOnError = showDecodeToolOnErrorToolStripMenuItem.Checked;
         }
         #endregion
-
+  
+        #region MyMod
         private void newModMenuItem_Click(object sender, EventArgs e) {
             List<string> oldMods = ModManager.Instance.ModNames;
             string packFileName = ModManager.Instance.AddMod();
             if (packFileName != null) {
                 // add mod entry to menu
                 if (Settings.Default.CurrentMod != "") {
-                    ToolStrip strip = editModMenuItem.GetCurrentParent();
                     if (!oldMods.Contains(Settings.Default.CurrentMod)) {
                         modsToolStripMenuItem.DropDownItems.Add(new ModMenuItem(Settings.Default.CurrentMod, Settings.Default.CurrentMod));
                     }
@@ -2264,6 +2313,31 @@ namespace PackFileManager
             };
             CurrentPackFile = new PackFile(name, header);
         }
+        
+        private void installModMenuItem_Click(object sender, EventArgs e) {
+            if (CurrentPackFile != null && CurrentPackFile.IsModified) {
+                var result = MessageBox.Show("The current pack has been modified. Save first?\n"+
+                                "Otherwise, the last saved version will be installed.", "Save?", MessageBoxButtons.YesNoCancel);
+
+                if (result == DialogResult.Yes) {
+                    SaveAsFile(ModManager.Instance.FullModPath);
+                } else if (result == DialogResult.Cancel) {
+                    return;
+                }
+            }
+            try {
+                ModManager.Instance.InstallCurrentMod();
+            } catch (Exception ex) {
+                MessageBox.Show(string.Format("Install failed: {0}", ex), "Install Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private void uninstallModMenuItem_Click(object sender, EventArgs e) {
+            try {
+                ModManager.Instance.UninstallCurrentMod();
+            } catch (Exception ex) {
+                MessageBox.Show(string.Format("Uninstall failed: {0}", ex), "Uninstall Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
         private void deleteCurrentToolStripMenuItem_Click(object sender, EventArgs e) {
             string current = Settings.Default.CurrentMod;
@@ -2277,6 +2351,7 @@ namespace PackFileManager
                 }
             }
         }
+        #endregion
     }
 
     class LoadUpdater 
