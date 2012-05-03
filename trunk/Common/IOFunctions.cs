@@ -15,48 +15,52 @@
         public static string GetShogunTotalWarDirectory()
         {
             string str = null;
-            if (string.IsNullOrEmpty(str))
-            {
-                str = (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 34330", "InstallLocation", "");
-            }
-            if (string.IsNullOrEmpty(str))
-            {
-                str = (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 34330", "InstallLocation", "");
-            }
+            try {
+                if (string.IsNullOrEmpty(str))
+                {
+                    str = (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 34330", "InstallLocation", "");
+                }
+                if (string.IsNullOrEmpty(str))
+                {
+                    str = (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 34330", "InstallLocation", "");
+                }
+            } catch {}
             return str;
         }
 
         public static string GetNapoleonTotalWarDirectory()
         {
             string str = null;
-            if (string.IsNullOrEmpty(str))
-            {
-                str = (string) Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 34030", "InstallLocation", "");
-            }
-            if (string.IsNullOrEmpty(str))
-            {
-                str = (string) Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 34050", "InstallLocation", "");
-            }
-            if (string.IsNullOrEmpty(str))
-            {
-                str = (string) Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 901162", "InstallLocation", "");
-            }
-            if (string.IsNullOrEmpty(str))
-            {
-                str = (string) Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 34030", "InstallLocation", "");
-            }
-            if (string.IsNullOrEmpty(str))
-            {
-                str = (string) Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 34050", "InstallLocation", "");
-            }
-            if (string.IsNullOrEmpty(str))
-            {
-                str = (string) Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 901162", "InstallLocation", "");
-            }
-            if (string.IsNullOrEmpty(str))
-            {
-                str = string.Empty;
-            }
+            try {
+                if (string.IsNullOrEmpty(str))
+                {
+                    str = (string) Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 34030", "InstallLocation", "");
+                }
+                if (string.IsNullOrEmpty(str))
+                {
+                    str = (string) Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 34050", "InstallLocation", "");
+                }
+                if (string.IsNullOrEmpty(str))
+                {
+                    str = (string) Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 901162", "InstallLocation", "");
+                }
+                if (string.IsNullOrEmpty(str))
+                {
+                    str = (string) Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 34030", "InstallLocation", "");
+                }
+                if (string.IsNullOrEmpty(str))
+                {
+                    str = (string) Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 34050", "InstallLocation", "");
+                }
+                if (string.IsNullOrEmpty(str))
+                {
+                    str = (string) Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 901162", "InstallLocation", "");
+                }
+                if (string.IsNullOrEmpty(str))
+                {
+                    str = string.Empty;
+                }
+            } catch {}
             return str;
         }
 
