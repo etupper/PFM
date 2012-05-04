@@ -23,25 +23,39 @@
 		}
 
 		#region CSV export
+        static char[] TABS = { '\t' };
+        
         public void Export(StreamWriter writer) {
-			for (int i = 0; i < NumEntries; i++) {
-				writer.WriteLine (this.Entries [i].Tag.Replace ("\t", @"\t").Replace ("\n", @"\n") + 
-				                 "\t" + this.Entries [i].Localised.Replace ("\t", @"\t").Replace ("\n", @"\n") + 
-				                  "\t" + (this.Entries [i].Tooltip ? "True" : "False"));
+			for (int j = 0; j < NumEntries; j++) {
+                LocEntry entry = Entries[j];
+                string str = CsvUtil.Format (entry[0]);
+                for (int i = 1; i < 3; i++) {
+                    string current = entry[i];
+                    str += "\t" + CsvUtil.Format (current);
+                }
+                writer.WriteLine (str);
 			}
 		}
 
         public void Import(StreamReader reader) {			
 			Entries.Clear ();
 			while (!reader.EndOfStream) {
-				string str = reader.ReadLine ();
-				if (str.Trim () != "") {
-					string[] strArray = str.Split (new char[] { '\t' });
-					string tag = strArray [0].Replace (@"\t", "\t").Replace (@"\n", "\n").Trim (new char[] { '"' });
-					string localised = strArray [1].Replace (@"\t", "\t").Replace (@"\n", "\n").Trim (new char[] { '"' });
-					bool tooltip = strArray [2].ToLower () == "true";
-					Entries.Add (new LocEntry (tag, localised, tooltip));
-				}
+                try {
+    				string str = reader.ReadLine ();
+    				if (str.Trim () != "") {
+                        string[] strArray = str.Split (TABS, StringSplitOptions.None);
+                        if (strArray.Length != 3) {
+                            continue;
+                        }
+                        List<string> imported = new List<string>(3);
+    
+                        for (int i = 0; i < 3; i++) {
+                            string str3 = CsvUtil.Unformat (strArray [i]);
+                            imported.Add(str3);
+                        }
+    					Entries.Add (new LocEntry(imported[0], imported[1], Boolean.Parse(imported[2])));
+    				}
+                } catch {}
 			}
 		}
 		#endregion
@@ -51,6 +65,22 @@
 		public string Localised { get; set; }
 		public string Tag { get; set; }
 		public bool Tooltip { get; set; }
+        
+        public string this[int index] {
+            get {
+                switch(index) {
+                case 0:
+                    return Tag;
+                case 1:
+                    return Localised;
+                case 2:
+                    return Tooltip.ToString();
+                default:
+                    break;
+                }
+                throw new IndexOutOfRangeException();
+            }
+        }
 
 		public LocEntry (string tag, string localised, bool tooltip) {
 			this.Tag = tag;
