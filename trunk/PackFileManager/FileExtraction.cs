@@ -46,10 +46,14 @@ namespace PackFileManager {
                 packActionProgressBar.Maximum = packedFiles.Count;
                 packActionProgressBar.Step = 1;
                 packActionProgressBar.Value = 0;
-                int num = 0;
-                int num2 = 0;
+                int extractedCount = 0;
+                int skippedCount = 0;
                 foreach (PackedFile file in packedFiles) {
-                    string path = Path.Combine(exportDirectory, Preprocessor.GetFileName(file.FullPath));
+                    if (!Preprocessor.CanExtract(file)) {
+                        skippedCount++;
+                        continue;
+                    }
+                    string path = Path.Combine(exportDirectory, Preprocessor.GetFileName(file));
                     if (File.Exists(path)) {
                         string str3;
                         if (defaultAction == FileAlreadyExistsDialog.Action.Ask) {
@@ -62,8 +66,8 @@ namespace PackFileManager {
                         }
                         switch (action) {
                             case FileAlreadyExistsDialog.Action.Skip: {
-                                    num2++;
-                                    packStatusLabel.Text = string.Format("({1} of {2} files extracted, {3} skipped): extracting {0}", new object[] { file.FullPath, num, packedFiles.Count, num2 });
+                                    skippedCount++;
+                                    packStatusLabel.Text = string.Format("({1} of {2} files extracted, {3} skipped): extracting {0}", new object[] { file.FullPath, extractedCount, packedFiles.Count, skippedCount });
                                     packActionProgressBar.PerformStep();
                                     Application.DoEvents();
                                     continue;
@@ -91,11 +95,16 @@ namespace PackFileManager {
                     } else {
                         Directory.CreateDirectory(Path.GetDirectoryName(path));
                     }
-                    packStatusLabel.Text = string.Format("({1} of {2} files extracted, {3} skipped): extracting {0}", new object[] { file.FullPath, num, packedFiles.Count, num2 });
+                    packStatusLabel.Text = string.Format("({1} of {2} files extracted, {3} skipped): extracting {0}", new object[] { file.FullPath, extractedCount, packedFiles.Count, skippedCount });
                     Application.DoEvents();
-                    File.WriteAllBytes(path, Preprocessor.Process(file));
-                    num++;
-                    packStatusLabel.Text = string.Format("({1} of {2} files extracted, {3} skipped): extracting {0}", new object[] { file.FullPath, num, packedFiles.Count, num2 });
+                    try {
+                        File.WriteAllBytes(path, Preprocessor.Process(file));
+                        extractedCount++;
+                    } catch (Exception e) {
+                        MessageBox.Show(string.Format("Failed to export {0} to tsv: {1}", file.FullPath, e.Message));
+                        skippedCount++;
+                    }
+                    packStatusLabel.Text = string.Format("({1} of {2} files extracted, {3} skipped): extracting {0}", new object[] { file.FullPath, extractedCount, packedFiles.Count, skippedCount });
                     packActionProgressBar.PerformStep();
                     Application.DoEvents();
                 }
@@ -103,28 +112,76 @@ namespace PackFileManager {
         }
     }
     public interface IExtractionPreprocessor {
-        string GetFileName(string path);
+        bool CanExtract(PackedFile file);
+        string GetFileName(PackedFile file);
         byte[] Process(PackedFile file);
     }
+
     public class IdentityPreprocessor : IExtractionPreprocessor {
-        public string GetFileName(string path) { return path; }
+        public bool CanExtract(PackedFile file) { return true; }
+        public string GetFileName(PackedFile path) { return path.FullPath; }
         public byte[] Process(PackedFile file) { return file.Data; }
+    }
+    
+    public class TsvExtractionPreprocessor : IExtractionPreprocessor {
+        List<IExtractionPreprocessor> processors = new List<IExtractionPreprocessor>();
+        public TsvExtractionPreprocessor() {
+            processors.Add(new TsvConversionPreprocessor());
+            processors.Add(new LocTsvPreprocessor());
+        }
+        private IExtractionPreprocessor GetExtractor(PackedFile file) {
+            IExtractionPreprocessor result = null;
+            foreach(IExtractionPreprocessor e in processors) {
+                if (e.CanExtract(file)) {
+                    result = e;
+                    break;
+                }
+            }
+            return result;
+        }
+        public bool CanExtract(PackedFile file) {
+            return GetExtractor(file) != null;
+        }
+        public string GetFileName(PackedFile file) {
+            return GetExtractor(file).GetFileName(file);
+        }
+        public byte[] Process(PackedFile file) {
+            return GetExtractor(file).Process(file);
+        }
     }
 
     public class TsvConversionPreprocessor : IExtractionPreprocessor {
-        public string GetFileName(string path) {
-            return string.Format("{0}.csv", path);
+        public bool CanExtract(PackedFile file) {
+            return file.FullPath.StartsWith("db");
+        }
+        public string GetFileName(PackedFile path) {
+            return string.Format("{0}.csv", path.FullPath);
         }
         public byte[] Process(PackedFile file) {
             byte[] result = file.Data;
             using (MemoryStream stream = new MemoryStream()) {
-                try {
-                    DBFile dbFile = PackedFileDbCodec.Decode(file);
-                    TextDbCodec.Instance.Encode(stream, dbFile);
-                    result = stream.ToArray();
-                } catch (DBFileNotSupportedException) {
-                    MessageBox.Show(string.Format("Could not export to tsv: {0}\nTSV File will contain raw db data.", file.FullPath));
-                }
+                DBFile dbFile = PackedFileDbCodec.Decode(file);
+                TextDbCodec.Instance.Encode(stream, dbFile);
+                result = stream.ToArray();
+            }
+            return result;
+        }
+    }
+    
+    public class LocTsvPreprocessor : IExtractionPreprocessor {
+        public bool CanExtract(PackedFile file) {
+            return file.FullPath.EndsWith(".loc");
+        }
+        public string GetFileName(PackedFile path) {
+            return string.Format("{0}.csv", path.FullPath);
+        }
+        public byte[] Process(PackedFile file) {
+            byte[] result;
+            MemoryStream stream = new MemoryStream();
+            using (var writer = new StreamWriter(stream)) {
+                LocFile locFile = LocCodec.Instance.Decode(file.Data);
+                locFile.Export(writer);
+                result = stream.ToArray();
             }
             return result;
         }

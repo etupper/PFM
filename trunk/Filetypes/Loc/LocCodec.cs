@@ -13,6 +13,12 @@ namespace Common {
 				return stream.ToArray ();
 			}
 		}
+        
+        public LocFile Decode(byte[] data) {
+            using(MemoryStream stream = new MemoryStream(data)) {
+                return Decode (stream);
+            }
+        }
 
 		// read from pack
         public LocFile Decode(Stream stream) {
