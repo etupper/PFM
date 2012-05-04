@@ -631,7 +631,6 @@ namespace PackFileManager
 
         #endregion
 
-
         #region Open Packed
         private void openAsTextMenuItem_Click(object sender, EventArgs e) {
             List<PackedFile> packedFiles = new List<PackedFile>();
@@ -830,7 +829,7 @@ namespace PackFileManager
             IExtractionPreprocessor tsvExport = new TsvExtractionPreprocessor();
             currentPackFile.Files.ForEach(f => { if (tsvExport.CanExtract(f)) { files.Add(f); }});
             FileExtractor extractor = new FileExtractor(packStatusLabel, packActionProgressBar) {
-                Preprocessor = new TsvConversionPreprocessor()
+                Preprocessor = tsvExport
             };
             extractor.extractFiles(files);
         }
@@ -851,7 +850,6 @@ namespace PackFileManager
             }
             new FileExtractor(packStatusLabel, packActionProgressBar).extractFiles(packedFiles);
         }
-
 
         private void extractSelectedToolStripMenuItem_Click(object sender, EventArgs e)
         {
