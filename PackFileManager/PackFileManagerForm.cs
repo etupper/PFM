@@ -201,15 +201,6 @@ namespace PackFileManager
             ModManager.Instance.CurrentModChanged += enableMenuItem;
         }
 
-        private void OpenCurrentModPack() {
-            try {
-                string modPath = Path.Combine(ModManager.Instance.CurrentModDirectory, Settings.Default.CurrentMod + ".pack");
-                if (Settings.Default.CurrentMod != "" && File.Exists(modPath)) {
-                    OpenExistingPackFile(modPath);
-                }
-            } catch { }
-        }
-
         public override sealed string Text
         {
             get { return base.Text; }
@@ -2350,6 +2341,15 @@ namespace PackFileManager
                     }
                 }
             }
+        }
+        
+        private void OpenCurrentModPack() {
+            try {
+                string modPath = ModManager.Instance.FullModPath;
+                if (Settings.Default.CurrentMod != "" && File.Exists(modPath)) {
+                    OpenExistingPackFile(modPath);
+                }
+            } catch { }
         }
         #endregion
     }
