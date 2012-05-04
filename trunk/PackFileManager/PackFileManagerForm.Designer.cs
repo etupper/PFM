@@ -352,8 +352,8 @@ namespace PackFileManager
             // toolStripMenuItem9
             // 
             this.extractToolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.extractSelectedToolStripMenuItem,
-            this.extractAllToolStripMenuItem,
+            this.extractSelectedToolStripMenuItem2,
+            this.extractAllToolStripMenuItem2,
             this.extractUnknownToolStripMenuItem});
             this.extractToolStripMenuItem2.Name = "toolStripMenuItem9";
             this.extractToolStripMenuItem2.Size = new System.Drawing.Size(131, 22);
