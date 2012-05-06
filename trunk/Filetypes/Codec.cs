@@ -14,7 +14,14 @@ namespace Common {
 		static string format = "\"{0}\"";
 
 		public static string Format(string input) {
-			return string.Format (format, Regex.Escape (input));
+            return string.Format(format, Regex.Escape(input))
+                .Replace("\\ ", " ")
+                .Replace("\\.", ".")
+                .Replace("\\|", "|")
+                .Replace("\\(", "(")
+                .Replace("\\)", ")")
+                .Replace("\\[", "[")
+                ;
 		}
 
 		public static string Unformat(string formatted) {
