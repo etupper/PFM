@@ -23,7 +23,7 @@ namespace PackFileManager {
             Preprocessor = new IdentityPreprocessor();
         }
 
-        public void extractFiles(List<PackedFile> packedFiles) {
+        public static string GetExportDirectory() {
             string exportDirectory = null;
             if (Settings.Default.CurrentMod == "") {
                 FolderBrowserDialog extractFolderBrowserDialog = new FolderBrowserDialog {
@@ -37,15 +37,22 @@ namespace PackFileManager {
             } else {
                 exportDirectory = ModManager.Instance.CurrentModDirectory;
             }
+            return exportDirectory;
+        }
+
+        public void extractFiles(List<PackedFile> packedFiles) {
+            string exportDirectory = GetExportDirectory();
             if (!string.IsNullOrEmpty(exportDirectory)) {
                 FileAlreadyExistsDialog.Action action = FileAlreadyExistsDialog.Action.Ask;
                 FileAlreadyExistsDialog.Action defaultAction = FileAlreadyExistsDialog.Action.Ask;
-                packStatusLabel.Text = string.Format("Extracting file (0 of {0} files extracted, 0 skipped)", packedFiles.Count);
-                packActionProgressBar.Visible = true;
-                packActionProgressBar.Minimum = 0;
-                packActionProgressBar.Maximum = packedFiles.Count;
-                packActionProgressBar.Step = 1;
-                packActionProgressBar.Value = 0;
+                SetStatusText(string.Format("Extracting file (0 of {0} files extracted, 0 skipped)", packedFiles.Count));
+                if (packActionProgressBar != null) {
+                    packActionProgressBar.Visible = true;
+                    packActionProgressBar.Minimum = 0;
+                    packActionProgressBar.Maximum = packedFiles.Count;
+                    packActionProgressBar.Step = 1;
+                    packActionProgressBar.Value = 0;
+                }
                 int extractedCount = 0;
                 int skippedCount = 0;
                 foreach (PackedFile file in packedFiles) {
@@ -67,8 +74,10 @@ namespace PackFileManager {
                         switch (action) {
                             case FileAlreadyExistsDialog.Action.Skip: {
                                     skippedCount++;
-                                    packStatusLabel.Text = string.Format("({1} of {2} files extracted, {3} skipped): extracting {0}", new object[] { file.FullPath, extractedCount, packedFiles.Count, skippedCount });
-                                    packActionProgressBar.PerformStep();
+                                    SetStatus(file.FullPath, extractedCount, packedFiles.Count, skippedCount);
+                                    if (packActionProgressBar != null) {
+                                        packActionProgressBar.PerformStep();
+                                    }
                                     Application.DoEvents();
                                     continue;
                                 }
@@ -88,14 +97,16 @@ namespace PackFileManager {
                                 break;
 
                             case FileAlreadyExistsDialog.Action.Cancel:
-                                packStatusLabel.Text = "Extraction cancelled.";
-                                packActionProgressBar.Visible = false;
+                                SetStatusText("Extraction cancelled.");
+                                if (packActionProgressBar != null) {
+                                    packActionProgressBar.Visible = false;
+                                }
                                 return;
                         }
                     } else {
                         Directory.CreateDirectory(Path.GetDirectoryName(path));
                     }
-                    packStatusLabel.Text = string.Format("({1} of {2} files extracted, {3} skipped): extracting {0}", new object[] { file.FullPath, extractedCount, packedFiles.Count, skippedCount });
+                    SetStatus(file.FullPath, extractedCount, packedFiles.Count, skippedCount);
                     Application.DoEvents();
                     try {
                         File.WriteAllBytes(path, Preprocessor.Process(file));
@@ -104,10 +115,21 @@ namespace PackFileManager {
                         MessageBox.Show(string.Format("Failed to export {0} to tsv: {1}", file.FullPath, e.Message));
                         skippedCount++;
                     }
-                    packStatusLabel.Text = string.Format("({1} of {2} files extracted, {3} skipped): extracting {0}", new object[] { file.FullPath, extractedCount, packedFiles.Count, skippedCount });
-                    packActionProgressBar.PerformStep();
+                    SetStatus(file.FullPath, extractedCount, packedFiles.Count, skippedCount);
+                    if (packActionProgressBar != null) {
+                        packActionProgressBar.PerformStep();
+                    }
                     Application.DoEvents();
                 }
+            }
+        }
+        void SetStatus(string currentFile, int extractedCount, int totalCount, int skippedCount) {
+            SetStatusText(string.Format("({1} of {2} files extracted, {3} skipped): extracting {0}", 
+                new object[] { currentFile, extractedCount, totalCount, skippedCount }));
+        }
+        void SetStatusText(string text) {
+            if (packStatusLabel != null) {
+                packStatusLabel.Text = text;
             }
         }
     }
@@ -126,7 +148,7 @@ namespace PackFileManager {
     public class TsvExtractionPreprocessor : IExtractionPreprocessor {
         List<IExtractionPreprocessor> processors = new List<IExtractionPreprocessor>();
         public TsvExtractionPreprocessor() {
-            processors.Add(new TsvConversionPreprocessor());
+            processors.Add(new DbTsvExtractor());
             processors.Add(new LocTsvPreprocessor());
         }
         private IExtractionPreprocessor GetExtractor(PackedFile file) {
@@ -150,7 +172,7 @@ namespace PackFileManager {
         }
     }
 
-    public class TsvConversionPreprocessor : IExtractionPreprocessor {
+    public class DbTsvExtractor : IExtractionPreprocessor {
         public bool CanExtract(PackedFile file) {
             return file.FullPath.StartsWith("db");
         }

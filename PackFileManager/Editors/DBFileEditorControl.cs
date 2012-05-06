@@ -50,6 +50,7 @@ namespace PackFileManager {
             dataGridView.ColumnHeaderMouseClick += dataGridView1_ColumnHeaderMouseClick;
             try {
                 useFirstColumnAsRowHeader.Checked = Settings.Default.UseFirstColumnAsRowHeader;
+                useComboBoxCells.Checked = Settings.Default.UseComboboxCells;
                 showAllColumns.Checked = Settings.Default.ShowAllColumns;
             } catch {
                 // TODO: Should not need to swallow an exception.
@@ -57,6 +58,17 @@ namespace PackFileManager {
             dataGridView.KeyUp += copyPaste;
             dataGridView.SelectionChanged += new EventHandler(delegate(object sender, EventArgs args) 
                 { cloneRowsButton.Enabled = dataGridView.SelectedRows.Count > 0; });
+
+            dataGridView.DataError += new DataGridViewDataErrorEventHandler(CellErrorHandler);
+            this.useComboBoxCells.CheckedChanged += new System.EventHandler(this.useComboBoxCells_CheckedChanged);
+        }
+        private void CellErrorHandler(object sender, DataGridViewDataErrorEventArgs args) {
+            if (Settings.Default.UseComboboxCells) {
+                MessageBox.Show("A table reference could not be resolved; disabling combo box cells");
+                Settings.Default.UseComboboxCells = false;
+            }
+            args.ThrowException = true;
+            useComboBoxCells.Checked = false;
         }
 
         private void copyPaste(object sender, KeyEventArgs arge) 
@@ -264,25 +276,11 @@ namespace PackFileManager {
         }
 
         private void exportButton_Click(object sender, EventArgs e) {
-            var dialog = new SaveFileDialog {
-                InitialDirectory = Settings.Default.ImportExportDirectory,
-                FileName = EditedFile.CurrentType.name + ".tsv",
-                Filter = IOFunctions.TSV_FILTER
-            };
-            dialog.InitialDirectory = Settings.Default.ImportExportDirectory;
-
-            if (dialog.ShowDialog () == DialogResult.OK) {
-                Settings.Default.ImportExportDirectory = Path.GetDirectoryName(dialog.FileName);
-                Stream stream = new FileStream (dialog.FileName, FileMode.Create);
-                try {
-                    TextDbCodec.Instance.Encode (stream, EditedFile);
-                    stream.Close ();
-                } catch (DBFileNotSupportedException exception) {
-                    showDBFileNotSupportedMessage (exception.Message);
-                } finally {
-                    stream.Dispose ();
-                }
-            }
+            List<PackedFile> files = new List<PackedFile>();
+            files.Add(CurrentPackedFile);
+            FileExtractor extractor = new FileExtractor(null, null) { Preprocessor = new TsvExtractionPreprocessor() };
+            extractor.extractFiles(files);
+            MessageBox.Show(string.Format("File exported to TSV."));
         }
 
         private void importButton_Click(object sender, EventArgs e) {
@@ -455,7 +453,6 @@ namespace PackFileManager {
             this.useComboBoxCells.TabIndex = 5;
             this.useComboBoxCells.Text = "Use ComboBox Cells";
             this.useComboBoxCells.UseVisualStyleBackColor = true;
-            this.useComboBoxCells.CheckedChanged += new System.EventHandler(this.useComboBoxCells_CheckedChanged);
             // 
             // dataGridView
             // 
@@ -524,9 +521,12 @@ namespace PackFileManager {
                             cb.Items.Add(item);
                     }
                 } 
-                catch (Exception x) 
-                {
-                    Console.WriteLine(x);
+                catch {
+                    MessageBox.Show("A table reference could not be resolved.\nDisabling combo cells.");
+                    Settings.Default.UseComboboxCells = false;
+                    useComboBoxCells.CheckedChanged -= useComboBoxCells_CheckedChanged;
+                    useComboBoxCells.CheckState = CheckState.Unchecked;
+                    useComboBoxCells.CheckedChanged += useComboBoxCells_CheckedChanged;
                 }
             }
 
@@ -685,7 +685,6 @@ namespace PackFileManager {
         private void useComboBoxCells_CheckedChanged(object sender, EventArgs e) 
         {
             Settings.Default.UseComboboxCells = useComboBoxCells.Checked;
-            Settings.Default.Save();
             if (CurrentPackedFile != null) 
             {
                 // rebuild table
