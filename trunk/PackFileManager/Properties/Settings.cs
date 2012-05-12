@@ -80,6 +80,20 @@
                 Save();
             }
         }
+        [DefaultSettingValue("csv"), UserScopedSetting]
+        public string TsvExtension {
+            get {
+                string result = (string)this["TsvExtension"];
+                return result;
+            }
+            set {
+                this["TsvExtension"] = value;
+                Save();
+            }
+        }
+        public string TsvFile(string baseFile) {
+            return string.Format("{0}.{1}", baseFile, TsvExtension);
+        }
 
         public bool IsColumnIgnored(string key, string columnName)
         {
