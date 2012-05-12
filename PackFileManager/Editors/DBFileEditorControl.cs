@@ -10,8 +10,7 @@ using System.IO;
 using System.Windows.Forms;
 
 namespace PackFileManager {
-    public class DBFileEditorControl : UserControl 
-    {
+    public class DBFileEditorControl : UserControl {
         private enum COPIED_TYPE { NONE, ROWS, CELLS }
         private string referenceTarget = null;
 
@@ -158,6 +157,7 @@ namespace PackFileManager {
             }
         }
 
+        #region Copy/Paste
         private void copyEvent() 
         {
             if (EditedFile == null || dataGridView.SelectedCells.Count == 0) {
@@ -165,38 +165,80 @@ namespace PackFileManager {
             }
 
             string encoded = "";
-            // copiedRows = new List<List<FieldInstance>>();
             DataGridViewSelectedCellCollection cells = dataGridView.SelectedCells;
-            copiedRows = new List<List<FieldInstance>>();
-            int minColumn = dataGridView.ColumnCount;
-            int maxColumn = -1;
-            int minRow = dataGridView.RowCount;
-            int maxRow = -1;
-
-            foreach (DataGridViewCell cell in cells) 
-            {
-                minColumn = Math.Min(minColumn, cell.ColumnIndex);
-                maxColumn = Math.Max(maxColumn, cell.ColumnIndex);
-                minRow = Math.Min(minRow, cell.RowIndex);
-                maxRow = Math.Max(maxRow, cell.RowIndex);
-            }
-
-            for (int j = minRow; j <= maxRow; j++) 
-            {
-                var dataRowView = dataGridView.Rows[j].DataBoundItem as DataRowView;
-                // var copy = new List<FieldInstance>(maxColumn - minColumn);
-
+            List<List<DataGridViewCell>> selected = SelectedCells(cells);
+            for (int rowNum = 0; rowNum < selected.Count; rowNum++) {
+                List<DataGridViewCell> row = selected[rowNum];
                 string line = "";
-                for (int i = minColumn; i <= maxColumn; i++) 
-                {
-                    line += dataRowView[i].ToString() + "\t";
+                for (int colNum = 0; colNum < row.Count; colNum++) {
+                    line += row[colNum].Value + "\t";
                 }
                 encoded += line + "\n";
             }
-            // lastCopy = COPIED_TYPE.CELLS;
+
             Clipboard.SetText(encoded);
             pasteToolStripButton.Enabled = encoded.Length > 2;
         }
+
+        private void pasteEvent() {
+            string encoded = Clipboard.GetText();
+            string[] lines = encoded.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            string[][] values = new string[lines.Length][];
+            for (int i = 0; i < lines.Length; i++) {
+                string[] line = lines[i].Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                values[i] = line;
+            }
+            DataGridViewSelectedCellCollection cells = dataGridView.SelectedCells;
+            List<List<DataGridViewCell>> selected = SelectedCells(cells);
+            for (int rowNum = 0; rowNum < selected.Count; rowNum++) {
+                List<DataGridViewCell> row = selected[rowNum];
+                for (int col = 0; col < row.Count; col++) {
+                    try {
+                        string setValue = values[rowNum][col];
+                        row[col].Value = setValue;
+                    } catch (Exception e) {
+                        MessageBox.Show(string.Format("Could not paste {0}/{1}: {2}", rowNum, col, e), "Failed to paste");
+                        return;
+                    }
+                }
+            }
+
+            CurrentPackedFile.Data = Codec.Encode(EditedFile);
+            dataGridView.Refresh();
+        }
+
+        List<List<DataGridViewCell>> SelectedCells(DataGridViewSelectedCellCollection collection) {
+            List<List<DataGridViewCell>> rows = new List<List<DataGridViewCell>>();
+            bool ignoreColumnZero = !Settings.Default.UseFirstColumnAsRowHeader;
+            foreach (DataGridViewCell cell in collection) {
+                if (cell.ColumnIndex == 0 && ignoreColumnZero) {
+                    continue;
+                }
+                int rowIndex = cell.RowIndex;
+                List<DataGridViewCell> addTo;
+                while (rowIndex >= rows.Count) {
+                    rows.Add(new List<DataGridViewCell>());
+                }
+                addTo = rows[rowIndex];
+                while (cell.ColumnIndex >= addTo.Count) {
+                    addTo.Add(null);
+                }
+                if (cell.ColumnIndex == 0 && ignoreColumnZero) {
+                    continue;
+                }
+                addTo[cell.ColumnIndex] = cell;
+            }
+            List<List<DataGridViewCell>> result = new List<List<DataGridViewCell>>();
+            rows.ForEach(row => {
+                if (row.Count > 0) {
+                    List<DataGridViewCell> newRow = new List<DataGridViewCell>();
+                    row.ForEach(cell => { if (cell != null) newRow.Add(cell); });
+                    result.Add(newRow);
+                }
+            });
+            return result;
+        }
+        #endregion
 
         private void copyToolStripButton_Click(object sender, EventArgs e) 
         {
@@ -286,7 +328,7 @@ namespace PackFileManager {
         private void importButton_Click(object sender, EventArgs e) {
             OpenFileDialog openDBFileDialog = new OpenFileDialog {
                 InitialDirectory = Settings.Default.ImportExportDirectory,
-                FileName = EditedFile.CurrentType.name + ".tsv"
+                FileName = Settings.Default.TsvFile(EditedFile.CurrentType.name)
             };
 
             if (openDBFileDialog.ShowDialog() == DialogResult.OK) {
@@ -628,26 +670,6 @@ namespace PackFileManager {
             toggleFirstColumnAsRowHeader(Settings.Default.UseFirstColumnAsRowHeader);
         }
 
-        private void pasteEvent() 
-        {
-            string encoded = Clipboard.GetText();
-            string[] lines = encoded.Split(new char[] {'\n'}, StringSplitOptions.RemoveEmptyEntries);
-            string[][] values = new string[lines.Length][];
-            for (int i = 0; i < lines.Length; i++) {
-                string[] line = lines[i].Split(new char[]{ '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                values[i] = line;
-            }
-            DataGridViewSelectedCellCollection selectedCells = dataGridView.SelectedCells;
-            foreach (DataGridViewCell cell in selectedCells) {
-                int rowIndex = cell.RowIndex % values.Length;
-                int columnIndex = cell.ColumnIndex % values[rowIndex].Length;
-                cell.Value = values[rowIndex][columnIndex];
-            }
-
-            CurrentPackedFile.Data = Codec.Encode(EditedFile);
-            dataGridView.Refresh();
-        }
-
         private void pasteToolStripButton_Click(object sender, EventArgs e) 
         {
             pasteEvent();
@@ -854,6 +876,7 @@ namespace PackFileManager {
                 }
             }
         }
+
         private void RenumberFrom(int columnIndex) {
             InputBox box = new InputBox { Text = "Enter number to start from", Input = "1" };
             if (box.ShowDialog() == DialogResult.OK) {

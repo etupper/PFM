@@ -53,7 +53,24 @@ namespace PackFileManager {
     class PackedFileNode : PackEntryNode {
         public PackedFileNode(PackedFile file)
             : base(file) {
+                if (file.FullPath.StartsWith("db")) {
+                    file.RenameEvent += Renamed;
+                }
         }
+        void Renamed(PackEntry file, string val) {
+            PackedFile file2 = file as PackedFile;
+            if (!val.Contains("version")) {
+                if (file2.Data.Length != 0) {
+                    try {
+                        DBFileHeader header = PackedFileDbCodec.readHeader(file2);
+                        Text = string.Format("{0} - version {1}", val, header.Version);
+                    } catch (Exception e) {
+                        Console.WriteLine(e);
+                    }
+                }
+            }
+        }
+
         /*
          * Overridden to adjust to color depending on we have DB type information.
          */

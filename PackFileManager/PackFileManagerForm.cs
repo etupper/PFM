@@ -65,6 +65,9 @@ namespace PackFileManager
         };
         private UnitVariantFileEditorControl unitVariantFileEditorControl;
         private TextFileEditorControl textFileEditorControl;
+        private ToolStripMenuItem extractTSVFileExtensionToolStripMenuItem;
+        private ToolStripMenuItem csvToolStripMenuItem;
+        private ToolStripMenuItem tsvToolStripMenuItem;
         private Common.ReadmeEditorControl readmeEditorControl;
         #endregion
 
@@ -102,6 +105,7 @@ namespace PackFileManager
             }
             dbFileEditorControl = control;
 
+            // initialize MyMods menu
             modsToolStripMenuItem.DropDownItems.Add(new ModMenuItem("None", ""));
             ModManager.Instance.ModNames.ForEach(name => modsToolStripMenuItem.DropDownItems.Add(new ModMenuItem(name, name)));
             ModManager.Instance.CurrentModChanged += delegate(string newMod) { OpenCurrentModPack(); };
@@ -109,6 +113,7 @@ namespace PackFileManager
                 OpenCurrentModPack();
             }
             
+            // fill CA file list
             string shogunPath = IOFunctions.GetShogunTotalWarDirectory();
             if (shogunPath != null) {
                 shogunPath = Path.Combine(shogunPath, "data");
@@ -127,6 +132,9 @@ namespace PackFileManager
             };
             enableMenuItem(Settings.Default.CurrentMod);
             ModManager.Instance.CurrentModChanged += enableMenuItem;
+
+            csvToolStripMenuItem.Checked = "csv".Equals(Settings.Default.TsvExtension);
+            tsvToolStripMenuItem.Checked = "tsv".Equals(Settings.Default.TsvExtension);
         }
 
         static readonly Regex NumberedFileNameRE = new Regex("([^0-9]*)([0-9]+).*");
@@ -515,7 +523,9 @@ namespace PackFileManager
         }
 
         private void addFileToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (AddTo == null) {
+            VirtualDirectory addToBase = (Settings.Default.CurrentMod != "")
+                ? currentPackFile.Root : AddTo;
+            if (addToBase == null) {
                 return;
             }
             var addReplaceOpenFileDialog = new OpenFileDialog {
@@ -528,7 +538,7 @@ namespace PackFileManager
                     foreach (string file in addReplaceOpenFileDialog.FileNames) {
                         string addBase = (Settings.Default.CurrentMod != "") 
                             ? GetPathRelativeToMod(file) : Path.GetFileName(file);
-                        AddTo.Add(addBase, new PackedFile(file));
+                        addToBase.Add(addBase, new PackedFile(file));
                     }
                 } catch (Exception x) {
                     MessageBox.Show(x.Message, "Problem, Sir!", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -633,8 +643,9 @@ namespace PackFileManager
         }
 
         private void dBFileFromTSVToolStripMenuItem_Click(object sender, EventArgs e) {
-            var dir = packTreeView.SelectedNode.Tag as VirtualDirectory;
-            if (dir != null) {
+            VirtualDirectory addToBase = (Settings.Default.CurrentMod != "")
+                ? currentPackFile.Root : AddTo;
+            if (addToBase != null) {
                 OpenFileDialog openDBFileDialog = new OpenFileDialog {
                     InitialDirectory = Settings.Default.ImportExportDirectory,
                     Filter = IOFunctions.TSV_FILTER
@@ -659,9 +670,9 @@ namespace PackFileManager
                                 data = PackedFileDbCodec.FromFilename(openDBFileDialog.FileName).Encode(file);
                             }
                             string addBase = (Settings.Default.CurrentMod != "")
-                                ? GetPathRelativeToMod(openDBFileDialog.FileName) : dir.FullPath;
+                                ? GetPathRelativeToMod(openDBFileDialog.FileName) : Path.GetFileName(openDBFileDialog.FileName);
 
-                            AddTo.Add(addBase, new PackedFile { Data = data, Name = filename, Parent = dir });
+                            addToBase.Add(addBase, new PackedFile { Data = data, Name = filename });
                         }
                     } catch (Exception x) {
                         MessageBox.Show(x.Message);
@@ -1091,21 +1102,20 @@ namespace PackFileManager
         #endregion
 
         #region Tree Handler
-        private void packTreeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
-        {
+        static readonly Regex versionedRegex = new Regex("(.*) - version.*");
+        private void packTreeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e) {
             PackEntry entry = e.Node.Tag as PackEntry;
-            if ((e.Label == null) || (e.Label == e.Node.Text) || (entry == null))
-            {
-                e.CancelEdit = true;
+            if ((e.Label != null) && (e.Label != e.Node.Text) && (entry != null))             {
+                string newName = e.Label;
+                if (versionedRegex.IsMatch(newName)) {
+                    newName = versionedRegex.Match(newName).Groups[1].Value;
+                }
+                entry.Name = newName;
             }
-            else
-            {
-                entry.Name = e.Label;
-            }
+            e.CancelEdit = true;
         }
 
-        private void packTreeView_AfterSelect(object sender, TreeViewEventArgs e)
-        {
+        private void packTreeView_AfterSelect(object sender, TreeViewEventArgs e) {
             closeEditors();
             splitContainer1.Panel2.Controls.Clear();
          
@@ -1427,6 +1437,9 @@ namespace PackFileManager
             this.cAPacksAreReadOnlyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showDecodeToolOnErrorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.extractTSVFileExtensionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.csvToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsvToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.indexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -2169,7 +2182,8 @@ namespace PackFileManager
             this.extrasToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.cAPacksAreReadOnlyToolStripMenuItem,
             this.updateOnStartupToolStripMenuItem,
-            this.showDecodeToolOnErrorToolStripMenuItem});
+            this.showDecodeToolOnErrorToolStripMenuItem,
+            this.extractTSVFileExtensionToolStripMenuItem});
             this.extrasToolStripMenuItem.Name = "extrasToolStripMenuItem";
             this.extrasToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.extrasToolStripMenuItem.Text = "Options";
@@ -2199,6 +2213,33 @@ namespace PackFileManager
             this.showDecodeToolOnErrorToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
             this.showDecodeToolOnErrorToolStripMenuItem.Text = "Show Decode Tool on Error";
             this.showDecodeToolOnErrorToolStripMenuItem.Click += new System.EventHandler(this.showDecodeToolOnErrorToolStripMenuItem_Click);
+            // 
+            // extractTSVFileExtensionToolStripMenuItem
+            // 
+            this.extractTSVFileExtensionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.csvToolStripMenuItem,
+            this.tsvToolStripMenuItem});
+            this.extractTSVFileExtensionToolStripMenuItem.Name = "extractTSVFileExtensionToolStripMenuItem";
+            this.extractTSVFileExtensionToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.extractTSVFileExtensionToolStripMenuItem.Text = "Extract TSV File Extension";
+            // 
+            // csvToolStripMenuItem
+            // 
+            this.csvToolStripMenuItem.Checked = true;
+            this.csvToolStripMenuItem.CheckOnClick = true;
+            this.csvToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.csvToolStripMenuItem.Name = "csvToolStripMenuItem";
+            this.csvToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.csvToolStripMenuItem.Text = "csv";
+            this.csvToolStripMenuItem.Click += new System.EventHandler(this.extensionSelectionChanged);
+            // 
+            // tsvToolStripMenuItem
+            // 
+            this.tsvToolStripMenuItem.CheckOnClick = true;
+            this.tsvToolStripMenuItem.Name = "tsvToolStripMenuItem";
+            this.tsvToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.tsvToolStripMenuItem.Text = "tsv";
+            this.tsvToolStripMenuItem.Click += new System.EventHandler(this.extensionSelectionChanged);
             // 
             // helpToolStripMenuItem
             // 
@@ -2403,6 +2444,12 @@ namespace PackFileManager
         private System.Windows.Forms.ToolStripMenuItem uninstallModMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteCurrentToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
+
+        private void extensionSelectionChanged(object sender, EventArgs e) {
+            Settings.Default.TsvExtension = (sender as ToolStripMenuItem).Text;
+            csvToolStripMenuItem.Checked = "csv".Equals(Settings.Default.TsvExtension);
+            tsvToolStripMenuItem.Checked = "tsv".Equals(Settings.Default.TsvExtension);
+        }
     }
 
     class LoadUpdater 

@@ -177,7 +177,7 @@ namespace PackFileManager {
             return file.FullPath.StartsWith("db");
         }
         public string GetFileName(PackedFile path) {
-            return string.Format("{0}.csv", path.FullPath);
+            return Settings.Default.TsvFile(path.FullPath);
         }
         public byte[] Process(PackedFile file) {
             byte[] result = file.Data;
@@ -195,7 +195,7 @@ namespace PackFileManager {
             return file.FullPath.EndsWith(".loc");
         }
         public string GetFileName(PackedFile path) {
-            return string.Format("{0}.csv", path.FullPath);
+            return Settings.Default.TsvFile(path.FullPath);
         }
         public byte[] Process(PackedFile file) {
             byte[] result;

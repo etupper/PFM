@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
+using PackFileManager.Properties;
 
 namespace PackFileManager
 {
@@ -134,7 +135,7 @@ namespace PackFileManager
         private void exportButton_Click(object sender, EventArgs e)
         {
             SaveFileDialog dialog = new SaveFileDialog {
-                FileName = this.EditedFile.Name + ".tsv"
+                FileName = Settings.Default.TsvFile(this.EditedFile.Name)
             };
             if (dialog.ShowDialog() == DialogResult.OK)
             {
@@ -180,7 +181,7 @@ namespace PackFileManager
 
         private void importButton_Click(object sender, EventArgs e)
         {
-            this.openLocFileDialog.FileName = this.EditedFile.Name + ".tsv";
+            this.openLocFileDialog.FileName = Settings.Default.TsvFile(this.EditedFile.Name);
             if (this.openLocFileDialog.ShowDialog() == DialogResult.OK)
             {
                 using (StreamReader reader = new StreamReader(this.openLocFileDialog.FileName))
@@ -303,7 +304,7 @@ namespace PackFileManager
             // 
             // openLocFileDialog
             // 
-            this.openLocFileDialog.Filter = "Text TSV|*.tsv|Any File|*.*";
+            this.openLocFileDialog.Filter = IOFunctions.TSV_FILTER;
             // 
             // LocFileEditorControl
             // 
