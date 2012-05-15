@@ -173,6 +173,7 @@ namespace PackFileManager {
                 for (int colNum = 0; colNum < row.Count; colNum++) {
                     line += row[colNum].Value + "\t";
                 }
+                line.Remove(line.LastIndexOf("\t"));
                 encoded += line + "\n";
             }
 
@@ -185,7 +186,7 @@ namespace PackFileManager {
             string[] lines = encoded.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
             string[][] values = new string[lines.Length][];
             for (int i = 0; i < lines.Length; i++) {
-                string[] line = lines[i].Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] line = lines[i].Split(new char[] { '\t' });
                 values[i] = line;
             }
             DataGridViewSelectedCellCollection cells = dataGridView.SelectedCells;
