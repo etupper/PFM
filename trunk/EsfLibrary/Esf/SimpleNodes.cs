@@ -122,8 +122,9 @@ namespace EsfLibrary {
 
     public class Coordinate2DNode : CodecNode<Coordinates2D> {
         static Coordinates2D Parse(string value) {
-            string removedBrackets = value.Substring(1, value.Length - 1);
+            string removedBrackets = value.Substring(1, value.Length - 2);
             string[] coords = removedBrackets.Split(',');
+            Console.WriteLine("Trying to parse [{0}] - [{1}]", coords[0].Trim(), coords[1].Trim());
             Coordinates2D result = new Coordinates2D(
                 float.Parse(coords[0].Trim()),
                 float.Parse(coords[1].Trim())
@@ -144,7 +145,7 @@ namespace EsfLibrary {
     }
     public class Coordinates3DNode : CodecNode<Coordinates3D> {
         static Coordinates3D Parse(string value) {
-            string removedBrackets = value.Substring(1, value.Length - 1);
+            string removedBrackets = value.Substring(1, value.Length - 2);
             string[] coords = removedBrackets.Split(',');
             Coordinates3D result = new Coordinates3D(
                 float.Parse(coords[0].Trim()),
