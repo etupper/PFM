@@ -69,7 +69,7 @@ namespace EsfLibrary {
             get; set;
         }
 
-        protected bool invalid = false;
+        public bool Invalid { get; set; }
         public override bool Modified {
             get {
                 return base.Modified;
@@ -80,19 +80,9 @@ namespace EsfLibrary {
                 // if we are invalidated already, stay so; we will need to
                 // encode fully because we may have been set to not modified
                 // in the meantime, and overwrite the changes in between
-                invalid |= Modified;
+                Invalid |= Modified;
                 if (Modified && InvalidateSiblings) {
-                    bool invalidate = false;
-
-                    // invalidate all nodes after this one
-                    // because they have their addresses invalidated
-                    (Parent as ParentNode).AllNodes.ForEach(node => {
-                        if (node == this) {
-                            invalidate = true;
-                        } else if (invalidate && node is MemoryMappedRecordNode) {
-                            (node as MemoryMappedRecordNode).invalid = true;
-                        }
-                    });
+                    new SiblingInvalidator(this).Invalidate();
                 }
             }
         }
@@ -120,11 +110,31 @@ namespace EsfLibrary {
         }
 
         public override void Encode(BinaryWriter writer) {
-            if (invalid) {
+            if (Invalid) {
                 Decoded.Encode(writer);
             } else {
                 writer.Write(buffer, mapStart, byteCount);
             }
+        }
+    }
+
+    public class SiblingInvalidator {
+        private ParentNode Reference;
+        public SiblingInvalidator(ParentNode reference) {
+            Reference = reference;
+        }
+        public void Invalidate() {
+            bool invalidate = false;
+
+            // invalidate all nodes after this one
+            // because they have their addresses invalidated
+            ((Reference as ParentNode).Parent as ParentNode).AllNodes.ForEach(node => {
+                if (node == Reference) {
+                    invalidate = true;
+                } else if (invalidate && node is MemoryMappedRecordNode) {
+                    (node as MemoryMappedRecordNode).Invalid = true;
+                }
+            });
         }
     }
 }

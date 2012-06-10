@@ -71,6 +71,7 @@ namespace EsfLibrary {
         }
 
         public abstract string ToXml();
+        public abstract EsfNode CreateCopy();
     }
 
     [DebuggerDisplay("ValueNode: {TypeCode}")]

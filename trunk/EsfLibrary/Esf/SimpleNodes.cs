@@ -8,8 +8,8 @@ using System.IO;
 
 namespace EsfLibrary {
     public abstract class DelegatingDecoderNode<T> : CodecNode<T> {
-        ValueReader<T> Read;
-        ValueWriter<T> Write;
+        protected ValueReader<T> Read;
+        protected ValueWriter<T> Write;
         public DelegatingDecoderNode(Converter<T> conv, ValueReader<T> reader, ValueWriter<T> writer)
             : base(conv) {
             Read = reader;
@@ -29,6 +29,12 @@ namespace EsfLibrary {
                 delegate(BinaryWriter writer, int v) { writer.Write(v); }) {
             TypeCode = EsfType.INT32;
         }
+
+        public override EsfNode CreateCopy() {
+            return new IntNode {
+                Value = this.Value
+            };
+        }
     }
     public class UIntNode : DelegatingDecoderNode<uint> {
         public UIntNode()
@@ -36,6 +42,12 @@ namespace EsfLibrary {
                 EsfCodec.ReadUInt,
                 delegate(BinaryWriter writer, uint u) { writer.Write(u); }) {
                     TypeCode = EsfType.UINT32;
+        }
+        public override EsfNode CreateCopy() {
+            return new UIntNode {
+                Value = this.Value,
+                Modified = false
+            };
         }
     }
     public class BoolNode : DelegatingDecoderNode<bool> {
@@ -45,6 +57,11 @@ namespace EsfLibrary {
                 delegate(BinaryWriter writer, bool b) { writer.Write(b); }) {
                     TypeCode = EsfType.BOOL;
         }
+        public override EsfNode CreateCopy() {
+            return new BoolNode {
+                Value = this.Value
+            };
+        }
     }
     public class FloatNode : DelegatingDecoderNode<float> {
         public FloatNode()
@@ -52,6 +69,11 @@ namespace EsfLibrary {
                 EsfCodec.ReadFloat,
                 delegate(BinaryWriter writer, float f) { writer.Write(f); }) {
                     TypeCode = EsfType.SINGLE;
+        }
+        public override EsfNode CreateCopy() {
+            return new FloatNode {
+                Value = this.Value
+            };
         }
     }
 
@@ -62,12 +84,22 @@ namespace EsfLibrary {
                 delegate(BinaryWriter writer, byte b) { writer.Write(b); }) {
             TypeCode = EsfType.UINT8;
         }
+        public override EsfNode CreateCopy() {
+            return new ByteNode {
+                Value = this.Value
+            };
+        }
     }
     public class SByteNode : DelegatingDecoderNode<sbyte> {
         public SByteNode() : base(sbyte.Parse,
                 EsfCodec.ReadSbyte,
                 delegate(BinaryWriter writer, sbyte b) { writer.Write(b); }) {
                     TypeCode = EsfType.INT8;
+        }
+        public override EsfNode CreateCopy() {
+            return new SByteNode {
+                Value = this.Value
+            };
         }
     }
     public class ShortNode : DelegatingDecoderNode<short> {
@@ -77,6 +109,11 @@ namespace EsfLibrary {
                 delegate(BinaryWriter writer, short b) { writer.Write(b); }) {
                     TypeCode  = EsfType.INT16;
         }
+        public override EsfNode CreateCopy() {
+            return new ShortNode {
+                Value = this.Value
+            };
+        }
     }
     public class UShortNode : DelegatingDecoderNode<ushort> {
         public UShortNode()
@@ -84,6 +121,11 @@ namespace EsfLibrary {
                 EsfCodec.ReadUshort,
                 delegate(BinaryWriter writer, ushort b) { writer.Write(b); }) {
                     TypeCode = EsfType.UINT16;
+        }
+        public override EsfNode CreateCopy() {
+            return new UShortNode {
+                Value = this.Value
+            };
         }
     }
     public class LongNode : DelegatingDecoderNode<long> {
@@ -93,6 +135,11 @@ namespace EsfLibrary {
                 delegate(BinaryWriter writer, long b) { writer.Write(b); }) {
                     TypeCode = EsfType.INT64;
         }
+        public override EsfNode CreateCopy() {
+            return new LongNode {
+                Value = this.Value
+            };
+        }
     }
     public class ULongNode : DelegatingDecoderNode<ulong> {
         public ULongNode()
@@ -100,6 +147,11 @@ namespace EsfLibrary {
                 EsfCodec.ReadUlong,
                 delegate(BinaryWriter writer, ulong b) { writer.Write(b); }) {
                     TypeCode = EsfType.UINT64;
+        }
+        public override EsfNode CreateCopy() {
+            return new ULongNode {
+                Value = this.Value
+            };
         }
     }
     public class DoubleNode : DelegatingDecoderNode<double> {
@@ -109,6 +161,11 @@ namespace EsfLibrary {
                 delegate(BinaryWriter writer, double b) { writer.Write(b); }) {
                     TypeCode = EsfType.DOUBLE;
         }
+        public override EsfNode CreateCopy() {
+            return new DoubleNode {
+                Value = this.Value
+            };
+        }
     }
     #endregion
 
@@ -117,6 +174,11 @@ namespace EsfLibrary {
             : base(delegate(string v) { return v; },
                 reader,
                 writer) {
+        }
+        public override EsfNode CreateCopy() {
+            return new StringNode(Read, Write) {
+                Value = this.Value
+            };
         }
     }
 
@@ -142,6 +204,11 @@ namespace EsfLibrary {
             writer.Write(Value.Item1);
             writer.Write(Value.Item2);
         }
+        public override EsfNode CreateCopy() {
+            return new Coordinate2DNode {
+                Value = this.Value
+            };
+        }
     }
     public class Coordinates3DNode : CodecNode<Coordinates3D> {
         static Coordinates3D Parse(string value) {
@@ -163,6 +230,11 @@ namespace EsfLibrary {
             writer.Write(Value.Item1);
             writer.Write(Value.Item2);
             writer.Write(Value.Item3);
+        }
+        public override EsfNode CreateCopy() {
+            return new Coordinates3DNode {
+                Value = this.Value
+            };
         }
     }
 

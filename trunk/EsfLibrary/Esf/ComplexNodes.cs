@@ -123,6 +123,16 @@ namespace EsfLibrary {
         public virtual string ToXml(bool end) {
             return end ? string.Format("</{0}>", TypeCode) : string.Format("<{0}\">", TypeCode);
         }
+
+        protected void CopyMembers(ParentNode node) {
+            node.Name = Name;
+            node.OriginalTypeCode = OriginalTypeCode;
+            node.Size = Size;
+            node.Version = Version;
+            List<EsfNode> nodeCopy = new List<EsfNode>();
+            Value.ForEach(n => nodeCopy.Add(n.CreateCopy()));
+            node.Value = nodeCopy;
+        }
     }
 
     [DebuggerDisplay("Record: {Name}")]
@@ -161,6 +171,12 @@ namespace EsfLibrary {
             if (!result) {
             }
             return result;
+        }
+
+        public override EsfNode CreateCopy() {
+            RecordNode node = new RecordNode(Codec, OriginalTypeCode);
+            CopyMembers(node);
+            return node;
         }
     }
 
@@ -208,6 +224,12 @@ namespace EsfLibrary {
             Codec.WriteRecordInfo(writer, (byte)TypeCode, Name, Version);
             Codec.EncodeSized(writer, AllNodes, true);
         }
+
+        public override EsfNode CreateCopy() {
+            RecordArrayNode node = new RecordArrayNode(Codec, OriginalTypeCode);
+            CopyMembers(node);
+            return node;
+        }
     }
 
     [DebuggerDisplay("Record Entry: {Name}")]
@@ -222,6 +244,11 @@ namespace EsfLibrary {
         public void Decode(BinaryReader reader, EsfType unused) {
             Size = (int) Codec.ReadSize(reader);
             Value = Codec.ReadToOffset(reader, reader.BaseStream.Position + Size);
+        }
+        public override EsfNode CreateCopy() {
+            RecordEntryNode node = new RecordEntryNode(Codec);
+            CopyMembers(node);
+            return node;
         }
     }
 }
