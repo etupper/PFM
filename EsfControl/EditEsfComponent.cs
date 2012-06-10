@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using System.IO;
 using EsfLibrary;
 
 namespace EsfControl {
@@ -48,7 +49,11 @@ namespace EsfControl {
 
             nodeValueGridView.CellValidating += new DataGridViewCellValidatingEventHandler(validateCell);
             nodeValueGridView.CellEndEdit += new DataGridViewCellEventHandler(cellEdited);
+
+            MouseHandler mouseHandler = new MouseHandler();
+            esfNodeTree.MouseUp += new MouseEventHandler(mouseHandler.ShowContextMenu);
         }
+
         private void validateCell(object sender, DataGridViewCellValidatingEventArgs args) {
             EsfNode valueNode = nodeValueGridView.Rows[args.RowIndex].Tag as EsfNode;
             if (valueNode != null) {
@@ -71,6 +76,61 @@ namespace EsfControl {
         }
     }
 
+    public class MouseHandler {
+        public void ShowContextMenu(object sender, System.Windows.Forms.MouseEventArgs e) {
+            TreeView treeView = sender as TreeView;
+            if (e.Button == MouseButtons.Right && treeView != null) {
+                // Point where the mouse is clicked.
+                Point p = new Point(e.X, e.Y);
+
+                // Get the node that the user has clicked.
+                TreeNode node = treeView.GetNodeAt(p);
+                ParentNode toCopy = (node != null) ? node.Tag as ParentNode : null;
+                if (toCopy != null && (node.Tag as EsfNode).Parent is RecordArrayNode) {
+                    treeView.SelectedNode = node;
+                    //Console.WriteLine("Selected node {0}", (toCopy as INamedNode).GetName());
+                    ContextMenuStrip contextMenu = new ContextMenuStrip();
+                    ToolStripItem copyItem = new ToolStripMenuItem("Duplicate");
+                    copyItem.Click += new EventHandler(delegate(object s, EventArgs args) {
+                        ParentNode copy;
+                        copy = toCopy.CreateCopy() as ParentNode; 
+                            /*new RecordEntryNode(toCopy.Codec) {
+                            Name = String.Format("Copy of {0}", toCopy),
+                            TypeCode = EsfType.RECORD_BLOCK_ENTRY
+                        };
+                        //toCopy = (toCopy.Value[0] as RecordNode);
+/*                        RecordNode copyValue = toCopy.Value[0] as RecordNode;
+                        using (MemoryStream stream = new MemoryStream()) {
+                            using (BinaryWriter writer = new BinaryWriter(stream)) {
+                                MemoryMappedRecordNode mappedNode = copyValue as MemoryMappedRecordNode;
+                                bool oldInvalid = (mappedNode != null) ? mappedNode.Invalid : false;
+                                if (mappedNode != null) {
+                                    // force encoding
+                                    mappedNode.Invalid = true;
+                                }
+                                using (BinaryReader reader = new BinaryReader(new MemoryStream(stream.ToArray()))) {
+                                    RecordNode entryCopy = toCopy.Codec.ReadRecordNode(reader, (byte) EsfType.RECORD, true) as RecordNode;
+                                    copy.Value.Add(entryCopy);
+                                }
+                                if (mappedNode != null) {
+                                    mappedNode.Invalid = oldInvalid;
+                                }
+                            }
+                        }
+ * */
+                        if (copy != null) {
+                            List<EsfNode> nodes = new List<EsfNode>((toCopy.Parent as RecordArrayNode).Value);
+                            nodes.Add(copy);
+                            (toCopy.Parent as RecordArrayNode).Value = nodes;
+                        }
+                    });
+                    contextMenu.Items.Add(copyItem);
+                    contextMenu.Show(treeView, p);
+                }
+            }
+        }
+    }
+
     public class EsfTreeNode : TreeNode {
         private bool showCode;
         public bool ShowCode {
@@ -90,7 +150,7 @@ namespace EsfControl {
         public EsfTreeNode(ParentNode node, bool showC = false) {
             Tag = node;
             Text = (node as INamedNode).GetName();
-            node.ModifiedEvent += delegate(EsfNode n) { ForeColor = n.Modified ? Color.Red : Color.Black; };
+            node.ModifiedEvent += NodeChange;
             ShowCode = showC;
         }
         public void Fill() {
@@ -98,6 +158,19 @@ namespace EsfControl {
                 ParentNode parentNode = (Tag as ParentNode);
                 foreach (ParentNode child in parentNode.Children) {
                     Nodes.Add(new EsfTreeNode(child, ShowCode));
+                }
+            }
+        }
+        public void NodeChange(EsfNode n) {
+            ForeColor = n.Modified ? Color.Red : Color.Black;
+            ParentNode node = (Tag as ParentNode);
+            if (node != null && node.Children.Count != this.Nodes.Count) {
+                Nodes.Clear();
+                Fill();
+                if (IsExpanded) {
+                    foreach (TreeNode child in Nodes) {
+                        (child as EsfTreeNode).Fill();
+                    }
                 }
             }
         }

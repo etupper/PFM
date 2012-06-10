@@ -33,6 +33,11 @@ namespace EsfLibrary {
         protected override void WriteValue(BinaryWriter writer) {
             // writer.Write((byte)TypeCode);
         }
+        public override EsfNode CreateCopy() {
+            return new OptimizedBoolNode {
+                Value = this.Value
+            };
+        }
     }
 
     public class OptimizedIntNode : CodecNode<int> {
@@ -134,6 +139,11 @@ namespace EsfLibrary {
                     throw new InvalidOperationException();
             }
         }
+        public override EsfNode CreateCopy() {
+            return new OptimizedIntNode {
+                Value = this.Value
+            };
+        }
     }
 
     public class OptimizedUIntNode : CodecNode<uint> {
@@ -226,6 +236,11 @@ namespace EsfLibrary {
                     throw new InvalidOperationException();
             }
         }
+        public override EsfNode CreateCopy() {
+            return new OptimizedUIntNode {
+                Value = this.Value
+            };
+        }
     }
 
     public class OptimizedFloatNode : CodecNode<float> {
@@ -247,6 +262,11 @@ namespace EsfLibrary {
             if (TypeCode != EsfType.SINGLE_ZERO) {
                 writer.Write(Value);
             }
+        }
+        public override EsfNode CreateCopy() {
+            return new OptimizedFloatNode {
+                Value = this.Value
+            };
         }
     }
 }

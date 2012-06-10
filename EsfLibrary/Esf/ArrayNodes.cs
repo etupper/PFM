@@ -6,9 +6,10 @@ using Coordinates2D = System.Tuple<float, float>;
 using Coordinates3D = System.Tuple<float, float, float>;
 
 namespace EsfLibrary {
-    public abstract class EsfArrayNode<T> : EsfValueNode<byte[]>, ICodecNode {
+    public class EsfArrayNode<T> : EsfValueNode<byte[]>, ICodecNode {
         protected EsfArrayNode(EsfCodec codec, Converter<T> reader) : base(delegate(string s) { throw new InvalidOperationException(); }) {
             Codec = codec;
+            Convert = reader;
         }
         public ValueReader<T> ItemReader {
             get; set;
@@ -21,6 +22,7 @@ namespace EsfLibrary {
             private set {
             }
         }
+        public Converter<T> Convert { get; set; }
         
         static bool ArraysEqual<O> (O[] array1, O[] array2) {
             bool result = array1.Length == array2.Length;
@@ -69,6 +71,12 @@ namespace EsfLibrary {
             writer.Write ((byte) TypeCode);
             Codec.WriteOffset(writer, Value.Length);
             writer.Write(Value);
+        }
+
+        public override EsfNode CreateCopy() {
+            return new EsfArrayNode<T>(Codec, Convert) {
+                Value = this.Value
+            };
         }
     }
     #region Typed Array Nodes
