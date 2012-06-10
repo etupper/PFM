@@ -8,22 +8,6 @@ using System.Windows.Forms;
 using PackFileManager.Properties;
 
 namespace PackFileManager {
-    public class ModMenuItem : ToolStripMenuItem {
-        public ModMenuItem(string title, string modName)
-            : base(title) {
-            string currentMod = Settings.Default.CurrentMod;
-            Checked = currentMod == modName;
-            ModManager.Instance.CurrentModChanged += CheckSelection;
-            Tag = modName;
-        }
-        protected override void OnClick(EventArgs e) {
-            ModManager.Instance.SetCurrentMod(Tag as string);
-        }
-        private void CheckSelection(string mod) {
-            Checked = mod == (Tag as string);
-        }
-    }
-
     public class Mod {
         public string Name { get; set; }
         public string BaseDirectory { get; set; }
@@ -111,7 +95,7 @@ namespace PackFileManager {
                 throw new FileNotFoundException(string.Format("Shogun install directory not found"));
             }
             targetDir = Path.Combine(targetDir, "data");
-            string targetFile = Path.Combine(targetDir, Settings.Default.CurrentMod);
+            string targetFile = Path.Combine(targetDir, ModPackName);
             if (File.Exists(FullModPath) && Directory.Exists(targetDir)) {
                 
                 // copy to data directory
@@ -217,6 +201,22 @@ namespace PackFileManager {
                 result += string.Format("{0}{1}{2}{3}", key, Path.PathSeparator, mods[key], "@@@");
             }
             return result;
+        }
+    }
+
+    public class ModMenuItem : ToolStripMenuItem {
+        public ModMenuItem(string title, string modName)
+            : base(title) {
+            string currentMod = Settings.Default.CurrentMod;
+            Checked = currentMod == modName;
+            ModManager.Instance.CurrentModChanged += CheckSelection;
+            Tag = modName;
+        }
+        protected override void OnClick(EventArgs e) {
+            ModManager.Instance.SetCurrentMod(Tag as string);
+        }
+        private void CheckSelection(string mod) {
+            Checked = mod == (Tag as string);
         }
     }
 }
