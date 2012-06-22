@@ -94,30 +94,6 @@ namespace EsfControl {
                     copyItem.Click += new EventHandler(delegate(object s, EventArgs args) {
                         ParentNode copy;
                         copy = toCopy.CreateCopy() as ParentNode; 
-                            /*new RecordEntryNode(toCopy.Codec) {
-                            Name = String.Format("Copy of {0}", toCopy),
-                            TypeCode = EsfType.RECORD_BLOCK_ENTRY
-                        };
-                        //toCopy = (toCopy.Value[0] as RecordNode);
-/*                        RecordNode copyValue = toCopy.Value[0] as RecordNode;
-                        using (MemoryStream stream = new MemoryStream()) {
-                            using (BinaryWriter writer = new BinaryWriter(stream)) {
-                                MemoryMappedRecordNode mappedNode = copyValue as MemoryMappedRecordNode;
-                                bool oldInvalid = (mappedNode != null) ? mappedNode.Invalid : false;
-                                if (mappedNode != null) {
-                                    // force encoding
-                                    mappedNode.Invalid = true;
-                                }
-                                using (BinaryReader reader = new BinaryReader(new MemoryStream(stream.ToArray()))) {
-                                    RecordNode entryCopy = toCopy.Codec.ReadRecordNode(reader, (byte) EsfType.RECORD, true) as RecordNode;
-                                    copy.Value.Add(entryCopy);
-                                }
-                                if (mappedNode != null) {
-                                    mappedNode.Invalid = oldInvalid;
-                                }
-                            }
-                        }
- * */
                         if (copy != null) {
                             List<EsfNode> nodes = new List<EsfNode>((toCopy.Parent as RecordArrayNode).Value);
                             nodes.Add(copy);

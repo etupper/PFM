@@ -41,7 +41,9 @@ namespace EsfLibrary {
                 decoder.Code(inStream, outStream, data.Length, size, null);
                 outData = outStream.ToArray();
             }
-            
+            using (Stream inStream = new MemoryStream(data, false), file = File.OpenWrite("decompressed_section.esf")) {
+                file.Write(outData, 0, outData.Length);
+            }
             Console.WriteLine("decompressed, parsing");
             EsfNode result;
             AbcaFileCodec codec = new AbcaFileCodec();
