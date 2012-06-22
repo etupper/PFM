@@ -29,11 +29,11 @@
             this.valueColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.typeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Code = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            //((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nodeValueGridView)).BeginInit();
+            //((System.ComponentModel.ISupportInitialize)(this.nodeValueGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -109,9 +109,9 @@
             this.Size = new System.Drawing.Size(465, 371);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            // ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.nodeValueGridView)).EndInit();
+            //((System.ComponentModel.ISupportInitialize)(this.nodeValueGridView)).EndInit();
             this.ResumeLayout(false);
 
         }

@@ -60,6 +60,7 @@ namespace EsfLibrary {
             Codec = codec;
             buffer = bytes;
             mapStart = start-1;
+            InvalidateSiblings = true;
             // byteCount = count;
         }
         
@@ -68,8 +69,37 @@ namespace EsfLibrary {
         public bool InvalidateSiblings {
             get; set;
         }
-
-        public bool Invalid { get; set; }
+  
+        bool invalid;
+        public bool Invalid { 
+            get { return invalid; }
+            set {
+                if (invalid != value) {
+                    invalid = value;
+                    if (value) {
+                        // when this gets invalidated, it also needs to un-map contained mapped nodes
+                        bool invalidate = false;
+                        foreach(ParentNode candidate in Children) {
+                            if (invalidate) {
+                                MemoryMappedRecordNode mapped = candidate as MemoryMappedRecordNode;
+                                if (mapped != null) {
+                                    mapped.Modified = true;
+                                }
+                            } else {
+                                if(candidate.Modified) {
+                                    invalidate = true;
+                                } else {
+                                    MemoryMappedRecordNode mapped = candidate as MemoryMappedRecordNode;
+                                    if (mapped != null && mapped.Invalid) {
+                                        invalidate = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         public override bool Modified {
             get {
                 return base.Modified;
@@ -113,6 +143,7 @@ namespace EsfLibrary {
             if (Invalid) {
                 Decoded.Encode(writer);
             } else {
+                Console.WriteLine("encoding by memory mapping {0}", Name);
                 writer.Write(buffer, mapStart, byteCount);
             }
         }
@@ -128,13 +159,16 @@ namespace EsfLibrary {
 
             // invalidate all nodes after this one
             // because they have their addresses invalidated
-            ((Reference as ParentNode).Parent as ParentNode).AllNodes.ForEach(node => {
-                if (node == Reference) {
-                    invalidate = true;
-                } else if (invalidate && node is MemoryMappedRecordNode) {
-                    (node as MemoryMappedRecordNode).Invalid = true;
-                }
-            });
+            ParentNode parent = ((Reference as ParentNode).Parent as ParentNode);
+            if (parent != null) {
+                parent.AllNodes.ForEach(node => {
+                    if (node == Reference) {
+                        invalidate = true;
+                    } else if (invalidate && node is MemoryMappedRecordNode) {
+                        (node as MemoryMappedRecordNode).Modified = true;
+                    }
+                });
+            }
         }
     }
 }
