@@ -1182,6 +1182,7 @@
     <field name='unknown7' type='optstring' />
     <field name='unknown8' type='optstring' />
     <field name='unknown9' type='optstring' />
+    <field name='unknown10' type='float' version_start='2' />
   </table>
   <table name='campaign_clan_level_infos_tables'>
     <field name='unknown' type='int' />
