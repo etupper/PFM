@@ -90,20 +90,8 @@ namespace EsfControl {
                 if (toCopy != null && (node.Tag as EsfNode).Parent is RecordArrayNode) {
                     treeView.SelectedNode = node;
 
-                    ParentNode rootNode = toCopy;
-                    while (rootNode.Parent != null) {
-                        rootNode = rootNode.Parent as ParentNode;
-                    }
-                    //Console.WriteLine("Selected node {0}", (toCopy as INamedNode).GetName());
                     ToolStripItem copyItem = new ToolStripMenuItem("Duplicate");
                     copyItem.Click += new EventHandler(delegate(object s, EventArgs args) {
-                        if (rootNode is MemoryMappedRecordNode) {
-                            // ((MemoryMappedRecordNode) rootNode).Invalid = true;
-                            //Console.WriteLine("invalidating all nodes");
-                            //new DeepInvalidator().Invalidate(rootNode);
-                            //Console.WriteLine("done");
-                        }
-
                         ParentNode copy;
                         copy = toCopy.CreateCopy() as ParentNode;
                         if (copy != null) {
@@ -111,18 +99,12 @@ namespace EsfControl {
                             if (parent != null) {
                                 List<EsfNode> nodes = new List<EsfNode>((toCopy.Parent as RecordArrayNode).Value);
                                 int insertAt = nodes.Count;
-                                parent.Children.IndexOf(toCopy);
-                                Console.WriteLine("copying at {0}", insertAt);
+                                insertAt = parent.Children.IndexOf(toCopy) + 1;
+                                // Console.WriteLine("copying at {0}", insertAt);
                                 nodes.Insert(insertAt, copy);
                                 (toCopy.Parent as RecordArrayNode).Value = nodes;
                                 copy.Modified = true;
                             }
-                        }
-                        
-                        Console.WriteLine("saving tempEsf.xml");
-                        using (StreamWriter stream = File.CreateText("tempEsf.xml")) {
-                            rootNode.ToXml(stream, "");
-                            // stream.Write(rootNode.ToXml());
                         }
                     });
                     contextMenu.Items.Add(copyItem);
@@ -155,6 +137,7 @@ namespace EsfControl {
             Tag = node;
             Text = (node as INamedNode).GetName();
             node.ModifiedEvent += NodeChange;
+            ForeColor = node.Modified ? Color.Red : Color.Black;
             ShowCode = showC;
         }
         public void Fill() {

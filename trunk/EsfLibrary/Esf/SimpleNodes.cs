@@ -177,6 +177,7 @@ namespace EsfLibrary {
         }
         public override EsfNode CreateCopy() {
             return new StringNode(Read, Write) {
+                TypeCode = this.TypeCode,
                 Value = this.Value
             };
         }

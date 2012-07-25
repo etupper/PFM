@@ -75,6 +75,7 @@ namespace EsfLibrary {
 
         public override EsfNode CreateCopy() {
             return new EsfArrayNode<T>(Codec, Convert) {
+                TypeCode = this.TypeCode,
                 Value = this.Value
             };
         }
