@@ -61,7 +61,11 @@ namespace EsfLibrary {
                     base.Value = value;
                     //val = value;
                     Value.ForEach(node => node.Parent = this);
-                    Modified = true;
+                    if (!Modified) {
+                        Modified = true;
+                    } else {
+                        RaiseModifiedEvent();
+                    }
                 }
             }
         }

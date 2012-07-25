@@ -77,24 +77,13 @@ namespace EsfLibrary {
                 if (invalid != value) {
                     invalid = value;
                     if (value) {
-                        // when this gets invalidated, it also needs to un-map contained mapped nodes
-                        bool invalidate = false;
-                        foreach(ParentNode candidate in Children) {
-                            if (invalidate) {
-                                MemoryMappedRecordNode mapped = candidate as MemoryMappedRecordNode;
-                                if (mapped != null) {
-                                    mapped.Modified = true;
-                                }
-                            } else {
-                                if(candidate.Modified) {
-                                    invalidate = true;
-                                } else {
-                                    MemoryMappedRecordNode mapped = candidate as MemoryMappedRecordNode;
-                                    if (mapped != null && mapped.Invalid) {
-                                        invalidate = true;
-                                    }
-                                }
+                        ParentNode p = Parent as ParentNode;
+                        while (p != null) {
+                            MemoryMappedRecordNode mapped = p as MemoryMappedRecordNode;
+                            if (mapped != null) {
+                                mapped.Invalid = true;
                             }
+                            p = p.Parent as ParentNode;
                         }
                     }
                 }
@@ -142,10 +131,15 @@ namespace EsfLibrary {
         public override void Encode(BinaryWriter writer) {
             if (Invalid) {
                 Decoded.Encode(writer);
+                // Console.WriteLine("actually encoding {0}", Name);
             } else {
-                Console.WriteLine("encoding by memory mapping {0}", Name);
+                // Console.WriteLine("encoding by memory mapping {0}", Name);
                 writer.Write(buffer, mapStart, byteCount);
             }
+        }
+
+        public override EsfNode CreateCopy() {
+            return Decoded.CreateCopy();
         }
     }
 
