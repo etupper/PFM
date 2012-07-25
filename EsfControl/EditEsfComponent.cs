@@ -82,25 +82,53 @@ namespace EsfControl {
             if (e.Button == MouseButtons.Right && treeView != null) {
                 // Point where the mouse is clicked.
                 Point p = new Point(e.X, e.Y);
+                ContextMenuStrip contextMenu = new ContextMenuStrip();
 
                 // Get the node that the user has clicked.
                 TreeNode node = treeView.GetNodeAt(p);
                 ParentNode toCopy = (node != null) ? node.Tag as ParentNode : null;
                 if (toCopy != null && (node.Tag as EsfNode).Parent is RecordArrayNode) {
                     treeView.SelectedNode = node;
+
+                    ParentNode rootNode = toCopy;
+                    while (rootNode.Parent != null) {
+                        rootNode = rootNode.Parent as ParentNode;
+                    }
                     //Console.WriteLine("Selected node {0}", (toCopy as INamedNode).GetName());
-                    ContextMenuStrip contextMenu = new ContextMenuStrip();
                     ToolStripItem copyItem = new ToolStripMenuItem("Duplicate");
                     copyItem.Click += new EventHandler(delegate(object s, EventArgs args) {
+                        if (rootNode is MemoryMappedRecordNode) {
+                            // ((MemoryMappedRecordNode) rootNode).Invalid = true;
+                            //Console.WriteLine("invalidating all nodes");
+                            //new DeepInvalidator().Invalidate(rootNode);
+                            //Console.WriteLine("done");
+                        }
+
                         ParentNode copy;
-                        copy = toCopy.CreateCopy() as ParentNode; 
+                        copy = toCopy.CreateCopy() as ParentNode;
                         if (copy != null) {
-                            List<EsfNode> nodes = new List<EsfNode>((toCopy.Parent as RecordArrayNode).Value);
-                            nodes.Add(copy);
-                            (toCopy.Parent as RecordArrayNode).Value = nodes;
+                            ParentNode parent = toCopy.Parent as ParentNode;
+                            if (parent != null) {
+                                List<EsfNode> nodes = new List<EsfNode>((toCopy.Parent as RecordArrayNode).Value);
+                                int insertAt = nodes.Count;
+                                parent.Children.IndexOf(toCopy);
+                                Console.WriteLine("copying at {0}", insertAt);
+                                nodes.Insert(insertAt, copy);
+                                (toCopy.Parent as RecordArrayNode).Value = nodes;
+                                copy.Modified = true;
+                            }
+                        }
+                        
+                        Console.WriteLine("saving tempEsf.xml");
+                        using (StreamWriter stream = File.CreateText("tempEsf.xml")) {
+                            rootNode.ToXml(stream, "");
+                            // stream.Write(rootNode.ToXml());
                         }
                     });
                     contextMenu.Items.Add(copyItem);
+                }
+                
+                if (contextMenu.Items.Count != 0) {
                     contextMenu.Show(treeView, p);
                 }
             }

@@ -51,14 +51,15 @@ namespace EsfLibrary {
                 return modified;
             }
             set {
-//                if (modified != value) {
+                if (modified != value) {
                     modified = value;
                     RaiseModifiedEvent();
                     if (modified && Parent != null) {
                         Parent.Modified = value;
                     }
+                    // Console.WriteLine("{1}setting modified: {0}", this, (modified ? "" : "un"));
                 }
-//            }
+            }
         }
         protected void RaiseModifiedEvent() {
             if (ModifiedEvent != null) {
@@ -70,7 +71,7 @@ namespace EsfLibrary {
             throw new InvalidOperationException();
         }
 
-        public abstract string ToXml();
+        public abstract void ToXml(TextWriter writer, string indent);
         public abstract EsfNode CreateCopy();
     }
 
@@ -121,8 +122,8 @@ namespace EsfLibrary {
             return result;
         }
 
-        public override string ToXml() {
-            return string.Format("<{0} Value=\"{1}\"/>", TypeCode, Value);
+        public override void ToXml(TextWriter writer, string indent) {
+            writer.WriteLine(string.Format("{2}<{0} Value=\"{1}\"/>", TypeCode, Value, indent));
         }
     }
 
