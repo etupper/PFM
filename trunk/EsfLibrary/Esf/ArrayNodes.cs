@@ -59,8 +59,8 @@ namespace EsfLibrary {
             return result;
         }
 
-        public override string ToXml() {
-            return string.Format("<{0} Length=\"{1}\"/>", TypeCode, Value.Length);
+        public override void ToXml(TextWriter writer, string indent) {
+            writer.WriteLine("{2}<{0} Length=\"{1}\"/>", TypeCode, Value.Length, indent);
         }
         
         public void Decode(BinaryReader reader, EsfType type) {

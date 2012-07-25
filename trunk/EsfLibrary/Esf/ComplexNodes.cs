@@ -116,12 +116,26 @@ namespace EsfLibrary {
             }
             return result;
         }
+        
+        public override string ToString() {
+            return string.Format("{0} {1}", TypeCode, Name);
+        }
 
-        public override string ToXml() {
-            return ToXml(false);
+        public override void ToXml(TextWriter writer, string indent) {
+            writer.WriteLine(string.Format("{2}<{0} name=\"{1}\">", TypeCode, Name, indent));
+            string childIndent = indent + " ";
+            foreach(ParentNode child in Children) {
+                child.ToXml(writer, childIndent);
+            }
+            foreach(EsfNode val in Values) {
+                val.ToXml(writer, childIndent);
+//                result += " " + val.ToXml();
+            }
+            writer.WriteLine(string.Format("{1}</{0}>", TypeCode, indent));
+            // return result;
         }
         public virtual string ToXml(bool end) {
-            return end ? string.Format("</{0}>", TypeCode) : string.Format("<{0}\">", TypeCode);
+            return end ? string.Format("</{0}>", TypeCode) : string.Format("<{0} name=\"{1}\">", TypeCode, Name);
         }
 
         protected void CopyMembers(ParentNode node) {

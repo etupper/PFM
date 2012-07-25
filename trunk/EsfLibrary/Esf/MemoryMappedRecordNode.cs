@@ -171,5 +171,32 @@ namespace EsfLibrary {
             }
         }
     }
+
+    public class ParentInvalidator {
+        public static void Invalidate(EsfNode node) {
+
+        }
+    }
+    
+    public class DeepInvalidator {
+//        private ParentNode InvalidateBelow;
+        public DeepInvalidator() {
+//            InvalidateBelow = node;
+        }
+        public void Invalidate(ParentNode parent) {
+            if (parent != null) {
+                MemoryMappedRecordNode mapped = parent as MemoryMappedRecordNode;
+                if (mapped != null) {
+                    mapped.Invalid = true;
+                }
+                parent.AllNodes.ForEach(node => {
+                    ParentNode p = node as ParentNode;
+                    if (p != null) {
+                        Invalidate (p);
+                    }
+                });
+            }
+        }
+    }
 }
 

@@ -210,6 +210,7 @@ namespace EsfLibrary {
             if (NodeReadFinished != null) {
                 NodeReadFinished(result, reader.BaseStream.Position);
             }
+            // Console.WriteLine(string.Format("decoded {0} at {1:x}", result.TypeCode, reader.BaseStream.Position));
             return result;
         }
         public virtual EsfNode Decode(BinaryReader reader, byte code) {
@@ -221,10 +222,10 @@ namespace EsfLibrary {
                 // writeDebug = reader.BaseStream.Position > 0xd80000;
                 if (typeCode < EsfType.BOOL_ARRAY) {
                     result = ReadValueNode(reader, typeCode);
-                    if (Log != null) { Log(result.ToXml()); };
+                    // if (Log != null) { Log(result.ToXml()); };
                 } else if (typeCode < EsfType.RECORD) {
                     result = ReadArrayNode(reader, typeCode);
-                    if (Log != null) { Log(result.ToXml()); };
+                    // if (Log != null) { Log(result.ToXml()); };
                 } else if (typeCode == EsfType.RECORD) {
                     result = ReadRecordNode(reader, code);
                 } else if (typeCode == EsfType.RECORD_BLOCK) {
