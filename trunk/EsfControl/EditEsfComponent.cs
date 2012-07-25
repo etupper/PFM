@@ -87,7 +87,7 @@ namespace EsfControl {
                 // Get the node that the user has clicked.
                 TreeNode node = treeView.GetNodeAt(p);
                 ParentNode toCopy = (node != null) ? node.Tag as ParentNode : null;
-                if (toCopy != null && (node.Tag as EsfNode).Parent is RecordArrayNode) {
+                if (toCopy != null && (node.Tag as EsfNode).Parent is RecordArrayNode && toCopy.Codec is AbcaFileCodec) {
                     treeView.SelectedNode = node;
 
                     ToolStripItem copyItem = new ToolStripMenuItem("Duplicate");
@@ -104,6 +104,7 @@ namespace EsfControl {
                                 nodes.Insert(insertAt, copy);
                                 (toCopy.Parent as RecordArrayNode).Value = nodes;
                                 copy.Modified = true;
+                                copy.AllNodes.ForEach(n => n.Modified = false);
                             }
                         }
                     });

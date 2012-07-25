@@ -139,7 +139,15 @@ namespace EsfLibrary {
         }
 
         public override EsfNode CreateCopy() {
-            return Decoded.CreateCopy();
+            if (!Invalid) {
+                // only works for ABCA: earlier records contain their end address 
+                // instead of their length
+                return new MemoryMappedRecordNode(Codec, buffer, mapStart + 1) {
+                    Name = this.Name
+                };
+            } else {
+                return Decoded.CreateCopy();
+            }
         }
     }
 
