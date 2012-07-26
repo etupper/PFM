@@ -25,7 +25,7 @@ namespace EsfLibrary {
 
         // unzip contained 7zip node
         protected override RecordNode DecodeDelegate() {
-            Console.WriteLine("decompressing");
+            //Console.WriteLine("decompressing");
             List<EsfNode> values = compressedNode.Values;
             byte[] data = (values[0] as EsfValueNode<byte[]>).Value;
             ParentNode infoNode = compressedNode.Children[0];
@@ -41,10 +41,10 @@ namespace EsfLibrary {
                 decoder.Code(inStream, outStream, data.Length, size, null);
                 outData = outStream.ToArray();
             }
-            using (Stream inStream = new MemoryStream(data, false), file = File.OpenWrite("decompressed_section.esf")) {
-                file.Write(outData, 0, outData.Length);
-            }
-            Console.WriteLine("decompressed, parsing");
+            //using (Stream inStream = new MemoryStream(data, false), file = File.OpenWrite("decompressed_section.esf")) {
+            //    file.Write(outData, 0, outData.Length);
+            //}
+            //Console.WriteLine("decompressed, parsing");
             EsfNode result;
             AbcaFileCodec codec = new AbcaFileCodec();
 
@@ -59,7 +59,7 @@ namespace EsfLibrary {
         public override void Encode(BinaryWriter writer) {
             // encode the node into bytes
             byte[] data;
-            Console.WriteLine("encoding...");
+            //Console.WriteLine("encoding...");
             MemoryStream uncompressedStream = new MemoryStream();
             using (BinaryWriter w = new BinaryWriter(uncompressedStream)) {
                 // use the node's own codec or we'll mess up the string lists
@@ -69,14 +69,14 @@ namespace EsfLibrary {
             uint uncompressedSize = (uint) data.LongLength;
             
             // compress the encoded data
-            Console.WriteLine("compressing...");
+            // Console.WriteLine("compressing...");
             MemoryStream outStream = new MemoryStream();
             LzmaEncoder encoder = new LzmaEncoder();
             using (uncompressedStream = new MemoryStream(data)) {
                 encoder.Code(uncompressedStream, outStream, data.Length, long.MaxValue, null);
                 data = outStream.ToArray();
             }
-            Console.WriteLine("ok, compression done");
+            //Console.WriteLine("ok, compression done");
    
             // prepare decoding information
             List<EsfNode> infoItems = new List<EsfNode>();
