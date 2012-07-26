@@ -77,6 +77,8 @@ namespace EsfControl {
     }
 
     public class MouseHandler {
+        public delegate void NodeAction(EsfNode node);
+
         public void ShowContextMenu(object sender, System.Windows.Forms.MouseEventArgs e) {
             TreeView treeView = sender as TreeView;
             if (e.Button == MouseButtons.Right && treeView != null) {
@@ -86,28 +88,14 @@ namespace EsfControl {
 
                 // Get the node that the user has clicked.
                 TreeNode node = treeView.GetNodeAt(p);
-                ParentNode toCopy = (node != null) ? node.Tag as ParentNode : null;
-                if (toCopy != null && (node.Tag as EsfNode).Parent is RecordArrayNode) {
+                ParentNode selectedNode = (node != null) ? node.Tag as ParentNode : null;
+                if (selectedNode != null && (node.Tag as EsfNode).Parent is RecordArrayNode) {
                     treeView.SelectedNode = node;
 
-                    ToolStripItem copyItem = new ToolStripMenuItem("Duplicate");
-                    copyItem.Click += new EventHandler(delegate(object s, EventArgs args) {
-                        ParentNode copy;
-                        copy = toCopy.CreateCopy() as ParentNode;
-                        if (copy != null) {
-                            ParentNode parent = toCopy.Parent as ParentNode;
-                            if (parent != null) {
-                                List<EsfNode> nodes = new List<EsfNode>((toCopy.Parent as RecordArrayNode).Value);
-                                int insertAt = nodes.Count;
-                                insertAt = parent.Children.IndexOf(toCopy) + 1;
-                                nodes.Insert(insertAt, copy);
-                                (toCopy.Parent as RecordArrayNode).Value = nodes;
-                                copy.Modified = true;
-                                copy.AllNodes.ForEach(n => n.Modified = false);
-                            }
-                        }
-                    });
-                    contextMenu.Items.Add(copyItem);
+                    ToolStripItem toolItem = CreateMenuItem("Duplicate", selectedNode, CopyNode);
+                    contextMenu.Items.Add(toolItem);
+                    toolItem = CreateMenuItem("Delete", selectedNode, DeleteNode);
+                    contextMenu.Items.Add(toolItem);
                 }
                 
                 if (contextMenu.Items.Count != 0) {
@@ -115,8 +103,42 @@ namespace EsfControl {
                 }
             }
         }
-    }
+        
+        private ToolStripMenuItem CreateMenuItem(String label, EsfNode node, NodeAction action) {
+            ToolStripMenuItem item = new ToolStripMenuItem(label);
+            item.Click += new EventHandler(delegate(object s, EventArgs args) { action(node); });
+            return item;
+        }
+        
+        private void CopyNode(EsfNode node) {
+            ParentNode toCopy = node as ParentNode;
+            ParentNode copy;
+            copy = toCopy.CreateCopy() as ParentNode;
+            if (copy != null) {
+                ParentNode parent = toCopy.Parent as ParentNode;
+                if (parent != null) {
+                    List<EsfNode> nodes = new List<EsfNode>((toCopy.Parent as RecordArrayNode).Value);
+                    int insertAt = nodes.Count;
+                    insertAt = parent.Children.IndexOf(toCopy) + 1;
+                    nodes.Insert(insertAt, copy);
+                    (toCopy.Parent as RecordArrayNode).Value = nodes;
+                    copy.Modified = true;
+                    copy.AllNodes.ForEach(n => n.Modified = false);
+                }
+            }
+        }
 
+        private void DeleteNode(EsfNode node) {
+            ParentNode toCopy = node as ParentNode;
+            ParentNode parent = toCopy.Parent as ParentNode;
+            if (parent != null) {
+                List<EsfNode> nodes = new List<EsfNode>((toCopy.Parent as RecordArrayNode).Value);
+                nodes.Remove(node);
+                (toCopy.Parent as RecordArrayNode).Value = nodes;
+            }
+        }
+    }
+    
     public class EsfTreeNode : TreeNode {
         private bool showCode;
         public bool ShowCode {
@@ -170,6 +192,10 @@ namespace EsfControl {
         public TreeEventHandler(DataGridView view) {
             nodeValueGridView = view;
         }
+        /*
+         * Fill the event's target tree node's children with their children
+         * (to show the [+] if they contain child nodes).
+         */
         public void FillNode(object sender, TreeViewCancelEventArgs args) {
             foreach (TreeNode child in args.Node.Nodes) {
                 EsfTreeNode esfNode = child as EsfTreeNode;
@@ -178,6 +204,10 @@ namespace EsfControl {
                 }
             }
         }
+
+        /*
+         * Render the data cell view, preparing the red color for modified entries.
+         */
         public void NodeSelected(object sender, TreeViewEventArgs args) {
             ParentNode node = args.Node.Tag as ParentNode;
             try {

@@ -70,6 +70,7 @@ namespace EsfLibrary {
             get; set;
         }
   
+        #region Invalidation
         bool invalid;
         public bool Invalid { 
             get { return invalid; }
@@ -110,6 +111,10 @@ namespace EsfLibrary {
                 Invalid |= Modified;
             }
         }
+
+        /*
+         * Invalidate until the first memory-mapped node is found.
+         */
         private bool Invalidate(EsfNode node) {
             MemoryMappedRecordNode mapped = node as MemoryMappedRecordNode;
             bool continuteIteration = mapped == null;
@@ -119,13 +124,14 @@ namespace EsfLibrary {
             // don't continue when a node was invalidated
             return !continuteIteration;
         }
+        /*
+         * Invalidate all memory-mapped nodes we come across.
+         */
         private bool InvalidateAll(EsfNode node) {
-            MemoryMappedRecordNode mapped = node as MemoryMappedRecordNode;
-            if (mapped != null) {
-                mapped.Invalid = true;
-            }
+            Invalidate(node);
             return true;
         }
+        #endregion
 
         protected override RecordNode DecodeDelegate() {
             RecordNode result;
@@ -151,18 +157,14 @@ namespace EsfLibrary {
 
         public override void Encode(BinaryWriter writer) {
             if (Invalid) {
-                Console.WriteLine("actually encoding {0}", Name);
                 Decoded.Encode(writer);
             } else {
-                Console.WriteLine("encoding by memory mapping {0}", Name);
                 writer.Write(buffer, mapStart, byteCount);
             }
         }
 
         public override EsfNode CreateCopy() {
             if (!Invalid) {
-                // only works for ABCA: earlier records contain their end address 
-                // instead of their length
                 return new MemoryMappedRecordNode(Codec, buffer, mapStart + 1) {
                     Name = this.Name
                 };
