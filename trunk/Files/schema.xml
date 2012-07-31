@@ -183,10 +183,10 @@
   <table name='aide_de_camp_speeches_tables'>
     <field name='ADC IDRef' type='string' pk='true' />
     <field name='Speech Text' type='string' />
-    <field name='Unkown' type='boolean' />
+    <field name='Unknown' type='boolean' />
     <field name='Unknown' type='float' />
     <field name='Unknown' type='float' />
-    <field name='Unkown' type='boolean' version_start='2' />
+    <field name='Unknown' type='boolean' version_start='2' />
   </table>
   <table name='ancillaries_tables'>
     <field fkey='ancillary_info_tables.Ancillary ID' name='Ancillary ID' type='string' pk='true' />
@@ -3341,50 +3341,50 @@
     <field name='Infantry Battle Entity' type='string' />
     <field name='Animation Table' type='string' />
     <field name='Warscape Equipment Theme IDRef' type='string' />
-    <field name='unknown13' type='int' />
-    <field name='Armor Type' type='string' />
-    <field name='unknown15' type='int' />
-    <field name='Horse 1' type='optstring' />
+    <field name='Armour' type='int' />
+    <field name='Armour Type' type='string' />
+    <field name='Man Health' type='int' />
+    <field name='Horse Entity' type='optstring' />
     <field name='Cavalry Battle Entity' type='optstring' />
-    <field name='Horse 3' type='optstring' />
-    <field name='unknown22' type='string' version_end='5' />
-    <field name='unknown23' type='string' version_end='5' />
+    <field name='Horse Model' type='optstring' />
+    <field name='Mount Armour' type='string' version_end='5' />
+    <field name='Mount Health' type='string' version_end='5' />
     <field name='field17' type='int' version_start='13' />
     <field name='field18' type='int' version_start='13' />
     <field name='Carriage Battle Entity' type='optstring' />
     <field name='Ammo Train Battle Entity' type='optstring' />
     <field name='Limber' type='optstring' />
-    <field name='Artillery 1' type='optstring' />
-    <field name='Has Artillery 2?' type='boolean' />
+    <field name='Artillery model' type='optstring' />
+    <field name='Capable Siege Gun' type='boolean' />
     <field name='Gun IDRef' type='optstring' />
-    <field name='Missile Weapon Type' type='optstring' />
+    <field name='Primary Missile Weapon' type='optstring' />
     <field name='Accuracy' type='int' />
     <field name='Reloading Skill' type='int' />
-    <field name='unknown39' type='string' />
-    <field name='unknown40' type='string' />
+    <field name='Primary Missle Attack' type='string' />
+    <field name='Firing Mechanism' type='string' />
     <field name='Projectile IDRef' type='optstring' />
     <field name='Ammo' type='int' />
-    <field name='unknown45' type='optstring' />
+    <field name='Skeleton Missile' type='optstring' />
     <field name='Melee Weapon' type='string' />
     <field name='Melee Skill' type='int' />
     <field name='Charge Bonus' type='int' />
     <field name='Dismounted Melee Skill' type='int' version_start='13' />
     <field name='Dismounted Defence skill' type='int' version_start='13' />
     <field name='Defense Skill' type='int' />
-    <field name='unknown50' type='int' />
-    <field name='unknown51' type='string' />
-    <field name='unknown52' type='string' />
+    <field name='Shield Bonus' type='int' />
+    <field name='Skeleton Melee' type='string' />
+    <field name='Pistol' type='string' />
     <field name='Drill Set' type='string' />
     <field name='Training' type='string' />
     <field name='Morale' type='int' />
     <field name='Rank Depth' type='int' />
-    <field name='File Spacing' type='float' />
-    <field name='Rank Spacing' type='float' />
-    <field name='unused' type='float' />
-    <field name='unused' type='float' />
+    <field name='Close File Spacing' type='float' />
+    <field name='Close Rank Spacing' type='float' />
+    <field name='Loose File Spacing' type='float' />
+    <field name='Loose Rank Spacing' type='float' />
     <field name='Dismounted File Spacing' type='float' />
     <field name='Dismounted Rank Spacing' type='float' />
-    <field name='unknown60' type='float' />
+    <field name='Base Density' type='float' />
     <field name='unknown61' type='float' version_start='13' />
     <field name='unknown61' type='float' version_start='13' />
     <field name='Anti Cavalry Bonus' type='int' />
@@ -3392,7 +3392,7 @@
     <field name='Can Skirmish' type='boolean' />
     <field name='Can Guard' type='boolean' />
     <field name='Can Dismount' type='boolean' />
-    <field name='unknown69' type='boolean' />
+    <field name='Can Place Stakes' type='boolean' />
     <field name='Is Slow Moving' type='boolean' />
     <field name='Can Rally Comrades' type='boolean' />
     <field name='Can Hide in Woodland' type='boolean' />
@@ -3400,15 +3400,15 @@
     <field name='Can Hide in Long Grass' type='boolean' />
     <field name='Can Hide in Buildings' type='boolean' />
     <field name='Can Hide when Walking' type='boolean' />
-    <field name='unknown77' type='boolean' />
+    <field name='Sniper' type='boolean' />
     <field name='Can Fire from Horseback' type='boolean' />
-    <field name='unknown79' type='float' />
-    <field name='unknown80' type='float' />
-    <field name='unknown81' type='float' />
+    <field name='Tree Spot Distance' type='float' />
+    <field name='Scrub Spot Distance' type='float' />
+    <field name='Long Grass Spot Distance' type='float' />
     <field name='Paths Seldom Trod' type='boolean' />
     <field name='Garrison Police Bonus' type='boolean' />
     <field name='Morale Shock Resistant' type='boolean' />
-    <field name='unknown85' type='boolean' />
+    <field name='Impetuous' type='boolean' />
     <field name='Scares Horses' type='boolean' />
     <field name='Scares Enemies' type='boolean' />
     <field name='Inspires Allies' type='boolean' />
@@ -3416,7 +3416,7 @@
     <field name='Use Grappling Hooks' type='boolean' />
     <field name='Heat Resistant' type='boolean' />
     <field name='Cold Resistant' type='boolean' />
-    <field name='unknown93' type='boolean' />
+    <field name='Can Do Formed Attack' type='boolean' />
     <field name='Can Use Pike Wall' type='boolean' />
     <field name='Can Use Pike Square' type='boolean' />
     <field name='Immune to Attrition' type='boolean' version_start='4' />
@@ -3430,7 +3430,7 @@
     <field name='Unused?' type='boolean' version_start='13' />
     <field name='UNKNOWN_BOS' type='optstring' version_start='13' />
     <field name='UNKNOWN_BOS' type='optstring' version_start='13' />
-    <field name='Unkown' type='boolean' version_start='13' />
+    <field name='Unknown' type='boolean' version_start='13' />
     <field name='Deployable outside standard deployment area?' type='boolean' version_start='13' />
     <field name='unknown105' type='string' version_start='13' />
     <field name='unknown106' type='string' version_start='13' />
@@ -3440,17 +3440,17 @@
     <field name='unknown110' type='string' version_start='13' />
     <field name='unknown111' type='string' version_start='13' />
     <field name='unknown112' type='string' version_start='13' />
-    <field name='Unkown' type='boolean' version_start='13' />
-    <field name='Unkown' type='boolean' version_start='13' />
-    <field name='Unkown' type='boolean' version_start='13' />
-    <field name='Unkown' type='boolean' version_start='13' />
-    <field name='Unkown' type='boolean' version_start='13' />
-    <field name='Unkown' type='boolean' version_start='16' />
-    <field name='Unkown' type='float' version_start='16' />
-    <field name='Unkown' type='float' version_start='16' />
-    <field name='Unkown' type='float' version_start='16' />
-    <field name='Unkown' type='float' version_start='16' />
-    <field name='Unkown' type='boolean' version_start='16' />
+    <field name='Unknown' type='boolean' version_start='13' />
+    <field name='Unknown' type='boolean' version_start='13' />
+    <field name='Unknown' type='boolean' version_start='13' />
+    <field name='Unknown' type='boolean' version_start='13' />
+    <field name='Unknown' type='boolean' version_start='13' />
+    <field name='Unknown' type='boolean' version_start='16' />
+    <field name='Unknown' type='float' version_start='16' />
+    <field name='Unknown' type='float' version_start='16' />
+    <field name='Unknown' type='float' version_start='16' />
+    <field name='Unknown' type='float' version_start='16' />
+    <field name='Unknown' type='boolean' version_start='16' />
   </table>
   <table name='unit_stats_land_experience_bonuses_tables'>
     <field name='Experience Level' type='string' pk='true' />
