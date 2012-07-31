@@ -1134,7 +1134,7 @@ namespace PackFileManager
             replaceFileToolStripMenuItem.Enabled = CanWriteCurrentPack && isChildNode;
             renameToolStripMenuItem.Enabled = (CanWriteCurrentPack && nodeSelected) 
                 && (packTreeView.SelectedNode != packTreeView.Nodes[0]);
-            deleteToolStripMenuItem2.Enabled = nodeSelected;
+            contextDeleteMenuItem.Enabled = nodeSelected;
         }
 
         private void packTreeView_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -1349,20 +1349,20 @@ namespace PackFileManager
             this.components = new System.ComponentModel.Container();
             this.packTreeView = new System.Windows.Forms.TreeView();
             this.packActionMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem13 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem14 = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.renameToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextAddMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextAddDirMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextAddEmptyDirMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextAddFileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextImportTsvMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextDeleteMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextRenameMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
-            this.openExternalToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.openTextToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.extractToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.extractSelectedToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.extractAllToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextOpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextOpenExternalMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextOpenTextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextExtractMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextExtractSelectedMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextExtractAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extractUnknownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extractSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extractAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -1478,71 +1478,71 @@ namespace PackFileManager
             // packActionMenuStrip
             // 
             this.packActionMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem1,
-            this.deleteToolStripMenuItem2,
-            this.renameToolStripMenuItem2,
+            this.contextAddMenuItem,
+            this.contextDeleteMenuItem,
+            this.contextRenameMenuItem,
             this.toolStripSeparator10,
-            this.toolStripMenuItem6,
-            this.extractToolStripMenuItem2});
+            this.contextOpenMenuItem,
+            this.contextExtractMenuItem});
             this.packActionMenuStrip.Name = "packActionMenuStrip";
             this.packActionMenuStrip.Size = new System.Drawing.Size(132, 120);
             this.packActionMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.packActionMenuStrip_Opening);
             // 
-            // toolStripMenuItem1
+            // contextAddMenuItem
             // 
-            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem3,
-            this.toolStripMenuItem13,
-            this.toolStripMenuItem2,
-            this.toolStripMenuItem14});
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(131, 22);
-            this.toolStripMenuItem1.Text = "Add";
+            this.contextAddMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.contextAddDirMenuItem,
+            this.contextAddEmptyDirMenuItem,
+            this.contextAddFileMenuItem,
+            this.contextImportTsvMenuItem});
+            this.contextAddMenuItem.Name = "contextAddMenuItem";
+            this.contextAddMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.contextAddMenuItem.Text = "Add";
             // 
-            // toolStripMenuItem3
+            // contextAddDirMenuItem
             // 
-            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.ShortcutKeyDisplayString = "Shift+Ins";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(185, 22);
-            this.toolStripMenuItem3.Text = "&Directory...";
-            this.toolStripMenuItem3.Click += new System.EventHandler(this.addDirectoryToolStripMenuItem_Click);
+            this.contextAddDirMenuItem.Name = "contextAddDirMenuItem";
+            this.contextAddDirMenuItem.ShortcutKeyDisplayString = "Shift+Ins";
+            this.contextAddDirMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.contextAddDirMenuItem.Text = "&Directory...";
+            this.contextAddDirMenuItem.Click += new System.EventHandler(this.addDirectoryToolStripMenuItem_Click);
             // 
-            // toolStripMenuItem13
+            // contextAddEmptyDirMenuItem
             // 
-            this.toolStripMenuItem13.Name = "toolStripMenuItem13";
-            this.toolStripMenuItem13.Size = new System.Drawing.Size(185, 22);
-            this.toolStripMenuItem13.Text = "Empty Directory";
-            this.toolStripMenuItem13.Click += new System.EventHandler(this.emptyDirectoryToolStripMenuItem_Click);
+            this.contextAddEmptyDirMenuItem.Name = "contextAddEmptyDirMenuItem";
+            this.contextAddEmptyDirMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.contextAddEmptyDirMenuItem.Text = "Empty Directory";
+            this.contextAddEmptyDirMenuItem.Click += new System.EventHandler(this.emptyDirectoryToolStripMenuItem_Click);
             // 
-            // toolStripMenuItem2
+            // contextAddFileMenuItem
             // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.ShortcutKeyDisplayString = "Ins";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(185, 22);
-            this.toolStripMenuItem2.Text = "&File(s)...";
-            this.toolStripMenuItem2.Click += new System.EventHandler(this.addFileToolStripMenuItem_Click);
+            this.contextAddFileMenuItem.Name = "contextAddFileMenuItem";
+            this.contextAddFileMenuItem.ShortcutKeyDisplayString = "Ins";
+            this.contextAddFileMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.contextAddFileMenuItem.Text = "&File(s)...";
+            this.contextAddFileMenuItem.Click += new System.EventHandler(this.addFileToolStripMenuItem_Click);
             // 
-            // toolStripMenuItem14
+            // contextImportTsvMenuItem
             // 
-            this.toolStripMenuItem14.Name = "toolStripMenuItem14";
-            this.toolStripMenuItem14.Size = new System.Drawing.Size(185, 22);
-            this.toolStripMenuItem14.Text = "DB file from TSV";
-            this.toolStripMenuItem14.Click += new System.EventHandler(this.dBFileFromTSVToolStripMenuItem_Click);
+            this.contextImportTsvMenuItem.Name = "contextImportTsvMenuItem";
+            this.contextImportTsvMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.contextImportTsvMenuItem.Text = "DB file from TSV";
+            this.contextImportTsvMenuItem.Click += new System.EventHandler(this.dBFileFromTSVToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem2
             // 
-            this.deleteToolStripMenuItem2.Name = "deleteToolStripMenuItem2";
-            this.deleteToolStripMenuItem2.ShortcutKeyDisplayString = "Del";
-            this.deleteToolStripMenuItem2.Size = new System.Drawing.Size(131, 22);
-            this.deleteToolStripMenuItem2.Text = "Delete";
-            this.deleteToolStripMenuItem2.Click += new System.EventHandler(this.deleteFileToolStripMenuItem_Click);
+            this.contextDeleteMenuItem.Name = "contextDeleteMenuItem";
+            this.contextDeleteMenuItem.ShortcutKeyDisplayString = "Del";
+            this.contextDeleteMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.contextDeleteMenuItem.Text = "Delete";
+            this.contextDeleteMenuItem.Click += new System.EventHandler(this.deleteFileToolStripMenuItem_Click);
             // 
             // renameToolStripMenuItem2
             // 
-            this.renameToolStripMenuItem2.Name = "renameToolStripMenuItem2";
-            this.renameToolStripMenuItem2.Size = new System.Drawing.Size(131, 22);
-            this.renameToolStripMenuItem2.Text = "Rename";
-            this.renameToolStripMenuItem2.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
+            this.contextRenameMenuItem.Name = "contextRenameMenuItem";
+            this.contextRenameMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.contextRenameMenuItem.Text = "Rename";
+            this.contextRenameMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
             // 
             // toolStripSeparator10
             // 
@@ -1551,51 +1551,51 @@ namespace PackFileManager
             // 
             // toolStripMenuItem6
             // 
-            this.toolStripMenuItem6.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openExternalToolStripMenuItem2,
-            this.openTextToolStripMenuItem2});
-            this.toolStripMenuItem6.Name = "toolStripMenuItem6";
-            this.toolStripMenuItem6.Size = new System.Drawing.Size(131, 22);
-            this.toolStripMenuItem6.Text = "Open";
+            this.contextOpenMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.contextOpenExternalMenuItem,
+            this.contextOpenTextMenuItem});
+            this.contextOpenMenuItem.Name = "contextOpenMenuItem";
+            this.contextOpenMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.contextOpenMenuItem.Text = "Open";
             // 
             // openExternalToolStripMenuItem2
             // 
-            this.openExternalToolStripMenuItem2.Name = "openExternalToolStripMenuItem2";
-            this.openExternalToolStripMenuItem2.Size = new System.Drawing.Size(156, 22);
-            this.openExternalToolStripMenuItem2.Text = "Open External...";
-            this.openExternalToolStripMenuItem2.Click += new System.EventHandler(this.openFileToolStripMenuItem_Click);
+            this.contextOpenExternalMenuItem.Name = "contextOpenExternalMenuItem";
+            this.contextOpenExternalMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.contextOpenExternalMenuItem.Text = "Open External...";
+            this.contextOpenExternalMenuItem.Click += new System.EventHandler(this.openFileToolStripMenuItem_Click);
             // 
             // openTextToolStripMenuItem2
             // 
-            this.openTextToolStripMenuItem2.Name = "openTextToolStripMenuItem2";
-            this.openTextToolStripMenuItem2.Size = new System.Drawing.Size(156, 22);
-            this.openTextToolStripMenuItem2.Text = "Open as Text";
-            this.openTextToolStripMenuItem2.Click += new System.EventHandler(this.openAsTextMenuItem_Click);
+            this.contextOpenTextMenuItem.Name = "contextOpenTextMenuItem";
+            this.contextOpenTextMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.contextOpenTextMenuItem.Text = "Open as Text";
+            this.contextOpenTextMenuItem.Click += new System.EventHandler(this.openAsTextMenuItem_Click);
             // 
             // extractToolStripMenuItem2
             // 
-            this.extractToolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.extractSelectedToolStripMenuItem2,
-            this.extractAllToolStripMenuItem2,
+            this.contextExtractMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.contextExtractSelectedMenuItem,
+            this.contextExtractAllMenuItem,
             this.extractUnknownToolStripMenuItem});
-            this.extractToolStripMenuItem2.Name = "extractToolStripMenuItem2";
-            this.extractToolStripMenuItem2.Size = new System.Drawing.Size(131, 22);
-            this.extractToolStripMenuItem2.Text = "Extract";
+            this.contextExtractMenuItem.Name = "contextExtractMenuItem";
+            this.contextExtractMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.contextExtractMenuItem.Text = "Extract";
             // 
             // extractSelectedToolStripMenuItem2
             // 
-            this.extractSelectedToolStripMenuItem2.Name = "extractSelectedToolStripMenuItem2";
-            this.extractSelectedToolStripMenuItem2.ShortcutKeyDisplayString = "Ctl+X";
-            this.extractSelectedToolStripMenuItem2.Size = new System.Drawing.Size(202, 22);
-            this.extractSelectedToolStripMenuItem2.Text = "Extract &Selected...";
-            this.extractSelectedToolStripMenuItem2.Click += new System.EventHandler(this.extractSelectedToolStripMenuItem_Click);
+            this.contextExtractSelectedMenuItem.Name = "contextExtractSelectedMenuItem";
+            this.contextExtractSelectedMenuItem.ShortcutKeyDisplayString = "Ctl+X";
+            this.contextExtractSelectedMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.contextExtractSelectedMenuItem.Text = "Extract &Selected...";
+            this.contextExtractSelectedMenuItem.Click += new System.EventHandler(this.extractSelectedToolStripMenuItem_Click);
             // 
             // extractAllToolStripMenuItem2
             // 
-            this.extractAllToolStripMenuItem2.Name = "extractAllToolStripMenuItem2";
-            this.extractAllToolStripMenuItem2.Size = new System.Drawing.Size(202, 22);
-            this.extractAllToolStripMenuItem2.Text = "Extract &All...";
-            this.extractAllToolStripMenuItem2.Click += new System.EventHandler(this.extractAllToolStripMenuItem_Click);
+            this.contextExtractAllMenuItem.Name = "contextExtractAllMenuItem";
+            this.contextExtractAllMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.contextExtractAllMenuItem.Text = "Extract &All...";
+            this.contextExtractAllMenuItem.Click += new System.EventHandler(this.extractAllToolStripMenuItem_Click);
             // 
             // extractUnknownToolStripMenuItem
             // 
@@ -2416,23 +2416,23 @@ namespace PackFileManager
         private System.Windows.Forms.ToolStripMenuItem cAPacksAreReadOnlyToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem updateOnStartupToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
-        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem contextAddMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem contextAddFileMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem contextAddDirMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem contextDeleteMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem contextRenameMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem6;
-        private System.Windows.Forms.ToolStripMenuItem openExternalToolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem openTextToolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem extractToolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem extractSelectedToolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem extractAllToolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem contextOpenMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem contextOpenExternalMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem contextOpenTextMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem contextExtractMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem contextExtractSelectedMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem contextExtractAllMenuItem;
         private System.Windows.Forms.ToolStripMenuItem extractUnknownToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem emptyDirectoryToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem13;
+        private System.Windows.Forms.ToolStripMenuItem contextAddEmptyDirMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importTSVToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem14;
+        private System.Windows.Forms.ToolStripMenuItem contextImportTsvMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showDecodeToolOnErrorToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem extractAllTsv;
