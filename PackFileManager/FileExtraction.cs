@@ -112,7 +112,7 @@ namespace PackFileManager {
                         File.WriteAllBytes(path, Preprocessor.Process(file));
                         extractedCount++;
                     } catch (Exception e) {
-                        MessageBox.Show(string.Format("Failed to export {0} to tsv: {1}", file.FullPath, e.Message));
+                        MessageBox.Show(string.Format("Failed to export {0}: {1}", file.FullPath, e.Message));
                         skippedCount++;
                     }
                     SetStatus(file.FullPath, extractedCount, packedFiles.Count, skippedCount);
