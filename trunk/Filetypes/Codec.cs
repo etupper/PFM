@@ -14,7 +14,8 @@ namespace Common {
 		static string format = "\"{0}\"";
 
 		public static string Format(string input) {
-            return string.Format(format, Regex.Escape(input))
+            string escaped = Regex.Escape(input.Trim());
+            return string.Format(format, escaped)
                 .Replace("\\ ", " ")
                 .Replace("\\.", ".")
                 .Replace("\\|", "|")
@@ -30,7 +31,7 @@ namespace Common {
 				// remove one leading and trailing quote if present
 				result = result.Substring (1, result.Length - 2);
 			}
-			return result;
+			return result.Trim();
 		}
 	}
 }

@@ -89,10 +89,10 @@ namespace Common
 			return 2 * str.Length + 2;
 		}
 		public override string Decode(BinaryReader reader) {
-			return IOFunctions.readCAString (reader);
+			return IOFunctions.readCAString (reader).Trim();
 		}
 		public override void Encode(BinaryWriter writer, string val) {
-			IOFunctions.writeCAString (writer, val);
+			IOFunctions.writeCAString (writer, val.Trim());
 		}
 	}
 
@@ -188,7 +188,7 @@ namespace Common
 			} else if (b != 0) {
 				result = string.Format ("- invalid - ({0:x2})", b);
 			}
-			return result;
+			return result.Trim();
 		}
 
 		public override int Length(string str) {
@@ -197,7 +197,7 @@ namespace Common
 		public override void Encode(BinaryWriter writer, string val) {
 			writer.Write (val.Length > 0);
 			if (val.Length > 0) {
-				IOFunctions.writeCAString (writer, val);
+				IOFunctions.writeCAString (writer, val.Trim());
 			}
 		}
 	}
