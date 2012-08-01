@@ -11,7 +11,6 @@ using System.Windows.Forms;
 
 namespace PackFileManager {
     public class DBFileEditorControl : UserControl {
-        private enum COPIED_TYPE { NONE, ROWS, CELLS }
         private string referenceTarget = null;
 
         PackedFileDbCodec Codec;
@@ -38,7 +37,6 @@ namespace PackFileManager {
         private bool TableColumnChanged;
         private List<List<FieldInstance>> copiedRows = new List<List<FieldInstance>>();
         private ToolStripButton cloneRowsButton;
-        private COPIED_TYPE lastCopy = COPIED_TYPE.NONE;
         #endregion
 
         public DBFileEditorControl () {
