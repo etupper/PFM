@@ -78,7 +78,6 @@ namespace PackFileManager
 
             updateOnStartupToolStripMenuItem.Checked = Settings.Default.UpdateOnStartup;
             showDecodeToolOnErrorToolStripMenuItem.Checked = Settings.Default.ShowDecodeToolOnError;
-            bool comboBoxes = Settings.Default.UseComboboxCells;
 
             try {
                 if (Settings.Default.UpdateOnStartup) {
@@ -694,6 +693,26 @@ namespace PackFileManager
 
         private void openFileToolStripMenuItem_Click(object sender, EventArgs e) {
             openExternal(packTreeView.SelectedNode.Tag as PackedFile, "openas");
+        }
+
+        private void openDecodeToolMenuItem_Click(object sender, EventArgs e) {
+            PackedFile packedFile = packTreeView.SelectedNode.Tag as PackedFile;
+            if (packedFile != null) {
+                DecodeTool.DecodeTool decoder = null;
+                // best used if a db file...
+                try {
+                    string key = DBFile.typename(packedFile.FullPath);
+                    decoder = new DecodeTool.DecodeTool { TypeName = key, Bytes = packedFile.Data };
+                    decoder.ShowDialog();
+                } catch (Exception ex) {
+                    MessageBox.Show (string.Format("DecodeTool could not be opened:\n{0}", ex.Message), 
+                                     "DecodeTool problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                } finally {
+                    if (decoder != null) {
+                        decoder.Dispose();
+                    }
+                }
+            }
         }
 
         public void openExternal(PackedFile packedFile, string verb)
@@ -1359,6 +1378,7 @@ namespace PackFileManager
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
             this.contextOpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextOpenExternalMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextOpenDecodeToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextOpenTextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextExtractMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextExtractSelectedMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -1407,8 +1427,9 @@ namespace PackFileManager
             this.replaceFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.openToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.openFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openExternalMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openDecodeToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openAsTextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extractToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportUnknownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -1529,7 +1550,7 @@ namespace PackFileManager
             this.contextImportTsvMenuItem.Text = "DB file from TSV";
             this.contextImportTsvMenuItem.Click += new System.EventHandler(this.dBFileFromTSVToolStripMenuItem_Click);
             // 
-            // deleteToolStripMenuItem2
+            // contextDeleteMenuItem
             // 
             this.contextDeleteMenuItem.Name = "contextDeleteMenuItem";
             this.contextDeleteMenuItem.ShortcutKeyDisplayString = "Del";
@@ -1537,7 +1558,7 @@ namespace PackFileManager
             this.contextDeleteMenuItem.Text = "Delete";
             this.contextDeleteMenuItem.Click += new System.EventHandler(this.deleteFileToolStripMenuItem_Click);
             // 
-            // renameToolStripMenuItem2
+            // contextRenameMenuItem
             // 
             this.contextRenameMenuItem.Name = "contextRenameMenuItem";
             this.contextRenameMenuItem.Size = new System.Drawing.Size(131, 22);
@@ -1549,30 +1570,38 @@ namespace PackFileManager
             this.toolStripSeparator10.Name = "toolStripSeparator10";
             this.toolStripSeparator10.Size = new System.Drawing.Size(128, 6);
             // 
-            // toolStripMenuItem6
+            // contextOpenMenuItem
             // 
             this.contextOpenMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.contextOpenExternalMenuItem,
+            this.contextOpenDecodeToolMenuItem,
             this.contextOpenTextMenuItem});
             this.contextOpenMenuItem.Name = "contextOpenMenuItem";
             this.contextOpenMenuItem.Size = new System.Drawing.Size(131, 22);
             this.contextOpenMenuItem.Text = "Open";
             // 
-            // openExternalToolStripMenuItem2
+            // contextOpenExternalMenuItem
             // 
             this.contextOpenExternalMenuItem.Name = "contextOpenExternalMenuItem";
             this.contextOpenExternalMenuItem.Size = new System.Drawing.Size(156, 22);
             this.contextOpenExternalMenuItem.Text = "Open External...";
             this.contextOpenExternalMenuItem.Click += new System.EventHandler(this.openFileToolStripMenuItem_Click);
             // 
-            // openTextToolStripMenuItem2
+            // contextOpenDecodeToolMenuItem
+            // 
+            this.contextOpenDecodeToolMenuItem.Name = "contextOpenDecodeToolMenuItem";
+            this.contextOpenDecodeToolMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.contextOpenDecodeToolMenuItem.Text = "Open DecodeTool...";
+            this.contextOpenDecodeToolMenuItem.Click += new System.EventHandler(this.openDecodeToolMenuItem_Click);
+            // 
+            // contextOpenTextMenuItem
             // 
             this.contextOpenTextMenuItem.Name = "contextOpenTextMenuItem";
             this.contextOpenTextMenuItem.Size = new System.Drawing.Size(156, 22);
             this.contextOpenTextMenuItem.Text = "Open as Text";
             this.contextOpenTextMenuItem.Click += new System.EventHandler(this.openAsTextMenuItem_Click);
             // 
-            // extractToolStripMenuItem2
+            // contextExtractMenuItem
             // 
             this.contextExtractMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.contextExtractSelectedMenuItem,
@@ -1582,7 +1611,7 @@ namespace PackFileManager
             this.contextExtractMenuItem.Size = new System.Drawing.Size(131, 22);
             this.contextExtractMenuItem.Text = "Extract";
             // 
-            // extractSelectedToolStripMenuItem2
+            // contextExtractSelectedMenuItem
             // 
             this.contextExtractSelectedMenuItem.Name = "contextExtractSelectedMenuItem";
             this.contextExtractSelectedMenuItem.ShortcutKeyDisplayString = "Ctl+X";
@@ -1937,7 +1966,7 @@ namespace PackFileManager
             this.replaceFileToolStripMenuItem,
             this.renameToolStripMenuItem,
             this.toolStripSeparator4,
-            this.openToolStripMenuItem1,
+            this.openMenuItem,
             this.extractToolStripMenuItem,
             this.toolStripSeparator8,
             this.createReadMeToolStripMenuItem,
@@ -1975,19 +2004,27 @@ namespace PackFileManager
             // 
             // openToolStripMenuItem1
             // 
-            this.openToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openFileToolStripMenuItem,
+            this.openMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openExternalMenuItem,
+            this.openDecodeToolMenuItem,
             this.openAsTextMenuItem});
-            this.openToolStripMenuItem1.Name = "openToolStripMenuItem1";
-            this.openToolStripMenuItem1.Size = new System.Drawing.Size(154, 22);
-            this.openToolStripMenuItem1.Text = "Open";
+            this.openMenuItem.Name = "openToolStripMenuItem1";
+            this.openMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.openMenuItem.Text = "Open";
             // 
-            // openFileToolStripMenuItem
+            // openExternalMenuItem
             // 
-            this.openFileToolStripMenuItem.Name = "openFileToolStripMenuItem";
-            this.openFileToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
-            this.openFileToolStripMenuItem.Text = "Open External...";
-            this.openFileToolStripMenuItem.Click += new System.EventHandler(this.openFileToolStripMenuItem_Click);
+            this.openExternalMenuItem.Name = "openExternalMenuItem";
+            this.openExternalMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.openExternalMenuItem.Text = "Open External...";
+            this.openExternalMenuItem.Click += new System.EventHandler(this.openFileToolStripMenuItem_Click);
+            // 
+            // openDecodeToolMenuItem
+            // 
+            this.openDecodeToolMenuItem.Name = "openDecodeToolMenuItem";
+            this.openDecodeToolMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.openDecodeToolMenuItem.Text = "Open DecodeTool...";
+            this.openDecodeToolMenuItem.Click += new System.EventHandler(this.openDecodeToolMenuItem_Click);
             // 
             // openAsTextMenuItem
             // 
@@ -2398,8 +2435,9 @@ namespace PackFileManager
         private System.Windows.Forms.ToolStripMenuItem replaceFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem openFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openDecodeToolMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openExternalMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openAsTextMenuItem;
         private System.Windows.Forms.ToolStripMenuItem extractToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem extractSelectedToolStripMenuItem;
@@ -2424,6 +2462,7 @@ namespace PackFileManager
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
         private System.Windows.Forms.ToolStripMenuItem contextOpenMenuItem;
         private System.Windows.Forms.ToolStripMenuItem contextOpenExternalMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem contextOpenDecodeToolMenuItem;
         private System.Windows.Forms.ToolStripMenuItem contextOpenTextMenuItem;
         private System.Windows.Forms.ToolStripMenuItem contextExtractMenuItem;
         private System.Windows.Forms.ToolStripMenuItem contextExtractSelectedMenuItem;
