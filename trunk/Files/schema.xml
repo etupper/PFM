@@ -1219,16 +1219,16 @@
     <field name='Y' type='float' />
   </table>
   <table name='campaign_map_playable_areas_tables'>
-    <field name='Unknown' type='string' />
-    <field name='Unknown' type='boolean' />
-    <field name='Unknown' type='boolean' />
-    <field name='Unknown' type='string' />
-    <field name='?' type='optstring' />
-    <field name='?' type='optstring' />
-    <field name='Unknown' type='string' />
-    <field name='Unknown6' type='int' />
-    <field name='Unknown7' type='int' />
-    <field name='Unknown8' type='int' />
+   	<field name='Index' type='string' />
+    <field name='Sea Trade Area' type='boolean' />
+    <field name='Onscreen name' type='boolean' />
+    <field name='Map_file' type='string' />
+    <field name='Overlay_file' type='optstring' />
+    <field name='Radar_file' type='optstring' />
+    <field name='meaningful_id' type='string' />
+    <field name='Preview_width' type='int' />
+    <field name='Preview_height' type='int' />
+    <field name='Preview_border' type='int' />
   </table>
   <table name='campaign_map_settlement_sprawl_descriptions_tables'>
     <field name='Settlement' type='string' />
@@ -2734,7 +2734,7 @@
     <field name='unknown4' type='optstring' />
   </table>
   <table name='projectile_impacts_tables'>
-    <field name='Projectile IDRef' type='string' pk='true' />
+    <field name='Projectile_IDRef' type='string' pk='true' />
     <field name='unknown' type='optstring' />
     <field name='unknown' type='optstring' />
     <field name='unknown' type='optstring' />
@@ -2761,7 +2761,7 @@
     <field name='Artillery_projectile_x0020__x0028__x003F__x0029_' type='boolean' />
   </table>
   <table name='projectile_trails_tables'>
-    <field name='Projectile Trail' type='string' pk='true' />
+    <field name='Projectile_Trail' type='string' pk='true' />
     <field name='unknown' type='string' />
     <field name='unknown' type='float' />
     <field name='unknown' type='float' />
@@ -2776,39 +2776,38 @@
   </table>
   <table name='projectiles_tables'>
     <field name='Projectile ID' type='string' pk='true' />
-    <field name='Type' type='string' />
+    <field name='category' type='string' />
     <field fkey='projectile_shot_type_enum_tables.Projectile_Shot' name='Shot Type' type='string' />
-    <field fkey='projectiles_missile_type_enum_tables.Projectile Missile' name='Missile type' type='string' />
+    <field fkey='projectiles_missile_type_enum_tables.Projectile_Missile' name='Missile type' type='string' />
     <field name='Projectile Model' type='optstring' />
-    <field fkey='projectiles_explosions_tables.Projectile Explosion' name='Explosion' type='optstring' />
-    <field fkey='projectile_trails_tables.Projectile Trail' name='Trail' type='optstring' />
+    <field fkey='projectiles_explosions_tables.Projectile_Explosion' name='Explosion' type='optstring' />
+    <field fkey='projectile_trails_tables.Projectile_Trail' name='Trail' type='optstring' />
     <field name='Spin' type='string' />
     <field name='Number_of_Pellets' type='int' />
-    <field name='unknown4' type='optstring' />
-    <field name='unknown5' type='string' />
+    <field name='in_flight_transition' type='optstring' />
+    <field name='trajectory_sight' type='string' />
     <field name='Range' type='int' />
     <field name='Minimum_x0020_Range' type='int' />
-    <field name='unknown7' type='int' />
+    <field name='max_elevation' type='int' />
     <field name='Velocity' type='float' />
-    <field name='unknown8' type='float' />
-    <field name='Maximum_deviance_x0020_from_0_to_360' type='float' />
+    <field name='marksmanship_bonus' type='float' />
+    <field name='spread' type='float' />
     <field name='Damage' type='float' />
-    <field name='Damage_x0020_Range_effectiveness' type='optstring' />
-    <field name='unknown11' type='optstring' />
-    <field name='unknown12' type='optstring' />
-    <field name='unknown13' type='boolean' />
-    <field name='unknown14' type='boolean' />
-    <field name='unknown15' type='float' />
+    <field name='penetration' type='optstring' />
+    <field name='incendiary' type='optstring' />
+    <field name='blast_effect' type='optstring' />
+    <field name='can bounce' type='short' />
+    <field name='collision_radius' type='float' />
     <field name='Base_Reload__x0020_Time_x0020__x0023_Added_to_animation' type='int' />
-    <field name='unknown16' type='int' />
-    <field name='unknown17' type='optstring' />
-    <field name='unknown18' type='float' />
-    <field name='unknown19' type='float' />
-    <field name='unknown20' type='string' />
-    <field name='unknown21' type='string' />
-    <field name='unknown22' type='optstring' />
-    <field name='unknown23' type='optstring' />
-    <field fkey='projectile_impacts_tables.Projectile IDRef' name='Impact' type='optstring' />
+    <field name='base_misfire_chance' type='int' />
+    <field name='weather_effect' type='optstring' />
+    <field name='sail_damage_modifier' type='float' />
+    <field name='below_waterline_damage_modifer' type='float' />
+    <field name='launch_audio' type='string' />
+    <field name='hit_audio' type='string' />
+    <field name='launch_particle_effect' type='optstring' />
+    <field name='projectile_trail_particle_effect' type='optstring' />
+    <field fkey='projectile_impacts_tables.Projectile_IDRef' name='Impact' type='optstring' />
     <field name='unknown24' type='optstring' version_start='1' />
     <field name='unknown' type='boolean' version_start='5' />
     <field name='unknown' type='float' version_start='5' />
@@ -2817,7 +2816,7 @@
     <field name='unknown' type='float' version_start='5' />
   </table>
   <table name='projectiles_explosions_tables'>
-    <field name='Projectile Explosion' type='string' pk='true' />
+    <field name='Projectile_Explosion' type='string' pk='true' />
     <field name='Trigger Type' type='string' />
     <field name='Explosive Concussion Type' type='string' />
     <field name='Concussive Blast Area' type='float' />
@@ -2832,7 +2831,7 @@
     <field name='unknown13' type='optstring' version_start='1' />
   </table>
   <table name='projectiles_missile_type_enum_tables'>
-    <field name='Projectile Missile' type='string' pk='true' />
+    <field name='Projectile_Missile' type='string' pk='true' />
   </table>
   <table name='public_order_factors_tables'>
     <field name='Factor ID' type='string' pk='true' />
@@ -3069,7 +3068,7 @@
     <field name='Early_Availability' type='boolean' />
     <field name='Late_Availability' type='boolean' />
     <field name='Researched_Message_Picture' type='string' />
-    <field name='unknown3' type='int' version_start='1' />
+    <field name='AI_Bias' type='int' version_start='1' />
     <field name='index' type='int' version_start='2' />
   </table>
   <table name='technology_categories_tables'>
@@ -3645,14 +3644,14 @@
     <field name='unknown' type='optstring' />
   </table>
   <table name='unit_stats_naval_experience_bonuses_tables'>
-    <field name='Level' type='string' />
+    <field name='Experience_Level' type='string' />
     <field name='melee_attack_bonus' type='int' version_start='1' />
     <field name='melee_defense_bonus' type='int' />
-    <field name='unknown4' type='int' />
-    <field name='unknown5' type='int' />
-    <field name='morale_bonus' type='int' />
-    <field name='unknown7' type='int' />
-    <field name='unknown8' type='float' />
+    <field name='core_gunner_loading_skill' type='int' />
+    <field name='core_gunner_marksmanship' type='int' />
+    <field name='morale' type='int' />
+    <field name='mp_fixed_cost' type='int' />
+    <field name='mp_experience_cost_multiplier' type='float' />
   </table>
   <table name='unit_to_unit_abilities_junctions_tables'>
     <field fkey='units_tables.Unit ID' name='Unit IDRef' type='string' pk='true' />
