@@ -116,12 +116,14 @@ namespace PackFileManager
             string shogunPath = IOFunctions.GetShogunTotalWarDirectory();
             if (shogunPath != null) {
                 shogunPath = Path.Combine(shogunPath, "data");
-                List<string> packFiles = new List<string> (Directory.GetFiles(shogunPath, "*.pack"));
-                packFiles.Sort(NumberedFileComparison);
-                packFiles.ForEach(file => openCAToolStripMenuItem.DropDownItems.Add(
-                    new ToolStripMenuItem(Path.GetFileName(file), null, 
-                                     delegate(object s, EventArgs a) { OpenExistingPackFile(file); })));
-                openCAToolStripMenuItem.Enabled = true;
+                if (Directory.Exists(shogunPath)) {
+                    List<string> packFiles = new List<string> (Directory.GetFiles(shogunPath, "*.pack"));
+                    packFiles.Sort(NumberedFileComparison);
+                    packFiles.ForEach(file => openCAToolStripMenuItem.DropDownItems.Add(
+                        new ToolStripMenuItem(Path.GetFileName(file), null, 
+                                         delegate(object s, EventArgs a) { OpenExistingPackFile(file); })));
+                    openCAToolStripMenuItem.Enabled = true;
+                }
             }
             
             ModManager.ModChangeEvent enableMenuItem = delegate(string newMod) {
@@ -145,8 +147,6 @@ namespace PackFileManager
             if (NumberedFileNameRE.IsMatch(name1) && NumberedFileNameRE.IsMatch(name2)) {
                 Match m1 = NumberedFileNameRE.Match(name1);
                 Match m2 = NumberedFileNameRE.Match(name2);
-                string g1 = m1.Groups[1].Value;
-                string g2 = m2.Groups[1].Value;
                 if (m1.Groups[1].Value.Equals(m2.Groups[1].Value)) {
                     int number1 = int.Parse(m1.Groups[2].Value);
                     int number2 = int.Parse(m2.Groups[2].Value);
