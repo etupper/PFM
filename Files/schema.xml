@@ -1880,22 +1880,22 @@
   </table>
   <table name='factions_tables'>
     <field name='Faction IDRef' type='string' pk='true' />
-    <field name='ID2' type='int' />
+    <field name='Index' type='int' />
     <field name='unknown3' type='int' version_start='5' />
     <field name='Subculture' type='string' />
     <field name='Type' type='string' />
     <field name='Nation' type='string' />
     <field name='Nationality' type='string' />
-    <field name='Names_DB' type='string' />
-    <field name='sounds_id' type='string' />
-    <field name='unknown10' type='optstring' version_start='1' />
+    <field name='Names group' type='string' />
+    <field name='Skin' type='string' />
+    <field name='UI Skin' type='optstring' version_start='1' />
     <field name='Rebels' type='boolean' />
     <field name='Early_Availability' type='boolean' />
     <field name='Late_Availability' type='boolean' />
-    <field name='unknown' type='string' />
-    <field name='Faction Icons' type='string' />
-    <field name='Flag2' type='optstring' />
-    <field name='unknown' type='optstring' />
+    <field name='Faction Icon' type='string' />
+    <field name='Faction Flag' type='string' />
+    <field name='Republic Flag' type='optstring' />
+    <field name='Rebel Flag' type='optstring' />
     <field name='R1' type='float' />
     <field name='G1' type='float' />
     <field name='B1' type='float' />
@@ -1915,17 +1915,16 @@
     <field name='G6' type='float' />
     <field name='B6' type='float' />
     <field fkey='groupings_military_tables.Group' name='Military_x0020_Group' type='string' />
-    <field name='Settler_Rebels' type='optstring' />
+    <field name='Rebels Faction' type='optstring' />
     <field name='R' type='float' />
     <field name='G' type='float' />
     <field name='B' type='float' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='string' />
-    <field name='Abreviation' type='string' />
-    <field name='unknown43' type='boolean' />
-    <field name='unknown44' type='boolean' />
-    <field name='Names_1' type='string' />
-    <field name='Names_2' type='string' />
+    <field name='Death Movie' type='optstring' />
+    <field name='Faction Audio' type='string' />
+    <field name='MP Republic Early' type='boolean' />
+    <field name='MP Republic Late' type='boolean' />
+    <field name='Regiment Name Group' type='string' />
+    <field name='Naval Name Group' type='string' />
     <field name='Attacking Text' type='string' version_start='3' />
     <field name='Defending Text' type='string' version_start='3' />
     <field name='unknown49' type='boolean' version_start='3' />
