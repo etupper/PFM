@@ -340,7 +340,7 @@
     <field name='unknown' type='string' />
     <field name='unknown' type='optstring' />
     <field name='unknown' type='int' />
-    <field name='unknown' type='string' />
+    <field name='unknown' type='string' version_start='8' />
     <field name='unknown' type='string' version_start='8' />
   </table>
   <table name='avatar_clan_specialisms_tables'>
@@ -485,7 +485,7 @@
     <field name='unknown1' type='string' pk='true' />
     <field name='unknown2' type='int' />
     <field name='unknown3' type='int' />
-    <field name='campaign' type='string' />
+    <field name='campaign' type='string' version_start='1' />
   </table>
   <table name='avatar_unit_ui_categories_tables'>
     <field name='Avatar UI Category ID' type='string' pk='true' />
@@ -1011,6 +1011,8 @@
     <field name='unknown' type='int' />
     <field name='unknown' type='int' />
     <field name='unknown' type='int' />
+    <field name='unknown' type='string' />
+    <field name='unknown' type='string' />
   </table>
   <table name='cai_personalities_budget_context_types_tables'>
     <field name='Budget Allocation Policy ID' type='string' pk='true' />
@@ -1411,7 +1413,7 @@
     <field name='unknown2' type='int' />
     <field name='unknown3' type='int' />
     <field name='unknown4' type='int' />
-    <field name='' type='optstring' />
+    <field name='unknown5' type='optstring' version_start='1' />
   </table>
   <table name='character_skill_level_to_effects_junctions_tables'>
     <field fkey='character_skills_tables.Skill Level ID' name='Skill Level IDRef' type='string' />
@@ -1750,9 +1752,9 @@
   <table name='event_log_descriptions_tables'>
     <field name='unknown1' type='string' pk='true' />
     <field name='unknown' type='optstring' version_start='2' />
-    <field name='unknown' type='boolean' version_start='2' />
-    <field name='unknown' type='string' version_start='2' />
-    <field name='unknown' type='boolean' version_start='2' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='string' />
+    <field name='unknown' type='boolean' />
   </table>
   <table name='events_tables'>
     <field name='Event ID' type='string' pk='true' />
@@ -2729,7 +2731,7 @@
   </table>
   <table name='pre_battle_speeches_tables'>
     <field name='unknown1' type='string' pk='true' />
-    <field name='unknown2' type='string' />
+    <field name='unknown2' type='string' version_end='1' />
     <field name='unknown3' type='int' />
     <field name='unknown4' type='optstring' />
   </table>
@@ -2837,6 +2839,7 @@
     <field name='Factor ID' type='string' pk='true' />
     <field name='Icon1' type='string' />
     <field name='Icon2' type='optstring' />
+    <field name='Campaign' type='optstring' version_start='1' />
   </table>
   <table name='quotes_tables'>
     <field name='Text' type='string' />
