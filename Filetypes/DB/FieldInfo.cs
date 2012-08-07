@@ -77,6 +77,21 @@ namespace Common
 		public string DefaultValue {
 			get; set;
 		}
+        
+        public override bool Equals(object other) {
+            bool result = false;
+            if (other is FieldInfo) {
+                FieldInfo info = other as FieldInfo;
+                result = Name.Equals(info.Name);
+                result &= TypeName.Equals(info.TypeName);
+            }
+            return result;
+        }
+        
+        public override int GetHashCode() {
+            return 2*Name.GetHashCode() +
+                3*TypeName.GetHashCode();
+        }
 	}
 
 	class StringType : FieldInfo {

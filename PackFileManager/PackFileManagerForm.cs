@@ -1055,7 +1055,7 @@ namespace PackFileManager
 
                         // identify FieldInstances missing in db file
                         TypeInfo dbFileInfo = updatedFile.CurrentType;
-                        TypeInfo targetInfo = DBTypeMap.Instance[key, maxVersion];
+                        TypeInfo targetInfo = DBTypeMap.Instance.GetVersionedInfo(header.GUID, key, maxVersion);
                         for (int i = dbFileInfo.fields.Count; i < targetInfo.fields.Count; i++) {
                             foreach (List<FieldInstance> entry in updatedFile.Entries) {
                                 var field = new FieldInstance(targetInfo.fields[i], targetInfo.fields[i].DefaultValue);

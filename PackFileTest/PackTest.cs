@@ -15,7 +15,7 @@ namespace PackFileTest {
 		bool testDbFiles = false;
 		bool testTsvExport = false;
 		bool testUnitVariants = false;
-        bool testGroupformations = false;
+        // bool testGroupformations = false;
 
 		private static string OPTIONS_FILENAME = "testoptions.txt";
 
@@ -43,7 +43,7 @@ namespace PackFileTest {
 						testUnitVariants = true;
                     } else if (dir.StartsWith("-gf")) {
                         Console.WriteLine("Group formations test enabled");
-                        testGroupformations = true;
+                        // testGroupformations = true;
                         GroupformationTest test = new GroupformationTest();
                         test.testFile(dir.Split(" ".ToCharArray())[1].Trim());
 					} else {
@@ -56,6 +56,7 @@ namespace PackFileTest {
 						}
 					}
 				}
+                // DBTypeMap.Instance.saveToFile(Directory.GetCurrentDirectory());
 				Console.WriteLine ("Test run finished, press any key");
 				Console.ReadKey ();
 			} else {

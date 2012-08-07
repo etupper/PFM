@@ -31,7 +31,7 @@ namespace PackFileTest {
         // test the given packed file as a database file
         // tests PackedFileCodec and the db definitions we have
         public override void testFile(PackedFile file) {
-            PackedFileDbCodec packedCodec = PackedFileDbCodec.FromFilename(file.FullPath);
+            // PackedFileDbCodec packedCodec = PackedFileDbCodec.FromFilename(file.FullPath);
             string type = DBFile.typename(file.FullPath);
             DBFileHeader header = PackedFileDbCodec.readHeader(file);
             Tuple<string, int> tuple = new Tuple<string, int>(type, header.Version);
@@ -50,6 +50,12 @@ namespace PackFileTest {
                     DBFile dbFile = PackedFileDbCodec.Decode(file);
                     if (dbFile.Entries.Count == dbFile.Header.EntryCount) {
                         addTo = supported;
+                        
+                        if (!string.IsNullOrEmpty(header.GUID)) {
+                            List<FieldInfo> fields = new List<FieldInfo>(DBTypeMap.Instance.GetVersionedInfo("", type, header.Version).fields);
+                            DBTypeMap.Instance.SetByGuid(header.GUID, type, header.Version, fields);
+                        }
+                        
                         // only test tsv import/export if asked,
                         // it takes some time more than just the read checks
                         if (testTsv) {

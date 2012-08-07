@@ -54,7 +54,7 @@ namespace EsfLibrary {
         private void verifyEncodeDecode(List<EsfNode> nodes) {
             RecordNode rootNode = createRootNode();
             rootNode.Value = nodes;
-            EsfFile encodedFile = new EsfFile(rootNode, codec);
+            // EsfFile encodedFile = new EsfFile(rootNode, codec);
             MemoryStream stream = new MemoryStream();
             byte[] encoded;
             using (BinaryWriter writer = new BinaryWriter(stream)) {

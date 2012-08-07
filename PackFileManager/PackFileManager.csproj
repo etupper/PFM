@@ -138,7 +138,7 @@
     <Compile Include="PackFileManagerForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PackFileManagerForm.Designer.cs" >
+    <Compile Include="PackFileManagerForm.Designer.cs">
       <DependUpon>PackFileManagerForm.cs</DependUpon>
     </Compile>
     <Compile Include="PackTree.cs" />
