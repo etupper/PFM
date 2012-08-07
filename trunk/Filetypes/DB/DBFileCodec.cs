@@ -54,22 +54,24 @@ namespace Common {
 			reader.BaseStream.Position = 0;
 			DBFileHeader header = readHeader (reader);
             TypeInfo realInfo = DBTypeMap.Instance.GetVersionedInfo(header.GUID, typeName, header.Version);
-			DBFile file = new DBFile (header, realInfo);
-			reader.BaseStream.Position = header.Length;
-
-			for (int i = 0; i < header.EntryCount; i++) {
-				try {
-					file.Entries.Add (readFields (reader, realInfo));
-				} catch (Exception x) {
-					string message = string.Format ("{2} at entry {0}, db version {1}", i, file.Header.Version, x.Message);
-					throw new DBFileNotSupportedException (message, x);
-				}
-			}
-			if (file.Entries.Count != header.EntryCount) {
-				throw new DBFileNotSupportedException (string.Format ("Expected {0} entries, got {1}", header.EntryCount, file.Entries.Count));
-			}
-			return file;
+            return ReadFile(reader, header, realInfo);
 		}
+        public DBFile ReadFile(BinaryReader reader, DBFileHeader header, TypeInfo info) {
+            reader.BaseStream.Position = header.Length;
+            DBFile file = new DBFile (header, info);
+            for (int i = 0; i < header.EntryCount; i++) {
+                try {
+                    file.Entries.Add (readFields (reader, info));
+                } catch (Exception x) {
+                    string message = string.Format ("{2} at entry {0}, db version {1}", i, file.Header.Version, x.Message);
+                    throw new DBFileNotSupportedException (message, x);
+                }
+            }
+            if (file.Entries.Count != header.EntryCount) {
+                throw new DBFileNotSupportedException (string.Format ("Expected {0} entries, got {1}", header.EntryCount, file.Entries.Count));
+            }
+            return file;
+        }
         public DBFile Decode(byte[] data) {
             using (MemoryStream stream = new MemoryStream(data, 0, data.Length)) {
                 return Decode(stream);

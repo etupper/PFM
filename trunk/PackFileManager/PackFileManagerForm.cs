@@ -1038,7 +1038,7 @@ namespace PackFileManager
                     "Problem, sir!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-     
+
         // this could do with an update; since the transition to schema.xml,
         // we also know obsolete fields and can remove them,
         // and we can add fields in the middle instead of assuming they got appended.
@@ -1053,15 +1053,22 @@ namespace PackFileManager
                         // found a more recent db definition; read data from db file
                         DBFile updatedFile = PackedFileDbCodec.Decode(packedFile);
 
-                        // identify FieldInstances missing in db file
                         TypeInfo dbFileInfo = updatedFile.CurrentType;
-                        TypeInfo targetInfo = DBTypeMap.Instance.GetVersionedInfo(header.GUID, key, maxVersion);
+                        string guid;
+                        TypeInfo targetInfo = GetTargetTypeInfo (key, maxVersion, out guid);
+                        if (targetInfo == null) {
+                            MessageBox.Show("Will not update this table: can't decide new structure.");
+                            return;
+                        }
+
+                        // identify FieldInstances missing in db file
                         for (int i = dbFileInfo.fields.Count; i < targetInfo.fields.Count; i++) {
                             foreach (List<FieldInstance> entry in updatedFile.Entries) {
                                 var field = new FieldInstance(targetInfo.fields[i], targetInfo.fields[i].DefaultValue);
                                 entry.Add(field);
                             }
                         }
+                        updatedFile.Header.GUID = guid;
                         updatedFile.Header.Version = maxVersion;
                         packedFile.Data = codec.Encode(updatedFile);
 
@@ -1073,6 +1080,30 @@ namespace PackFileManager
             } catch (Exception x) {
                 MessageBox.Show(string.Format("Could not update {0}: {1}", Path.GetFileName(packedFile.FullPath), x.Message));
             }
+        }
+
+        TypeInfo GetTargetTypeInfo(string key, int maxVersion, out string guid) {
+            TypeInfo targetInfo = null;
+            List<string> newGuid = DBTypeMap.Instance.GetGuidsForInfo(key, maxVersion);
+            guid = null;
+            if (newGuid.Count == 0) {
+                guid = "";
+            } else if (newGuid.Count == 1) {
+                guid = newGuid[0];
+            } if (newGuid.Count > 1) {
+                for (int index = 0; newGuid.Count > index && guid == null; index++) {
+                    string message = string.Format("There are more than one definitions for the maximum version {0}.\nUse GUID {1}?",
+                                                   maxVersion, newGuid[index]);
+                    if (MessageBox.Show(message, "Choose GUID", MessageBoxButtons.YesNo) == DialogResult.Yes) {
+                        guid = newGuid[index];
+                    }
+                }
+            }
+            
+            if (guid != null) {
+                targetInfo = DBTypeMap.Instance.GetVersionedInfo(guid, key, maxVersion);
+            }
+            return targetInfo;
         }
         #endregion
 

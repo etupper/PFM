@@ -93,7 +93,7 @@ Global
 		{FF1EE66E-779C-4239-9C9E-1D319C88F14F}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = PackFileTest\PackFileTest.csproj
+		StartupItem = PackFileManager\PackFileManager.csproj
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

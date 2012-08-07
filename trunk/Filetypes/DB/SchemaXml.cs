@@ -189,22 +189,18 @@ namespace Common {
             if (description.PrimaryKey) {
                 builder.Append ("pk='true' ");
             }
+            if (description.StartVersion != 0) {
+                 builder.Append ("version_start='" + description.StartVersion + "' ");
+             }
+             if (description.LastVersion < int.MaxValue) {
+                 builder.Append ("version_end='" + description.LastVersion + "' ");
+             }
             return builder.ToString();
         }
     }
     class VersionedTableInfoFormatter : TableInfoFormatter<string> {
         public override string FormatHeader(string type) {
             return string.Format("  <table name='{0}_tables'>", type); 
-        }
-        public override string FormatFieldContent(FieldInfo description) {
-            StringBuilder content = new StringBuilder(base.FormatFieldContent (description));
-            if (description.StartVersion != 0) {
-                 content.Append ("version_start='" + description.StartVersion + "' ");
-             }
-             if (description.LastVersion < int.MaxValue) {
-                 content.Append ("version_end='" + description.LastVersion + "' ");
-             }
-            return content.ToString();
         }
     }
     class GuidTableInfoFormatter : TableInfoFormatter<GuidTypeInfo> {
