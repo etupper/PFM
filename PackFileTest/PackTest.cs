@@ -50,14 +50,16 @@ namespace PackFileTest {
 						ICollection<PackedFileTest> tests = testAllPacks (dir, testTsvExport);
 						Console.WriteLine ("Dir: {0}\nTests Run:{1}", dir, tests.Count);
 						foreach (PackedFileTest test in tests) {
-							Console.WriteLine (test.Packfile);
-							// output results
-							test.printResults ();
+                            if (test.TestCount > 0) {
+                                Console.WriteLine(test.Packfile);
+                                // output results
+                                test.printResults();
+                            }
 						}
 					}
 				}
-                // DBTypeMap.Instance.saveToFile(Directory.GetCurrentDirectory());
-				Console.WriteLine ("Test run finished, press any key");
+                DBTypeMap.Instance.saveToFile(Directory.GetCurrentDirectory());
+				Console.Error.WriteLine ("Test run finished, press any key");
 				Console.ReadKey ();
 			} else {
 				Console.Error.Write ("Missing options file {0}", OPTIONS_FILENAME);
@@ -94,6 +96,12 @@ namespace PackFileTest {
 		public abstract void testFile(PackedFile file);
 
 		public abstract void printResults();
+
+        public virtual int TestCount {
+            get {
+                return 0;
+            }
+        }
 
 		// tests all files in this test's pack
 		public void testAllFiles() {
