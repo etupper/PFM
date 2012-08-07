@@ -39,8 +39,9 @@ namespace Common {
                         descriptions.Add(id, fields);
                     } else {
                         id = tableNode.Attributes["guid"].Value.Trim();
-                        string encoded = tableNode.Attributes["table_name"].Value.Trim();
-                        GuidTypeInfo info = new GuidTypeInfo(id, encoded);
+                        string table_name = tableNode.Attributes["table_name"].Value.Trim();
+                        string table_version = tableNode.Attributes["table_version"].Value.Trim();
+                        GuidTypeInfo info = new GuidTypeInfo(id, table_name, int.Parse(table_version));
                         if (!guidToDescriptions.ContainsKey(info)) {
                             guidToDescriptions.Add(info, fields);
                         } else {
@@ -204,8 +205,11 @@ namespace Common {
         }
     }
     class GuidTableInfoFormatter : TableInfoFormatter<GuidTypeInfo> {
+        static string HEADER_FORMAT = "  <table guid='{0}'\n" +
+            "         table_name='{1}'\n" +
+            "         table_version='{2}'>";
         public override string FormatHeader(GuidTypeInfo info) {
-            return string.Format("  <table guid='{0}'\n         table_name='{1}'>", info.Guid, info.EncodeVersionedType());
+            return string.Format(HEADER_FORMAT, info.Guid, info.TypeName, info.Version);
         }
     }
     #endregion

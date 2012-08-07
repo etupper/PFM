@@ -10,6 +10,13 @@ namespace PackFileTest {
 
         private bool testTsv;
 
+        public override int TestCount {
+            get {
+                return supported.Count + noDefinition.Count + noDefForVersion.Count +
+                    invalidDefForVersion.Count + emptyTables.Count + tsvFails.Count;
+            }
+        }
+
         #region Result lists
         public SortedSet<Tuple<string, int>> supported = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
         public SortedSet<Tuple<string, int>> noDefinition = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
@@ -31,10 +38,14 @@ namespace PackFileTest {
         // test the given packed file as a database file
         // tests PackedFileCodec and the db definitions we have
         public override void testFile(PackedFile file) {
+            if (file.Size == 0) {
+                emptyTables.Add(new Tuple<string, int>(DBFile.typename(file.FullPath), -1));
+                return;
+            }
             // PackedFileDbCodec packedCodec = PackedFileDbCodec.FromFilename(file.FullPath);
             string type = DBFile.typename(file.FullPath);
             DBFileHeader header = PackedFileDbCodec.readHeader(file);
-            Tuple<string, int> tuple = new Tuple<string, int>(type, header.Version);
+            Tuple<string, int> tuple = new Tuple<string, int>(string.Format("{0} # {1}", type, header.GUID), header.Version);
             if (header.EntryCount == 0) {
                 // special case: we will never find out the structure of a file
                 // if it contains no data
@@ -134,9 +145,11 @@ namespace PackFileTest {
 		}
 
 		public override void printResults() {
-			Console.WriteLine ("Database Test:");
-			Console.WriteLine ("Supported Files: {0}", supported.Count);
-			Console.WriteLine ("Empty Files: {0}", emptyTables.Count);
+            if (!(supported.Count == 0 && emptyTables.Count == 0)) {
+                Console.WriteLine("Database Test:");
+                Console.WriteLine("Supported Files: {0}", supported.Count);
+                Console.WriteLine("Empty Files: {0}", emptyTables.Count);
+            }
 			printList ("General errors", generalErrors);
 			printList ("No description", noDefinition);
 			printList ("no definition for version", noDefForVersion);
