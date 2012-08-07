@@ -31,7 +31,7 @@ namespace DecodeTool {
                     using (var stream = new MemoryStream(value)) {
                         DBFileHeader header = PackedFileDbCodec.readHeader(stream);
                         newFieldVersion = header.Version;
-                        typeNameLabel.Text = string.Format("Type: {0}, version {1} - {2}", TypeName, header.Version, header.GUID);
+                        Guid = header.GUID;
                     }
                 } catch {
                     newFieldVersion = -1;
@@ -46,6 +46,19 @@ namespace DecodeTool {
         public string TypeName {
             get { return typeName; }
             set { typeName = value; typeNameLabel.Text = string.Format("Type: {0}", typeName); }
+        }
+        string guid = "";
+        public string Guid {
+            get { return guid; }
+            set {
+                typeNameLabel.Text = string.Format("Type: {0}, version {1} - {2}", TypeName, newFieldVersion, value);
+                guid = value;
+            }
+        }
+        public GuidTypeInfo GuidInfo {
+            get {
+                return new GuidTypeInfo(Guid, TypeName, newFieldVersion);
+            }
         }
         int Offset {
             get { return offset; }
@@ -235,7 +248,7 @@ namespace DecodeTool {
             using (MemoryStream stream = new MemoryStream(bytes)) {
                 DBFileHeader header = PackedFileDbCodec.readHeader(stream);
                 if (DBTypeMap.Instance.IsSupported(TypeName)) {
-                    TypeInfo info = DBTypeMap.Instance[TypeName, header.Version];
+                    TypeInfo info = DBTypeMap.Instance.GetVersionedInfo(header.GUID, TypeName, header.Version);
                     types = info.fields;
                 }
                 Offset = header.Length;
@@ -288,7 +301,7 @@ namespace DecodeTool {
         }
 
         private void showTypes_Click(object sender, EventArgs e) {
-            string text = XmlExporter.tableToString(TypeName, types);
+            string text = XmlExporter.tableToString(TypeName, GuidInfo, types);
 			TextDisplay d = new TextDisplay (text);
 			d.ShowDialog ();
 		}
@@ -343,13 +356,13 @@ namespace DecodeTool {
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 using (FileStream stream = File.OpenWrite(dlg.FileName)) {
                     XmlExporter exporter = new XmlExporter(stream);
-                    exporter.export(DBTypeMap.Instance.typeMap);
+                    exporter.export();
                 }
             }
         }
 
         private void setButton_Click(object sender, EventArgs e) {
-            DBTypeMap.Instance.set(TypeName, types);
+            DBTypeMap.Instance.SetByName(TypeName, types);
         }
     }
 }

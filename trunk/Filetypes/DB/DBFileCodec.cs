@@ -53,7 +53,7 @@ namespace Common {
 			BinaryReader reader = new BinaryReader (stream);
 			reader.BaseStream.Position = 0;
 			DBFileHeader header = readHeader (reader);
-            TypeInfo realInfo = DBTypeMap.Instance[typeName, header.Version];
+            TypeInfo realInfo = DBTypeMap.Instance.GetVersionedInfo(header.GUID, typeName, header.Version);
 			DBFile file = new DBFile (header, realInfo);
 			reader.BaseStream.Position = header.Length;
 
@@ -219,6 +219,7 @@ namespace Common {
     public class TextDbCodec : Codec<DBFile> {
         static char[] QUOTES = { '"' };
 		static char[] TABS = { '\t' };
+        static char[] GUID_SEPARATOR = { ':' };
 
         public static readonly Codec<DBFile> Instance = new TextDbCodec();
 
@@ -238,6 +239,12 @@ namespace Common {
 			// another tool might have saved tabs and quotes around this 
 			// (at least open office does)
 			string typeInfoName = reader.ReadLine ().Replace ("\t", "").Trim (QUOTES);
+            string guid = "";
+            string[] split = typeInfoName.Split(GUID_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
+            if (split.Length == 2) {
+                typeInfoName = split[0];
+                guid = split[1];
+            }
 			string versionStr = reader.ReadLine ().Replace ("\t", "").Trim (QUOTES);
 			int version;
 			switch (versionStr) {
@@ -251,7 +258,7 @@ namespace Common {
 				version = int.Parse (versionStr);
 				break;
 			}
-			TypeInfo info = DBTypeMap.Instance [typeInfoName, version];
+			TypeInfo info = DBTypeMap.Instance.GetVersionedInfo(guid, typeInfoName, version);
 			// ignore header line (type names)
 			reader.ReadLine ();
 			List<List<FieldInstance>> entries = new List<List<FieldInstance>> ();

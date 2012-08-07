@@ -85,7 +85,6 @@ namespace PackFileManager {
             }
             if (SelectedLine != null) {
                 pen.Color = Color.Yellow;
-                Dictionary<Line, RectangleF> lookup = (SelectedLine is SpanningLine) ? spanningLines : basicLines;
                 RectangleF toPaint = GetRectangle(SelectedLine);
                 g.DrawRectangles(pen, new RectangleF[] { toPaint });
                 if (SelectedLine is RelativeLine) {

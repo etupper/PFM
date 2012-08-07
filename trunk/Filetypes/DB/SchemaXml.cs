@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 
@@ -9,6 +10,7 @@ namespace Common {
     public class XmlImporter {
         // table to contained fields
         public SortedDictionary<string, List<FieldInfo>> descriptions = new SortedDictionary<string, List<FieldInfo>>();
+        public SortedDictionary<GuidTypeInfo, List<FieldInfo>> guidToDescriptions = new SortedDictionary<GuidTypeInfo, List<FieldInfo>>();
 
         TextReader reader;
         public XmlImporter (Stream stream) {
@@ -24,28 +26,60 @@ namespace Common {
 			doc.Load (reader);
 			foreach (XmlNode node in doc.ChildNodes) {
 				foreach (XmlNode tableNode in node.ChildNodes) {
-					string tableName = tableNode.Attributes ["name"].Value.Replace("_tables", "");
-					if (unify) {
-						tableName = unifyName (tableName);
-					}
-					List<FieldInfo> fields = new List<FieldInfo> ();
+                    string id;
+                    List<FieldInfo> fields = new List<FieldInfo> ();
+                    bool verifyEquality = false;
+                    
+                    XmlAttribute attribute = tableNode.Attributes["name"];
+                    if (attribute != null) {
+                        id = attribute.Value.Replace("_tables", "");
+                        if (unify) {
+                            id = unifyName (id);
+                        }
+                        descriptions.Add(id, fields);
+                    } else {
+                        id = tableNode.Attributes["guid"].Value.Trim();
+                        string encoded = tableNode.Attributes["table_name"].Value.Trim();
+                        GuidTypeInfo info = new GuidTypeInfo(id, encoded);
+                        if (!guidToDescriptions.ContainsKey(info)) {
+                            guidToDescriptions.Add(info, fields);
+                        } else {
+                            verifyEquality = true;
+                        }
+                    }
+
 					for (int i = 0; i < tableNode.ChildNodes.Count; i++) {
 						XmlNode fieldNode = tableNode.ChildNodes [i];
-						FieldInfo field = fromNode (fieldNode, unify);
+						FieldInfo field = FromNode (fieldNode, unify);
 						if (unify) {
 							field.Name = unifyName (field.Name);
 						}
 						fields.Add (field);
 					}
-					descriptions.Add (tableName, fields);
+
+                    // defensive code block; might as well take it out.
+                    // used when the guid part was first introduced to make sure that
+                    // guids didn't get shared across games
+                    if (verifyEquality) {
+                        id = tableNode.Attributes["guid"].Value.Trim();
+                        string encoded = tableNode.Attributes["table_name"].Value.Trim();
+                        GuidTypeInfo info = new GuidTypeInfo(id, encoded);
+                        List<FieldInfo> existing = guidToDescriptions[info];
+                        if (!Enumerable.SequenceEqual<FieldInfo>(fields, existing)) {
+                            Console.WriteLine("{0} was:", info.Guid);
+                            existing.ForEach(f => Console.WriteLine(f));
+                            Console.WriteLine("is:");
+                            fields.ForEach(f => Console.WriteLine(f));
+                            throw new InvalidDataException();
+                        }
+                    }
+
+                    verifyEquality = false;
 				}
 			}
 		}
-        public string fieldName(string table, int index) {
-            return descriptions [table] [index].Name;
-        }
 
-        FieldInfo fromNode(XmlNode fieldNode, bool unify) {
+        FieldInfo FromNode(XmlNode fieldNode, bool unify) {
 			XmlAttributeCollection attributes = fieldNode.Attributes;
 			string name = attributes ["name"].Value;
 			string type = attributes ["type"].Value;
@@ -80,20 +114,26 @@ namespace Common {
 			writer = new StreamWriter (stream);
         }
 
-        public void export(SortedDictionary<string, List<FieldInfo>> tableDescriptions) {
+        public void export() {
 			writer.WriteLine ("<schema>");
-			List<string> sorted = new List<string> (tableDescriptions.Keys);
-			sorted.Sort ();
-			foreach (string tableName in sorted) {
-				writeTable (tableName, tableDescriptions [tableName]);
-			}
+            writeTables(DBTypeMap.Instance.TypeMap, new VersionedTableInfoFormatter());
+            writeTables(DBTypeMap.Instance.GuidMap, new GuidTableInfoFormatter());
 			writer.WriteLine ("</schema>");
 			writer.Close ();
 		}
-
-        public void writeTable(string name, List<FieldInfo> descriptions) {
-			Console.WriteLine ("writing table {0}", name);
-			writer.WriteLine ("  <table name='{0}_tables'>", name);
+        
+        private void writeTables<T>(SortedDictionary<T, List<FieldInfo>> tableDescriptions, TableInfoFormatter<T> formatter) {
+            List<T> sorted = new List<T> (tableDescriptions.Keys);
+            sorted.Sort ();
+            foreach (T name in sorted) {
+                List<FieldInfo> descriptions = tableDescriptions[name];
+                writeTable(name, descriptions, formatter);
+            }
+        }
+        
+        void writeTable<T>(T id, List<FieldInfo> descriptions, TableInfoFormatter<T> format) {
+			Console.WriteLine ("writing table {0}", id);
+			writer.WriteLine (format.FormatHeader(id));
 			foreach (FieldInfo description in descriptions) {
 				StringBuilder builder = new StringBuilder ("    <field ");
 				if (!description.ForeignReference.Equals ("")) {
@@ -117,15 +157,61 @@ namespace Common {
             writer.Flush();
 		}
 
-        public static string tableToString(string name, List<FieldInfo> description) {
+        public static string tableToString(string name, GuidTypeInfo guid, List<FieldInfo> description) {
             string result = "";
             using (StreamReader reader = new StreamReader(new MemoryStream())) {
-                new XmlExporter(reader.BaseStream).writeTable(name, description);
+                XmlExporter exporter = new XmlExporter(reader.BaseStream);
+                exporter.writeTable(name, description, new VersionedTableInfoFormatter());
+                exporter.writeTable(guid, description, new GuidTableInfoFormatter());
                 reader.BaseStream.Position = 0;
                 result = reader.ReadToEnd();
             }
             return result;
         }
     }
+
+    #region Formatting
+    abstract class TableInfoFormatter<T> {
+        public abstract string FormatHeader(T toWrite);
+        public string FormatField(FieldInfo description) {
+            StringBuilder builder = new StringBuilder ("    <field ");
+            builder.Append(FormatFieldContent(description));
+            builder.Append ("/>");
+            return builder.ToString();
+        }
+        public virtual string FormatFieldContent(FieldInfo description) {
+            StringBuilder builder = new StringBuilder();
+            if (!description.ForeignReference.Equals ("")) {
+                builder.Append (string.Format ("fkey='{0}' ", description.ForeignReference));
+            }
+            builder.Append (string.Format ("name='{0}' ", description.Name));
+            builder.Append (string.Format ("type='{0}' ", description.TypeName));
+            if (description.PrimaryKey) {
+                builder.Append ("pk='true' ");
+            }
+            return builder.ToString();
+        }
+    }
+    class VersionedTableInfoFormatter : TableInfoFormatter<string> {
+        public override string FormatHeader(string type) {
+            return string.Format("  <table name='{0}_tables'>", type); 
+        }
+        public override string FormatFieldContent(FieldInfo description) {
+            StringBuilder content = new StringBuilder(base.FormatFieldContent (description));
+            if (description.StartVersion != 0) {
+                 content.Append ("version_start='" + description.StartVersion + "' ");
+             }
+             if (description.LastVersion < int.MaxValue) {
+                 content.Append ("version_end='" + description.LastVersion + "' ");
+             }
+            return content.ToString();
+        }
+    }
+    class GuidTableInfoFormatter : TableInfoFormatter<GuidTypeInfo> {
+        public override string FormatHeader(GuidTypeInfo info) {
+            return string.Format("  <table guid='{0}'\n         table_name='{1}'>", info.Guid, info.EncodeVersionedType());
+        }
+    }
+    #endregion
 }
 

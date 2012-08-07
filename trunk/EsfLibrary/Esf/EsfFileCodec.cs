@@ -112,7 +112,7 @@ namespace EsfLibrary {
         
         public event NodeStarting NodeReadStarting;
         public event NodeRead NodeReadFinished;
-        public event WriteLog Log;
+        //public event WriteLog Log;
 
         protected SortedList<int, string> nodeNames = new SortedList<int, string>();
 
@@ -444,7 +444,6 @@ namespace EsfLibrary {
         #region Record Nodes
         // read an identified node from the reader at its current position
         public virtual RecordNode ReadRecordNode(BinaryReader reader, byte typeCode, bool forceDecode = false) {
-            long position = reader.BaseStream.Position;
             RecordNode node;
             if (!forceDecode && buffer != null) {
                 node = new MemoryMappedRecordNode(this, buffer, (int) reader.BaseStream.Position);

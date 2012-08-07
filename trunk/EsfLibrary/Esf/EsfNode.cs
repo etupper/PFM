@@ -121,6 +121,10 @@ namespace EsfLibrary {
             }
             return result;
         }
+        
+        public override int GetHashCode() {
+            return Value.GetHashCode();
+        }
 
         public override void ToXml(TextWriter writer, string indent) {
             writer.WriteLine(string.Format("{2}<{0} Value=\"{1}\"/>", TypeCode, Value, indent));

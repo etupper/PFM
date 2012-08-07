@@ -14,11 +14,6 @@ namespace EsfLibrary {
         #endregion
 
         #region Added Readers
-        static ValueReader<bool> TrueValue = delegate(BinaryReader reader) { return true; };
-        static ValueReader<bool> FalseValue = delegate(BinaryReader reader) { return false; };
-        static ValueReader<uint> UIntZero = delegate(BinaryReader reader) { return 0; };
-        static ValueReader<uint> UIntOne = delegate(BinaryReader reader) { return 1; };
-        static ValueReader<float> FloatZero = delegate(BinaryReader reader) { return 0; };
         static ValueReader<int> IntByteReader = delegate(BinaryReader reader) { return reader.ReadSByte(); };
         static ValueReader<int> Int16Reader = delegate(BinaryReader reader) { return reader.ReadInt16(); };
         static ValueReader<uint> UIntByteReader = delegate(BinaryReader reader) { return reader.ReadByte(); };

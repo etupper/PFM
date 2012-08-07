@@ -186,8 +186,6 @@ namespace EsfLibrary {
             bool result = false;
             RecordNode node = obj as RecordNode;
             result = (node != null) && base.Equals(obj);
-            if (!result) {
-            }
             return result;
         }
 

@@ -34,7 +34,7 @@ namespace EsfLibrary {
 
             LzmaDecoder decoder = new LzmaDecoder();
             decoder.SetDecoderProperties(decodeProperties);
-            DecompressionCodeProgress progress = new DecompressionCodeProgress(this, Codec);
+            // DecompressionCodeProgress progress = new DecompressionCodeProgress(this);
             
             byte[] outData = new byte[size];
             using (MemoryStream inStream = new MemoryStream(data, false), outStream = new MemoryStream(outData)) {
@@ -93,20 +93,6 @@ namespace EsfLibrary {
             
             // and finally encode
             compressedNode.Encode(writer);
-        }
-    }
-    
-    public class DecompressionCodeProgress : ICodeProgress {
-        CompressedNode beingDecompressed;
-        EsfCodec codec;
-        EsfCodec.NodeRead readDelegate;
-        public DecompressionCodeProgress(CompressedNode node, EsfCodec delegateTo) {
-            beingDecompressed = node;
-            readDelegate = delegateTo.CreateEventDelegate();
-            codec = delegateTo;
-        }
-        public void SetProgress(long inPosition, long outPosition) {
-            readDelegate(beingDecompressed, inPosition);
         }
     }
 }
