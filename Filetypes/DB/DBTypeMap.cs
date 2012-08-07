@@ -111,6 +111,17 @@ namespace Common {
             }
             return result;
         }
+
+        public List<string> GetGuidsForInfo(string type, int version) {
+            List<string> result = new List<string>();
+            foreach(GuidTypeInfo info in guidMap.Keys) {
+                if (info.Version == version && info.TypeName.Equals(type)) {
+                    result.Add(info.Guid);
+                }
+            }
+            return result;
+        }
+
         public int MaxVersion(string type) {
             int result = 0;
             bool found = false;
@@ -174,11 +185,6 @@ namespace Common {
         }
     }
 
-//    class TypeInfoComparer : Comparer<TypeInfo> {
-//        public override int Compare(TypeInfo x, TypeInfo y) {
-//            return x.name.CompareTo(y.name);
-//        }
-//    }
     class GuidInfoComparer : Comparer<GuidTypeInfo> {
         public override int Compare(GuidTypeInfo x, GuidTypeInfo y) {
             int result = x.TypeName.CompareTo(y.TypeName);
