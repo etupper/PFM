@@ -31,6 +31,7 @@ namespace DecodeTool {
                     using (var stream = new MemoryStream(value)) {
                         DBFileHeader header = PackedFileDbCodec.readHeader(stream);
                         newFieldVersion = header.Version;
+                        typeNameLabel.Text = string.Format("Type: {0}, version {1} - {2}", TypeName, header.Version, header.GUID);
                     }
                 } catch {
                     newFieldVersion = -1;
