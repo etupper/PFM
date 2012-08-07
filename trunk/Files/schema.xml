@@ -726,15 +726,15 @@
     <field name='list order' type='int' />
     <field name='naval appropriate' type='boolean' />
   </table>
-  <table name='battlefield building categories tables'>
+  <table name='battlefield_building_categories_tables'>
     <field name='Building ID' type='string' pk='true' />
     <field name='Type' type='string' />
     <field fkey='particle_effects_tables.Particle Effect ID' name='Destroyed Effect' type='string' />
   </table>
-  <table name='battlefield building transformations tables'>
+  <table name='battlefield_building_transformations_tables'>
     <field name='Transformation' type='string' pk='true' />
   </table>
-  <table name='battlefield buildings tables'>
+  <table name='battlefield_buildings_tables'>
     <field name='Battlefield Building ID' type='string' pk='true' />
     <field name='Type' type='string' />
     <field name='Building 2' type='string' />
@@ -749,7 +749,7 @@
     <field name='unknown' type='int' version_start='6' />
     <field name='unknown' type='boolean' version_start='6' />
   </table>
-  <table name='battlefield deployable siege items tables'>
+  <table name='battlefield_deployable_siege_items_tables'>
     <field name='Siege item' type='string' />
     <field name='unknown1' type='int' />
     <field name='unknown2' type='int' />
@@ -757,7 +757,7 @@
     <field name='unknown3' type='string' />
     <field name='unknown4' type='string' />
   </table>
-  <table name='battlefield snow props tables'>
+  <table name='battlefield_snow_props_tables'>
     <field name='Prop' type='string' pk='true' />
     <field name='unknown' type='boolean' />
   </table>
