@@ -30,6 +30,24 @@ namespace PackFileManager {
                 Settings.Default.ModList = ModManager.Instance.encodeMods();
             }
         }
+
+        public string PackName {
+            get {
+                return string.Format("{0}.pack", Name);
+            }
+        }
+        public string ModScriptFileEntry {
+            get {
+                return string.Format("mod \"{0}\";", PackName);
+            }
+        }
+        public string FullModPath {
+            get {
+                return Path.Combine(BaseDirectory, PackName);
+            }
+        }
+
+        #region Overrides
         public override bool Equals(object obj) {
             bool result = obj is Mod;
             if (result) {
@@ -40,6 +58,7 @@ namespace PackFileManager {
         public override int GetHashCode() {
             return Name.GetHashCode ();
         }
+        #endregion
     }
 
     public class ModManager {
@@ -116,24 +135,13 @@ namespace PackFileManager {
                 return result;
             }
         }
-
-        public void SetCurrentMod(string modname) {
-            Settings.Default.CurrentMod = modname;
-            if (CurrentModChanged != null) {
-                CurrentModChanged();
-            }
+  
+        #region Add, Deletion, Change of Mods
+        public void AddMod(Mod mod) {
+            mods.Add(mod);
+            Settings.Default.ModList = encodeMods();
+            CurrentMod = mod;
         }
-        private Mod FindByName(string name) {
-            Mod result = null;
-            foreach(Mod m in mods) {
-                if (m.Name.Equals(name)) {
-                    result = m;
-                    break;
-                }
-            }
-            return result;
-        }
-
         public Mod CurrentMod {
             get {
                 return FindByName(Settings.Default.CurrentMod);
@@ -153,24 +161,55 @@ namespace PackFileManager {
                 SetCurrentMod("");
             }
         }
+        public void SetCurrentMod(string modname) {
+            Settings.Default.CurrentMod = modname;
+            if (CurrentModChanged != null) {
+                CurrentModChanged();
+            }
+        }
+        #endregion
+  
+        #region Current Mod properties
+        public string CurrentModDirectory {
+            get {
+                string result = (CurrentMod != null) ? CurrentMod.BaseDirectory : null;
+                return result;
+            }
+        }
+        #endregion
+
+        private Mod FindByName(string name) {
+            Mod result = null;
+            foreach(Mod m in mods) {
+                if (m.Name.Equals(name)) {
+                    result = m;
+                    break;
+                }
+            }
+            return result;
+        }
+
 
         public void InstallCurrentMod() {
-            string targetDir = GameManager.Instance.CurrentGame.GameDirectory;
+            if (CurrentMod == null) {
+                throw new InvalidOperationException("No mod set");
+            }
+            string targetDir = CurrentMod.Game.GameDirectory;
             if (targetDir == null) {
-                throw new FileNotFoundException(string.Format("Shogun install directory not found"));
+                throw new FileNotFoundException(string.Format("Game install directory not found"));
             }
             targetDir = Path.Combine(targetDir, "data");
-            string targetFile = Path.Combine(targetDir, ModPackName);
-            if (File.Exists(FullModPath) && Directory.Exists(targetDir)) {
+            string targetFile = Path.Combine(targetDir, CurrentMod.PackName);
+            if (File.Exists(CurrentMod.FullModPath) && Directory.Exists(targetDir)) {
                 
                 // copy to data directory
-                File.Copy(FullModPath, targetFile, true);
+                File.Copy(CurrentMod.FullModPath, targetFile, true);
                 
                 // add entry to user.script.txt if it's a mod file
                 using(BinaryReader reader = new BinaryReader(File.OpenRead(targetFile))) {
                     PFHeader header = new PackFileCodec().readHeader(reader);
                     if (header.Type == PackType.Mod) {
-                        string modEntry = ModScriptFileEntry;
+                        string modEntry = CurrentMod.ModScriptFileEntry;
                         string scriptFile = GameManager.Instance.CurrentGame.ScriptFile;
                         List<string> linesToWrite = new List<string>();
                         if (File.Exists(scriptFile)) {
@@ -191,17 +230,21 @@ namespace PackFileManager {
         }
 
         public void UninstallCurrentMod() {
+            if (CurrentMod == null) {
+                throw new InvalidOperationException("No mod set");
+            }
+            
             string targetDir = GameManager.Instance.CurrentGame.GameDirectory;
             if (targetDir == null) {
                 throw new FileNotFoundException(string.Format("Install directory not found"));
             }
 
-            string targetFile = Path.Combine(targetDir, "data", ModPackName);
+            string targetFile = Path.Combine(targetDir, "data", CurrentMod.Name);
             if (File.Exists(targetFile)) {
                 File.Move(targetFile, string.Format("{0}.old", targetFile));
             }
 
-            string modEntry = ModScriptFileEntry;
+            string modEntry = CurrentMod.ModScriptFileEntry;
             string scriptFile = GameManager.Instance.CurrentGame.ScriptFile;
             List<string> linesToWrite = new List<string>();
             if (File.Exists(scriptFile)) {
@@ -217,33 +260,6 @@ namespace PackFileManager {
             }
         }
         
-        string ModScriptFileEntry {
-            get {
-                return string.Format("mod \"{0}.pack\";", Settings.Default.CurrentMod);
-            }
-        }
-        public string ModPackName {
-            get {
-                return string.Format("{0}.pack", Settings.Default.CurrentMod);
-            }
-        }
-        public string FullModPath {
-            get {
-                return Path.Combine(CurrentModDirectory, ModPackName);
-            }
-        }
-        
-        public void AddMod(Mod mod) {
-            mods.Add(mod);
-            Settings.Default.ModList = encodeMods();
-            CurrentMod = mod;
-        }
-        public string CurrentModDirectory {
-            get {
-                string result = (CurrentMod != null) ? CurrentMod.BaseDirectory : null;
-                return result;
-            }
-        }
         private List<Mod> decodeMods(string encoded) {
             List<Mod> result = new List<Mod>();
             string[] entries = encoded.Split(new string[] { "@@@" }, StringSplitOptions.RemoveEmptyEntries);

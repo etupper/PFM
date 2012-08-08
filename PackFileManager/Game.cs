@@ -91,7 +91,7 @@ namespace PackFileManager {
                 return current;
             }
             set {
-                current = value;
+                current = value != null ? value : Game.STW;
                 if (GameChanged != null) {
                     GameChanged();
                 }
