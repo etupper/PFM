@@ -13090,6 +13090,15 @@
     <field name='Factor' type='string' pk='true' />
     <field name='Icon Path' type='string' />
   </table>
+  <table guid='b7e81ebc-b1e6-43bb-96e5-1eda1fbe9e6a'
+         table_name='region_groups'
+         table_version='0'>
+    <field name='unknown1' type='int' />
+    <field name='unknown2' type='int' />
+    <field name='unknown7' type='int' />
+    <field name='unknown8' type='int' />
+    <field name='Region Group ID' type='string' />
+  </table>
   <table guid='16510a20-9172-4577-adcd-633644a6b340'
          table_name='region_groups'
          table_version='1'>
@@ -13099,15 +13108,6 @@
     <field name='unknown8' type='int' />
     <field name='Region Group ID' type='string' />
     <field name='unknown8' type='int' />
-  </table>
-  <table guid='b7e81ebc-b1e6-43bb-96e5-1eda1fbe9e6a'
-         table_name='region_groups'
-         table_version='0'>
-    <field name='unknown1' type='int' />
-    <field name='unknown2' type='int' />
-    <field name='unknown7' type='int' />
-    <field name='unknown8' type='int' />
-    <field name='Region Group ID' type='string' />
   </table>
   <table guid='1d07d922-6f22-49bf-8e06-be21edf9d3ea'
          table_name='region_unit_resources'
