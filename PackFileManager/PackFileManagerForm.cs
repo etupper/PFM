@@ -1001,7 +1001,7 @@ namespace PackFileManager
 
         private void saveToDirectoryToolStripMenuItem_Click(object sender, EventArgs e) {
             try {
-                DBTypeMap.Instance.saveToFile(Path.GetDirectoryName(Application.ExecutablePath));
+                DBTypeMap.Instance.saveToFile(Path.GetDirectoryName(Application.ExecutablePath), GameManager.Instance.CurrentGame.Id);
                 string message = "You just saved your own DB definitions in a new file.\n" +
                     "This means that these will be used instead of the ones received in updates from TWC.\n" +
                     "Once you have uploaded your changes and they have been integrated,\n" +
@@ -1051,7 +1051,7 @@ namespace PackFileManager
                     MessageBox.Show(message, "Update result", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 if (update) {
-                    DBTypeMap.Instance.initializeTypeMap(path);
+                    GameManager.Instance.ApplyGameTypemap();
                 }
                 if (version != Application.ProductVersion) {
                     if (MessageBox.Show(string.Format("A new version of PFM is available ({0})\nAutoinstall?", version),

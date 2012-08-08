@@ -30,6 +30,7 @@ namespace PackFileManager {
         
         public void FilterExistingPacks() {
             if (Directory.Exists(PackDirectory)) {
+                DateTime start = DateTime.Now;
                 Console.WriteLine("Retrieving from {0}, storing to {1}", PackDirectory, SchemaFilename);
 
                 typeMap.Clear();
@@ -79,6 +80,9 @@ namespace PackFileManager {
                 using (var stream = File.Create(SchemaFilename)) {
                     new XmlExporter(stream) { LogWriting = false}.export(typeMap, guidMap);
                 }
+
+                DateTime end = DateTime.Now;
+                Console.WriteLine("optimization took {0}", end.Subtract(start));
             }
         }
 
@@ -88,20 +92,23 @@ namespace PackFileManager {
                 addTo[key] = addValue;
             }
         }
-        
+
         private List<GuidTypeInfo> GetUsedTypes(PackFile pack) {
             List<GuidTypeInfo> infos = new List<GuidTypeInfo>();
-            foreach(PackedFile packed in pack.Files) {
-                if (packed.FullPath.Contains("_kv")) {
-                    Console.WriteLine();
-                }
-                if (packed.FullPath.StartsWith("db") && packed.Size != 0) {
-                    string type = DBFile.typename(packed.FullPath);
-                    DBFileHeader header = PackedFileDbCodec.readHeader(packed);
-                    infos.Add(new GuidTypeInfo(header.GUID, type, header.Version));
+            foreach (PackedFile packed in pack.Files) {
+                if (packed.FullPath.StartsWith("db")) {
+                    AddFromPacked(infos, packed);
                 }
             }
             return infos;
+        }
+
+        private static void AddFromPacked(List<GuidTypeInfo> infos, PackedFile packed) {
+            if (packed.Size != 0) {
+                string type = DBFile.typename(packed.FullPath);
+                DBFileHeader header = PackedFileDbCodec.readHeader(packed);
+                infos.Add(new GuidTypeInfo(header.GUID, type, header.Version));
+            }
         }
     }
 }
