@@ -4,6 +4,7 @@ using System.IO;
 using Common;
 using Microsoft.Win32;
 using PackFileManager.Properties;
+using System.Windows.Forms;
 
 namespace PackFileManager {
     public class Game {
@@ -35,6 +36,20 @@ namespace PackFileManager {
         public bool IsInstalled {
             get {
                 return Directory.Exists(GameDirectory);
+            }
+        }
+        public void CreateSchemaFile() {
+            if (IsInstalled && !File.Exists(SchemaFilename)) {
+                SchemaOptimizer optimizer = new SchemaOptimizer() {
+                    PackDirectory = Path.Combine(GameDirectory, "data"),
+                    SchemaFilename = SchemaFilename
+                };
+                optimizer.FilterExistingPacks();
+            }
+        }
+        public string SchemaFilename {
+            get {
+                return string.Format("schema_{0}.xml", Id);
             }
         }
         
@@ -100,17 +115,28 @@ namespace PackFileManager {
                 return current;
             }
             set {
-                current = value != null ? value : Game.STW;
-                if (GameChanged != null) {
-                    GameChanged();
-                }
-                Settings.Default.CurrentGame = current.Id;
+                if (current != value) {
+                    current = value != null ? value : Game.STW;
+                    if (GameChanged != null) {
+                        GameChanged();
+                    }
+                    Settings.Default.CurrentGame = current.Id;
 
-                string schemaFile = string.Format("schema_{0}.xml", current.Id);
-                if (File.Exists(schemaFile)) {
-                    DBTypeMap.Instance.initializeFromFile(schemaFile);
+                    ApplyGameTypemap();
                 }
             }
+        }
+
+        public void ApplyGameTypemap() {
+            DBTypeMap.Instance.initializeTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
+            string schemaFile = DBTypeMap.Instance.GetUserFilename(current.Id);
+            if (!File.Exists(schemaFile)) {
+                schemaFile = current.SchemaFilename;
+                if (!File.Exists(schemaFile)) {
+                    current.CreateSchemaFile();
+                }
+            }
+            DBTypeMap.Instance.initializeFromFile(schemaFile);
         }
     }
 }

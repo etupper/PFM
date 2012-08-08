@@ -6,10 +6,15 @@ using System.Collections.Generic;
 namespace Common {
     public class DBTypeMap {
         public static readonly string SCHEMA_FILE_NAME = "schema.xml";
+        public static readonly string MASTER_SCHEMA_FILE_NAME = "master_schema.xml";
         public static readonly string SCHEMA_USER_FILE_NAME = "schema_user.xml";
         SortedDictionary<string, List<FieldInfo>> typeMap = new SortedDictionary<string, List<FieldInfo>>();
         SortedDictionary<GuidTypeInfo, List<FieldInfo>> guidMap = new SortedDictionary<GuidTypeInfo, List<FieldInfo>>();
         public static readonly DBTypeMap Instance = new DBTypeMap();
+
+        public static readonly string[] SCHEMA_FILENAMES = {
+            SCHEMA_USER_FILE_NAME, MASTER_SCHEMA_FILE_NAME, SCHEMA_FILE_NAME
+        };
 
         private DBTypeMap() {
             // prevent instantiation
@@ -26,11 +31,13 @@ namespace Common {
         }
 
         public void initializeTypeMap(string basePath) {
-            string xmlFile = Path.Combine(basePath, SCHEMA_USER_FILE_NAME);
-            if (!File.Exists(xmlFile)) {
-                xmlFile = Path.Combine(basePath, SCHEMA_FILE_NAME);
+            foreach(string file in SCHEMA_FILENAMES) {
+                string xmlFile = Path.Combine(basePath, file);
+                if (File.Exists(xmlFile)) {
+                    initializeFromFile(xmlFile);
+                    break;
+                }
             }
-            initializeFromFile(xmlFile);
         }
         public void initializeFromFile(string filename) {
             XmlImporter importer = null;
@@ -45,9 +52,12 @@ namespace Common {
         public void loadFromXsd(string xsdFile) {
             //            typeMap = new XsdParser (xsdFile).loadXsd ();
         }
+        public string GetUserFilename(string suffix) {
+            return string.Format(string.Format("schema_{0}.xml", suffix));
+        }
 
-        public void saveToFile(string path) {
-            string filename = Path.Combine(path, SCHEMA_USER_FILE_NAME);
+        public void saveToFile(string path, string suffix) {
+            string filename = Path.Combine(path, GetUserFilename(suffix));
             string backupName = filename + ".bak";
             if (File.Exists(filename)) {
                 File.Copy(filename, backupName);

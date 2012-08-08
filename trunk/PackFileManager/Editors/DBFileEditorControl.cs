@@ -42,7 +42,7 @@ namespace PackFileManager {
         public DBFileEditorControl () {
             components = null;
             InitializeComponent ();
-            // initTypeMap (Path.GetDirectoryName (Application.ExecutablePath));
+            initTypeMap (Path.GetDirectoryName (Application.ExecutablePath));
             dataGridView.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             dataGridView.ColumnHeaderMouseClick += dataGridView1_ColumnHeaderMouseClick;
             try {

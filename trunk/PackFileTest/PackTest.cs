@@ -102,7 +102,7 @@ namespace PackFileTest {
 					}
 				}
                 if (saveSchema) {
-                    DBTypeMap.Instance.saveToFile(Directory.GetCurrentDirectory());
+                    DBTypeMap.Instance.saveToFile(Directory.GetCurrentDirectory(), "user");
                 }
 				Console.Error.WriteLine ("Test run finished, press any key");
 				Console.ReadKey ();
