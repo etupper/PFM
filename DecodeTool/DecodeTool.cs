@@ -340,14 +340,16 @@ namespace DecodeTool {
 
         private void valueList_SelectedIndexChanged(object sender, EventArgs e) {
             using (BinaryReader reader = new BinaryReader(new MemoryStream(bytes))) {
-                skipToCurrentEntry(reader);
-                int index = (sender as ListBox).SelectedIndex;
-                for (int i = 0; i < index; i++) {
-                    types[i].Decode(reader);
-                }
-                long pos = reader.BaseStream.Position;
-                showPreview(reader, pos);
-                color((int) pos, 1, Color.DarkRed);
+                try {
+                    skipToCurrentEntry(reader);
+                    int index = (sender as ListBox).SelectedIndex;
+                    for (int i = 0; i < index; i++) {
+                        types[i].Decode(reader);
+                    }
+                    long pos = reader.BaseStream.Position;
+                    showPreview(reader, pos);
+                    color((int) pos, 1, Color.DarkRed);
+                } catch {}
             }
         }
 

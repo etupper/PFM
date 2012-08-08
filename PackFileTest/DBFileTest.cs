@@ -6,9 +6,10 @@ using Common;
 namespace PackFileTest {
     public class DBFileTest : PackedFileTest {
         // to conveniently set breakpoints for certain tables.
-        private string debug_at = "sound_events";
+        private string debug_at = "";
 
         private bool testTsv;
+        private bool outputTable;
 
         public override int TestCount {
             get {
@@ -26,9 +27,10 @@ namespace PackFileTest {
         public SortedSet<Tuple<string, int>> tsvFails = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
         #endregion
 
-        public DBFileTest (string file, bool tsv) {
+        public DBFileTest (string file, bool tsv, bool table) {
 			Packfile = file;
 			testTsv = tsv;
+            outputTable = table;
 		}
 		
 		public override bool canTest(PackedFile packed) {
@@ -42,10 +44,15 @@ namespace PackFileTest {
                 emptyTables.Add(new Tuple<string, int>(DBFile.typename(file.FullPath), -1));
                 return;
             }
+
             // PackedFileDbCodec packedCodec = PackedFileDbCodec.FromFilename(file.FullPath);
             string type = DBFile.typename(file.FullPath);
             DBFileHeader header = PackedFileDbCodec.readHeader(file);
             Tuple<string, int> tuple = new Tuple<string, int>(string.Format("{0} # {1}", type, header.GUID), header.Version);
+            if (outputTable) {
+                Console.WriteLine("TABLE:{0}#{1}#{2}", type, header.Version, header.GUID);
+            }
+            Console.Out.Flush();
             if (header.EntryCount == 0) {
                 // special case: we will never find out the structure of a file
                 // if it contains no data
@@ -53,7 +60,7 @@ namespace PackFileTest {
             } else if (DBTypeMap.Instance.IsSupported(type)) {
                 SortedSet<Tuple<string, int>> addTo = null;
                 try {
-                    if (file.FullPath.EndsWith(debug_at)) {
+                    if (!string.IsNullOrEmpty(debug_at) && file.FullPath.EndsWith(debug_at)) {
                         Console.WriteLine("stop right here");
                     }
                     // a wrong db definition might not cause errors,
@@ -62,10 +69,10 @@ namespace PackFileTest {
                     if (dbFile.Entries.Count == dbFile.Header.EntryCount) {
                         addTo = supported;
                         
-                        if (!string.IsNullOrEmpty(header.GUID)) {
-                            List<FieldInfo> fields = new List<FieldInfo>(DBTypeMap.Instance.GetVersionedInfo("", type, header.Version).fields);
-                            DBTypeMap.Instance.SetByGuid(header.GUID, type, header.Version, fields);
-                        }
+//                        if (!string.IsNullOrEmpty(header.GUID)) {
+//                            List<FieldInfo> fields = new List<FieldInfo>(DBTypeMap.Instance.GetVersionedInfo(header.GUID, type, header.Version).fields);
+//                            DBTypeMap.Instance.SetByGuid(header.GUID, type, header.Version, fields);
+//                        }
                         
                         // only test tsv import/export if asked,
                         // it takes some time more than just the read checks
@@ -74,9 +81,16 @@ namespace PackFileTest {
                         }
                     } else {
                         // didn't get what we expect
+                        if (!string.IsNullOrEmpty(debug_at) && file.FullPath.EndsWith(debug_at)) {
+                            Console.WriteLine("adding watched to invalid");
+                        }
                         addTo = invalidDefForVersion;
                     }
                 } catch {
+                    //Console.WriteLine(ex);
+                    if (file.FullPath.EndsWith(debug_at)) {
+                        Console.WriteLine("adding watched to invalid");
+                    }
                     addTo = invalidDefForVersion;
                 }
                 addTo.Add(tuple);

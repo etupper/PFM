@@ -27,6 +27,8 @@ namespace PackFileTest {
 			// List<string> arguments = new List<string> ();
 			// run tests for all packs in all dirs given in the options file
 			if (File.Exists (OPTIONS_FILENAME)) {
+                bool saveSchema = false;
+                bool outputTables = false;
 				foreach (string dir in File.ReadAllLines(OPTIONS_FILENAME)) {
 					if (dir.StartsWith ("#")) {
 						continue;
@@ -46,9 +48,16 @@ namespace PackFileTest {
                         // testGroupformations = true;
                         GroupformationTest test = new GroupformationTest();
                         test.testFile(dir.Split(" ".ToCharArray())[1].Trim());
+                    } else if (dir.Equals("-w")) {
+                        saveSchema = true;
+                        Console.WriteLine("will save schema_user.xml after run");
+                    } else if (dir.Equals("-ot")) {
+                        outputTables = true;
+                        Console.WriteLine("will output tables of db files");
 					} else {
 						ICollection<PackedFileTest> tests = testAllPacks (dir, testTsvExport);
 						Console.WriteLine ("Dir: {0}\nTests Run:{1}", dir, tests.Count);
+                        Console.Out.Flush();
 						foreach (PackedFileTest test in tests) {
                             if (test.TestCount > 0) {
                                 Console.WriteLine(test.Packfile);
@@ -58,7 +67,9 @@ namespace PackFileTest {
 						}
 					}
 				}
-                DBTypeMap.Instance.saveToFile(Directory.GetCurrentDirectory());
+                if (saveSchema) {
+                    DBTypeMap.Instance.saveToFile(Directory.GetCurrentDirectory());
+                }
 				Console.Error.WriteLine ("Test run finished, press any key");
 				Console.ReadKey ();
 			} else {
@@ -67,11 +78,11 @@ namespace PackFileTest {
 		}
 
         // run db tests for all files in the given directory
-        public SortedSet<PackedFileTest> testAllPacks(string dir, bool testTsv) {
+        public SortedSet<PackedFileTest> testAllPacks(string dir, bool outputTable, bool testTsv = false) {
 			SortedSet<PackedFileTest> tests = new SortedSet<PackedFileTest> ();
 			foreach (string file in Directory.EnumerateFiles(dir, "*.pack")) {
 				if (testDbFiles) {
-					DBFileTest test = new DBFileTest (file, testTsv);
+					DBFileTest test = new DBFileTest (file, testTsv, outputTable);
 					test.testAllFiles ();
 					tests.Add (test);
 				}

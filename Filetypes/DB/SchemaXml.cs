@@ -63,8 +63,9 @@ namespace Common {
                     // guids didn't get shared across games
                     if (verifyEquality) {
                         id = tableNode.Attributes["guid"].Value.Trim();
-                        string encoded = tableNode.Attributes["table_name"].Value.Trim();
-                        GuidTypeInfo info = new GuidTypeInfo(id, encoded);
+                        string table_name = tableNode.Attributes["table_name"].Value.Trim();
+                        string table_version = tableNode.Attributes["table_version"].Value.Trim();
+                        GuidTypeInfo info = new GuidTypeInfo(id, table_name, int.Parse(table_version));
                         List<FieldInfo> existing = guidToDescriptions[info];
                         if (!Enumerable.SequenceEqual<FieldInfo>(fields, existing)) {
                             Console.WriteLine("{0} was:", info.Guid);
