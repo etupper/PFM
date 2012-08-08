@@ -161,18 +161,9 @@ namespace Common {
             TypeName = type;
             Version = version;
         }
-        public GuidTypeInfo(string guid, string encoded) {
-            Guid = guid;
-            DecodeVersionedType(encoded);
-        }
         public string Guid { get; set; }
         public string TypeName { get; set; }
         public int Version { get; set; }
-        public void DecodeVersionedType(string encoded) {
-            string[] split = encoded.Split(SEPARATOR);
-            TypeName = split[0];
-            Version = int.Parse(split[1]);
-        }
         public string EncodeVersionedType() {
             return string.Format("{0}{1}{2}", TypeName, SEPARATOR, Version);
         }
@@ -181,7 +172,13 @@ namespace Common {
             if (result == 0) {
                 result = Version - other.Version;
             }
+            if (result == 0) {
+                result = Guid.CompareTo(other.Guid);
+            }
             return result;
+        }
+        public override string ToString() {
+            return string.Format("{1}/{2} # {0}", Guid, TypeName, Version);
         }
     }
 
