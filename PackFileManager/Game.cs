@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Common;
 using Microsoft.Win32;
@@ -61,6 +62,14 @@ namespace PackFileManager {
         private static readonly Game[] GAMES = new Game[] {
             STW, NTW, ETW
         };
+
+        public static List<Game> GetGames() {
+            List<Game> result = new List<Game>();
+            foreach (Game g in GAMES) {
+                result.Add(g);
+            }
+            return result;
+        }
         
         private string GetInstallLocation(string node) {
             string str = null;
@@ -96,6 +105,11 @@ namespace PackFileManager {
                     GameChanged();
                 }
                 Settings.Default.CurrentGame = current.Id;
+
+                string schemaFile = string.Format("schema_{0}.xml", current.Id);
+                if (File.Exists(schemaFile)) {
+                    DBTypeMap.Instance.initializeFromFile(schemaFile);
+                }
             }
         }
     }

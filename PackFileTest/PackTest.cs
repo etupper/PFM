@@ -9,8 +9,9 @@ namespace PackFileTest {
 #pragma warning disable 414
         // just to keep track of what's available in testAll:
 		// -db: test db files; -t: tsv test for db files
-		// -uv: unit variant files
-        private static string[] OPTIONS = { "-t", "-db", "uv", "gf" };
+		// -uv: unit variant files; -ot: create output of tables
+        // -pr: prepare release... split schemata into each of the games'
+        private static string[] OPTIONS = { "-t", "-db", "uv", "gf", "-ot", "-pr" };
 #pragma warning restore 414
 
 		bool testDbFiles = false;
@@ -34,7 +35,22 @@ namespace PackFileTest {
 					if (dir.StartsWith ("#")) {
 						continue;
 					}
-					if (dir.Equals ("-t")) {
+                    if (dir.Equals("-pr")) {
+                        DBTypeMap.Instance.initializeFromFile("master_schema.xml");
+                        foreach(Game game in Game.GetGames()) {
+                            if (game.IsInstalled) {
+                                string datapath = Path.Combine(game.GameDirectory, "data");
+                                string outfile = string.Format("schema_{0}.xml", game.Id);
+                                SchemaOptimizer optimizer = new SchemaOptimizer() {
+                                    PackDirectory = datapath,
+                                    SchemaFilename = outfile
+                                };
+                                optimizer.FilterExistingPacks();
+                                Console.WriteLine("{0} entries removed for {1}", optimizer.RemovedEntries, game.Id);
+                            }
+                        }
+                        return;
+					} else if (dir.Equals ("-t")) {
 						Console.WriteLine ("TSV export/import enabled");
 						testTsvExport = true;
 					} else if (dir.Equals ("-db")) {

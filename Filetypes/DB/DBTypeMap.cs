@@ -167,6 +167,20 @@ namespace Common {
             }
             return result;
         }
+        public override bool Equals(object obj) {
+            bool result = obj is GuidTypeInfo;
+            if (result) {
+                if (string.IsNullOrEmpty(Guid)) {
+                    result = (obj as GuidTypeInfo).TypeName.Equals(TypeName);
+                } else {
+                    result = (obj as GuidTypeInfo).Guid.Equals(Guid);
+                }
+            }
+            return result;
+        }
+        public override int GetHashCode() {
+            return Guid.GetHashCode();
+        }
         public override string ToString() {
             return string.Format("{1}/{2} # {0}", Guid, TypeName, Version);
         }

@@ -17,7 +17,6 @@ namespace PackFileManager {
             }
             set {
                 dir = value;
-                Settings.Default.ModList = ModManager.Instance.encodeMods();
             }
         }
         private Game game;
@@ -27,7 +26,6 @@ namespace PackFileManager {
             }
             set {
                 game = value;
-                Settings.Default.ModList = ModManager.Instance.encodeMods();
             }
         }
 
@@ -189,7 +187,6 @@ namespace PackFileManager {
             return result;
         }
 
-
         public void InstallCurrentMod() {
             if (CurrentMod == null) {
                 throw new InvalidOperationException("No mod set");
@@ -282,7 +279,7 @@ namespace PackFileManager {
         public string encodeMods() {
             string result = "";
             foreach (var mod in mods) {
-                result += string.Format("{0}{1}{2}{1}{3}{4}", mod, Path.PathSeparator, mod.BaseDirectory, mod.Game.Id, "@@@");
+                result += string.Format("{0}{1}{2}{1}{3}{4}", mod.Name, Path.PathSeparator, mod.BaseDirectory, mod.Game.Id, "@@@");
             }
             return result;
         }

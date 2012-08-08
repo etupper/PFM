@@ -69,10 +69,10 @@ namespace PackFileTest {
                     if (dbFile.Entries.Count == dbFile.Header.EntryCount) {
                         addTo = supported;
                         
-//                        if (!string.IsNullOrEmpty(header.GUID)) {
-//                            List<FieldInfo> fields = new List<FieldInfo>(DBTypeMap.Instance.GetVersionedInfo(header.GUID, type, header.Version).fields);
-//                            DBTypeMap.Instance.SetByGuid(header.GUID, type, header.Version, fields);
-//                        }
+                        //if (!string.IsNullOrEmpty(header.GUID)) {
+                        //    List<FieldInfo> fields = new List<FieldInfo>(DBTypeMap.Instance.GetVersionedInfo(header.GUID, type, header.Version).fields);
+                        //    DBTypeMap.Instance.SetByGuid(header.GUID, type, header.Version, fields);
+                        //}
                         
                         // only test tsv import/export if asked,
                         // it takes some time more than just the read checks
@@ -88,7 +88,7 @@ namespace PackFileTest {
                     }
                 } catch {
                     //Console.WriteLine(ex);
-                    if (file.FullPath.EndsWith(debug_at)) {
+                    if (!string.IsNullOrEmpty(debug_at) && file.FullPath.EndsWith(debug_at)) {
                         Console.WriteLine("adding watched to invalid");
                     }
                     addTo = invalidDefForVersion;

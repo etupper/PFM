@@ -30,6 +30,8 @@ namespace PackFileManager {
         
         public void FilterExistingPacks() {
             if (Directory.Exists(PackDirectory)) {
+                Console.WriteLine("Retrieving from {0}, storing to {1}", PackDirectory, SchemaFilename);
+
                 typeMap.Clear();
                 guidMap.Clear();
 
@@ -39,16 +41,38 @@ namespace PackFileManager {
                     List<GuidTypeInfo> infos = GetUsedTypes(pack);
                     
                     // add all infos we don't have yet
-                infos.ForEach(info => { if (!allUsed.Contains(info)) { allUsed.Add(info); } });
+                    infos.ForEach(info => { if (!allUsed.Contains(info)) { allUsed.Add(info); } });
                 }
                 
                 SortedDictionary<string, List<FieldInfo>> masterTypes = DBTypeMap.Instance.TypeMap;
                 SortedDictionary<GuidTypeInfo, List<FieldInfo>> masterGuids = DBTypeMap.Instance.GuidMap;
+
+                Dictionary<string, int> minVersion = new Dictionary<string, int>();
+                Dictionary<string, int> maxVersion = new Dictionary<string, int>();
                 foreach(GuidTypeInfo info in allUsed) {
-                    if (string.IsNullOrEmpty(info.Guid)) {
-                        AddSafe(info.TypeName, typeMap, masterTypes);
-                    } else {
+                    if (!string.IsNullOrEmpty(info.Guid)) {
                         AddSafe(info, guidMap, masterGuids);
+                        continue;
+                    }
+                    int min = int.MaxValue;
+                    minVersion.TryGetValue(info.TypeName, out min);
+                    min = Math.Min(min, info.Version);
+                    minVersion[info.TypeName] = min;
+                    int max = 0;
+                    maxVersion.TryGetValue(info.TypeName, out max);
+                    max = Math.Max(max, info.Version);
+                    maxVersion[info.TypeName] = max;
+                }
+                foreach (string type in minVersion.Keys) {
+                    List<FieldInfo> add = new List<FieldInfo>();
+                    List<FieldInfo> addFrom;
+                    if (masterTypes.TryGetValue(type, out addFrom)) {
+                        addFrom.ForEach(field => {
+                            if (field.StartVersion <= minVersion[type] && field.LastVersion >= maxVersion[type]) {
+                                add.Add(field);
+                            }
+                        });
+                        typeMap[type] = add;
                     }
                 }
                 
@@ -68,6 +92,9 @@ namespace PackFileManager {
         private List<GuidTypeInfo> GetUsedTypes(PackFile pack) {
             List<GuidTypeInfo> infos = new List<GuidTypeInfo>();
             foreach(PackedFile packed in pack.Files) {
+                if (packed.FullPath.Contains("_kv")) {
+                    Console.WriteLine();
+                }
                 if (packed.FullPath.StartsWith("db") && packed.Size != 0) {
                     string type = DBFile.typename(packed.FullPath);
                     DBFileHeader header = PackedFileDbCodec.readHeader(packed);
