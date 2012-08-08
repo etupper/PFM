@@ -264,6 +264,17 @@
                 Save();
             }
         }
+
+        [DebuggerNonUserCode, DefaultSettingValue("STW"), UserScopedSetting]
+        public string CurrentGame {
+            get {
+                return (string)this["CurrentGame"];
+            }
+            set {
+                this["CurrentGame"] = value;
+                Save();
+            }
+        }
     }
 }
 

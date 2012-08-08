@@ -107,31 +107,21 @@ namespace PackFileManager
             // initialize MyMods menu
             modsToolStripMenuItem.DropDownItems.Add(new ModMenuItem("None", ""));
             ModManager.Instance.ModNames.ForEach(name => modsToolStripMenuItem.DropDownItems.Add(new ModMenuItem(name, name)));
-            ModManager.Instance.CurrentModChanged += delegate(string newMod) { OpenCurrentModPack(); };
+            ModManager.Instance.CurrentModChanged += delegate() { OpenCurrentModPack(); };
             if (args.Length == 0) {
                 OpenCurrentModPack();
             }
-            
+
             // fill CA file list
-            string shogunPath = IOFunctions.GetShogunTotalWarDirectory();
-            if (shogunPath != null) {
-                shogunPath = Path.Combine(shogunPath, "data");
-                if (Directory.Exists(shogunPath)) {
-                    List<string> packFiles = new List<string> (Directory.GetFiles(shogunPath, "*.pack"));
-                    packFiles.Sort(NumberedFileComparison);
-                    packFiles.ForEach(file => openCAToolStripMenuItem.DropDownItems.Add(
-                        new ToolStripMenuItem(Path.GetFileName(file), null, 
-                                         delegate(object s, EventArgs a) { OpenExistingPackFile(file); })));
-                    openCAToolStripMenuItem.Enabled = true;
-                }
-            }
-            
-            ModManager.ModChangeEvent enableMenuItem = delegate(string newMod) {
-                bool enabled = newMod != "";
-                enabled &= IOFunctions.GetShogunTotalWarDirectory() != null;
+            GameManager.Instance.GameChanged += FillCaPackMenu;
+            GameManager.Instance.CurrentGame = Game.STW;
+
+            ModManager.ModChangeEvent enableMenuItem = delegate() {
+                bool enabled = !Settings.Default.CurrentMod.Equals("");
+                enabled &= GameManager.Instance.CurrentGame.IsInstalled;
                 installModMenuItem.Enabled = uninstallModMenuItem.Enabled = enabled;
             };
-            enableMenuItem(Settings.Default.CurrentMod);
+            enableMenuItem();
             ModManager.Instance.CurrentModChanged += enableMenuItem;
 
             csvToolStripMenuItem.Checked = "csv".Equals(Settings.Default.TsvExtension);
@@ -160,6 +150,27 @@ namespace PackFileManager
         {
             refreshTitle();
             EnableMenuItems();
+        }
+        
+        private void EnableInstallUninstall() {
+            bool enabled = !string.IsNullOrEmpty(Settings.Default.CurrentMod);
+            enabled &= GameManager.Instance.CurrentGame.IsInstalled;
+            installModMenuItem.Enabled = uninstallModMenuItem.Enabled = enabled;
+        }
+        
+        private void FillCaPackMenu() {
+            string shogunPath = GameManager.Instance.CurrentGame.GameDirectory;
+            openCAToolStripMenuItem.Enabled = shogunPath != null;
+            if (shogunPath != null) {
+                shogunPath = Path.Combine(shogunPath, "data");
+                if (Directory.Exists(shogunPath)) {
+                    List<string> packFiles = new List<string> (Directory.GetFiles(shogunPath, "*.pack"));
+                    packFiles.Sort(NumberedFileComparison);
+                    packFiles.ForEach(file => openCAToolStripMenuItem.DropDownItems.Add(
+                        new ToolStripMenuItem(Path.GetFileName(file), null, 
+                                         delegate(object s, EventArgs a) { OpenExistingPackFile(file); })));
+                }
+            }
         }
 
         #region Form Management
@@ -214,7 +225,7 @@ namespace PackFileManager
                     initialDialog = Settings.Default.LastPackDirectory;
                 } else {
                     // otherwise, try to determine the shogun install path and use the data directory
-                    initialDialog = IOFunctions.GetShogunTotalWarDirectory();
+                    initialDialog = GameManager.Instance.CurrentGame.GameDirectory;
                     if (!string.IsNullOrEmpty(initialDialog)) {
                         initialDialog = Path.Combine(initialDialog, "data");
                     } else {

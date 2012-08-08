@@ -111,15 +111,20 @@ namespace Common {
         // table to (field to fkey)
         public static Dictionary<string, Dictionary<string, string>> fkeys = new Dictionary<string, Dictionary<string, string>> ();
         TextWriter writer;
+        
+        public bool LogWriting {
+            get; set;
+        }
+        
         //int currentIndent = 0;
         public XmlExporter (Stream stream) {
 			writer = new StreamWriter (stream);
         }
 
-        public void export() {
+        public void export(SortedDictionary<string, List<FieldInfo>> nameMap, SortedDictionary<GuidTypeInfo, List<FieldInfo>> guidMap) {
 			writer.WriteLine ("<schema>");
-            writeTables(DBTypeMap.Instance.TypeMap, new VersionedTableInfoFormatter());
-            writeTables(DBTypeMap.Instance.GuidMap, new GuidTableInfoFormatter());
+            writeTables(nameMap, new VersionedTableInfoFormatter());
+            writeTables(guidMap, new GuidTableInfoFormatter());
 			writer.WriteLine ("</schema>");
 			writer.Close ();
 		}
@@ -134,7 +139,9 @@ namespace Common {
         }
         
         void writeTable<T>(T id, List<FieldInfo> descriptions, TableInfoFormatter<T> format) {
-			Console.WriteLine ("writing table {0}", id);
+            if (LogWriting) {
+                Console.WriteLine ("writing table {0}", id);
+            }
 			writer.WriteLine (format.FormatHeader(id));
 			foreach (FieldInfo description in descriptions) {
 				StringBuilder builder = new StringBuilder ("    <field ");

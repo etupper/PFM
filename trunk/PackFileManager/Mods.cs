@@ -10,18 +10,56 @@ using PackFileManager.Properties;
 namespace PackFileManager {
     public class Mod {
         public string Name { get; set; }
-        public string BaseDirectory { get; set; }
+        private string dir;
+        public string BaseDirectory { 
+            get {
+                return dir;
+            }
+            set {
+                dir = value;
+                Settings.Default.ModList = ModManager.Instance.encodeMods();
+            }
+        }
+        private Game game;
+        public Game Game { 
+            get {
+                return game;
+            }
+            set {
+                game = value;
+                Settings.Default.ModList = ModManager.Instance.encodeMods();
+            }
+        }
+        public override bool Equals(object obj) {
+            bool result = obj is Mod;
+            if (result) {
+                result = (obj as Mod).Name.Equals(Name);
+            }
+            return result;
+        }
+        public override int GetHashCode() {
+            return Name.GetHashCode ();
+        }
     }
 
     public class ModManager {
         public static readonly ModManager Instance = new ModManager();
-        public delegate void ModChangeEvent(string newCurrentMod);
+        public delegate void ModChangeEvent();
         public event ModChangeEvent CurrentModChanged;
 
         private ModManager() {
             mods = decodeMods(Settings.Default.ModList);
+            GameManager.Instance.GameChanged += SetModGame;
         }
-        private Dictionary<string, string> mods;
+
+        private void SetModGame() {
+            if (CurrentMod != null) {
+                CurrentMod.Game = GameManager.Instance.CurrentGame;
+                Settings.Default.ModList = encodeMods();
+            }
+        }
+
+        private List<Mod> mods;
         public string AddMod() {
             string result = null;
             InputBox box = new InputBox { Text = "Enter Mod Name:", Input = "my_mod" };
@@ -49,11 +87,12 @@ namespace PackFileManager {
                         PackFile newFile = new PackFile(result, header);
                         new PackFileCodec().writeToFile(result, newFile);
                     }
-
-                    SetMod(mod);
+     
+                    mod.Game = GameManager.Instance.CurrentGame;
+                    AddMod(mod);
 
                     // open existing CA pack or create new pack
-                    string shogunPath = IOFunctions.GetShogunTotalWarDirectory();
+                    string shogunPath = GameManager.Instance.CurrentGame.GameDirectory;
                     if (shogunPath != null && Directory.Exists(shogunPath)) {
                         OpenFileDialog packOpenFileDialog = new OpenFileDialog {
                             InitialDirectory = Path.Combine(shogunPath, "data"),
@@ -72,25 +111,51 @@ namespace PackFileManager {
             get {
                 List<string> result = new List<string>();
                 foreach (var entry in decodeMods(Settings.Default.ModList)) {
-                    result.Add(entry.Key);
+                    result.Add(entry.Name);
                 }
                 return result;
             }
         }
+
         public void SetCurrentMod(string modname) {
             Settings.Default.CurrentMod = modname;
             if (CurrentModChanged != null) {
-                CurrentModChanged(modname);
+                CurrentModChanged();
+            }
+        }
+        private Mod FindByName(string name) {
+            Mod result = null;
+            foreach(Mod m in mods) {
+                if (m.Name.Equals(name)) {
+                    result = m;
+                    break;
+                }
+            }
+            return result;
+        }
+
+        public Mod CurrentMod {
+            get {
+                return FindByName(Settings.Default.CurrentMod);
+            }
+            set {
+                string modName = (value != null) ? value.Name : "";
+                Settings.Default.CurrentMod = modName;
+                if (CurrentModChanged != null) {
+                    CurrentModChanged();
+                }
             }
         }
         public void DeleteCurrentMod() {
-            mods.Remove(Settings.Default.CurrentMod);
-            Settings.Default.ModList = encodeMods(mods);
-            SetCurrentMod("");
+            if (CurrentMod != null) {
+                mods.Remove(CurrentMod);
+                Settings.Default.ModList = encodeMods();
+                SetCurrentMod("");
+            }
         }
 
         public void InstallCurrentMod() {
-            string targetDir = IOFunctions.GetShogunTotalWarDirectory();
+            string targetDir = GameManager.Instance.CurrentGame.GameDirectory;
             if (targetDir == null) {
                 throw new FileNotFoundException(string.Format("Shogun install directory not found"));
             }
@@ -106,7 +171,7 @@ namespace PackFileManager {
                     PFHeader header = new PackFileCodec().readHeader(reader);
                     if (header.Type == PackType.Mod) {
                         string modEntry = ModScriptFileEntry;
-                        string scriptFile = GetUserScriptPath();
+                        string scriptFile = GameManager.Instance.CurrentGame.ScriptFile;
                         List<string> linesToWrite = new List<string>();
                         if (File.Exists(scriptFile)) {
                             // retain all other mods in the script file; will add our mod afterwards
@@ -126,9 +191,9 @@ namespace PackFileManager {
         }
 
         public void UninstallCurrentMod() {
-            string targetDir = IOFunctions.GetShogunTotalWarDirectory();
+            string targetDir = GameManager.Instance.CurrentGame.GameDirectory;
             if (targetDir == null) {
-                throw new FileNotFoundException(string.Format("Shogun install directory not found"));
+                throw new FileNotFoundException(string.Format("Install directory not found"));
             }
 
             string targetFile = Path.Combine(targetDir, "data", ModPackName);
@@ -137,7 +202,7 @@ namespace PackFileManager {
             }
 
             string modEntry = ModScriptFileEntry;
-            string scriptFile = GetUserScriptPath();
+            string scriptFile = GameManager.Instance.CurrentGame.ScriptFile;
             List<string> linesToWrite = new List<string>();
             if (File.Exists(scriptFile)) {
                 // retain all other mods in the script file
@@ -168,37 +233,40 @@ namespace PackFileManager {
             }
         }
         
-        string GetUserScriptPath() {
-            string scriptFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            scriptFile = Path.Combine(scriptFile, "The Creative Assembly", "Shogun2", "scripts", "user.script.txt");
-            return scriptFile;
-        }
-        
-        public void SetMod(Mod mod) {
-            mods[mod.Name] = mod.BaseDirectory;
-            Settings.Default.ModList = encodeMods(mods);
-            SetCurrentMod(mod.Name);
+        public void AddMod(Mod mod) {
+            mods.Add(mod);
+            Settings.Default.ModList = encodeMods();
+            CurrentMod = mod;
         }
         public string CurrentModDirectory {
             get {
-                return mods[Settings.Default.CurrentMod];
+                string result = (CurrentMod != null) ? CurrentMod.BaseDirectory : null;
+                return result;
             }
         }
-        private Dictionary<string, string> decodeMods(string encoded) {
-            Dictionary<string, string> result = new Dictionary<string, string>();
+        private List<Mod> decodeMods(string encoded) {
+            List<Mod> result = new List<Mod>();
             string[] entries = encoded.Split(new string[] { "@@@" }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string entry in entries) {
                 string[] nameDirTuple = entry.Split(Path.PathSeparator);
                 try {
-                    result[nameDirTuple[0]] = nameDirTuple[1];
+                    Game game = (nameDirTuple.Length > 2)?
+                        Game.ById(nameDirTuple[2]) :
+                        Game.STW;
+                    Mod newMod = new Mod {
+                        Name = nameDirTuple[0],
+                        BaseDirectory = nameDirTuple[1],
+                        Game = game
+                    };
+                    result.Add(newMod);
                 } catch { }
             }
             return result;
         }
-        public string encodeMods(Dictionary<string, string> mods) {
+        public string encodeMods() {
             string result = "";
-            foreach (var key in mods.Keys) {
-                result += string.Format("{0}{1}{2}{3}", key, Path.PathSeparator, mods[key], "@@@");
+            foreach (var mod in mods) {
+                result += string.Format("{0}{1}{2}{1}{3}{4}", mod, Path.PathSeparator, mod.BaseDirectory, mod.Game.Id, "@@@");
             }
             return result;
         }
@@ -215,8 +283,8 @@ namespace PackFileManager {
         protected override void OnClick(EventArgs e) {
             ModManager.Instance.SetCurrentMod(Tag as string);
         }
-        private void CheckSelection(string mod) {
-            Checked = mod == (Tag as string);
+        private void CheckSelection() {
+            Checked = Settings.Default.CurrentMod.Equals(Tag as string);
         }
     }
 }

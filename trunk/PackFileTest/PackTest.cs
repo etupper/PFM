@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Common;
+using PackFileManager;
 
 namespace PackFileTest {
     class PackTest {
@@ -55,7 +56,24 @@ namespace PackFileTest {
                         outputTables = true;
                         Console.WriteLine("will output tables of db files");
 					} else {
-						ICollection<PackedFileTest> tests = testAllPacks (dir, testTsvExport);
+                        if (outputTables) {
+                            string schemaFile = "schema_optimized.xml";
+                            if (dir.Contains("stw")) {
+                                schemaFile = "schema_stw.xml";
+                            } else if (dir.Contains("ntw")) {
+                                schemaFile = "schema_ntw.xml";
+                            } else if (dir.Contains("etw")) {
+                                schemaFile = "schema_etw.xml";
+                            }
+                            SchemaOptimizer optimizer = new SchemaOptimizer() {
+                                PackDirectory = dir,
+                                SchemaFilename = schemaFile
+                            };
+                            optimizer.FilterExistingPacks();
+                            Console.WriteLine("Optimizer removed {0} entries from schema {1}", optimizer.RemovedEntries, schemaFile);
+                        }
+                        
+						ICollection<PackedFileTest> tests = testAllPacks (dir, outputTables, testTsvExport);
 						Console.WriteLine ("Dir: {0}\nTests Run:{1}", dir, tests.Count);
                         Console.Out.Flush();
 						foreach (PackedFileTest test in tests) {
