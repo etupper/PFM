@@ -1,6 +1,5 @@
 ﻿namespace Common
 {
-    using Microsoft.Win32;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -11,49 +10,6 @@
     {
         public static string TSV_FILTER = "TSV Files (*.csv,*.tsv)|*.csv;*.tsv|Text Files (*.txt)|*.txt|All Files|*.*";
         public static string PACKAGE_FILTER = "Package File (*.pack)|*.pack|Any File|*.*";
-
-        public static string GetShogunTotalWarDirectory()
-        {
-            return GetDirectory(STW_IDS);
-        }
-        
-        public static string GetNapoleonTotalWarDirectory()
-        {
-            return GetDirectory(NTW_IDS);
-        }
-        
-        private static string WOW_NODE = @"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {0}";
-        private static string WIN_NODE = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {0}";
-        
-        private static string[] STW_IDS = { "34330" };
-        private static string[] NTW_IDS = { "34030", "34050", "901162" };
-        private static string[] ETW_IDS = { "10500" };
-
-        private static string GetDirectory(string[] candidates) {
-            string str = null;
-            for (int i = 0; i < candidates.Length && str == null; i++) {
-                try {
-                    str = GetInstallLocation(WOW_NODE, candidates[i]);
-                    if (str == null) {
-                        str = GetInstallLocation(WIN_NODE, candidates[i]);
-                    }
-                } catch {}
-            }
-            return str;
-        }
-        
-        private static string GetInstallLocation(string node, string id) {
-            string str = null;
-            try {
-                string regKey = string.Format(WOW_NODE, id);
-                str = (string) Registry.GetValue(regKey, "InstallLocation", "");
-                // check if directory actually exists
-                if (!string.IsNullOrEmpty(str) && !Directory.Exists(str)) {
-                    str = null;
-                }
-            } catch {}
-            return str;
-        }
 
         public static string readCAString(BinaryReader reader)
         {

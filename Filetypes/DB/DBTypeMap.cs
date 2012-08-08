@@ -53,7 +53,7 @@ namespace Common {
                 File.Copy(filename, backupName);
             }
             var stream = File.Create(filename);
-            new XmlExporter(stream).export();
+            new XmlExporter(stream).export(typeMap, guidMap);
             stream.Close();
             if (File.Exists(backupName)) {
                 File.Delete(backupName);
@@ -66,16 +66,6 @@ namespace Common {
         public void SetByGuid(string guid, string tableName, int version, List<FieldInfo> setTo) {
             GuidTypeInfo info = new GuidTypeInfo(guid, tableName, version);
             guidMap[info] = setTo;
-        }
-        public string GetTableForGuid(string guid) {
-            string result = "";
-            foreach(GuidTypeInfo info in guidMap.Keys) {
-                if (info.Guid.Equals(guid)) {
-                    result = info.TypeName;
-                    break;
-                }
-            }
-            return result;
         }
 
         private static List<TypeInfo> retrieveOrAdd<T>(IDictionary<T, List<TypeInfo>> dict, T key) {

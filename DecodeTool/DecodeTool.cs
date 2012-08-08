@@ -358,7 +358,7 @@ namespace DecodeTool {
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 using (FileStream stream = File.OpenWrite(dlg.FileName)) {
                     XmlExporter exporter = new XmlExporter(stream);
-                    exporter.export();
+                    exporter.export(DBTypeMap.Instance.TypeMap, DBTypeMap.Instance.GuidMap);
                 }
             }
         }

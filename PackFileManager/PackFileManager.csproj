@@ -182,6 +182,8 @@
     <Compile Include="Editors\GroupformationEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="SchemaOptimizer.cs" />
+    <Compile Include="Game.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
