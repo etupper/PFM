@@ -462,7 +462,8 @@ namespace PackFileManager
                                 "Otherwise, the last saved version will be installed.", "Save?", MessageBoxButtons.YesNoCancel);
 
                 if (result == DialogResult.Yes) {
-                    SaveAsFile(ModManager.Instance.FullModPath);
+                    string modPath = ModManager.Instance.CurrentMod != null ? ModManager.Instance.CurrentMod.FullModPath : CurrentPackFile.Filepath;
+                    SaveAsFile(modPath);
                 } else if (result == DialogResult.Cancel) {
                     return;
                 }
@@ -496,9 +497,11 @@ namespace PackFileManager
         
         private void OpenCurrentModPack() {
             try {
-                string modPath = ModManager.Instance.FullModPath;
-                if (Settings.Default.CurrentMod != "" && File.Exists(modPath)) {
-                    OpenExistingPackFile(modPath);
+                if (ModManager.Instance.CurrentMod != null) {
+                    string modPath = ModManager.Instance.CurrentMod.FullModPath;
+                    if (File.Exists(modPath)) {
+                        OpenExistingPackFile(modPath);
+                    }
                 }
             } catch { }
         }
