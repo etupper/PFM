@@ -3829,8 +3829,32 @@
   </table>
   <table table_name='_kv_fatigue'
          table_version='0'
-         guid='443b47a4-1ecc-4006-ac75-d182d7baa3bd,
+         guid='01b8a61a-3791-4bc4-a2b8-3425413f9904,
+               0fee3f11-7e2a-41cb-8159-4255c50053e3,
+               17c176fc-92f2-42a4-963a-7f03b09655d6,
+               1f0c41d5-1664-4a53-ab3c-b9c2a749a80d,
+               2374e5ce-ac8d-48d7-8344-752f6eb028e7,
+               31b7bf7a-dc8f-4cc8-a95e-b10db83be422,
+               32026db6-c4a8-49e8-ad90-ec22659c2302,
+               35f5a43d-6f58-4d47-997c-18ec5351a95d,
+               3ba5be94-3130-448a-a198-d455aee51581,
+               443b47a4-1ecc-4006-ac75-d182d7baa3bd,
+               4f2a4372-6587-4a26-a5cb-409c50461605,
                54ab9851-3c13-499a-b772-18474cac6454,
+               6407d96e-c480-4f73-808e-2de7324959b4,
+               6a63a7ea-ace7-4660-adc4-5ba7f1674793,
+               831d0266-af05-41e3-8802-b5cf3e21201c,
+               9d9014c2-19bb-4e12-9794-22626cd1a6f0,
+               a45a06ad-f7f4-4772-b69f-b719b7ed60e9,
+               ab514e4f-d5f6-4202-a4fc-14b39a1f0f8c,
+               c90c1d3e-8793-47e3-b498-0468a2022840,
+               cb05fa07-45af-447d-8bd8-25f8fc4bd792,
+               ccbea66b-f935-4620-8d12-eb4e0cdf1d50,
+               cd8e6a44-4ca6-4437-8118-3b31ab94bf60,
+               d5ac3864-edde-47d7-94c1-0b8210718c87,
+               dce33a41-dcad-4cf2-a57a-5df934a15247,
+               e3356b04-98a8-4ebd-8667-9982584534c9,
+               eec00561-9f52-4dd4-bb22-735fdfcc6dce,
                6a63a7ea-ace7-4660-adc4-5ba7f1674793,
                cd8e6a44-4ca6-4437-8118-3b31ab94bf60,
                dce33a41-dcad-4cf2-a57a-5df934a15247,
@@ -4272,7 +4296,10 @@
          table_version='2'
          guid='1355addd-771d-49cc-a40c-65e0231e4a10,
                531f935b-2c94-4f28-b91d-bd09b203338e,
+               89ff2575-c6a0-4317-8cf8-0228f3514b94,
+               8fd88a7f-ed00-4bab-ae7a-76a3d4299cbc,
                90806168-2d7c-49be-8a0d-2f322a7cba1d,
+               b17fbea1-77a2-4ac9-9069-1662320bdecd,
                89ff2575-c6a0-4317-8cf8-0228f3514b94,
                8fd88a7f-ed00-4bab-ae7a-76a3d4299cbc,
                b17fbea1-77a2-4ac9-9069-1662320bdecd'>
@@ -4293,11 +4320,31 @@
   </table>
   <table table_name='avatar_ancillaries_localised_source_lookups'
          table_version='0'
-         guid='45723d22-a830-4080-914a-2802351b1bfc,
+         guid='11723778-15fe-40ce-bb40-e05cdad5d333,
+               1545c106-b963-4c9c-8372-304c8f1b0109,
+               28a8ac9a-5c70-4d24-ab5f-ca8ebdcecea1,
+               3ad82e33-22e2-415c-b2fd-b472a4c7161e,
+               45723d22-a830-4080-914a-2802351b1bfc,
+               465a0fe4-75f7-40d4-b351-e806cf9017aa,
+               4a9ff0da-76c4-49b8-bee9-20993fcd80b0,
+               6fd49fa6-c109-4e34-aaa5-58eac1ee214d,
                74c25afe-d026-4347-a140-80484fe5b70f,
+               76c71bac-1f65-4af6-96f8-cfd3312497b4,
                973d8648-7fdb-40b0-8925-2f9568c7c384,
                98b5a318-433e-46e3-a6b7-d8ade1d06d5b,
+               a360b285-17b9-4764-a357-5f783d601909,
+               a4a37c4a-bc5f-4e82-b6fb-c6aaf908accd,
+               a4cf1d6e-95ef-4057-b2f0-1398f91a2529,
+               a774e19f-e3c7-4c07-ba92-d887e996c1de,
+               ae2c706a-4207-4d36-8793-44b0e23980c4,
                b4dc30bb-222a-4220-87f3-f6a6d2b6667a,
+               b715d477-c2dc-431c-8a24-fc285fcc6db8,
+               c589f354-75e0-427d-8ed1-0d82f5fb7c9c,
+               e29c0d71-6550-4cd0-aa9a-cfd5f0268c9d,
+               e4d3f966-7b93-468d-9789-10a717848a36,
+               f5007741-ab13-4184-aef9-7d6557846fd7,
+               f8277b7a-43fb-4ff7-b602-ef271bdd0691,
+               fac59150-caaf-422c-ad7c-9f90171eaa9a,
                a4cf1d6e-95ef-4057-b2f0-1398f91a2529,
                a4a37c4a-bc5f-4e82-b6fb-c6aaf908accd,
                11723778-15fe-40ce-bb40-e05cdad5d333,
@@ -4689,6 +4736,15 @@
          table_version='0'
          guid='091ca0b0-4e25-41c2-a480-7e466c6eec69,
                13c20816-c8c8-4baa-8bae-37dcd586fdcf,
+               543fee69-852c-4bb0-9263-065f4d9c7c77,
+               852b6cc4-f029-4aaa-9c54-6cb0c8c29ef4,
+               8c613f0d-8d6b-498c-8ad8-350ba515a102,
+               91f4cc70-fbc0-45a0-aba5-fcc644a0f651,
+               cd02508d-93f1-489f-9399-9d9933eb7cd5,
+               daaa593c-e1b0-4202-a77d-df22e3cf7a01,
+               e9f678a2-577d-11df-8001-001fd02417f0,
+               ef0c0ccc-8a76-4a5b-b4c3-c33f0c91039d,
+               13c20816-c8c8-4baa-8bae-37dcd586fdcf,
                852b6cc4-f029-4aaa-9c54-6cb0c8c29ef4,
                91f4cc70-fbc0-45a0-aba5-fcc644a0f651,
                cd02508d-93f1-489f-9399-9d9933eb7cd5,
@@ -4769,7 +4825,15 @@
   </table>
   <table table_name='avatar_unit_levels'
          table_version='0'
-         guid='1746c370-9f8e-4241-85a6-d85848bf2a22,
+         guid='0309bafe-42f0-423a-984b-b12a98bf028d,
+               08e45441-cc74-4c9b-84d8-cc196790a62b,
+               1746c370-9f8e-4241-85a6-d85848bf2a22,
+               2b23760d-870e-4d09-bc15-a7273465a601,
+               73669051-d6ad-46e4-b406-72f6ca518d6f,
+               810c221e-ec5a-45d4-9b44-0e47173d752f,
+               92e9cfd5-2996-4583-b496-877ab5b2ae9f,
+               b3cd79b4-ce29-4b2f-9128-2049e67c6f90,
+               ec520b07-f75d-408c-acaf-2f08e53da976,
                ee03e5ff-7d01-4061-9839-0f3d787a0dc7,
                0309bafe-42f0-423a-984b-b12a98bf028d,
                810c221e-ec5a-45d4-9b44-0e47173d752f,
@@ -4848,6 +4912,7 @@
          table_version='1'
          guid='11138b94-36ed-4499-bfb0-0a9bbd2f3104,
                405f1614-a49f-40b2-b722-914f24aaa081,
+               94a4d39f-1e04-430f-b4bf-230cebfb71d4,
                d0038ce7-60bd-4e46-8b84-2ec14bb0c800,
                94a4d39f-1e04-430f-b4bf-230cebfb71d4'>
     <field name='unknown1' type='string' pk='true' />
@@ -5194,13 +5259,19 @@
   </table>
   <table table_name='building_effects_junction'
          table_version='0'
-         guid='290d5221-a806-4b20-bbf9-d61adf802b50,
+         guid='175905d8-d4c2-45a4-83b8-914880932f26,
+               254daef3-c40c-4230-8134-cf77e55b6f47,
+               290d5221-a806-4b20-bbf9-d61adf802b50,
+               4410feca-890d-4dc2-9d7c-add6bd1fe794,
                471b8dbe-5039-4b64-9589-c959ccb7a053,
+               a4c6ae1f-0c21-4743-9c3f-826a298723f3,
                a5493afb-264c-41ad-887f-19a3f9a02223,
                d60299e8-d9ad-487e-8a42-43284b390f67,
                dc5ee289-e09e-4611-81ca-53434bad105e,
                dc87507c-2b92-4144-9f6c-1f86d9a4a69c,
+               e8bc1733-4778-4239-ba9f-8abe77974b5e,
                f1d24d61-938f-4454-b579-9f98b0b1deb8,
+               ffd76bc5-3d12-4c42-8efb-a8b7d9ce2526,
                175905d8-d4c2-45a4-83b8-914880932f26,
                254daef3-c40c-4230-8134-cf77e55b6f47,
                4410feca-890d-4dc2-9d7c-add6bd1fe794,
@@ -5628,8 +5699,12 @@
   </table>
   <table table_name='campaign_ai_character_skill_tree_distribution_junctions'
          table_version='0'
-         guid='28eedf66-9a4d-11df-8001-001fd02417f0,
+         guid='1b5682b6-880c-49f2-939a-f746e8153f5a,
+               28eedf66-9a4d-11df-8001-001fd02417f0,
+               4de50590-41a6-4b98-9ccb-9bc86da32033,
                b43b972d-99b8-41aa-826b-dd47233be42d,
+               da8a104f-70a6-40ff-93e3-8ebb4bc0bc7b,
+               de232439-41ae-4de6-b1ae-437b8892e7d4,
                1b5682b6-880c-49f2-939a-f746e8153f5a,
                4de50590-41a6-4b98-9ccb-9bc86da32033,
                da8a104f-70a6-40ff-93e3-8ebb4bc0bc7b,
@@ -5650,8 +5725,10 @@
          guid='08fad6a9-2547-4075-b110-19a234e0a0cf,
                097e0e52-afbd-49a0-ab2d-538bc608fffb,
                46bde581-8640-459a-ba23-ba608396033a,
+               5b588fcd-3c45-46aa-93a5-2c066c0354b1,
                76bc2689-8b2e-401f-8b14-72626199f4d3,
                7a38867c-6588-41a7-beda-08bf1abbbbb1,
+               f4881b6b-cf9e-4ed4-a6e0-fe4a6f00b135,
                5b588fcd-3c45-46aa-93a5-2c066c0354b1,
                f4881b6b-cf9e-4ed4-a6e0-fe4a6f00b135'>
     <field name='unknown' type='string' />
@@ -6024,9 +6101,12 @@
   </table>
   <table table_name='cdir_events_dilemma_incidents'
          table_version='0'
-         guid='717b92fb-3099-4cb1-be6e-212caf7eece3,
+         guid='1f7a8616-d7d2-4176-abd0-8c8fedb1e836,
+               432c8a55-8fc5-437a-b794-cd9f9d34df66,
+               717b92fb-3099-4cb1-be6e-212caf7eece3,
                cf0f012a-1d6b-4dbf-a5b8-dffd73420b7b,
                d5ede895-70a9-4ac4-b779-6f0b2ccb46c4,
+               e1360d29-3efa-4a70-8bf5-28073f784324,
                1f7a8616-d7d2-4176-abd0-8c8fedb1e836,
                432c8a55-8fc5-437a-b794-cd9f9d34df66,
                e1360d29-3efa-4a70-8bf5-28073f784324'>
@@ -6067,11 +6147,17 @@
          table_version='1'
          guid='0812408c-4a7f-4946-8480-88ca2c9da0df,
                0d60f129-3dc4-4488-af1f-fe7614a2e10e,
+               22fe4167-3701-4e53-a2b5-c73621fb4e1f,
+               2d08d093-2d5f-4780-9247-890890ea3a61,
                400960fa-92f2-4b40-86f9-3a54e60009b4,
                518f8e91-5c3b-4ed6-aa1b-20e070fb48ec,
+               5bf65abb-1ce6-4a35-bae7-980873210fc8,
                8957de54-105a-4110-8065-feb8e046f3b2,
                abf7fa7f-af70-4ce4-aad6-64eb0fbb0a47,
                ce8462c5-4c9d-4086-828c-1e96e71e7c1c,
+               d28cbab0-7964-4113-9a36-e1084755c20e,
+               e7efb3f7-d348-4cf3-a278-b43aa162b70b,
+               fa38fcec-5fa8-4976-85b0-31e2de822b6f,
                22fe4167-3701-4e53-a2b5-c73621fb4e1f,
                2d08d093-2d5f-4780-9247-890890ea3a61,
                5bf65abb-1ce6-4a35-bae7-980873210fc8,
@@ -6327,7 +6413,8 @@
   </table>
   <table table_name='commodity_unit_names'
          table_version='0'
-         guid='b7445338-3583-4b4a-acf0-4dc1e4778c71,
+         guid='42ebf791-aa75-4f30-b782-c67904b6e79c,
+               b7445338-3583-4b4a-acf0-4dc1e4778c71,
                42ebf791-aa75-4f30-b782-c67904b6e79c'>
     <field name='Unknown' type='string' pk='true' />
   </table>
@@ -6397,7 +6484,10 @@
          guid='4ba0f0cb-1ece-4a5a-a532-4cb992d422dd,
                500c14fa-4d21-47b1-8131-b5d6760cd760,
                7a6f408c-a81e-4f07-bdb6-5f6601d6582e,
+               af7567c1-9aac-41eb-83b0-ad7d026c491b,
                bd5d41bb-09f1-4ee8-b34b-bdc347ae6432,
+               c361384d-5d52-4967-be61-fde7f1b13892,
+               e43c4984-6960-489a-8377-f54bf2d4ce34,
                f36c336a-b458-4600-87fd-55b37e439d8f,
                af7567c1-9aac-41eb-83b0-ad7d026c491b,
                c361384d-5d52-4967-be61-fde7f1b13892,
@@ -6406,7 +6496,8 @@
   </table>
   <table table_name='diplomacy_negotiation_faction_override_strings'
          table_version='0'
-         guid='3a52d682-b9c1-4d14-a896-16c19d46b172,
+         guid='0ba96496-51ba-48f7-966c-0dc0db4a8a40,
+               3a52d682-b9c1-4d14-a896-16c19d46b172,
                975518d6-7a5c-447b-95e5-ac47738c0764,
                0ba96496-51ba-48f7-966c-0dc0db4a8a40'>
     <field name='Item ID' type='string' />
@@ -6529,9 +6620,12 @@
   </table>
   <table table_name='effect_bonus_value_religion_junction'
          table_version='0'
-         guid='36340703-a8e0-4a8b-b186-fb66ddeb400a,
+         guid='2ed0f19f-091d-4546-8f07-b0bda920298c,
+               36340703-a8e0-4a8b-b186-fb66ddeb400a,
                3ac31a1f-f2cc-4bb6-9f68-cace938bc0fb,
+               a88b931e-8371-407d-8e9f-1cce90da0304,
                abf9947c-8725-4c35-970e-43b5ee148891,
+               fd5a529d-fb6d-4e94-b59b-430bfce896e2,
                2ed0f19f-091d-4546-8f07-b0bda920298c,
                a88b931e-8371-407d-8e9f-1cce90da0304,
                fd5a529d-fb6d-4e94-b59b-430bfce896e2'>
@@ -6542,6 +6636,16 @@
   <table table_name='effect_bonus_value_shot_type_junctions'
          table_version='0'
          guid='001b06ee-7fdd-4fde-9f3e-55ba4e10d205,
+               28ccfb81-cec5-4db3-890e-0041caea555a,
+               360a5e2c-36c4-413a-9b95-d1ab05b030eb,
+               4a7ed8a2-35ab-440d-8bae-091bad58509b,
+               6d3c4a52-39f7-4f3a-ba78-9d1da76e606f,
+               7915609c-3da9-4902-9c99-5a60cc7d0d95,
+               7e60cb4e-5009-4fc7-bf43-653dd1113682,
+               9a21032d-f682-4009-9209-54cdb0ccf36a,
+               bd3acf82-f385-41eb-89fd-1ecc3918cdd9,
+               bf8bb9d0-5a30-43de-b90a-2a775e6943c4,
+               c14e272c-d9bd-4532-8034-9296a397ab47,
                28ccfb81-cec5-4db3-890e-0041caea555a,
                6d3c4a52-39f7-4f3a-ba78-9d1da76e606f,
                9a21032d-f682-4009-9209-54cdb0ccf36a,
@@ -7535,6 +7639,7 @@
                76351b2a-410a-4736-8b12-a3c73e57131a,
                94ba3184-bbe3-4fbd-8f0c-852d9ffeac89,
                969d08b9-d48c-4df4-9e26-4ac9ec648323,
+               a4f6ccec-328f-4623-991a-f46b330fbb7e,
                b6f5a4e7-8dd6-4967-b04b-966cce0eb3e1,
                d38f3bad-528b-447e-b342-67cdb2e08afd,
                f59f8af5-6142-4e66-81b0-9f556d4b410a,
@@ -7727,10 +7832,11 @@
   <table table_name='stats'
          table_version='1'
          guid='107456fa-a6b9-45ff-89d8-bfe97730bd9d,
-               580a3d12-28b8-417d-a388-9b19530f69e6,
-               d7d183e8-e16e-48c4-a8d5-a6deca6c3657,
                2bddb7d9-1b46-45f9-9adc-4845701f5e17,
-               7766c68e-0c7d-4f7e-a339-156cead995ba'>
+               580a3d12-28b8-417d-a388-9b19530f69e6,
+               7766c68e-0c7d-4f7e-a339-156cead995ba,
+               d7d183e8-e16e-48c4-a8d5-a6deca6c3657,
+               2bddb7d9-1b46-45f9-9adc-4845701f5e17'>
     <field name='unknown1' type='string' pk='true' />
     <field name='unknown2' type='optstring' />
     <field name='unknown3' type='boolean' />
