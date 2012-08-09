@@ -33,6 +33,9 @@ namespace PackFileManager
                 currentPackFile.Modified += currentPackFile_Modified;
                 changePackTypeToolStripMenuItem.Enabled = currentPackFile != null;
                 exportFileListToolStripMenuItem.Enabled = currentPackFile != null;
+                
+                DBReferenceMap.Instance.CurrentPack = value;
+                
                 Refresh ();
             }
         }
@@ -380,7 +383,7 @@ namespace PackFileManager
                             result = true;
                             break;
                         case PackType.Movie:
-                            // exclude files named patch_moviesX.packk
+                            // exclude files named patch_moviesX.pack
                             var caMovieRe = new Regex("(patch_)?movies([0-9]*).pack");
                             result = !caMovieRe.IsMatch(Path.GetFileName(currentPackFile.Filepath));
                             break;
@@ -812,7 +815,7 @@ namespace PackFileManager
                 }
             } else if (packedFile.FullPath.StartsWith("db")) {
                 try {
-                    dbFileEditorControl.Open(packedFile, currentPackFile);
+                    dbFileEditorControl.Open(packedFile);
                     splitContainer1.Panel2.Controls.Add(dbFileEditorControl);
                 } catch (FileNotFoundException exception) {
                     MessageBox.Show(exception.Message, "DB Type not found", MessageBoxButtons.OK, MessageBoxIcon.Hand);
@@ -1051,7 +1054,7 @@ namespace PackFileManager
                     MessageBox.Show(message, "Update result", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 if (update) {
-                    GameManager.Instance.ApplyGameTypemap();
+                    GameManager.Instance.CurrentGame.ApplyGameTypemap();
                 }
                 if (version != Application.ProductVersion) {
                     if (MessageBox.Show(string.Format("A new version of PFM is available ({0})\nAutoinstall?", version),
@@ -1108,7 +1111,7 @@ namespace PackFileManager
                         packedFile.Data = codec.Encode(updatedFile);
 
                         if (dbFileEditorControl.CurrentPackedFile == packedFile) {
-                            dbFileEditorControl.Open(packedFile, currentPackFile);
+                            dbFileEditorControl.Open(packedFile);
                         }
                     }
                 }

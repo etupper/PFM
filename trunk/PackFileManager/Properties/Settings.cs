@@ -265,7 +265,7 @@
             }
         }
 
-        [DebuggerNonUserCode, DefaultSettingValue("STW"), UserScopedSetting]
+        [DebuggerNonUserCode, DefaultSettingValue(""), UserScopedSetting]
         public string CurrentGame {
             get {
                 return (string)this["CurrentGame"];

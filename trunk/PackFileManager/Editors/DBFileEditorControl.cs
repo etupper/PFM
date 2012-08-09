@@ -542,15 +542,15 @@ namespace PackFileManager {
 
         }
 
-        DataGridViewColumn createColumn(string columnName, FieldInfo fieldInfo, PackFile packFile, int fieldCount) 
+        DataGridViewColumn createColumn(string columnName, FieldInfo fieldInfo, int fieldCount) 
         {
             DataGridViewColumn column = null;
             if (Settings.Default.UseComboboxCells)
             {
                 try 
                 {
-                    SortedSet<string> items;
-                    items = DBReferenceMap.Instance.resolveFromPackFile(fieldInfo.ForeignReference, packFile);
+                    ICollection<string> items;
+                    items = DBReferenceMap.Instance.resolveReference(fieldInfo.ForeignReference);
 
                     if (items != null) 
                     {
@@ -589,7 +589,7 @@ namespace PackFileManager {
             return column;
         }
 
-        public void Open(PackedFile packedFile, PackFile packFile = null) {
+        public void Open(PackedFile packedFile) {
             copiedRows.Clear();
             copyToolStripButton.Enabled = true;
             pasteToolStripButton.Enabled = false;
@@ -642,7 +642,7 @@ namespace PackFileManager {
                             : Type.GetType("System." + info.fields[num].TypeCode)
                 };
                 currentDataTable.Columns.Add(column);
-                dataGridView.Columns.Add(createColumn(columnName, info.fields[num], packFile, info.fields.Count));
+                dataGridView.Columns.Add(createColumn(columnName, info.fields[num], info.fields.Count));
             }
 
             currentDataSet.Tables.Add(currentDataTable);
