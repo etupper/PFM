@@ -29,6 +29,11 @@ namespace Common {
                 return new SortedDictionary<GuidTypeInfo, List<FieldInfo>>(guidMap);
             }
         }
+        public bool Initialized {
+            get {
+                return typeMap.Count != 0 || guidMap.Count != 0;
+            }
+        }
 
         public void initializeTypeMap(string basePath) {
             foreach(string file in SCHEMA_FILENAMES) {

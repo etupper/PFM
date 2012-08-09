@@ -67,6 +67,7 @@ namespace PackFileManager {
         private ModManager() {
             mods = decodeMods(Settings.Default.ModList);
             GameManager.Instance.GameChanged += SetModGame;
+            SetCurrentMod(Settings.Default.CurrentMod);
         }
 
         private void SetModGame() {
@@ -147,6 +148,9 @@ namespace PackFileManager {
             set {
                 string modName = (value != null) ? value.Name : "";
                 Settings.Default.CurrentMod = modName;
+                if (!string.IsNullOrEmpty(modName)) {
+                    GameManager.Instance.CurrentGame = CurrentMod.Game;
+                }
                 if (CurrentModChanged != null) {
                     CurrentModChanged();
                 }
@@ -160,10 +164,7 @@ namespace PackFileManager {
             }
         }
         public void SetCurrentMod(string modname) {
-            Settings.Default.CurrentMod = modname;
-            if (CurrentModChanged != null) {
-                CurrentModChanged();
-            }
+            CurrentMod = FindByName(modname);
         }
         #endregion
   
@@ -203,25 +204,23 @@ namespace PackFileManager {
                 File.Copy(CurrentMod.FullModPath, targetFile, true);
                 
                 // add entry to user.script.txt if it's a mod file
-                using(BinaryReader reader = new BinaryReader(File.OpenRead(targetFile))) {
-                    PFHeader header = new PackFileCodec().readHeader(reader);
-                    if (header.Type == PackType.Mod) {
-                        string modEntry = CurrentMod.ModScriptFileEntry;
-                        string scriptFile = GameManager.Instance.CurrentGame.ScriptFile;
-                        List<string> linesToWrite = new List<string>();
-                        if (File.Exists(scriptFile)) {
-                            // retain all other mods in the script file; will add our mod afterwards
-                            foreach(string line in File.ReadAllLines(scriptFile, Encoding.Unicode)) {
-                                if (!line.Contains(modEntry)) {
-                                    linesToWrite.Add(line);
-                                }
+                PFHeader header = PackFileCodec.ReadHeader(targetFile);
+                if (header.Type == PackType.Mod) {
+                    string modEntry = CurrentMod.ModScriptFileEntry;
+                    string scriptFile = GameManager.Instance.CurrentGame.ScriptFile;
+                    List<string> linesToWrite = new List<string>();
+                    if (File.Exists(scriptFile)) {
+                        // retain all other mods in the script file; will add our mod afterwards
+                        foreach(string line in File.ReadAllLines(scriptFile, Encoding.Unicode)) {
+                            if (!line.Contains(modEntry)) {
+                                linesToWrite.Add(line);
                             }
                         }
-                        if (!linesToWrite.Contains(modEntry)) {
-                            linesToWrite.Add(modEntry);
-                        }
-                        File.WriteAllLines(scriptFile, linesToWrite, Encoding.Unicode);
                     }
+                    if (!linesToWrite.Contains(modEntry)) {
+                        linesToWrite.Add(modEntry);
+                    }
+                    File.WriteAllLines(scriptFile, linesToWrite, Encoding.Unicode);
                 }
             }
         }

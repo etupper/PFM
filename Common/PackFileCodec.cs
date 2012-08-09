@@ -55,8 +55,14 @@ namespace Common {
 			file.IsModified = false;
 			return file;
 		}
+
+        public static PFHeader ReadHeader(string filename) {
+            using (var reader = new BinaryReader(File.OpenRead(filename))) {
+                return readHeader(reader);
+            }
+        }
 		
-		public virtual PFHeader readHeader(BinaryReader reader) {
+		public static PFHeader readHeader(BinaryReader reader) {
 			PFHeader header;
 			string packIdentifier = new string (reader.ReadChars (4));
 			header = new PFHeader (packIdentifier);
