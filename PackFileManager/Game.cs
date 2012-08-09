@@ -26,7 +26,7 @@ namespace PackFileManager {
                 }
                 return dir;
             }
-        }
+        }        
         public string ScriptFile {
             get {
                 string result = Path.Combine(UserDir, "scripts", "user.script.txt");
@@ -36,15 +36,6 @@ namespace PackFileManager {
         public bool IsInstalled {
             get {
                 return Directory.Exists(GameDirectory);
-            }
-        }
-        public void CreateSchemaFile() {
-            if (IsInstalled && !File.Exists(SchemaFilename)) {
-                SchemaOptimizer optimizer = new SchemaOptimizer() {
-                    PackDirectory = Path.Combine(GameDirectory, "data"),
-                    SchemaFilename = SchemaFilename
-                };
-                optimizer.FilterExistingPacks();
             }
         }
         public string SchemaFilename {
@@ -98,6 +89,30 @@ namespace PackFileManager {
             } catch {}
             return str;
         }
+
+        #region Game-specific schema (typemap) handling
+        public void ApplyGameTypemap() {
+            string schemaFile = DBTypeMap.Instance.GetUserFilename(Id);
+            if (!File.Exists(schemaFile)) {
+                schemaFile = SchemaFilename;
+                if (!File.Exists(schemaFile)) {
+                    // rebuild from master schema
+                    DBTypeMap.Instance.initializeTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
+                    CreateSchemaFile();
+                }
+            }
+            DBTypeMap.Instance.initializeFromFile(schemaFile);
+        }
+        public void CreateSchemaFile() {
+            if (IsInstalled && !File.Exists(SchemaFilename)) {
+                SchemaOptimizer optimizer = new SchemaOptimizer() {
+                    PackDirectory = Path.Combine(GameDirectory, "data"),
+                    SchemaFilename = SchemaFilename
+                };
+                optimizer.FilterExistingPacks();
+            }
+        }
+        #endregion
     }
 
     public class GameManager {
@@ -106,7 +121,22 @@ namespace PackFileManager {
         
         public static readonly GameManager Instance = new GameManager();
         private GameManager() {
-            CurrentGame = Game.ById(Settings.Default.CurrentGame);
+            string gameName = Settings.Default.CurrentGame;
+            if (!string.IsNullOrEmpty(gameName)) {
+                CurrentGame = Game.ById(gameName);
+            }
+            foreach(Game game in Game.GetGames()) {
+                if (CurrentGame != null) {
+                    break;
+                }
+                if (game.IsInstalled) {
+                    CurrentGame = game;
+                }
+            }
+            // no game installed?
+            if (CurrentGame == null) {
+                CurrentGame = Game.STW;
+            }
         }
         
         Game current;
@@ -120,24 +150,76 @@ namespace PackFileManager {
                     if (GameChanged != null) {
                         GameChanged();
                     }
-                    Settings.Default.CurrentGame = current.Id;
-
-                    ApplyGameTypemap();
+                    if (current != null) {
+                        Settings.Default.CurrentGame = current.Id;
+         
+                        // load the appropriate type map
+                        current.ApplyGameTypemap();
+    
+                        // invalidate cache of reference map cache
+                        List<PackFile> loaded = new PackLoadSequence() {
+                            IgnorePack = PackLoadSequence.IsDbCaPack
+                        }.GetPacksLoadedFrom(CurrentGame.GameDirectory);
+                        DBReferenceMap.Instance.GamePacks = loaded;
+                    }
                 }
             }
         }
-
-        public void ApplyGameTypemap() {
-            DBTypeMap.Instance.initializeTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
-            string schemaFile = DBTypeMap.Instance.GetUserFilename(current.Id);
-            if (!File.Exists(schemaFile)) {
-                schemaFile = current.SchemaFilename;
-                if (!File.Exists(schemaFile)) {
-                    current.CreateSchemaFile();
-                }
+    }
+    
+    public class PackLoadSequence {
+        private Predicate<PackFile> ignore;
+        public Predicate<PackFile> IgnorePack {
+            get { 
+                return ignore != null ? ignore : Keep;
             }
-            DBTypeMap.Instance.initializeFromFile(schemaFile);
+            set {
+                ignore = (value != null) ? value : Keep;
+            }
         }
+        
+        public List<PackFile> GetPacksLoadedFrom(string directory) {
+            List<PackFile> result = new List<PackFile>();
+            if (Directory.Exists(directory)) {
+                // remove obsoleted packs
+                List<string> obsoleted = new List<string>();
+                foreach (string filename in Directory.EnumerateFiles(directory, "*pack")) {
+                    PackFile pack = new PackFileCodec().Open(filename);
+                    if (!IgnorePack(pack)) {
+                        result.Add(pack);
+                        foreach (string replacedFile in pack.Header.ReplacedPackFileNames) {
+                            obsoleted.Add(Path.Combine(directory, replacedFile));
+                        }
+                    }
+                }
+                result.RemoveAll(delegate(PackFile pack) {
+                    return obsoleted.Contains(pack.Filepath);
+                });
+                result.Sort(LoadOrder);
+            }
+            return result;
+        }
+        
+        #region Pack filtering
+        static bool Keep(PackFile f) { return false; }
+        public static bool IsDbCaPack(PackFile pack) {
+            bool result = (pack.Type == PackType.Patch) || (pack.Type == PackType.Release);
+            return result;
+        }
+        #endregion
+  
+        #region Pack load order
+        private static List<PackType> Ordered = new List<PackType>(new PackType[] {
+            PackType.Boot, PackType.BootX, PackType.Shader1, PackType.Shader2,
+            PackType.Release, PackType.Patch,
+            PackType.Mod, PackType.Movie
+        });
+        static int LoadOrder(PackFile p1, PackFile p2) {
+            int index1 = Ordered.IndexOf(p1.Header.Type);
+            int index2 = Ordered.IndexOf(p2.Header.Type);
+            return index2 - index1;
+        }
+        #endregion
     }
 }
 

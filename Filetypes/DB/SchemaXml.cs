@@ -11,6 +11,10 @@ namespace Common {
         // table to contained fields
         public SortedDictionary<string, List<FieldInfo>> descriptions = new SortedDictionary<string, List<FieldInfo>>();
         public SortedDictionary<GuidTypeInfo, List<FieldInfo>> guidToDescriptions = new SortedDictionary<GuidTypeInfo, List<FieldInfo>>();
+        
+        private static string[] GUID_SEPARATOR = { "," };
+        
+        public static readonly string GUID_TAG = "guid";
 
         TextReader reader;
         public XmlImporter (Stream stream) {
@@ -38,14 +42,18 @@ namespace Common {
                         }
                         descriptions.Add(id, fields);
                     } else {
-                        id = tableNode.Attributes["guid"].Value.Trim();
-                        string table_name = tableNode.Attributes["table_name"].Value.Trim();
-                        string table_version = tableNode.Attributes["table_version"].Value.Trim();
-                        GuidTypeInfo info = new GuidTypeInfo(id, table_name, int.Parse(table_version));
-                        if (!guidToDescriptions.ContainsKey(info)) {
-                            guidToDescriptions.Add(info, fields);
-                        } else {
-                            verifyEquality = true;
+                        id = tableNode.Attributes[GUID_TAG].Value.Trim();
+                        string[] guids = id.Split(GUID_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
+                        foreach(string s in guids) {
+                            string guid = s.Trim();
+                            string table_name = tableNode.Attributes["table_name"].Value.Trim();
+                            string table_version = tableNode.Attributes["table_version"].Value.Trim();
+                            GuidTypeInfo info = new GuidTypeInfo(guid, table_name, int.Parse(table_version));
+                            if (!guidToDescriptions.ContainsKey(info)) {
+                                guidToDescriptions.Add(info, fields);
+                            } else {
+                                verifyEquality = true;
+                            }
                         }
                     }
 
@@ -58,21 +66,25 @@ namespace Common {
 						fields.Add (field);
 					}
 
-                    // defensive code block; might as well take it out.
+                    // defensive code block.
                     // used when the guid part was first introduced to make sure that
                     // guids didn't get shared across games
                     if (verifyEquality) {
-                        id = tableNode.Attributes["guid"].Value.Trim();
+                        id = tableNode.Attributes[GUID_TAG].Value.Trim();
                         string table_name = tableNode.Attributes["table_name"].Value.Trim();
                         string table_version = tableNode.Attributes["table_version"].Value.Trim();
-                        GuidTypeInfo info = new GuidTypeInfo(id, table_name, int.Parse(table_version));
-                        List<FieldInfo> existing = guidToDescriptions[info];
-                        if (!Enumerable.SequenceEqual<FieldInfo>(fields, existing)) {
-                            Console.WriteLine("{0} was:", info.Guid);
-                            existing.ForEach(f => Console.WriteLine(f));
-                            Console.WriteLine("is:");
-                            fields.ForEach(f => Console.WriteLine(f));
-                            throw new InvalidDataException();
+                        string[] guids = id.Split(GUID_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
+                        foreach(string s in guids) {
+                            string guid = s.Trim();
+                            GuidTypeInfo info = new GuidTypeInfo(guid, table_name, int.Parse(table_version));
+                            List<FieldInfo> existing = guidToDescriptions[info];
+                            if (!Enumerable.SequenceEqual<FieldInfo>(fields, existing)) {
+                                Console.WriteLine("{0} was:", info.Guid);
+                                existing.ForEach(f => Console.WriteLine(f));
+                                Console.WriteLine("is:");
+                                fields.ForEach(f => Console.WriteLine(f));
+                                throw new InvalidDataException();
+                            }
                         }
                     }
 
@@ -124,15 +136,35 @@ namespace Common {
         public void export(SortedDictionary<string, List<FieldInfo>> nameMap, SortedDictionary<GuidTypeInfo, List<FieldInfo>> guidMap) {
 			writer.WriteLine ("<schema>");
             writeTables(nameMap, new VersionedTableInfoFormatter());
-            writeTables(guidMap, new GuidTableInfoFormatter());
+            SortedDictionary<List<GuidTypeInfo>, List<FieldInfo>> cleaned = CompileSameDefinitions(guidMap);
+            writeTables(cleaned, new GuidTableInfoFormatter());
 			writer.WriteLine ("</schema>");
 			writer.Close ();
 		}
         
+        private SortedDictionary<List<GuidTypeInfo>, List<FieldInfo>> CompileSameDefinitions(SortedDictionary<GuidTypeInfo, List<FieldInfo>> guidMap) {
+            SortedDictionary<List<GuidTypeInfo>, List<FieldInfo>> result = 
+                new SortedDictionary<List<GuidTypeInfo>, List<FieldInfo>>(GuidListComparer.Instance);
+            foreach(GuidTypeInfo guid in guidMap.Keys) {
+                List<GuidTypeInfo> addTo = new List<GuidTypeInfo>();
+                List<FieldInfo> typeDef = guidMap[guid];
+
+                foreach(List<GuidTypeInfo> guids in result.Keys) {
+                    if (Enumerable.SequenceEqual<FieldInfo>(typeDef, result[guids])) {
+                        addTo = guids;
+                        break;
+                    }
+                }
+
+                addTo.Add (guid);
+                addTo.Sort();
+                result[addTo] = typeDef;
+            }
+            return result;
+        }
+        
         private void writeTables<T>(SortedDictionary<T, List<FieldInfo>> tableDescriptions, TableInfoFormatter<T> formatter) {
-            List<T> sorted = new List<T> (tableDescriptions.Keys);
-            sorted.Sort ();
-            foreach (T name in sorted) {
+            foreach (T name in tableDescriptions.Keys) {
                 List<FieldInfo> descriptions = tableDescriptions[name];
                 writeTable(name, descriptions, formatter);
             }
@@ -171,7 +203,9 @@ namespace Common {
             using (StreamReader reader = new StreamReader(new MemoryStream())) {
                 XmlExporter exporter = new XmlExporter(reader.BaseStream);
                 exporter.writeTable(name, description, new VersionedTableInfoFormatter());
-                exporter.writeTable(guid, description, new GuidTableInfoFormatter());
+                List<GuidTypeInfo> info = new List<GuidTypeInfo>();
+                info.Add(guid);
+                exporter.writeTable(info, description, new GuidTableInfoFormatter());
                 reader.BaseStream.Position = 0;
                 result = reader.ReadToEnd();
             }
@@ -212,14 +246,30 @@ namespace Common {
             return string.Format("  <table name='{0}_tables'>", type); 
         }
     }
-    class GuidTableInfoFormatter : TableInfoFormatter<GuidTypeInfo> {
-        static string HEADER_FORMAT = "  <table guid='{0}'\n" +
-            "         table_name='{1}'\n" +
-            "         table_version='{2}'>";
-        public override string FormatHeader(GuidTypeInfo info) {
-            return string.Format(HEADER_FORMAT, info.Guid, info.TypeName, info.Version);
+    class GuidTableInfoFormatter : TableInfoFormatter<List<GuidTypeInfo>> {
+        static string HEADER_FORMAT = "  <table table_name='{1}'\n" +
+            "         table_version='{2}'\n" +
+            "         " + XmlImporter.GUID_TAG +"='{0}'>";
+        static string GUID_SEPARATOR = ",\n               ";
+        public override string FormatHeader(List<GuidTypeInfo> info) {
+            List<string> guidList = new List<string>(info.Count);
+            info.ForEach(i => { guidList.Add(i.Guid); });
+            return string.Format(HEADER_FORMAT, string.Join(GUID_SEPARATOR, guidList), info[0].TypeName, info[0].Version);
         }
     }
     #endregion
+    
+    public class GuidListComparer : Comparer<List<GuidTypeInfo>> {
+        public static readonly GuidListComparer Instance = new GuidListComparer();
+        
+        public override int Compare(List<GuidTypeInfo> x, List<GuidTypeInfo> y) {
+            if (x.Count == 0) {
+                return y.Count == 0 ? 0 : 1;
+            } else  if (y.Count == 0) {
+                return -1;
+            }
+            return x[0].CompareTo(y[0]);
+        }
+    }
 }
 

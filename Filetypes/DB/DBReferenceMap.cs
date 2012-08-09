@@ -8,12 +8,13 @@ namespace Common {
     public class DBReferenceMap {
         public static readonly DBReferenceMap Instance = new DBReferenceMap();
         Dictionary<string, SortedSet<string>> valueCache = new Dictionary<string, SortedSet<string>>();
+        Dictionary<string, SortedSet<string>> gamePackCache = new Dictionary<string, SortedSet<string>>();
         PackFile lastPack = null;
 
         private DBReferenceMap() {
         }
 
-        PackFile LastPack {
+        public PackFile CurrentPack {
             get { return lastPack; }
             set {
                 if ((value != null && lastPack != null) &&
@@ -22,6 +23,14 @@ namespace Common {
                     valueCache.Clear();
                 }
                 lastPack = value;
+            }
+        }
+        List<PackFile> gamePacks = new List<PackFile>();
+        public List<PackFile> GamePacks {
+            get { return gamePacks; }
+            set {
+                gamePacks = value != null ? value : new List<PackFile>();
+                gamePackCache.Clear();
             }
         }
 
@@ -56,11 +65,8 @@ namespace Common {
         }
 
         SortedSet<string> collectValues(string reference, PackFile pack) {
-            if (pack != lastPack) {
-                lastPack = pack;
-            }
             SortedSet<string> result = new SortedSet<string>();
-            if (valueCache.TryGetValue(reference, out result)) {
+            if (pack == null) {
                 return result;
             }
             string[] split = reference.Split('.');
@@ -94,16 +100,33 @@ namespace Common {
                     }
                 }
             }
-            valueCache.Add(reference, result);
             return result;
         }
 
-        public SortedSet<string> resolveFromPackFile(string key, PackFile packFile) {
-            LastPack = packFile;
+        public SortedSet<string> resolveReference(string key) {
             if (key.Length == 0) {
                 return null;
             }
-            return collectValues(key, packFile);
+            List<string> result = new List<string>();
+            SortedSet<string> fromPack = new SortedSet<string>();
+            if (!valueCache.TryGetValue(key, out fromPack)) {
+                fromPack = collectValues(key, CurrentPack);
+                valueCache.Add(key, fromPack);
+            }
+            result.AddRange(fromPack);
+
+            SortedSet<string> fromGame;
+            if (!gamePackCache.TryGetValue(key, out fromGame)) {
+                List<string> values = new List<string>();
+                foreach(PackFile pack in gamePacks) {
+                    values.AddRange(collectValues(key, pack));
+                }
+                fromGame = new SortedSet<string>(values);
+            }
+            result.AddRange(fromGame);
+            
+            SortedSet<string> resultSet = new SortedSet<string>(result);
+            return resultSet;
         }
     }
 }
