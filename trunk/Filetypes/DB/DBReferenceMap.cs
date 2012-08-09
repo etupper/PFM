@@ -65,10 +65,7 @@ namespace Common {
         }
 
         SortedSet<string> collectValues(string reference, PackFile pack) {
-            SortedSet<string> result = new SortedSet<string>();
-            if (pack == null) {
-                return result;
-            }
+            SortedSet<string> result = null;
             string[] split = reference.Split('.');
             string tableName = split[0];
             string fieldName = split[1];
@@ -113,17 +110,23 @@ namespace Common {
                 fromPack = collectValues(key, CurrentPack);
                 valueCache.Add(key, fromPack);
             }
-            result.AddRange(fromPack);
+            if (fromPack != null) {
+                result.AddRange(fromPack);
+            }
 
             SortedSet<string> fromGame;
             if (!gamePackCache.TryGetValue(key, out fromGame)) {
-                List<string> values = new List<string>();
                 foreach(PackFile pack in gamePacks) {
-                    values.AddRange(collectValues(key, pack));
+                    fromGame = collectValues(key, pack);
+                    if (fromGame != null) {
+                        gamePackCache.Add(key, fromGame);
+                        break;
+                    }
                 }
-                fromGame = new SortedSet<string>(values);
             }
-            result.AddRange(fromGame);
+            if (fromGame != null) {
+                result.AddRange(fromGame);
+            }
             
             SortedSet<string> resultSet = new SortedSet<string>(result);
             return resultSet;

@@ -80,6 +80,16 @@ namespace PackFileManager
 
         public PackFileManagerForm (string[] args) {
             InitializeComponent();
+            try {
+                if (!DBTypeMap.Instance.Initialized) {
+                    DBTypeMap.Instance.initializeTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
+                }
+            } catch (Exception e) {
+                if (MessageBox.Show(string.Format("Could not initialize type map: {0}.\nTry autoupdate?", e.Message),
+                    "Initialize failed", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes) {
+                    tryUpdate();
+                }
+            }
 
             updateOnStartupToolStripMenuItem.Checked = Settings.Default.UpdateOnStartup;
             showDecodeToolOnErrorToolStripMenuItem.Checked = Settings.Default.ShowDecodeToolOnError;
@@ -109,14 +119,6 @@ namespace PackFileManager
             }
             dbFileEditorControl = control;
 
-            // initialize MyMods menu
-            modsToolStripMenuItem.DropDownItems.Add(new ModMenuItem("None", ""));
-            ModManager.Instance.ModNames.ForEach(name => modsToolStripMenuItem.DropDownItems.Add(new ModMenuItem(name, name)));
-            ModManager.Instance.CurrentModChanged += delegate() { OpenCurrentModPack(); };
-            if (args.Length == 0) {
-                OpenCurrentModPack();
-            }
-
             // fill CA file list
             FillCaPackMenu();
             GameManager.Instance.GameChanged += FillCaPackMenu;
@@ -142,6 +144,14 @@ namespace PackFileManager
             };
             enableMenuItem();
             ModManager.Instance.CurrentModChanged += enableMenuItem;
+
+            // initialize MyMods menu
+            modsToolStripMenuItem.DropDownItems.Add(new ModMenuItem("None", ""));
+            ModManager.Instance.ModNames.ForEach(name => modsToolStripMenuItem.DropDownItems.Add(new ModMenuItem(name, name)));
+            ModManager.Instance.CurrentModChanged += delegate() { OpenCurrentModPack(); };
+            if (args.Length == 0) {
+                OpenCurrentModPack();
+            }
 
             csvToolStripMenuItem.Checked = "csv".Equals(Settings.Default.TsvExtension);
             tsvToolStripMenuItem.Checked = "tsv".Equals(Settings.Default.TsvExtension);

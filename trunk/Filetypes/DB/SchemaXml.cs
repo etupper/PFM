@@ -150,6 +150,9 @@ namespace Common {
                 List<FieldInfo> typeDef = guidMap[guid];
 
                 foreach(List<GuidTypeInfo> guids in result.Keys) {
+                    if (!guids[0].TypeName.Equals(guid.TypeName)) {
+                        continue;
+                    }
                     if (Enumerable.SequenceEqual<FieldInfo>(typeDef, result[guids])) {
                         addTo = guids;
                         break;

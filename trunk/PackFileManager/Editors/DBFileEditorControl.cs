@@ -42,7 +42,6 @@ namespace PackFileManager {
         public DBFileEditorControl () {
             components = null;
             InitializeComponent ();
-            initTypeMap (Path.GetDirectoryName (Application.ExecutablePath));
             dataGridView.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             dataGridView.ColumnHeaderMouseClick += dataGridView1_ColumnHeaderMouseClick;
             try {
@@ -142,17 +141,6 @@ namespace PackFileManager {
             EditedFile.Entries.Add(newEntry);
             currentDataTable.Rows.Add(row);
             dataGridView.FirstDisplayedScrollingRowIndex = dataGridView.RowCount - 1;
-        }
-
-        private void initTypeMap(string path) {
-            try {
-                DBTypeMap.Instance.initializeTypeMap(path);
-            } catch (Exception e) {
-                if (MessageBox.Show(string.Format("Could not initialize type map: {0}.\nTry autoupdate?", e.Message),
-                    "Initialize failed", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes) {
-                    PackFileManagerForm.tryUpdate();
-                }
-            }
         }
 
         #region Copy/Paste
