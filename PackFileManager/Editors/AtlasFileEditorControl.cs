@@ -51,9 +51,10 @@
             this.olv = this.objectListView1;
             this.olv.CellEditFinishing += new CellEditEventHandler(this.olv_CellEditFinishing);
         }
-        
+
+        string[] EXTENSIONS = { ".atlas" };
         public override bool CanEdit(PackedFile file) {
-            return file.FullPath.EndsWith(".atlas");
+            return HasExtension(file, EXTENSIONS);
         }
 
         public override AtlasFile EditedFile {

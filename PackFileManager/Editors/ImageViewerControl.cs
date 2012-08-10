@@ -28,15 +28,58 @@
             button2.MouseHover += Button2MouseHover;
             button3.MouseHover += Button3MouseHover;
         }
-        
+
+        static string[] EXTENSIONS = {
+            ".tga",
+            ".dds",
+            ".png",
+            ".jpg",
+            ".bmp",
+            ".psd"
+                                     };
         public override bool CanEdit(PackedFile packedFile) {
-            bool result = (packedFile.FullPath.Contains(".tga") || 
-                       packedFile.FullPath.Contains(".dds") || 
-                       packedFile.FullPath.Contains(".png") || 
-                       packedFile.FullPath.Contains(".jpg") || 
-                       packedFile.FullPath.Contains(".bmp") || 
-                       packedFile.FullPath.Contains(".psd"));
-            return result;
+            return HasExtension(packedFile, EXTENSIONS);
+        }
+
+        public override Bitmap EditedFile {
+            get {
+                return base.EditedFile;
+            }
+            set {
+                button2.Enabled = false;
+                button2.Click -= Button2Click;
+                button3.Enabled = false;
+                button3.Click -= Button3Click;
+                pictureBox1.Enabled = false;
+
+                try {
+                    base.EditedFile = value;
+                    if (pictureBox1.Image != null) {
+                        pictureBox1.Image.Dispose();
+                    }
+
+                    pictureBox1.Image = EditedFile;
+                    pictureBox1.Enabled = true;
+                    pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+                } catch (Exception e) {
+                    MessageBox.Show(string.Format("Error opening image file. \r\n FreeImage error : {0}", e.Message),
+                                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        public override PackedFile CurrentPackedFile {
+            get {
+                return base.CurrentPackedFile;
+            }
+            set {
+                if (value != null) {
+                    string filePath = Path.GetExtension(value.FullPath).Replace(".", "");
+                    (codec as BitmapCodec).Format = filePath;
+                    button1.Enabled = filePath.EndsWith(".dds");
+                }
+                base.CurrentPackedFile = value;
+            }
         }
 
         private void Button1Click(object sender, EventArgs e) {
@@ -188,47 +231,6 @@
             ResumeLayout(false);
         }
         
-        public override Bitmap EditedFile {
-            get {
-                return base.EditedFile;
-            }
-            set {
-                button2.Enabled = false;
-                button2.Click -= Button2Click;
-                button3.Enabled = false;
-                button3.Click -= Button3Click;
-                pictureBox1.Enabled = false;
-                
-                try {
-                    base.EditedFile = value;
-                    if (pictureBox1.Image != null) {
-                        pictureBox1.Image.Dispose();
-                    }
-                    
-                    pictureBox1.Image = EditedFile;
-                    pictureBox1.Enabled = true;
-                    pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-                } catch (Exception e) {
-                    MessageBox.Show(string.Format("Error opening image file. \r\n FreeImage error : {0}", e.Message), 
-                                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-        
-        public override PackedFile CurrentPackedFile {
-            get {
-                return base.CurrentPackedFile;
-            }
-            set {
-                if (value != null) {
-                    string filePath = Path.GetExtension(value.FullPath).Replace(".", "");
-                    (codec as BitmapCodec).Format = filePath;
-                    button1.Enabled = filePath.EndsWith(".dds");
-                }
-                base.CurrentPackedFile = value;
-            }
-        }
-
         public void SetImage(byte[] data, string filePath) {
             button3.Enabled = false;
             button3.MouseHover += Button3MouseHover;

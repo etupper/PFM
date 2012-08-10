@@ -51,9 +51,10 @@ namespace PackFileManager
                 this.dataGridView.Columns.Add (column);
             }
         }
-        
+
+        static string[] EXTENSIONS = { ".loc" };
         public override bool CanEdit(PackedFile file) {
-            return file.FullPath.EndsWith(".loc");
+            return HasExtension(file, EXTENSIONS);
         }
 
         private void addNewRowButton_Click(object sender, EventArgs e) {

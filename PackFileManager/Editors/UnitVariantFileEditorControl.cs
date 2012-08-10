@@ -50,9 +50,10 @@
         public UnitVariantFileEditorControl (PackedFile packedFile) : this() {
 			this.CurrentPackedFile = packedFile;
         }
-        
+
+        string[] EXTENSIONS = { ".unit_variant" };
         public override bool CanEdit(PackedFile file) {
-            return file.FullPath.EndsWith(".unit_variant");
+            return HasExtension(file, EXTENSIONS);
         }
 
         public override UnitVariantFile EditedFile {

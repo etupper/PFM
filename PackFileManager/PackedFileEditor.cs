@@ -81,5 +81,18 @@ namespace PackFileManager {
                 }
             }
         }
+
+        public static bool HasExtension(PackedFile file, string[] extensions) {
+            bool result = false;
+            if (file != null) {
+                foreach (string ext in extensions) {
+                    if (Path.GetExtension(file.FullPath).Equals(ext)) {
+                        result = true;
+                        break;
+                    }
+                }
+            }
+            return result;
+        }
     }
 }
