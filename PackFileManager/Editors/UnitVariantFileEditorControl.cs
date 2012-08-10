@@ -50,6 +50,10 @@
         public UnitVariantFileEditorControl (PackedFile packedFile) : this() {
 			this.CurrentPackedFile = packedFile;
         }
+        
+        public override bool CanEdit(PackedFile file) {
+            return file.FullPath.EndsWith(".unit_variant");
+        }
 
         public override UnitVariantFile EditedFile {
             get { return base.EditedFile; }
@@ -98,15 +102,18 @@
                 OLVListItem item = (OLVListItem) this.treeListView1.Items[i];
                 if (item.RowObject is UnitVariantObject) {
                     UnitVariantObject rowObject = (UnitVariantObject) item.RowObject;
-                    strings.Add(rowObject.ModelPart.ToString() + "\t" + rowObject.Index.ToString() + "\t" + rowObject.Num2.ToString() + "\t" + rowObject.EntryCount.ToString() + "\t" + rowObject.MeshStartIndex.ToString());
+                    strings.Add(rowObject.ModelPart.ToString() + "\t" + rowObject.Index.ToString() + "\t" + 
+                                rowObject.Num2.ToString() + "\t" + rowObject.EntryCount.ToString() + "\t" + 
+                                rowObject.MeshStartIndex.ToString());
                     if (rowObject.MeshTextureList != null) {
                         foreach (MeshTextureObject obj3 in rowObject.MeshTextureList) {
-                            strings.Add("\t\t\t\t\t" + obj3.Mesh + "\t" + obj3.Texture + "\t" + obj3.Bool1.ToString() + "\t" + obj3.Bool2.ToString());
+                            strings.Add("\t\t\t\t\t" + obj3.Mesh + "\t" + obj3.Texture + "\t" + obj3.Bool1.ToString() + "\t" + 
+                                        obj3.Bool2.ToString());
                         }
                     }
                 }
             }
-            IOFunctions.writeToTSVFile(strings);
+            WriteToTSVFile(strings);
         }
 
         private void InitializeComponent() {
@@ -165,7 +172,10 @@
             this.treeListView1.AllColumns.Add(this.olvColumn9);
             this.treeListView1.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Top;
             this.treeListView1.CellEditActivation = ObjectListView.CellEditActivateMode.DoubleClick;
-            this.treeListView1.Columns.AddRange(new ColumnHeader[] { this.olvColumn1, this.olvColumn2, this.olvColumn3, this.olvColumn4, this.olvColumn5, this.olvColumn6, this.olvColumn7, this.olvColumn8, this.olvColumn9 });
+            this.treeListView1.Columns.AddRange(new ColumnHeader[] { this.olvColumn1, this.olvColumn2, 
+                this.olvColumn3, this.olvColumn4, 
+                this.olvColumn5, this.olvColumn6, 
+                this.olvColumn7, this.olvColumn8, this.olvColumn9 });
             this.treeListView1.Cursor = Cursors.Default;
             this.treeListView1.HeaderStyle = ColumnHeaderStyle.Nonclickable;
             this.treeListView1.Location = new Point(0, 0x19);
@@ -329,7 +339,8 @@
         private void removeReference_Click(object sender, EventArgs e) {
             MeshTextureObject selectedObject = (MeshTextureObject) this.treeListView1.SelectedObject;
             UnitVariantObject parent = (UnitVariantObject) this.treeListView1.GetParent(this.treeListView1.SelectedObject);
-            int index = this.treeListView1.IndexOf(this.treeListView1.SelectedObject) - this.treeListView1.IndexOf(this.treeListView1.GetParent(this.treeListView1.SelectedObject));
+            int index = this.treeListView1.IndexOf(this.treeListView1.SelectedObject) - 
+                this.treeListView1.IndexOf(this.treeListView1.GetParent(this.treeListView1.SelectedObject));
             this.EditedFile.removeMTO(parent, selectedObject, index);
             this.treeListView1.RemoveObject(this.treeListView1.SelectedObject);
             this.treeListView1.RefreshObjects(this.EditedFile.UnitVariantObjects);
@@ -362,7 +373,8 @@
         }
 
         private void richTextBox3_MouseHover(object sender, EventArgs e) {
-            new ToolTip().SetToolTip(this.richTextBox3, "Unknown two byte sequence [B1B2] expressed as an unsigned integer value. (Editable)");
+            new ToolTip().SetToolTip(this.richTextBox3, 
+                                     "Unknown two byte sequence [B1B2] expressed as an unsigned integer value. (Editable)");
         }
 
         private void richTextBox3_TextChanged(object sender, EventArgs e) {
@@ -371,11 +383,13 @@
         }
 
         private void richTextBox4_MouseHover(object sender, EventArgs e) {
-            new ToolTip().SetToolTip(this.richTextBox4, "First byte [B1] in an unknown two byte sequence [B1B2] expressed as an unsigned integer value. (Uneditable)");
+            new ToolTip().SetToolTip(this.richTextBox4, 
+                                     "First byte [B1] in an unknown two byte sequence [B1B2] expressed as an unsigned integer value. (Uneditable)");
         }
 
         private void richTextBox5_MouseHover(object sender, EventArgs e) {
-            new ToolTip().SetToolTip(this.richTextBox5, "Second byte [B2] in an unknown two byte sequence [B1B2] expressed as an unsigned integer value. (Uneditable)");
+            new ToolTip().SetToolTip(this.richTextBox5, 
+                                     "Second byte [B2] in an unknown two byte sequence [B1B2] expressed as an unsigned integer value. (Uneditable)");
         }
 
         public void richTextBox6_Click(object sender, EventArgs e) {
@@ -415,11 +429,6 @@
                     this.olvColumn7.Width = (int) num2;
                 }
             }
-        }
-
-        public void SetData() {
-			this.CurrentPackedFile.Data = UnitVariantCodec.Encode (EditedFile);
-            this.DataChanged = false;
         }
 
         private void treeListView1_CellEditFinishing(object sender, CellEditEventArgs e) {
@@ -555,12 +564,6 @@
                     this.removeModelPartToolStripMenuItem.Enabled = true;
                     this.insertModelPartToolStripMenuItem.Enabled = true;
                 }
-            }
-        }
-
-        public void Commit() {
-            if (this.DataChanged) {
-                this.SetData();
             }
         }
     }

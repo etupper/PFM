@@ -7,7 +7,7 @@
     using System.Text.RegularExpressions;
     using System.Windows.Forms;
 
-    public class customMessageBox : Form
+    public class CustomMessageBox : Form
     {
         private Button btnCancel;
         private Button btnNext;
@@ -19,14 +19,14 @@
         private IContainer components = null;
         private List<bool>[] equalsList;
         public Label lblMessage;
-        public static customMessageBox newMessageBox;
+        public static CustomMessageBox newMessageBox;
         public TreeNode nextNode;
         public List<TreeNode> tnList = new List<TreeNode>();
         public int tnSelected;
         private TextBox txtSearch;
         private string[] wordList;
 
-        public customMessageBox()
+        public CustomMessageBox()
         {
             this.InitializeComponent();
             base.Size = new Size(600, 150);
@@ -244,7 +244,7 @@
 
         public static string ShowBox(string txtMessage, string txtTitle)
         {
-            newMessageBox = new customMessageBox();
+            newMessageBox = new CustomMessageBox();
             newMessageBox.btnNext.Visible = false;
             newMessageBox.btnPrev.Visible = false;
             newMessageBox.btnSearch.Visible = false;

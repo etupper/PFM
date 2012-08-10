@@ -301,7 +301,7 @@ namespace DecodeTool {
         }
 
         private void showTypes_Click(object sender, EventArgs e) {
-            string text = XmlExporter.tableToString(TypeName, GuidInfo, types);
+            string text = XmlExporter.TableToString(GuidInfo, types);
 			TextDisplay d = new TextDisplay (text);
 			d.ShowDialog ();
 		}
@@ -358,7 +358,7 @@ namespace DecodeTool {
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 using (FileStream stream = File.OpenWrite(dlg.FileName)) {
                     XmlExporter exporter = new XmlExporter(stream);
-                    exporter.export(DBTypeMap.Instance.TypeMap, DBTypeMap.Instance.GuidMap);
+                    exporter.Export(DBTypeMap.Instance.TypeMap, DBTypeMap.Instance.GuidMap);
                 }
             }
         }
