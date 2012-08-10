@@ -19,19 +19,12 @@
             richTextBox1.TextChanged += (b, e) => DataChanged = true;
         }
 
-        public override bool CanEdit(PackedFile file) {
-            string[] extensions = { "txt", "lua", "csv", "fx", "fx_fragment", 
-                "h", "battle_script", "xml", 
-                "tai", "xml.rigging", "placement", "hlsl"
+        string[] EXTENSIONS = { ".txt", ".lua", ".csv", ".fx", ".fx_fragment", 
+                ".h", ".battle_script", ".xml", 
+                ".tai", ".xml.rigging", ".placement", ".hlsl"
             };
-            bool result = false;
-            foreach (string ext in extensions) {
-                if (file.FullPath.EndsWith(ext)) {
-                    result = true;
-                    break;
-                }
-            }
-            return result;
+        public override bool CanEdit(PackedFile file) {
+            return HasExtension(file, EXTENSIONS);
         }
         
         public override string EditedFile {

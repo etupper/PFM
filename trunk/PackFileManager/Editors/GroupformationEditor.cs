@@ -14,7 +14,7 @@ namespace PackFileManager {
         List<GroupformationEditorControl> Editors = new List<GroupformationEditorControl>();
         
         public override bool CanEdit(PackedFile file) {
-            return file.FullPath.EndsWith("groupformations.bin");
+            return file != null && file.FullPath.EndsWith("groupformations.bin");
         }
         
         protected override bool DataChanged {

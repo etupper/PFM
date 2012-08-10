@@ -26,6 +26,8 @@ namespace PackFileManager
             set {
                 // register previous and build tree
                 currentPackFile = value;
+                RefreshTitle();
+                EnableMenuItems();
                 currentPackFile.Modified += RefreshTitle;
                 currentPackFile.Modified += EnableMenuItems;
 
@@ -569,6 +571,7 @@ namespace PackFileManager
                 Uri createPath = baseUri.MakeRelativeUri(new Uri(file));
                 addBase = createPath.ToString().Replace('/', Path.DirectorySeparatorChar);
                 addBase = addBase.Remove(0, addBase.IndexOf(Path.DirectorySeparatorChar) + 1);
+                addBase = Uri.UnescapeDataString(addBase);
             }
             return addBase;
         }
