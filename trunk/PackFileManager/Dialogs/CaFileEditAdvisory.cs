@@ -5,7 +5,7 @@
     using System.Drawing;
     using System.Windows.Forms;
 
-    public class caFileEditAdvisory : Form
+    public class CaFileEditAdvisory : Form
     {
         private Button button1;
         private Button button2;
@@ -14,7 +14,7 @@
         private Label label2;
         private LinkLabel linkLabel1;
 
-        public caFileEditAdvisory()
+        public CaFileEditAdvisory()
         {
             this.InitializeComponent();
             base.ShowDialog();

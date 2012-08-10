@@ -59,32 +59,13 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="Utilities.cs" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Data" />
     <Reference Include="System" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="ErrorBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DataGridViewAutoFilter\DataGridViewAutoFilterColumnHeaderCell.cs" />
-    <Compile Include="DataGridViewAutoFilter\DataGridViewAutoFilterTextBoxColumn.cs" />
     <Compile Include="IOFunctions.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="PackedFile.cs" />
     <Compile Include="PackFile.cs" />
     <Compile Include="PackFileCodec.cs" />
-    <Compile Include="ReadmeEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Reference Include="System.Xml.Linq" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ReadmeEditorControl.resources">
-      <DependentUpon>ReadmeEditorControl.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

@@ -77,7 +77,7 @@ namespace PackFileManager {
                 }
                 
                 using (var stream = File.Create(SchemaFilename)) {
-                    new XmlExporter(stream) { LogWriting = false}.export(typeMap, guidMap);
+                    new XmlExporter(stream) { LogWriting = false}.Export(typeMap, guidMap);
                 }
 
                 DateTime end = DateTime.Now;

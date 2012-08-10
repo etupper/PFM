@@ -48,7 +48,7 @@ namespace Common {
             XmlImporter importer = null;
             using (Stream stream = File.OpenRead(filename)) {
                 importer = new XmlImporter(stream);
-                importer.import();
+                importer.Import();
             }
             typeMap = importer.descriptions;
             guidMap = importer.guidToDescriptions;
@@ -68,7 +68,7 @@ namespace Common {
                 File.Copy(filename, backupName);
             }
             var stream = File.Create(filename);
-            new XmlExporter(stream).export(typeMap, guidMap);
+            new XmlExporter(stream).Export(typeMap, guidMap);
             stream.Close();
             if (File.Exists(backupName)) {
                 File.Delete(backupName);

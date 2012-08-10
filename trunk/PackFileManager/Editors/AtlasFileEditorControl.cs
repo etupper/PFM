@@ -50,11 +50,14 @@
             this.CSCont2.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
             this.olv = this.objectListView1;
             this.olv.CellEditFinishing += new CellEditEventHandler(this.olv_CellEditFinishing);
-
         }
-
+        
         public AtlasFileEditorControl(PackedFile packedFile) : this() {
             CurrentPackedFile = packedFile;
+        }
+        
+        public override bool CanEdit(PackedFile file) {
+            return file.FullPath.EndsWith(".atlas");
         }
 
         public override AtlasFile EditedFile {
@@ -140,9 +143,14 @@
             foreach (OLVListItem item in this.olv.Items)
             {
                 AtlasObject rowObject = (AtlasObject) item.RowObject;
-                strings.Add(rowObject.Container1 + "\t" + rowObject.Container2 + "\t" + rowObject.X1.ToString() + "\t" + rowObject.Y1.ToString() + "\t" + rowObject.X3.ToString() + "\t" + rowObject.Y3.ToString());
+                strings.Add(rowObject.Container1 + "\t" + 
+                            rowObject.Container2 + "\t" + 
+                            rowObject.X1.ToString() + "\t" + 
+                            rowObject.Y1.ToString() + "\t" + 
+                            rowObject.X3.ToString() + "\t" + 
+                            rowObject.Y3.ToString());
             }
-            IOFunctions.writeToTSVFile(strings);
+            WriteToTSVFile(strings);
         }
 
         private void InitializeComponent()
@@ -190,7 +198,8 @@
             this.objectListView1.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Top;
             this.objectListView1.CausesValidation = false;
             this.objectListView1.CellEditActivation = ObjectListView.CellEditActivateMode.DoubleClick;
-            this.objectListView1.Columns.AddRange(new ColumnHeader[] { this.olvColumn1, this.CSCont1, this.CSCont2, this.CX1P, this.CY1P, this.CX2P, this.CY2P, this.CX1, this.CY1, this.CX2, this.CY2, this.CX3, this.CY3 });
+            this.objectListView1.Columns.AddRange(new ColumnHeader[] { 
+                this.olvColumn1, this.CSCont1, this.CSCont2, this.CX1P, this.CY1P, this.CX2P, this.CY2P, this.CX1, this.CY1, this.CX2, this.CY2, this.CX3, this.CY3 });
             this.objectListView1.Cursor = Cursors.Default;
             this.objectListView1.HasCollapsibleGroups = false;
             this.objectListView1.HeaderStyle = ColumnHeaderStyle.Nonclickable;
@@ -276,7 +285,8 @@
             this.toolStripMenuItem1.Text = "toolStripMenuItem1";
             this.addNewAtlasEntryToolStripMenuItem.Name = "addNewAtlasEntryToolStripMenuItem";
             this.addNewAtlasEntryToolStripMenuItem.Size = new Size(0x43, 0x16);
-            this.contextMenuStrip1.Items.AddRange(new ToolStripItem[] { this.addAtlasEntryToolStripMenuItem, this.removeAtlasEntryToolStripMenuItem, this.exportEntriesToTextFileToolStripMenuItem });
+            this.contextMenuStrip1.Items.AddRange(new ToolStripItem[] { 
+                this.addAtlasEntryToolStripMenuItem, this.removeAtlasEntryToolStripMenuItem, this.exportEntriesToTextFileToolStripMenuItem });
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new Size(0xcc, 70);
             this.addAtlasEntryToolStripMenuItem.Name = "addAtlasEntryToolStripMenuItem";

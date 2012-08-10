@@ -30,31 +30,34 @@ namespace PackFileManager
         private ToolStrip toolStrip;
         private ToolStripSeparator toolStripSeparator1;
 
-        public LocFileEditorControl (PackedFile packedFile) :base (LocCodec.Instance) {
-			int[] numArray = new int[3];
-			numArray [2] = 1;
-			this.columnTypes = numArray;
-			this.columnWidths = new int[] { 200, 400, 20 };
-			this.components = null;
-			this.InitializeComponent ();
-			for (int i = 0; i < this.columnNames.Length; i++) {
-				DataGridViewColumn column;
-				int num2 = this.columnTypes [i];
-				if (num2 == 1) {
-					column = new DataGridViewCheckBoxColumn ();
-				} else {
-					column = new DataGridViewAutoFilterTextBoxColumn ();
-				}
-				column.DataPropertyName = this.columnNames [i];
-				column.HeaderText = this.columnHeaders [i];
-				column.Width = this.columnWidths [i];
-				this.dataGridView.Columns.Add (column);
-			}
-			this.CurrentPackedFile = packedFile;
-            this.bindingSource = new BindingSource();
-            this.currentDataTable = this.getData();
-            this.bindingSource.DataSource = this.currentDataTable;
-            this.dataGridView.DataSource = this.bindingSource;
+        public LocFileEditorControl (PackedFile packedFile) : this() {
+            this.CurrentPackedFile = packedFile;
+        }
+        
+        public LocFileEditorControl() : base(LocCodec.Instance) {
+            int[] numArray = new int[3];
+            numArray [2] = 1;
+            this.columnTypes = numArray;
+            this.columnWidths = new int[] { 200, 400, 20 };
+            this.components = null;
+            this.InitializeComponent ();
+            for (int i = 0; i < this.columnNames.Length; i++) {
+                DataGridViewColumn column;
+                int num2 = this.columnTypes [i];
+                if (num2 == 1) {
+                    column = new DataGridViewCheckBoxColumn ();
+                } else {
+                    column = new DataGridViewAutoFilterTextBoxColumn ();
+                }
+                column.DataPropertyName = this.columnNames [i];
+                column.HeaderText = this.columnHeaders [i];
+                column.Width = this.columnWidths [i];
+                this.dataGridView.Columns.Add (column);
+            }
+        }
+        
+        public override bool CanEdit(PackedFile file) {
+            return file.FullPath.EndsWith(".loc");
         }
 
         private void addNewRowButton_Click(object sender, EventArgs e) {
@@ -68,7 +71,7 @@ namespace PackFileManager
 			this.DataChanged = true;
 		}
 
-        public override bool DataChanged {
+        protected override bool DataChanged {
             get { return base.DataChanged; }
             set {
                 base.DataChanged = value;
@@ -89,7 +92,8 @@ namespace PackFileManager
         private void cloneCurrentRow_Click(object sender, EventArgs e)
         {
             DataRow row = this.currentDataTable.NewRow();
-            int num = (this.dataGridView.SelectedRows.Count == 1) ? this.dataGridView.SelectedRows[0].Index : this.dataGridView.SelectedCells[0].RowIndex;
+            int num = (this.dataGridView.SelectedRows.Count == 1) ? 
+                this.dataGridView.SelectedRows[0].Index : this.dataGridView.SelectedCells[0].RowIndex;
             row[0] = this.dataGridView.Rows[num].Cells[0].Value;
             row[1] = this.dataGridView.Rows[num].Cells[1].Value;
             row[2] = this.dataGridView.Rows[num].Cells[2].Value;
@@ -106,8 +110,10 @@ namespace PackFileManager
 
         private void dataGridView_SelectionChanged(object sender, EventArgs e)
         {
-            this.cloneCurrentRow.Enabled = this.cloneCurrentRow.Enabled = (this.dataGridView.SelectedRows.Count == 1) || (this.dataGridView.SelectedCells.Count == 1);
-            this.deleteCurrentRow.Enabled = this.cloneCurrentRow.Enabled = (this.dataGridView.SelectedRows.Count == 1) || (this.dataGridView.SelectedCells.Count == 1);
+            this.cloneCurrentRow.Enabled = this.cloneCurrentRow.Enabled = 
+                (this.dataGridView.SelectedRows.Count == 1) || (this.dataGridView.SelectedCells.Count == 1);
+            this.deleteCurrentRow.Enabled = this.cloneCurrentRow.Enabled = 
+                (this.dataGridView.SelectedRows.Count == 1) || (this.dataGridView.SelectedCells.Count == 1);
         }
 
         private void dataGridView_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
@@ -117,7 +123,8 @@ namespace PackFileManager
 
         private void deleteCurrentRow_Click(object sender, EventArgs e)
         {
-            int index = (this.dataGridView.SelectedRows.Count == 1) ? this.dataGridView.SelectedRows[0].Index : this.dataGridView.SelectedCells[0].RowIndex;
+            int index = (this.dataGridView.SelectedRows.Count == 1) ? 
+                this.dataGridView.SelectedRows[0].Index : this.dataGridView.SelectedCells[0].RowIndex;
             this.currentDataTable.Rows.RemoveAt(index);
             this.DataChanged = true;
         }
@@ -186,16 +193,27 @@ namespace PackFileManager
             {
                 using (StreamReader reader = new StreamReader(this.openLocFileDialog.FileName))
                 {
-                    this.EditedFile.Import(reader);
-                    this.currentDataTable = this.getData();
-                    this.bindingSource = new BindingSource();
-                    this.bindingSource.DataSource = this.currentDataTable;
-                    this.dataGridView.DataSource = this.bindingSource;
-                    this.DataChanged = true;
+                    LocFile imported = new LocFile();
+                    imported.Import(reader);
+                    EditedFile = imported;
                 }
             }
             this.DataChanged = true;
         }
+
+        public override LocFile EditedFile {
+            get {
+                return base.EditedFile;
+            }
+            set {
+                base.EditedFile = value;
+                this.bindingSource = new BindingSource();
+                this.currentDataTable = this.getData();
+                this.bindingSource.DataSource = this.currentDataTable;
+                this.dataGridView.DataSource = this.bindingSource;
+            }
+        }
+
 
         private void InitializeComponent()
         {

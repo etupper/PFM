@@ -1,15 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using Common;
 
 namespace PackFileManager {
-    public class PackedFileEditor<T> : UserControl {
-        Codec<T> codec;
+    public interface IPackedFileEditor {
+        PackedFile CurrentPackedFile {
+            get; set;
+        }
+        bool CanEdit(PackedFile file);
+        void Commit();
+    }
+    
+    public abstract class PackedFileEditor<T> : UserControl, IPackedFileEditor {
+        protected readonly Codec<T> codec;
         public virtual T EditedFile { get; set; }
         PackedFile currentPacked;
 
-        public virtual bool DataChanged {
+        protected virtual bool DataChanged {
             get;
             set;
         }
@@ -17,10 +26,11 @@ namespace PackFileManager {
         protected PackedFileEditor(Codec<T> c) {
             codec = c;
         }
-
-        public PackedFile CurrentPackedFile {
+        
+        // interface method to give the editor something to edit
+        public virtual PackedFile CurrentPackedFile {
             set {
-                if (currentPacked != null && value.FullPath.Equals(currentPacked.FullPath)) {
+                if (currentPacked != null) {
                     return;
                 }
                 if (value != null) {
@@ -31,6 +41,7 @@ namespace PackFileManager {
                 } else {
                     EditedFile = default(T);
                 }
+                DataChanged = false;
                 currentPacked = value;
             }
             get {
@@ -38,7 +49,10 @@ namespace PackFileManager {
             }
         }
 
-        // interface method to save to pack if data has changed
+        // interface to query if given file can be edited
+        public abstract bool CanEdit(PackedFile file);
+
+        // interface method to save to pack if data has changed in this editor
         public void Commit() {
             if (DataChanged) {
                 SetData();
@@ -51,6 +65,20 @@ namespace PackFileManager {
             using (MemoryStream stream = new MemoryStream()) {
                 codec.Encode(stream, EditedFile);
                 CurrentPackedFile.Data = stream.ToArray();
+            }
+        }
+        
+        // utility method for tsv export
+        public static void WriteToTSVFile(List<string> strings) {
+            SaveFileDialog dialog = new SaveFileDialog {
+                Filter = IOFunctions.TSV_FILTER
+            };
+            if (dialog.ShowDialog() == DialogResult.OK) {
+                using (StreamWriter writer = new StreamWriter(dialog.FileName)) {
+                    foreach (string str in strings) {
+                        writer.WriteLine(str);
+                    }
+                }
             }
         }
     }

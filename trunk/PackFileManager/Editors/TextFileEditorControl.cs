@@ -8,39 +8,51 @@
     using System.Text;
     using System.Windows.Forms;
 
-    public class TextFileEditorControl : UserControl
+    public class TextFileEditorControl : PackedFileEditor<string>
     {
-        private IContainer components;
+        private IContainer components = null;
         private RichTextBox richTextBox1;
-        private PackedFile packedFile;
-        bool changed = false;
 
-        public TextFileEditorControl()
-        {
-            this.components = null;
+        public TextFileEditorControl() : base(TextCodec.Instance) {
             this.InitializeComponent();
+
+            richTextBox1.TextChanged += (b, e) => DataChanged = true;
         }
 
-        public TextFileEditorControl(PackedFile file)
+        public TextFileEditorControl(PackedFile file) : this()
         {
-            this.components = null;
-            this.InitializeComponent();
-            StreamReader reader = new StreamReader(new MemoryStream(file.Data, false), Encoding.ASCII);
-            this.richTextBox1.Show();
-            packedFile = file;
-            this.richTextBox1.Text = reader.ReadToEnd();
-            richTextBox1.TextChanged += (b, e) => changed = true;
+            // this.richTextBox1.Show();
+            CurrentPackedFile = file;
+        }
+        
+        public override bool CanEdit(PackedFile file) {
+            string[] extensions = { "txt", "lua", "csv", "fx", "fx_fragment", 
+                "h", "battle_script", "xml", 
+                "tai", "xml.rigging", "placement", "hlsl"
+            };
+            bool result = false;
+            foreach (string ext in extensions) {
+                if (file.FullPath.EndsWith(ext)) {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
+        }
+        
+        public override string EditedFile {
+            get {
+                return richTextBox1.Text;
+            }
+            set {
+                richTextBox1.Text = value;
+                DataChanged = false;
+            }
         }
 
         public void CloseTextFileEditorControl()
         {
             base.Dispose();
-        }
-
-        public void updatePackedFile() {
-            if (changed) {
-                packedFile.Data = Encoding.ASCII.GetBytes(richTextBox1.Text);
-            }
         }
 
         protected override void Dispose(bool disposing)
@@ -68,6 +80,22 @@
             base.Name = "TextFileEditorControl";
             base.Size = new Size(0x4a2, 0x28c);
             base.ResumeLayout(false);
+        }
+    }
+    
+    public class TextCodec : Codec<string> {
+        public static readonly TextCodec Instance = new TextCodec();
+        public string Decode(Stream file) {
+            string result = "";
+            using (var reader = new StreamReader(file, Encoding.ASCII)) {
+                result = reader.ReadToEnd();
+            }
+            return result;
+        }
+        public void Encode(Stream stream, string toEncode) {
+            using (var writer = new StreamWriter(stream)) {
+                writer.Write(toEncode);
+            }
         }
     }
 }

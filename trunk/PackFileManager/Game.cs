@@ -11,6 +11,8 @@ namespace PackFileManager {
         private static string WOW_NODE = @"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {0}";
         private static string WIN_NODE = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {0}";
         
+        private string GAME_DIR_FILE = "gamedirs.txt";
+        
         public string Id {
             get; private set;
         }
@@ -23,6 +25,33 @@ namespace PackFileManager {
                 string dir = GetInstallLocation(WOW_NODE);
                 if (string.IsNullOrEmpty(dir)) {
                     dir = GetInstallLocation(WIN_NODE);
+                }
+                if (string.IsNullOrEmpty(dir)) {
+                    // empty string will be marker that gamedir file has been read, but was empty
+                    dir = null;
+                    if (File.Exists(GAME_DIR_FILE)) {
+                        foreach (string line in File.ReadAllLines(GAME_DIR_FILE)) {
+                            string[] split = line.Split(new char[] { Path.PathSeparator });
+                            if (split[0].Equals(Id)) {
+                                dir = split[1];
+                                break;
+                            }
+                        }
+                    }
+                    // if there was an empty entry in file, don't ask again
+                    if (dir == null) {
+                        FolderBrowserDialog dlg = new FolderBrowserDialog() {
+                            Description = string.Format("Please point to Location of {0}\nCancel if not installed.", Id)
+                        };
+                        if (dlg.ShowDialog() == DialogResult.OK) {
+                            dir = dlg.SelectedPath;
+                        } else {
+                            // add empty entry to file for next time
+                            dir = "";
+                        }
+                        string gameDir = string.Format("{0}{1}{2}{3}", Id, Path.PathSeparator, dir, Environment.NewLine);
+                        File.AppendAllLines(GAME_DIR_FILE, new string[] { gameDir });
+                    }
                 }
                 return dir;
             }

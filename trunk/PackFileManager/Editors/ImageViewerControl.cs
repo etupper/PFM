@@ -7,8 +7,9 @@
     using System.Drawing.Imaging;
     using System.IO;
     using System.Windows.Forms;
+    using Filetypes;
 
-    public class ImageViewerControl : UserControl {
+    public class ImageViewerControl : PackedFileEditor<Bitmap> {
         private AtlasFile atlasFile;
         private Button button1;
         private Button button2;
@@ -16,13 +17,26 @@
 #pragma warning disable 649
         private readonly IContainer components;
 #pragma warning restore 649
-        private string file;
         private Rectangle[] grid;
         private PictureBox pictureBox1;
         private ToolTipRegion[] toolTipRegions;
 
-        public ImageViewerControl() {
+        public ImageViewerControl() : base(new BitmapCodec()) {
             InitializeComponent();
+
+            button1.MouseHover += Button1MouseHover;
+            button2.MouseHover += Button2MouseHover;
+            button3.MouseHover += Button3MouseHover;
+        }
+        
+        public override bool CanEdit(PackedFile packedFile) {
+            bool result = (packedFile.FullPath.Contains(".tga") || 
+                       packedFile.FullPath.Contains(".dds") || 
+                       packedFile.FullPath.Contains(".png") || 
+                       packedFile.FullPath.Contains(".jpg") || 
+                       packedFile.FullPath.Contains(".bmp") || 
+                       packedFile.FullPath.Contains(".psd"));
+            return result;
         }
 
         private void Button1Click(object sender, EventArgs e) {
@@ -88,8 +102,8 @@
                 graphics.DrawRectangles(pen, grid);
             }
             pictureBox1.Refresh();
-            button2.Enabled = true;
             button1.Enabled = false;
+            button2.Enabled = true;
             button3.Enabled = true;
             button3.Click += Button3Click;
         }
@@ -173,15 +187,55 @@
             ((ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
         }
+        
+        public override Bitmap EditedFile {
+            get {
+                return base.EditedFile;
+            }
+            set {
+                button2.Enabled = false;
+                button2.Click -= Button2Click;
+                button3.Enabled = false;
+                button3.Click -= Button3Click;
+                pictureBox1.Enabled = false;
+                
+                try {
+                    base.EditedFile = value;
+                    if (pictureBox1.Image != null) {
+                        pictureBox1.Image.Dispose();
+                    }
+                    
+                    pictureBox1.Image = EditedFile;
+                    pictureBox1.Enabled = true;
+                    pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+                } catch (Exception e) {
+                    MessageBox.Show(string.Format("Error opening image file. \r\n FreeImage error : {0}", e.Message), 
+                                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+        
+        public override PackedFile CurrentPackedFile {
+            get {
+                return base.CurrentPackedFile;
+            }
+            set {
+                if (value != null) {
+                    string filePath = Path.GetExtension(value.FullPath).Replace(".", "");
+                    (codec as BitmapCodec).Format = filePath;
+                    button1.Enabled = filePath.EndsWith(".dds");
+                }
+                base.CurrentPackedFile = value;
+            }
+        }
 
         public void SetImage(byte[] data, string filePath) {
-            file = filePath;
             button3.Enabled = false;
             button3.MouseHover += Button3MouseHover;
             button2.Enabled = false;
             button2.MouseHover += Button2MouseHover;
             button1.MouseHover += Button1MouseHover;
-            button1.Enabled = file.EndsWith(".dds");
+            button1.Enabled = filePath.EndsWith(".dds");
 
             try {
                 var ending = Path.GetExtension(filePath);
@@ -220,10 +274,50 @@
                 }
                 pictureBox1.Image = (Bitmap)bitmap;
             } catch (Exception e) {
-                MessageBox.Show(string.Format("Error opening image file. \r\n FreeImage error : {0}", e.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(string.Format("Error opening image file. \r\n FreeImage error : {0}", e.Message), 
+                                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            pictureBox1.Enabled = true;
-            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+        }
+    }
+
+    public class BitmapCodec : Codec<Bitmap> {
+        public static readonly BitmapCodec Instance = new BitmapCodec();
+        
+        FREE_IMAGE_FORMAT format = FREE_IMAGE_FORMAT.FIF_BMP;
+        public string Format {
+            set {
+                switch (value) {
+                    case "tga":
+                        format = FREE_IMAGE_FORMAT.FIF_TARGA;
+                        break;
+                    case "dds":
+                        format = FREE_IMAGE_FORMAT.FIF_DDS;
+                        break;
+                    case "png":
+                        format = FREE_IMAGE_FORMAT.FIF_PNG;
+                        break;
+                    case "jpg":
+                        format = FREE_IMAGE_FORMAT.FIF_JPEG;
+                        break;
+                    case "bmp":
+                        format = FREE_IMAGE_FORMAT.FIF_BMP;
+                        break;
+                    case "psd":
+                        format = FREE_IMAGE_FORMAT.FIF_PSD;
+                        break;
+                    default:
+                        format = FREE_IMAGE_FORMAT.FIF_BMP;
+                        break;
+                }
+            }
+        }
+        public Bitmap Decode(Stream stream) {
+            FreeImageBitmap bitmap = new FreeImageBitmap(stream, format);
+            bitmap.ConvertType(FREE_IMAGE_TYPE.FIT_BITMAP, true);
+            return (Bitmap) bitmap;
+        }
+        public void Encode(Stream stream, Bitmap toEncode) {
+            throw new NotImplementedException ();
         }
     }
 }

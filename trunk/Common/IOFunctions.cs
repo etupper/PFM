@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Text;
-    using System.Windows.Forms;
 
     public class IOFunctions
     {
@@ -49,23 +48,6 @@
             byte[] array = new byte[0x200];
             Encoding.Unicode.GetBytes(value).CopyTo(array, 0);
             writer.Write(array);
-        }
-
-        public static void writeToTSVFile(List<string> strings)
-        {
-            SaveFileDialog dialog = new SaveFileDialog {
-                Filter = TSV_FILTER
-            };
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                using (StreamWriter writer = new StreamWriter(dialog.FileName))
-                {
-                    foreach (string str in strings)
-                    {
-                        writer.WriteLine(str);
-                    }
-                }
-            }
         }
     }
 }
