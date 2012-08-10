@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
   <PropertyGroup>
     <ProjectType>local</ProjectType>
@@ -104,6 +104,12 @@
     <Compile Include="Editors\LocFileEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Editors\PackedEsfEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editors\PackedEsfEditor.Designer.cs">
+      <DependentUpon>PackedEsfEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Editors\TextFileEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -114,7 +120,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FileExtraction.cs" />
-    <Compile Include="Mods.cs" />
+    <Compile Include="Mods.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="PackedFileEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -138,6 +146,9 @@
     <EmbeddedResource Include="Editors\LocFileEditorControl.resx">
       <DependentUpon>LocFileEditorControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Editors\PackedEsfEditor.resx">
+      <DependentUpon>PackedEsfEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PackFileManagerForm.resx">
       <DependentUpon>PackFileManagerForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -160,7 +171,9 @@
     </Compile>
     <Compile Include="SchemaOptimizer.cs" />
     <Compile Include="Game.cs" />
-    <Compile Include="Editors\ReadmeEditorControl.cs" />
+    <Compile Include="Editors\ReadmeEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Utilities.cs" />
     <Compile Include="DataGridViewAutoFilter\DataGridViewAutoFilterColumnHeaderCell.cs" />
     <Compile Include="DataGridViewAutoFilter\DataGridViewAutoFilterTextBoxColumn.cs" />
@@ -170,13 +183,21 @@
     <Reference Include="ObjectListView">
       <HintPath>..\Files\ObjectListView.dll</HintPath>
     </Reference>
-    <Compile Include="Dialogs\CaFileEditAdvisory.cs" />
-    <Compile Include="Dialogs\CustomMessageBox.cs" />
-    <Compile Include="Dialogs\InputBox.cs" />
+    <Compile Include="Dialogs\CaFileEditAdvisory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\CustomMessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\InputBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Dialogs\InputBox.Designer.cs">
       <DependentUpon>InputBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="Editors\ImageViewerControl.cs" />
+    <Compile Include="Editors\ImageViewerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
@@ -233,7 +254,5 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <ItemGroup>
-    <Folder Include="DnD\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

@@ -178,8 +178,16 @@ namespace EsfLibrary {
 
         // decodes the full stream, returning the root node
         public virtual EsfNode Parse(byte[] data) {
-            buffer = data;
-            using (BinaryReader reader = new BinaryReader(new MemoryStream(data))) {
+            return Parse(new MemoryStream(data));
+        }
+        public virtual EsfNode Parse(Stream stream) {
+            MemoryStream bufferStream = stream as MemoryStream;
+            if (bufferStream == null) {
+                bufferStream = new MemoryStream();
+                stream.CopyTo(bufferStream);
+            }
+            buffer = bufferStream.ToArray();
+            using (BinaryReader reader = new BinaryReader(bufferStream)) {
                 return Parse(reader);
             }
         }

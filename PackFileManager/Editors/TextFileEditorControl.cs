@@ -19,12 +19,6 @@
             richTextBox1.TextChanged += (b, e) => DataChanged = true;
         }
 
-        public TextFileEditorControl(PackedFile file) : this()
-        {
-            // this.richTextBox1.Show();
-            CurrentPackedFile = file;
-        }
-        
         public override bool CanEdit(PackedFile file) {
             string[] extensions = { "txt", "lua", "csv", "fx", "fx_fragment", 
                 "h", "battle_script", "xml", 

@@ -312,9 +312,14 @@
             }
         }
         public Bitmap Decode(Stream stream) {
-            FreeImageBitmap bitmap = new FreeImageBitmap(stream, format);
-            bitmap.ConvertType(FREE_IMAGE_TYPE.FIT_BITMAP, true);
-            return (Bitmap) bitmap;
+            try {
+                FreeImageBitmap bitmap = new FreeImageBitmap(stream, format);
+                bitmap.ConvertType(FREE_IMAGE_TYPE.FIT_BITMAP, true);
+                return (Bitmap)bitmap;
+            } catch (Exception e) {
+                Console.WriteLine(e);
+            }
+            return null;
         }
         public void Encode(Stream stream, Bitmap toEncode) {
             throw new NotImplementedException ();
