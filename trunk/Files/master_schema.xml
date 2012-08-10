@@ -3685,7 +3685,7 @@
     <field name='Localisation Key' type='string' />
     <field name='Region IDRef' type='optstring' />
     <field name='Unit Limit' type='int' />
-    <field fkey='unit_category_tables.Category ID' name='MP Category' type='string' />
+    <field name='MP Category' type='string' />
     <field name='Early Availability' type='boolean' />
     <field name='Related with Early availability' type='boolean' />
     <field name='Late Availability' type='boolean' />

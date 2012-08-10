@@ -30,8 +30,8 @@ namespace PackFileManager {
         // interface method to give the editor something to edit
         public virtual PackedFile CurrentPackedFile {
             set {
-                if (currentPacked != null) {
-                    return;
+                if (currentPacked != null && DataChanged) {
+                    Commit();
                 }
                 if (value != null) {
                     byte[]data = value.Data;

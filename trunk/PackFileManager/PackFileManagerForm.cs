@@ -48,13 +48,15 @@ namespace PackFileManager
         private TextFileEditorControl textFileEditorControl = new TextFileEditorControl { 
             Dock = DockStyle.Fill };
         private ReadmeEditorControl readmeEditorControl;
-        private EditEsfComponent esfEditor = new EditEsfComponent {
-            Dock = DockStyle.Fill
-        };
 
+        private IPackedFileEditor[] editors;
         private IPackedFileEditor[] Editors {
-            get {
-                IPackedFileEditor[] editors = {
+            get { return editors; }
+        }
+        #endregion
+
+        private IPackedFileEditor[] CreateEditors() {
+            return new IPackedFileEditor[] {
 #if __MonoCS__
 #else
                     // relies on win32 dll, so can't use it on Linux
@@ -64,15 +66,14 @@ namespace PackFileManager
                     new LocFileEditorControl { Dock = DockStyle.Fill },
                     new GroupformationEditor { Dock = DockStyle.Fill },
                     new UnitVariantFileEditorControl { Dock = DockStyle.Fill },
+                    new PackedEsfEditor { Dock = DockStyle.Fill },
                     textFileEditorControl
-                };
-                return editors;
-            }
+                                              };
         }
-        #endregion
 
         public PackFileManagerForm (string[] args) {
             InitializeComponent();
+            editors = CreateEditors();
             try {
                 if (!DBTypeMap.Instance.Initialized) {
                     DBTypeMap.Instance.initializeTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
@@ -786,9 +787,13 @@ namespace PackFileManager
                 }
             }
             if (editor != null) {
-                editor.CurrentPackedFile = packedFile;
-                if (!splitContainer1.Panel2.Controls.Contains(editor as UserControl)) {
-                    splitContainer1.Panel2.Controls.Add(editor as UserControl);
+                try {
+                    editor.CurrentPackedFile = packedFile;
+                    if (!splitContainer1.Panel2.Controls.Contains(editor as UserControl)) {
+                        splitContainer1.Panel2.Controls.Add(editor as UserControl);
+                    }
+                } catch (Exception ex) {
+                    MessageBox.Show(string.Format("Failed to open {0}: {1}", Path.GetFileName(packedFile.FullPath), ex));
                 }
                 return;
             }
@@ -797,15 +802,15 @@ namespace PackFileManager
                 openReadMe(packedFile);
             } else if (packedFile.FullPath.Contains(".rigid")) {
                 // viewModel(packedFile);
-            } else if (packedFile.FullPath.EndsWith(".esf")) {
-                using (var stream = new MemoryStream(packedFile.Data)) {
-                    EsfCodec codec = EsfCodecUtil.GetCodec(stream);
-                    if (codec != null) {
-                        esfEditor.RootNode = codec.Parse(packedFile.Data);
-                    }
-                    esfEditor.Tag = packedFile;
-                    splitContainer1.Panel2.Controls.Add(esfEditor);
-                }
+            //} else if (packedFile.FullPath.EndsWith(".esf")) {
+            //    using (var stream = new MemoryStream(packedFile.Data)) {
+            //        EsfCodec codec = EsfCodecUtil.GetCodec(stream);
+            //        if (codec != null) {
+            //            esfEditor.RootNode = codec.Parse(packedFile.Data);
+            //        }
+            //        esfEditor.Tag = packedFile;
+            //        splitContainer1.Panel2.Controls.Add(esfEditor);
+            //    }
             } else if (packedFile.FullPath.StartsWith("db")) {
                 try {
                     dbFileEditorControl.Open(packedFile);
@@ -829,16 +834,16 @@ namespace PackFileManager
                 readmeEditorControl.updatePackedFile();
             }
 
-            if (esfEditor.RootNode != null && esfEditor.RootNode.Modified) {
-                byte[] data;
-                var stream = new MemoryStream();
-                using (BinaryWriter writer = new BinaryWriter(stream)) {
-                    esfEditor.RootNode.Codec.EncodeRootNode(writer, esfEditor.RootNode);
-                    esfEditor.RootNode.Modified = false;
-                    data = stream.ToArray();
-                }
-                (esfEditor.Tag as PackedFile).Data = data;
-            }
+            //if (esfEditor.RootNode != null && esfEditor.RootNode.Modified) {
+            //    byte[] data;
+            //    var stream = new MemoryStream();
+            //    using (BinaryWriter writer = new BinaryWriter(stream)) {
+            //        esfEditor.RootNode.Codec.EncodeRootNode(writer, esfEditor.RootNode);
+            //        esfEditor.RootNode.Modified = false;
+            //        data = stream.ToArray();
+            //    }
+            //    (esfEditor.Tag as PackedFile).Data = data;
+            //}
         }
         
         private void OpenWith(string file, string verb) {
@@ -1165,6 +1170,9 @@ namespace PackFileManager
         }
 
         private void packTreeView_AfterSelect(object sender, TreeViewEventArgs e) {
+            if (e.Action != TreeViewAction.ByKeyboard && e.Action != TreeViewAction.ByMouse) {
+                return;
+            }
             CloseEditors();
             splitContainer1.Panel2.Controls.Clear();
          
@@ -1297,6 +1305,7 @@ namespace PackFileManager
                 }
 				if (path == str) {
                     packTreeView.SelectedNode = node;
+                    OpenPackedFile(node.Tag as PackedFile);
                 }
             }
             filesMenu.Enabled = true;

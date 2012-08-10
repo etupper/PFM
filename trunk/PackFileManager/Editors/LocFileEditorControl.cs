@@ -30,10 +30,6 @@ namespace PackFileManager
         private ToolStrip toolStrip;
         private ToolStripSeparator toolStripSeparator1;
 
-        public LocFileEditorControl (PackedFile packedFile) : this() {
-            this.CurrentPackedFile = packedFile;
-        }
-        
         public LocFileEditorControl() : base(LocCodec.Instance) {
             int[] numArray = new int[3];
             numArray [2] = 1;

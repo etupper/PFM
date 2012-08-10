@@ -52,10 +52,6 @@
             this.olv.CellEditFinishing += new CellEditEventHandler(this.olv_CellEditFinishing);
         }
         
-        public AtlasFileEditorControl(PackedFile packedFile) : this() {
-            CurrentPackedFile = packedFile;
-        }
-        
         public override bool CanEdit(PackedFile file) {
             return file.FullPath.EndsWith(".atlas");
         }
