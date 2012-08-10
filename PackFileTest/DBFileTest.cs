@@ -60,9 +60,11 @@ namespace PackFileTest {
             } else if (DBTypeMap.Instance.IsSupported(type)) {
                 SortedSet<Tuple<string, int>> addTo = null;
                 try {
+#if Debug
                     if (!string.IsNullOrEmpty(debug_at) && file.FullPath.EndsWith(debug_at)) {
                         Console.WriteLine("stop right here");
                     }
+#endif
                     // a wrong db definition might not cause errors,
                     // but read less entries than there are
                     DBFile dbFile = PackedFileDbCodec.Decode(file);
@@ -81,16 +83,19 @@ namespace PackFileTest {
                         }
                     } else {
                         // didn't get what we expect
+                        addTo = invalidDefForVersion;
+#if Debug
                         if (!string.IsNullOrEmpty(debug_at) && file.FullPath.EndsWith(debug_at)) {
                             Console.WriteLine("adding watched to invalid");
                         }
-                        addTo = invalidDefForVersion;
+#endif
                     }
                 } catch {
-                    //Console.WriteLine(ex);
+#if Debug
                     if (!string.IsNullOrEmpty(debug_at) && file.FullPath.EndsWith(debug_at)) {
                         Console.WriteLine("adding watched to invalid");
                     }
+#endif
                     addTo = invalidDefForVersion;
                 }
                 addTo.Add(tuple);
@@ -107,9 +112,11 @@ namespace PackFileTest {
                 // export to tsv
                 TextDbCodec codec = new TextDbCodec();
                 string exportPath = Path.Combine(Path.GetTempPath(), "exportTest.tsv");
+#if Debug
                 if (originalFile.CurrentType.name.Equals(debug_at)) {
                     Console.WriteLine("stop right here");
                 }
+#endif
                 using (Stream filestream = File.Open(exportPath, FileMode.Create)) {
                     codec.Encode(filestream, originalFile);
                 }

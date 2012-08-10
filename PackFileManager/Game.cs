@@ -53,7 +53,7 @@ namespace PackFileManager {
                         File.AppendAllLines(GAME_DIR_FILE, new string[] { gameDir });
                     }
                 }
-                return dir;
+                return string.IsNullOrEmpty(dir) ? null : dir;
             }
         }
         public string ScriptFilename {
