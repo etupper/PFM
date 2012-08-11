@@ -24,6 +24,8 @@ namespace PackFileManager
         public PackFile CurrentPackFile {
             get { return currentPackFile; }
             set {
+                CloseEditors();
+
                 // register previous and build tree
                 currentPackFile = value;
                 RefreshTitle();
@@ -782,6 +784,9 @@ namespace PackFileManager
         
         private void OpenPackedFile(object tag) {
             PackedFile packedFile = tag as PackedFile;
+            if (packedFile == null) {
+                return;
+            }
             IPackedFileEditor editor = null;
             foreach(IPackedFileEditor e in Editors) {
                 if (e.CanEdit(packedFile)) {
@@ -827,6 +832,8 @@ namespace PackFileManager
             if (readmeEditorControl != null) {
                 readmeEditorControl.updatePackedFile();
             }
+
+            splitContainer1.Panel2.Controls.Clear();
         }
         
         private void OpenWith(string file, string verb) {

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Common {
     [DebuggerDisplay("Filepath = {Filepath}")]
-    public class PackFile {
+    public class PackFile : IEnumerable<PackedFile> {
         public delegate void ModifyEvent();
         public event ModifyEvent Modified;
 
@@ -103,6 +103,10 @@ namespace Common {
         }
         #endregion
 
+        public override string ToString() {
+            return string.Format("Pack file {0}", Filepath);
+        }
+
         #region Event Handler for Entries
         // Set self to modified
         private void EntryModified(PackEntry file) {
@@ -155,6 +159,13 @@ namespace Common {
             files.AddRange(filesFrom.Files);
         }
         #endregion
+
+        public IEnumerator<PackedFile> GetEnumerator() {
+            return Files.GetEnumerator();
+        }
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+            return GetEnumerator();
+        }
     }
 
     /*

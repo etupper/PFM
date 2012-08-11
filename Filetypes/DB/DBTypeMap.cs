@@ -94,8 +94,11 @@ namespace Common {
 
         public List<string> DBFileTypes {
             get {
-                List<string> result = new List<string>(typeMap.Keys);
-                return result;
+                SortedSet<string> result = new SortedSet<string>(typeMap.Keys);
+                foreach (GuidTypeInfo info in guidMap.Keys) {
+                    result.Add(info.TypeName);
+                }
+                return new List<string>(result);
             }
         }
 
@@ -145,7 +148,7 @@ namespace Common {
             }
             return result;
         }
-        public Boolean IsSupported(string type) {
+        public bool IsSupported(string type) {
             bool result = typeMap.ContainsKey(type);
             if (!result) {
                 foreach(GuidTypeInfo info in guidMap.Keys) {

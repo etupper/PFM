@@ -37,7 +37,7 @@ namespace Common {
         }
 
         // Path
-        public string FullPath {
+        public virtual string FullPath {
             get {
                 string result = Name;
                 PackEntry p = Parent;
@@ -101,6 +101,18 @@ namespace Common {
 
         private static readonly byte[] EMPTY = new byte[0];
 
+        // a PackedFile can exist alone, without its parent
+        string fullPath;
+        public override string FullPath {
+            get {
+                if (Parent != null) {
+                    return base.FullPath;
+                } else {
+                    return fullPath;
+                }
+            }
+        }
+
         #region File Data access
         // retrieve the amount of available data
         public long Size {
@@ -133,14 +145,16 @@ namespace Common {
         #region Constructors
         public PackedFile() { }
         public PackedFile(string filename) {
+            fullPath = filename;
             Name = Path.GetFileName(filename);
             Source = new FileSystemSource(filename);
             Modified = false;
             EditTime = File.GetLastWriteTime(filename);
         }
         public PackedFile(string packFile, string packedName, long offset, long len) {
+            fullPath = packedName;
             Name = Path.GetFileName(packedName);
-            Source = new PackedFileSource(packedName, packFile, offset, len);
+            Source = new PackedFileSource(packFile, offset, len);
             Modified = false;
             EditTime = File.GetLastWriteTime(packFile);
         }
@@ -361,7 +375,7 @@ namespace Common {
             get;
             private set;
         }
-        public PackedFileSource(string pathInPack, string packfilePath, long offset, long length) {
+        public PackedFileSource(string packfilePath, long offset, long length) {
             Offset = offset;
             filepath = packfilePath;
             Size = length;

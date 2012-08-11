@@ -22,7 +22,7 @@ namespace Common {
 			PackFile file;
 			long sizes = 0;
 			using (var reader = new BinaryReader(new FileStream(packFullPath, FileMode.Open), Encoding.ASCII)) {
-				PFHeader header = readHeader (reader);
+				PFHeader header = ReadHeader (reader);
 				file = new PackFile (packFullPath, header);
 				OnHeaderLoaded (header);
 
@@ -57,11 +57,11 @@ namespace Common {
 
         public static PFHeader ReadHeader(string filename) {
             using (var reader = new BinaryReader(File.OpenRead(filename))) {
-                return readHeader(reader);
+                return ReadHeader(reader);
             }
         }
 		
-		public static PFHeader readHeader(BinaryReader reader) {
+		public static PFHeader ReadHeader(BinaryReader reader) {
 			PFHeader header;
 			string packIdentifier = new string (reader.ReadChars (4));
 			header = new PFHeader (packIdentifier);
@@ -189,4 +189,166 @@ namespace Common {
             return a.FullPath.CompareTo(b.FullPath);
         }
     }
+
+    #region Single Pack File Iteration
+    public class PackedFileEnumerable : IEnumerable<PackedFile> {
+        private string filepath;
+        public PackedFileEnumerable(string path) {
+            filepath = path;
+        }
+        public IEnumerator<PackedFile> GetEnumerator() {
+            return new PackFileEnumerator(filepath);
+        }
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+            return new PackFileEnumerator(filepath);
+        }
+        public override string ToString() {
+            return filepath;
+        }
+    }
+
+    public class PackFileEnumerator : IEnumerator<PackedFile>, IDisposable {
+        BinaryReader reader;
+        PFHeader header;
+        long offset;
+        uint currentFileIndex;
+        string filepath;
+        PackedFile currentFile = null;
+        long startPosition;
+        public PFHeader Header {
+            get {
+                return header;
+            }
+        }
+        public PackFileEnumerator(string path) {
+            filepath = path;
+            reader = new BinaryReader(File.OpenRead(path));
+            header = PackFileCodec.ReadHeader(reader);
+            startPosition = reader.BaseStream.Position;
+            Reset();
+        }
+
+        public void Reset() {
+            currentFileIndex = 0;
+            reader.BaseStream.Seek(startPosition, SeekOrigin.Begin);
+            offset = header.DataStart;
+            currentFile = null;
+        }
+
+        public bool MoveNext() {
+            currentFileIndex++;
+            if (currentFileIndex > header.FileCount) {
+                return false;
+            } 
+            uint size = reader.ReadUInt32();
+            switch (Header.Type) {
+                case PackType.BootX:
+                case PackType.Shader1:
+                case PackType.Shader2:
+                    header.AdditionalInfo = reader.ReadInt64();
+                    break;
+                default:
+                    break;
+            }
+            try {
+                string packedFileName = IOFunctions.readZeroTerminatedAscii(reader);
+                // this is easier because we can use the Path methods
+                // under both Windows and Unix
+                packedFileName = packedFileName.Replace('\\', Path.DirectorySeparatorChar);
+
+                currentFile = new PackedFile(filepath, packedFileName, offset, size);
+                offset += size;
+
+                return true;
+            } catch (Exception ex) {
+                Console.WriteLine("Failed enumeration of {2}/{3} file in {0}: {1}", 
+                    Path.GetFileName(filepath), ex, currentFileIndex, header.FileCount);
+                Console.WriteLine("Current position in file: {0}; last succesful file: {1}", 
+                    reader.BaseStream.Position, Current.FullPath);
+            }
+            return false;
+        }
+
+        public void Dispose() {
+            reader.Dispose();
+        }
+
+        public PackedFile Current {
+            get {
+                return currentFile;
+            }
+        }
+        object System.Collections.IEnumerator.Current {
+            get {
+                return Current;
+            }
+        }
+    }
+    #endregion
+
+    #region Multiple Pack File Enumeration
+    public class MultiPackEnumerable : IEnumerable<PackedFile> {
+        IEnumerable<string> paths;
+        public MultiPackEnumerable(IEnumerable<string> files) {
+            paths = files;
+        }
+        public IEnumerator<PackedFile> GetEnumerator() {
+            return new MultiPackEnumerator(paths);
+        }
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+            return new MultiPackEnumerator(paths);
+        }
+        public override string ToString() {
+            return string.Join(new string(Path.PathSeparator, 1), paths);
+        }
+    }
+
+    public class MultiPackEnumerator : IEnumerator<PackedFile>, IDisposable {
+        IEnumerator<string> paths;
+        IEnumerator<PackedFile> currentEnumerator;
+        public MultiPackEnumerator(IEnumerable<string> files) {
+            paths = files.GetEnumerator();
+        }
+        public PackedFile Current {
+            get {
+                return currentEnumerator.Current;
+            }
+        }
+        object System.Collections.IEnumerator.Current {
+            get {
+                return Current;
+            }
+        }
+        public bool MoveNext() {
+            bool result = true;
+            if (currentEnumerator == null || !currentEnumerator.MoveNext()) {
+                result = NextEnumerator();
+            }
+            return result;
+        }
+        public void Reset() {
+            if (currentEnumerator != null) {
+                currentEnumerator.Dispose();
+                currentEnumerator = null;
+            }
+            paths.Reset();
+        }
+        private bool NextEnumerator() {
+            if (currentEnumerator != null) {
+                currentEnumerator.Dispose();
+            }
+            bool result = paths.MoveNext();
+            if (result) {
+                currentEnumerator = new PackFileEnumerator(paths.Current);
+                result = currentEnumerator.MoveNext();
+            }
+            return result;
+        }
+        public void Dispose() {
+            if (currentEnumerator != null) {
+                currentEnumerator.Dispose();
+            }
+        }
+    }
+    #endregion
 }

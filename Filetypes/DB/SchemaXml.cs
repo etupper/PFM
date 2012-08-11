@@ -40,7 +40,7 @@ namespace Common {
                     XmlAttribute attribute = tableNode.Attributes["name"];
                     if (attribute != null) {
                         // pre-GUID table
-                        id = attribute.Value.Replace("_tables", "");
+                        id = attribute.Value;
                         if (unify) {
                             id = UnifyName (id);
                         }
@@ -265,7 +265,7 @@ namespace Common {
      */
     class VersionedTableInfoFormatter : TableInfoFormatter<string> {
         public override string FormatHeader(string type) {
-            return string.Format("  <table name='{0}_tables'>", type); 
+            return string.Format("  <table name='{0}'>", type); 
         }
     }
     /*
