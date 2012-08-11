@@ -77,40 +77,40 @@ namespace PackFileManager {
         public override void changeColor(PackEntry file) {
             base.changeColor(file);
 
-            string mouseover;
-            PackedFile file2 = file as PackedFile;
-            if (!file2.Deleted && file2.FullPath.StartsWith("db") && file2.Data.Length != 0) {
-                if (!PackedFileDbCodec.CanDecode(file2, out mouseover)) {
-                    if (Parent != null) {
-                        Parent.ToolTipText = mouseover;
-                        Parent.ForeColor = Color.Red;
+            PackedFile packedFile = file as PackedFile;
+            string text = Path.GetFileName(file.Name);
+            if (packedFile != null && packedFile.FullPath.StartsWith("db")) {
+                if (packedFile.Data.Length == 0) {
+                    text = string.Format("{0} (empty)", file.Name);
+                } else {
+                    string mouseover;
+                    if (!PackedFileDbCodec.CanDecode(packedFile, out mouseover)) {
+                        if (Parent != null) {
+                            Parent.ToolTipText = mouseover;
+                            Parent.ForeColor = Color.Red;
+                        }
+                        ForeColor = Color.Red;
                     }
-                    ForeColor = Color.Red;
-                } else if (file2.Data.Length != 0) {
                     try {
-                        DBFileHeader header = PackedFileDbCodec.readHeader(file2);
+                        DBFileHeader header = PackedFileDbCodec.readHeader(packedFile);
+                        text = string.Format("{0} - version {1}", text, header.Version);
                         if (header.EntryCount == 0) {
                             // empty db file
                             if (NodeFont != null) {
                                 NodeFont = new Font(NodeFont, FontStyle.Strikeout);
                             }
-                        } else if (HeaderVersionObsolete(file2)) {
+                        } else if (HeaderVersionObsolete(packedFile)) {
                             if (Parent != null) {
                                 Parent.BackColor = Color.Yellow;
                             }
                             BackColor = Color.Yellow;
                         }
-                        if (!Text.Contains("version")) {
-                            Text = string.Format("{0} - version {1}", Text, header.Version);
-                        }
-                    } catch (Exception e) {
-                        Console.WriteLine(e);
-                    }
-                } else {
-                    BackColor = Color.Red;
+                    } catch { }
                 }
             }
+            Text = text;
         }
+
         public static bool HeaderVersionObsolete(PackedFile packedFile) {
             DBFileHeader header = PackedFileDbCodec.readHeader(packedFile);
             string type = DBFile.typename(packedFile.FullPath);
