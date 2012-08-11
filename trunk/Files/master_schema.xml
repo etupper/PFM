@@ -854,7 +854,7 @@
   </table>
   <table name='building_level_required_technology_junctions_tables'>
     <field fkey='building_levels_tables.Building ID' name='Building IDRef' type='string' pk='true' />
-    <field fkey='technologies_tables.Technologies IDRef' name='Tech IDRef' type='string' pk='true' />
+    <field fkey='technologies_tables.Technology ID' name='Tech IDRef' type='string' pk='true' />
   </table>
   <table name='building_levels_tables'>
     <field name='Building ID' type='string' pk='true' />
@@ -3078,12 +3078,12 @@
     <field name='unknown3' type='optstring' version_start='1' />
   </table>
   <table name='technology_effects_junction_tables'>
-    <field fkey='technologies_tables.Technologies IDRef' name='Tech IDRef' type='string' pk='true' />
+    <field fkey='technologies_tables.Technology ID' name='Tech IDRef' type='string' pk='true' />
     <field fkey='effects_tables.Effect ID' name='Effect IDRef' type='string' pk='true' />
     <field name='Magnitude' type='float' />
   </table>
   <table name='technology_faction_junctions_tables'>
-    <field fkey='technologies_tables.Technologies IDRef' name='Tech IDRef' type='string' pk='true' />
+    <field fkey='technologies_tables.Technology ID' name='Tech IDRef' type='string' pk='true' />
     <field fkey='factions_tables.Faction IDRef' name='Faction IDRef' type='string' pk='true' />
   </table>
   <table name='technology_node_links_tables'>
@@ -3112,8 +3112,8 @@
     <field name='Unused' type='string' />
   </table>
   <table name='technology_required_technology_junctions_tables'>
-    <field fkey='technologies_tables.Technologies IDRef' name='Tech IDRef' type='string' pk='true' />
-    <field fkey='technologies_tables.Technologies IDRef' name='Requirement' type='string' pk='true' />
+    <field fkey='technologies_tables.Technology ID' name='Tech IDRef' type='string' pk='true' />
+    <field fkey='technologies_tables.Technology ID' name='Requirement' type='string' pk='true' />
   </table>
   <table name='technology_threads_tables'>
     <field name='Thread ID' type='string' pk='true' />
@@ -3281,7 +3281,7 @@
   </table>
   <table name='unit_class_to_unit_ability_junctions_tables'>
     <field fkey='unit_class_tables.Class ID' name='Class IDRef' type='string' pk='true' />
-    <field fkey='unit_abilities_tables.Ability IDRef' name='Unit Ability IDRef' type='string' pk='true' />
+    <field fkey='unit_abilities_tables.Ability ID' name='Unit Ability IDRef' type='string' pk='true' />
   </table>
   <table name='unit_experience_threshold_modifiers_tables'>
     <field fkey='unit_stats_land_tables.Unit IDRef' name='Unit IDRef' type='string' pk='true' />
@@ -5315,7 +5315,7 @@
                bbc11aab-7b31-4e8c-97d4-d1c53e59969d,
                f5fd2bff-29b4-4705-bd2b-0337a1fa3e98'>
     <field fkey='building_levels_tables.Building ID' name='Building IDRef' type='string' pk='true' />
-    <field fkey='technologies_tables.Technologies IDRef' name='Tech IDRef' type='string' pk='true' />
+    <field fkey='technologies_tables.Technology ID' name='Tech IDRef' type='string' pk='true' />
   </table>
   <table table_name='building_levels'
          table_version='2'
@@ -8078,7 +8078,7 @@
                57be0278-e3ce-4683-97b3-a5fde3a8bd65,
                aafcd6db-cdc7-4882-9a7f-06a47f317262,
                b0fe4c92-7f64-46a1-8c05-d8462a579253'>
-    <field fkey='technologies_tables.Technologies IDRef' name='Tech IDRef' type='string' pk='true' />
+    <field fkey='technologies_tables.Technology ID' name='Tech IDRef' type='string' pk='true' />
     <field fkey='effects_tables.Effect ID' name='Effect IDRef' type='string' pk='true' />
     <field name='Magnitude' type='float' />
   </table>

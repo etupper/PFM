@@ -45,7 +45,9 @@ namespace PackFileManager {
         }
         private void CellErrorHandler(object sender, DataGridViewDataErrorEventArgs args) {
             if (Settings.Default.UseComboboxCells) {
-                MessageBox.Show("A table reference could not be resolved; disabling combo box cells");
+                MessageBox.Show(string.Format("A table reference could not be resolved; disabling combo box cells\nColumn={0}, Value '{1}'", 
+                    dataGridView.Columns[args.ColumnIndex].HeaderText,
+                    dataGridView[args.ColumnIndex, args.RowIndex].Value));
                 Settings.Default.UseComboboxCells = false;
             }
             args.ThrowException = true;
@@ -92,6 +94,8 @@ namespace PackFileManager {
             EditedFile.Entries.Insert(index, newEntry);
             currentDataTable.Rows.InsertAt(row, index);
             dataGridView.FirstDisplayedScrollingRowIndex = index;
+
+            CurrentPackedFile.Data = Codec.Encode(EditedFile);
         }
 
         private void useFirstColumnAsRowHeader_CheckedChanged(object sender, EventArgs e) 
@@ -227,6 +231,9 @@ namespace PackFileManager {
                 FieldInstance instance = list[num];
                 string str = (proposedValue == null) ? "" : proposedValue.ToString();
                 instance.Value = str;
+#if DEBUG
+                Console.WriteLine("Data column changed");
+#endif
                 CurrentPackedFile.Data = Codec.Encode(EditedFile);
             }
         }
@@ -239,11 +246,11 @@ namespace PackFileManager {
             CurrentPackedFile.Data = Codec.Encode(EditedFile);
         }
 
-        private void currentDataTable_TableNewRow(object sender, DataTableNewRowEventArgs e) {
-            if (dataGridView.DataSource != null) {
-                CurrentPackedFile.Data = (Codec.Encode(EditedFile));
-            }
-        }
+        //private void currentDataTable_TableNewRow(object sender, DataTableNewRowEventArgs e) {
+        //    if (dataGridView.DataSource != null) {
+        //        CurrentPackedFile.Data = (Codec.Encode(EditedFile));
+        //    }
+        //}
 
         private void dataGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
@@ -356,6 +363,9 @@ namespace PackFileManager {
         }
 
         public void Open(PackedFile packedFile) {
+#if DEBUG
+            Console.WriteLine("Opening {0}", packedFile.FullPath);
+#endif
             copiedRows.Clear();
             copyToolStripButton.Enabled = true;
             pasteToolStripButton.Enabled = false;
@@ -388,7 +398,7 @@ namespace PackFileManager {
                     return;
                 }
             }
-            dataGridView.DataSource = null;
+            dataGridView.Columns.Clear();
             CurrentPackedFile = packedFile;
             Codec = PackedFileDbCodec.FromFilename(packedFile.FullPath);
             TypeInfo info = EditedFile.CurrentType;
@@ -414,8 +424,11 @@ namespace PackFileManager {
             currentDataSet.Tables.Add(currentDataTable);
             currentDataTable.ColumnChanged += currentDataTable_ColumnChanged;
             currentDataTable.RowDeleting += currentDataTable_RowDeleted;
-            currentDataTable.TableNewRow += currentDataTable_TableNewRow;
+            //currentDataTable.TableNewRow += currentDataTable_TableNewRow;
 
+#if DEBUG
+            Console.WriteLine("Filling data rows ({0} entries)", EditedFile.Entries.Count);
+#endif
             for (num = 0; num < EditedFile.Entries.Count; num++) {
                 DataRow row = currentDataTable.NewRow();
                 row[0] = num;
