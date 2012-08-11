@@ -29,10 +29,10 @@
 
         public static string readZeroTerminatedAscii(BinaryReader reader) {
             StringBuilder builder2 = new StringBuilder();
-            char ch2 = reader.ReadChar();
+            byte ch2 = reader.ReadByte();
             while (ch2 != '\0') {
-                builder2.Append(ch2);
-                ch2 = reader.ReadChar();
+                builder2.Append((char) ch2);
+                ch2 = reader.ReadByte();
             }
             return builder2.ToString();
         }

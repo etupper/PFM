@@ -183,20 +183,20 @@ namespace PackFileManager {
             set {
                 if (current != value) {
                     current = value != null ? value : Game.STW;
-                    if (GameChanged != null) {
-                        GameChanged();
-                    }
                     if (current != null) {
                         Settings.Default.CurrentGame = current.Id;
-         
+
                         // load the appropriate type map
                         current.ApplyGameTypemap();
-    
+
                         // invalidate cache of reference map cache
-                        List<PackFile> loaded = new PackLoadSequence() {
+                        List<string> loaded = new PackLoadSequence() {
                             IgnorePack = PackLoadSequence.IsDbCaPack
                         }.GetPacksLoadedFrom(current.GameDirectory);
                         DBReferenceMap.Instance.GamePacks = loaded;
+                    }
+                    if (GameChanged != null) {
+                        GameChanged();
                     }
                 }
             }
@@ -214,9 +214,9 @@ namespace PackFileManager {
             }
         }
 
-        public List<PackFile> GetPacksLoadedFrom(string directory) {
+        public List<string> GetPacksLoadedFrom(string directory) {
             List<string> paths = new List<string>();
-            List<PackFile> result = new List<PackFile>();
+            List<string> result = new List<string>();
             if (Directory.Exists(directory)) {
                 directory = Path.Combine(directory, "data");
                 // remove obsoleted packs
@@ -230,12 +230,21 @@ namespace PackFileManager {
                     return obsoleted.Contains(pack);
                 });
                 paths.ForEach(p => {
+#if DEBUG
                     DateTime start = DateTime.Now;
-                    PackFile file = new PackFileCodec().Open(p);
-                    if (ContainsDbData(file)) {
-                        result.Add(file);
+#endif
+                    // more efficient to use the enumerable class instead of instantiating an actual PackFile
+                    // prevents having to parse all contained file names
+                    PackedFileEnumerable packedFiles = new PackedFileEnumerable(p);
+                    foreach (PackedFile file in packedFiles) {
+                        if (file.FullPath.StartsWith("db")) {
+                            result.Add(p);
+                            break;
+                        }
                     }
+#if DEBUG
                     Console.WriteLine("{0} for {1}", DateTime.Now.Subtract(start), Path.GetFileName(p));
+#endif
                 });
                 result.Sort(new PackLoadOrder(result));
             }
@@ -245,7 +254,7 @@ namespace PackFileManager {
         #region Pack filtering
         static readonly string[] EXCLUDE_PREFIXES = { 
                                                         "local", "models", "sound", "terrain", 
-                                                        "anim", "ui" };
+                                                        "anim", "ui", "voices" };
         static bool Keep(string f) { return false; }
         public static bool IsDbCaPack(string filename) {
             foreach (string exclude in EXCLUDE_PREFIXES) {
@@ -257,36 +266,40 @@ namespace PackFileManager {
             bool result = (pack.Type != PackType.Patch) && (pack.Type != PackType.Release);
             return result;
         }
-        static bool ContainsDbData(PackFile pack) {
-            // check if file contains a db directory
-            bool result = false;
-            foreach (VirtualDirectory subDir in pack.Root.Subdirectories) {
-                if (subDir.Name.Equals("db")) {
-                    result = true;
-                    break;
-                }
-            }
-            return result;
-        }
+        //static bool ContainsDbData(PackFile pack) {
+        //    // check if file contains a db directory
+        //    bool result = false;
+        //    foreach (VirtualDirectory subDir in pack.Root.Subdirectories) {
+        //        if (subDir.Name.Equals("db")) {
+        //            result = true;
+        //            break;
+        //        }
+        //    }
+        //    return result;
+        //}
         #endregion
     }
 
-    public class PackLoadOrder : Comparer<PackFile> {
+    public class PackLoadOrder : Comparer<string> {
         private static List<PackType> Ordered = new List<PackType>(new PackType[] {
             PackType.Boot, PackType.BootX, PackType.Shader1, PackType.Shader2,
             PackType.Release, PackType.Patch,
             PackType.Mod, PackType.Movie
         });
 
-        Dictionary<string, PackFile> nameToFile = new Dictionary<string, PackFile>();
-        public PackLoadOrder(ICollection<PackFile> files) {
-            foreach (PackFile file in files) {
-                nameToFile.Add(Path.GetFileName(file.Filepath), file);
+        Dictionary<string, PFHeader> nameToHeader = new Dictionary<string, PFHeader>();
+        Dictionary<string, string> nameToPath = new Dictionary<string, string>();
+        public PackLoadOrder(ICollection<string> files) {
+            foreach (string file in files) {
+                nameToPath.Add(Path.GetFileName(file), file);
+                nameToHeader.Add(file, PackFileCodec.ReadHeader(file));
             }
         }
-        public override int Compare(PackFile p1, PackFile p2) {
-            int index1 = Ordered.IndexOf(p1.Header.Type);
-            int index2 = Ordered.IndexOf(p2.Header.Type);
+        public override int Compare(string p1, string p2) {
+            PFHeader p1Header = nameToHeader[p1];
+            PFHeader p2Header = nameToHeader[p2];
+            int index1 = Ordered.IndexOf(p1Header.Type);
+            int index2 = Ordered.IndexOf(p2Header.Type);
             int result = index2 - index1;
             if (result == 0) {
                 if (Obsoletes(p1, p2)) {
@@ -297,15 +310,17 @@ namespace PackFileManager {
             }
             return result;
         }
-        bool Obsoletes(PackFile p1, PackFile p2) {
-            if (p1.Header.ReplacedPackFileNames.Count == 0) {
+        bool Obsoletes(string p1, string p2) {
+            PFHeader p1Header = nameToHeader[p1];
+            PFHeader p2Header = nameToHeader[p2];
+            if (p1Header.ReplacedPackFileNames.Count == 0) {
                 return false;
             }
-            bool result = p1.Header.ReplacedPackFileNames.Contains(Path.GetFileName(p2.Filepath));
+            bool result = p1Header.ReplacedPackFileNames.Contains(Path.GetFileName(p2));
             if (!result) {
-                foreach (string name in p1.Header.ReplacedPackFileNames) {
-                    PackFile otherCandidate;
-                    if (nameToFile.TryGetValue(name, out otherCandidate)) {
+                foreach (string name in p1Header.ReplacedPackFileNames) {
+                    string otherCandidate;
+                    if (nameToPath.TryGetValue(name, out otherCandidate)) {
                         result = Obsoletes(otherCandidate, p2);
                     }
                     if (result) {
@@ -313,9 +328,11 @@ namespace PackFileManager {
                     }
                 }
             }
-            if (result) {
-                Console.WriteLine("{0} obsoletes {1}", Path.GetFileName(p1.Filepath), Path.GetFileName(p2.Filepath));
-            }
+#if DEBUG
+            //if (result) {
+            //    Console.WriteLine("{0} obsoletes {1}", Path.GetFileName(p1), Path.GetFileName(p2));
+            //}
+#endif
             return result;
         }
     }

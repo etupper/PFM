@@ -115,7 +115,7 @@ namespace Common {
 		}
 
 		public static string typename(string fullPath) {
-			return Path.GetFileName(Path.GetDirectoryName (fullPath)).Replace ("_tables", "");
+			return Path.GetFileName(Path.GetDirectoryName (fullPath));
 		}
 	}
 }

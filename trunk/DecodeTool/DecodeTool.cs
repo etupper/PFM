@@ -226,8 +226,7 @@ namespace DecodeTool {
 				types.Clear ();
 				offset = 0;
 				Bytes = File.ReadAllBytes (dlg.FileName);
-				string dir = Path.GetDirectoryName (dlg.FileName);
-				TypeName = Path.GetFileName (dir).Replace ("_tables", "").Trim ();
+				TypeName = Path.GetFileName(Path.GetDirectoryName (dlg.FileName));
                 showInPreview();
 			}
 		}
