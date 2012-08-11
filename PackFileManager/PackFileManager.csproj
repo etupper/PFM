@@ -254,5 +254,10 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>copy "$(SolutionDir)Files\master_schema.xml" "$(TargetDir)"
+copy "$(SolutionDir)PackFileTest\bin\schema_*" "$(TargetDir)"
+</PreBuildEvent>
+  </PropertyGroup>
   <ItemGroup />
 </Project>

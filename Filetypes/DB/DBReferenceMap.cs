@@ -34,30 +34,6 @@ namespace Common {
             }
         }
 
-        /*
-        public void validateReferences(string directory, PackFile pack) {
-            LastPack = pack;
-            // verify dependencies
-            foreach (string fromMap in references.Keys) {
-                foreach (TableReference reference in references[fromMap]) {
-                    if (reference.fromMap == "ancillary_to_effects") {
-                        Console.WriteLine("ok");
-                    }
-                    SortedSet<string> values = collectValues (reference.fromMap, pack);
-                    SortedSet<string> allowed = collectValues (reference.toMap, pack);
-                    if (values != null && allowed != null) {
-                        foreach (string val in values) {
-                            if (val != "" && !allowed.Contains (val)) {
-                                Console.WriteLine("value '{0}' in {1}:{2} does not fulfil reference {3}:{4}",
-                                    val, reference.fromMap, reference.fromIndex, reference.toMap, reference.toIndex);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-         * */
-
         public SortedSet<string> this[string key] {
             get {
                 return valueCache[key];
@@ -69,7 +45,6 @@ namespace Common {
             string[] split = reference.Split('.');
             string tableName = split[0];
             string fieldName = split[1];
-            // string dbFullPath = Path.Combine("db", dbFileName);
 
             foreach (PackedFile packed in pack.Files) {
                 string currentTable = Path.GetDirectoryName(packed.FullPath);
@@ -131,5 +106,29 @@ namespace Common {
             SortedSet<string> resultSet = new SortedSet<string>(result);
             return resultSet;
         }
+
+        /*
+        public void validateReferences(string directory, PackFile pack) {
+            LastPack = pack;
+            // verify dependencies
+            foreach (string fromMap in references.Keys) {
+                foreach (TableReference reference in references[fromMap]) {
+                    if (reference.fromMap == "ancillary_to_effects") {
+                        Console.WriteLine("ok");
+                    }
+                    SortedSet<string> values = collectValues (reference.fromMap, pack);
+                    SortedSet<string> allowed = collectValues (reference.toMap, pack);
+                    if (values != null && allowed != null) {
+                        foreach (string val in values) {
+                            if (val != "" && !allowed.Contains (val)) {
+                                Console.WriteLine("value '{0}' in {1}:{2} does not fulfil reference {3}:{4}",
+                                    val, reference.fromMap, reference.fromIndex, reference.toMap, reference.toIndex);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+         * */
     }
 }
