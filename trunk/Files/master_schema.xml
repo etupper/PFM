@@ -1498,7 +1498,7 @@
   </table>
   <table name='commodities_demand_junction_tables'>
     <field fkey='commodities_tables.Commodity ID' name='Commodity IDRef' type='string' pk='true' />
-    <field fkey='commodities_demand_drivers.Driver ID' name='Unknown' type='string' pk='true' />
+    <field fkey='commodities_demand_drivers_tables.Driver ID' name='Unknown' type='string' pk='true' />
     <field name='Unknown' type='float' />
     <field name='Unknown' type='float' />
   </table>

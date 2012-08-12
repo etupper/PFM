@@ -61,7 +61,7 @@ namespace PackFileTest {
                 SortedSet<Tuple<string, int>> addTo = null;
                 try {
 #if Debug
-                    if (!string.IsNullOrEmpty(debug_at) && file.FullPath.EndsWith(debug_at)) {
+                    if (!string.IsNullOrEmpty(debug_at) && file.FullPath.Contains(debug_at)) {
                         Console.WriteLine("stop right here");
                     }
 #endif
