@@ -33,6 +33,7 @@
             this.more1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.hexView = new System.Windows.Forms.RichTextBox();
+            this.panel3 = new System.Windows.Forms.Panel();
             this.goProblem = new System.Windows.Forms.Button();
             this.goStart = new System.Windows.Forms.Button();
             this.forward = new System.Windows.Forms.Button();
@@ -41,6 +42,11 @@
             this.typeList = new System.Windows.Forms.ListBox();
             this.valueList = new System.Windows.Forms.ListBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.boolLabel = new System.Windows.Forms.Label();
+            this.intLabel = new System.Windows.Forms.Label();
+            this.stringLabel = new System.Windows.Forms.Label();
             this.setButton = new System.Windows.Forms.Button();
             this.showTypes = new System.Windows.Forms.Button();
             this.optStringType = new TypeSelection();
@@ -60,6 +66,7 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
@@ -76,7 +83,7 @@
             this.moreToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(588, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(587, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -145,17 +152,14 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.goProblem);
-            this.splitContainer1.Panel2.Controls.Add(this.goStart);
-            this.splitContainer1.Panel2.Controls.Add(this.forward);
-            this.splitContainer1.Panel2.Controls.Add(this.back);
+            this.splitContainer1.Panel2.Controls.Add(this.panel3);
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel2.Controls.Add(this.panel2);
             this.splitContainer1.Panel2.Controls.Add(this.typeNameLabel);
             this.splitContainer1.Panel2.Controls.Add(this.panel1);
             this.splitContainer1.Panel2.Controls.Add(this.repeatInfo);
-            this.splitContainer1.Size = new System.Drawing.Size(588, 566);
-            this.splitContainer1.SplitterDistance = 196;
+            this.splitContainer1.Size = new System.Drawing.Size(587, 548);
+            this.splitContainer1.SplitterDistance = 195;
             this.splitContainer1.TabIndex = 1;
             // 
             // hexView
@@ -164,53 +168,61 @@
             this.hexView.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.hexView.Location = new System.Drawing.Point(0, 0);
             this.hexView.Name = "hexView";
-            this.hexView.Size = new System.Drawing.Size(196, 566);
+            this.hexView.Size = new System.Drawing.Size(195, 548);
             this.hexView.TabIndex = 0;
             this.hexView.Text = "";
             // 
+            // panel3
+            // 
+            this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel3.Controls.Add(this.goProblem);
+            this.panel3.Controls.Add(this.goStart);
+            this.panel3.Controls.Add(this.forward);
+            this.panel3.Controls.Add(this.back);
+            this.panel3.Location = new System.Drawing.Point(2, 212);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(383, 26);
+            this.panel3.TabIndex = 16;
+            // 
             // goProblem
             // 
-            this.goProblem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.goProblem.Location = new System.Drawing.Point(301, 245);
+            this.goProblem.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.goProblem.Location = new System.Drawing.Point(246, 3);
             this.goProblem.Name = "goProblem";
             this.goProblem.Size = new System.Drawing.Size(75, 23);
-            this.goProblem.TabIndex = 19;
+            this.goProblem.TabIndex = 23;
             this.goProblem.Text = "problem";
             this.goProblem.UseVisualStyleBackColor = true;
-            this.goProblem.Click += new System.EventHandler(this.goProblem_Click);
             // 
             // goStart
             // 
-            this.goStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.goStart.Location = new System.Drawing.Point(58, 245);
+            this.goStart.Location = new System.Drawing.Point(3, 3);
             this.goStart.Name = "goStart";
             this.goStart.Size = new System.Drawing.Size(75, 23);
-            this.goStart.TabIndex = 18;
+            this.goStart.TabIndex = 22;
             this.goStart.Text = "<<";
             this.goStart.UseVisualStyleBackColor = true;
-            this.goStart.Click += new System.EventHandler(this.goStart_Click);
             // 
             // forward
             // 
-            this.forward.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.forward.Location = new System.Drawing.Point(220, 245);
+            this.forward.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.forward.Location = new System.Drawing.Point(165, 3);
             this.forward.Name = "forward";
             this.forward.Size = new System.Drawing.Size(75, 23);
-            this.forward.TabIndex = 17;
+            this.forward.TabIndex = 21;
             this.forward.Text = ">";
             this.forward.UseVisualStyleBackColor = true;
-            this.forward.Click += new System.EventHandler(this.forward_Click);
             // 
             // back
             // 
-            this.back.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.back.Location = new System.Drawing.Point(139, 245);
+            this.back.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.back.Location = new System.Drawing.Point(84, 3);
             this.back.Name = "back";
             this.back.Size = new System.Drawing.Size(75, 23);
-            this.back.TabIndex = 16;
+            this.back.TabIndex = 20;
             this.back.Text = "<";
             this.back.UseVisualStyleBackColor = true;
-            this.back.Click += new System.EventHandler(this.back_Click);
             // 
             // splitContainer2
             // 
@@ -227,8 +239,8 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.valueList);
-            this.splitContainer2.Size = new System.Drawing.Size(381, 224);
-            this.splitContainer2.SplitterDistance = 126;
+            this.splitContainer2.Size = new System.Drawing.Size(381, 202);
+            this.splitContainer2.SplitterDistance = 124;
             this.splitContainer2.TabIndex = 15;
             // 
             // typeList
@@ -237,7 +249,7 @@
             this.typeList.FormattingEnabled = true;
             this.typeList.Location = new System.Drawing.Point(0, 0);
             this.typeList.Name = "typeList";
-            this.typeList.Size = new System.Drawing.Size(126, 224);
+            this.typeList.Size = new System.Drawing.Size(124, 202);
             this.typeList.TabIndex = 14;
             // 
             // valueList
@@ -246,7 +258,7 @@
             this.valueList.FormattingEnabled = true;
             this.valueList.Location = new System.Drawing.Point(0, 0);
             this.valueList.Name = "valueList";
-            this.valueList.Size = new System.Drawing.Size(251, 224);
+            this.valueList.Size = new System.Drawing.Size(253, 202);
             this.valueList.TabIndex = 13;
             this.valueList.SelectedIndexChanged += new System.EventHandler(this.valueList_SelectedIndexChanged);
             // 
@@ -254,6 +266,11 @@
             // 
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.Controls.Add(this.label5);
+            this.panel2.Controls.Add(this.label4);
+            this.panel2.Controls.Add(this.boolLabel);
+            this.panel2.Controls.Add(this.intLabel);
+            this.panel2.Controls.Add(this.stringLabel);
             this.panel2.Controls.Add(this.setButton);
             this.panel2.Controls.Add(this.showTypes);
             this.panel2.Controls.Add(this.optStringType);
@@ -262,10 +279,55 @@
             this.panel2.Controls.Add(this.button1);
             this.panel2.Controls.Add(this.intType);
             this.panel2.Controls.Add(this.stringType);
-            this.panel2.Location = new System.Drawing.Point(2, 274);
+            this.panel2.Location = new System.Drawing.Point(7, 244);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(383, 215);
             this.panel2.TabIndex = 14;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(2, 159);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(47, 13);
+            this.label5.TabIndex = 23;
+            this.label5.Text = "optstring";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(2, 127);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(27, 13);
+            this.label4.TabIndex = 22;
+            this.label4.Text = "float";
+            // 
+            // boolLabel
+            // 
+            this.boolLabel.AutoSize = true;
+            this.boolLabel.Location = new System.Drawing.Point(2, 89);
+            this.boolLabel.Name = "boolLabel";
+            this.boolLabel.Size = new System.Drawing.Size(27, 13);
+            this.boolLabel.TabIndex = 21;
+            this.boolLabel.Text = "bool";
+            // 
+            // intLabel
+            // 
+            this.intLabel.AutoSize = true;
+            this.intLabel.Location = new System.Drawing.Point(2, 55);
+            this.intLabel.Name = "intLabel";
+            this.intLabel.Size = new System.Drawing.Size(18, 13);
+            this.intLabel.TabIndex = 20;
+            this.intLabel.Text = "int";
+            // 
+            // stringLabel
+            // 
+            this.stringLabel.AutoSize = true;
+            this.stringLabel.Location = new System.Drawing.Point(2, 16);
+            this.stringLabel.Name = "stringLabel";
+            this.stringLabel.Size = new System.Drawing.Size(32, 13);
+            this.stringLabel.TabIndex = 19;
+            this.stringLabel.Text = "string";
             // 
             // setButton
             // 
@@ -289,31 +351,25 @@
             // 
             // optStringType
             // 
-            this.optStringType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.optStringType.Location = new System.Drawing.Point(-1, 150);
+            this.optStringType.Location = new System.Drawing.Point(55, 150);
             this.optStringType.Name = "optStringType";
-            this.optStringType.Size = new System.Drawing.Size(355, 31);
+            this.optStringType.Size = new System.Drawing.Size(302, 31);
             this.optStringType.TabIndex = 16;
             this.optStringType.Type = null;
             // 
             // singleType
             // 
-            this.singleType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.singleType.Location = new System.Drawing.Point(0, 113);
+            this.singleType.Location = new System.Drawing.Point(55, 118);
             this.singleType.Name = "singleType";
-            this.singleType.Size = new System.Drawing.Size(361, 31);
+            this.singleType.Size = new System.Drawing.Size(302, 31);
             this.singleType.TabIndex = 15;
             this.singleType.Type = null;
             // 
             // boolType
             // 
-            this.boolType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.boolType.Location = new System.Drawing.Point(0, 79);
+            this.boolType.Location = new System.Drawing.Point(55, 84);
             this.boolType.Name = "boolType";
-            this.boolType.Size = new System.Drawing.Size(361, 28);
+            this.boolType.Size = new System.Drawing.Size(302, 28);
             this.boolType.TabIndex = 14;
             this.boolType.Type = null;
             // 
@@ -329,21 +385,17 @@
             // 
             // intType
             // 
-            this.intType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.intType.Location = new System.Drawing.Point(0, 40);
+            this.intType.Location = new System.Drawing.Point(55, 46);
             this.intType.Name = "intType";
-            this.intType.Size = new System.Drawing.Size(357, 33);
+            this.intType.Size = new System.Drawing.Size(302, 33);
             this.intType.TabIndex = 12;
             this.intType.Type = null;
             // 
             // stringType
             // 
-            this.stringType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.stringType.Location = new System.Drawing.Point(0, 3);
+            this.stringType.Location = new System.Drawing.Point(55, 9);
             this.stringType.Name = "stringType";
-            this.stringType.Size = new System.Drawing.Size(357, 31);
+            this.stringType.Size = new System.Drawing.Size(302, 31);
             this.stringType.TabIndex = 11;
             this.stringType.Type = null;
             // 
@@ -351,7 +403,7 @@
             // 
             this.typeNameLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.typeNameLabel.AutoSize = true;
-            this.typeNameLabel.Location = new System.Drawing.Point(4, 492);
+            this.typeNameLabel.Location = new System.Drawing.Point(7, 462);
             this.typeNameLabel.Name = "typeNameLabel";
             this.typeNameLabel.Size = new System.Drawing.Size(60, 13);
             this.typeNameLabel.TabIndex = 13;
@@ -364,7 +416,7 @@
             this.panel1.Controls.Add(this.setHeader);
             this.panel1.Controls.Add(this.headerLength);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Location = new System.Drawing.Point(3, 521);
+            this.panel1.Location = new System.Drawing.Point(3, 503);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(382, 42);
             this.panel1.TabIndex = 12;
@@ -399,7 +451,7 @@
             // 
             this.repeatInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.repeatInfo.AutoSize = true;
-            this.repeatInfo.Location = new System.Drawing.Point(7, 505);
+            this.repeatInfo.Location = new System.Drawing.Point(4, 487);
             this.repeatInfo.Name = "repeatInfo";
             this.repeatInfo.Size = new System.Drawing.Size(68, 13);
             this.repeatInfo.TabIndex = 9;
@@ -409,7 +461,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(588, 590);
+            this.ClientSize = new System.Drawing.Size(587, 572);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -422,11 +474,13 @@
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.panel3.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
@@ -459,15 +513,21 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.ListBox typeList;
         private System.Windows.Forms.ListBox valueList;
-        private System.Windows.Forms.Button forward;
-        private System.Windows.Forms.Button back;
-        private System.Windows.Forms.Button goStart;
-        private System.Windows.Forms.Button goProblem;
         private System.Windows.Forms.Button showTypes;
         private System.Windows.Forms.ToolStripMenuItem moreToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem more1ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.Button setButton;
+        private System.Windows.Forms.Label stringLabel;
+        private System.Windows.Forms.Label intLabel;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label boolLabel;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Button goProblem;
+        private System.Windows.Forms.Button goStart;
+        private System.Windows.Forms.Button forward;
+        private System.Windows.Forms.Button back;
 
     }
 }
