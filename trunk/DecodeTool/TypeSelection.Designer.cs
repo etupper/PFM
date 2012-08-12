@@ -24,7 +24,6 @@
         /// </summary>
         private void InitializeComponent() {
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.label = new System.Windows.Forms.Label();
             this.preview = new System.Windows.Forms.TextBox();
             this.button = new System.Windows.Forms.Button();
             this.flowLayoutPanel1.SuspendLayout();
@@ -32,7 +31,6 @@
             // 
             // flowLayoutPanel1
             // 
-            this.flowLayoutPanel1.Controls.Add(this.label);
             this.flowLayoutPanel1.Controls.Add(this.preview);
             this.flowLayoutPanel1.Controls.Add(this.button);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -41,20 +39,11 @@
             this.flowLayoutPanel1.Size = new System.Drawing.Size(372, 28);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
-            // label
-            // 
-            this.label.AutoSize = true;
-            this.label.Location = new System.Drawing.Point(3, 0);
-            this.label.Name = "label";
-            this.label.Size = new System.Drawing.Size(35, 13);
-            this.label.TabIndex = 0;
-            this.label.Text = "label1";
-            // 
             // preview
             // 
             this.preview.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.preview.Location = new System.Drawing.Point(44, 3);
+            this.preview.Location = new System.Drawing.Point(3, 3);
             this.preview.Name = "preview";
             this.preview.ReadOnly = true;
             this.preview.Size = new System.Drawing.Size(209, 20);
@@ -64,7 +53,7 @@
             // 
             this.button.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.button.Location = new System.Drawing.Point(259, 3);
+            this.button.Location = new System.Drawing.Point(218, 3);
             this.button.Name = "button";
             this.button.Size = new System.Drawing.Size(75, 23);
             this.button.TabIndex = 2;
@@ -88,7 +77,6 @@
         #endregion
 
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private System.Windows.Forms.Label label;
         private System.Windows.Forms.TextBox preview;
         private System.Windows.Forms.Button button;
     }

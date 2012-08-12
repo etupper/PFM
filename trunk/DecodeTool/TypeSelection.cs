@@ -22,7 +22,6 @@ namespace DecodeTool {
         public TypeFactory Factory {
             set {
                 factory = value;
-                label.Text = factory != null ? factory().TypeName : "type";
             }
         }
 
