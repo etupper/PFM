@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using Common;
 using PackFileManager;
 
@@ -11,7 +12,8 @@ namespace PackFileTest {
 		// -db: test db files; -t: tsv test for db files
 		// -uv: unit variant files; -ot: create output of tables
         // -pr: prepare release... split schemata into each of the games'
-        private static string[] OPTIONS = { "-t", "-db", "uv", "gf", "-ot", "-pr" };
+        // -w : write schema_user.xml after iterating all db files
+        private static string[] OPTIONS = { "-t", "-db", "uv", "gf", "-ot", "-pr", "-w" };
 #pragma warning restore 414
 
 		bool testDbFiles = false;
@@ -105,6 +107,12 @@ namespace PackFileTest {
 					}
 				}
                 if (saveSchema) {
+                    foreach(List<FieldInfo> typeInfos in DBTypeMap.Instance.TypeMap.Values) {
+                        MakeFieldNamesUnique(typeInfos);
+                    }
+                    foreach (List<FieldInfo> typeInfos in DBTypeMap.Instance.GuidMap.Values) {
+                        MakeFieldNamesUnique(typeInfos);
+                    }
                     DBTypeMap.Instance.saveToFile(Directory.GetCurrentDirectory(), "user");
                 }
 				Console.Error.WriteLine ("Test run finished, press any key");
@@ -113,6 +121,32 @@ namespace PackFileTest {
 				Console.Error.Write ("Missing options file {0}", OPTIONS_FILENAME);
 			}
 		}
+        void MakeFieldNamesUnique(List<FieldInfo> fields) {
+            List<string> used = new List<string>();
+            for (int i = 0; i < fields.Count; i++) {
+                FieldInfo info = fields[i];
+                if (used.Contains(info.Name)) {
+                    string newName = MakeNameUnique(info.Name, used, i+1);
+                    info.Name = newName;
+                }
+                used.Add(info.Name);
+            }
+        }
+        string MakeNameUnique(string name, ICollection<string> alreadyUsed, int index) {
+            string result = name;
+            int number = index;
+            while (alreadyUsed.Contains(result)) {
+                if (numberedFieldNameRe.IsMatch(result)) {
+                    Match match = numberedFieldNameRe.Match(result);
+                    number = int.Parse(match.Groups[2].Value) + 1;
+                    result = string.Format("{0}{1}", match.Groups[1].Value, number);
+                } else {
+                    result = string.Format("{0}{1}", name, number);
+                }
+            }
+            return result;
+        }
+        static readonly Regex numberedFieldNameRe = new Regex("([^0-9]*)([0-9]+)");
 
         // run db tests for all files in the given directory
         public SortedSet<PackedFileTest> testAllPacks(string dir, bool outputTable, bool testTsv = false) {
