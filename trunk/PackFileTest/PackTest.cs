@@ -149,15 +149,15 @@ namespace PackFileTest {
 			foreach (string file in Directory.EnumerateFiles(dir, "*.pack")) {
                 SortedSet<PackedFileTest> tests = new SortedSet<PackedFileTest>();
                 if (testDbFiles) {
-                    tests.Add(new DBFileTest (testTsv, outputTable));
-                    //tests.Add(new ModelsTest<NavalModel, NavalEntry> {
-                    //    Codec = NavalModelCodec.Instance,
-                    //    ValidTypes = "models_naval_tables"
-                    //});
-                    tests.Add(new ModelsTest<BuildingModel, BuildingModelEntry> {
-                        Codec = BuildingModelCodec.Instance,
-                        ValidTypes = "models_building_tables"
+                    //tests.Add(new DBFileTest (testTsv, outputTable));
+                    tests.Add(new ModelsTest<NavalModel, NavalEntry> {
+                        Codec = NavalModelCodec.Instance,
+                        ValidTypes = "models_naval_tables"
                     });
+                    //tests.Add(new ModelsTest<BuildingModel, BuildingModelEntry> {
+                    //    Codec = BuildingModelCodec.Instance,
+                    //    ValidTypes = "models_building_tables"
+                    //});
 				}
 				if (testUnitVariants) {
                     tests.Add(new UnitVariantTest());
@@ -198,8 +198,6 @@ namespace PackFileTest {
                 }
             }
         }
-		
-
     }
 	
 	public abstract class PackedFileTest : IComparable {

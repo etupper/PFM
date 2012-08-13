@@ -41,7 +41,7 @@ namespace Filetypes {
 #endif
                             model.Entries.Add(entry);
                         } catch (Exception ex) {
-                            throw new InvalidDataException(string.Format("Failed to read entry {1} in {2}", j, model), ex);
+                            throw new InvalidDataException(string.Format("Failed to read entry {0} in {1}", j, model), ex);
                         }
                     }
                     result.Models.Add(model);
@@ -70,17 +70,17 @@ namespace Filetypes {
         protected abstract void WriteEntry(BinaryWriter writer, E entry, int index);
         
         protected void WriteAngles(BinaryWriter writer, E entry) {
-            entry.Angles.ForEach(a => {
-                a.ForEach(f => { 
+            foreach(Angles angle in entry) {
+                foreach(float f in angle) {
                     writer.Write (f); 
-                });
-            });
+                }
+            }
         }
         protected void ReadAngles(BinaryReader reader, E entry) {
-            foreach(List<float> angle in entry.Angles) {
-                for(int i = 0; i < angle.Count; i++) {
-                    angle[i] = reader.ReadSingle();
-                }
+            foreach (Angles angle in entry) {
+                angle.XAngle = reader.ReadSingle();
+                angle.YAngle = reader.ReadSingle();
+                angle.ZAngle = reader.ReadSingle();
             }
         }
     }
@@ -122,11 +122,6 @@ namespace Filetypes {
             IOFunctions.writeCAString(writer, entry.Name);
             writer.Write(entry.Unknown);
             WriteAngles(writer, entry);
-            entry.Angles.ForEach(a =>  {
-                a.ForEach(f => {
-                    writer.Write (f);
-                });
-            });
         }
     }
  
@@ -151,26 +146,41 @@ namespace Filetypes {
                 Unknown = reader.ReadBoolean(),
                 RigidModelPath = IOFunctions.readCAString(reader)
             };
-            int camCount = reader.ReadInt32();
-            for(int camIndex = 0; camIndex < camCount; camIndex++) {
-                NavalCam cam = new NavalCam {
-                    Name = IOFunctions.readCAString(reader)
-                };
-                for (int dataIndex = 0; dataIndex < cam.Data.Count; dataIndex++) {
-                    cam.Data[dataIndex] = reader.ReadUInt32();
+            Console.WriteLine("read model {0}, {1}, {2}, {3}", result.ModelId, result.RiggingLogicPath, result.Unknown, result.RigidModelPath);
+            Console.Out.Flush();
+            if (!result.Unknown) {
+                int camCount = reader.ReadInt32();
+                for (int camIndex = 0; camIndex < camCount; camIndex++) {
+                    NavalCam cam = new NavalCam {
+                        Name = IOFunctions.readCAString(reader)
+                    };
+                    for (int dataIndex = 0; dataIndex < cam.Data.Count; dataIndex++) {
+                        cam.Data[dataIndex] = reader.ReadUInt32();
+                    }
+                    result.NavalCams.Add(cam);
                 }
-                result.NavalCams.Add(cam);
+            } else {
+                using (var writer = new BinaryWriter(File.Create("debug"))) {
+                    WriteModel(writer, result);
+                    reader.BaseStream.CopyTo(writer.BaseStream);
+                }
+                throw new Exception();
+                //Console.WriteLine("nanu?");
             }
             return result;
         }
         protected override NavalEntry ReadEntry(BinaryReader reader) {
             // skip the item number, we don't care... is just its index in the list
-            reader.ReadInt32();
+            int entryIndex = reader.ReadInt32();
+            Console.WriteLine("reading entry {0}", entryIndex);
             NavalEntry entry = new NavalEntry();
             ReadAngles(reader, entry);
-            entry.Unknown1 = reader.ReadInt32();
-            entry.Unknown2 = reader.ReadInt32();
-            entry.Unknown3 = reader.ReadInt32();
+            int moreEntries = reader.ReadInt32();
+            for (int i = 0; i < moreEntries; i++) {
+                entry.Unknown.Add(reader.ReadInt32());
+            }
+            Console.WriteLine("read entry {0}", string.Join(",", entry.Unknown));
+            Console.Out.Flush();
             return entry;
         }
         
@@ -190,9 +200,8 @@ namespace Filetypes {
         protected override void WriteEntry(BinaryWriter writer, NavalEntry entry, int index) {
             writer.Write(index);
             WriteAngles(writer, entry);
-            writer.Write(entry.Unknown1);
-            writer.Write(entry.Unknown2);
-            writer.Write(entry.Unknown3);
+            writer.Write(entry.Unknown.Count);
+            entry.Unknown.ForEach(u => writer.Write(u));
         }
     }
 }

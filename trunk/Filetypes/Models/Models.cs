@@ -1,7 +1,6 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-
-using Angles = System.Collections.Generic.List<float>;
 
 namespace Filetypes {
     public abstract class ModelFile<T> {
@@ -23,24 +22,47 @@ namespace Filetypes {
         }
     }
 
-    public abstract class ModelEntry {
-        public ModelEntry() {
-            for (int i = 0; i < 3; i++) {
-                allAngles.Add(AllNull());
-            }
+    public class Angles : IEnumerable {
+        public float XAngle {
+            get;
+            set;
         }
-        List<Angles> allAngles = new List<Angles>();
-        public List<Angles> Angles {
+        public float YAngle {
+            get;
+            set;
+        }
+        public float ZAngle {
+            get;
+            set;
+        }
+        public IEnumerator GetEnumerator() {
+            float[] angles = new float[] { XAngle, YAngle, ZAngle };
+            return angles.GetEnumerator();
+        }
+    }
+
+    public abstract class ModelEntry : IEnumerable {
+        Angles angles1 = new Angles();
+        public Angles Angles1 {
             get {
-                return allAngles;
+                return angles1;
             }
         }
-        public static Angles AllNull() {
-            Angles result = new List<float>();
-            for(int i = 0; i < 3; i++) {
-                result.Add(0f);
+        Angles angles2 = new Angles();
+        public Angles Angles2 {
+            get {
+                return angles2;
             }
-            return result;
+        }
+        Angles angles3 = new Angles();
+        public Angles Angles3 {
+            get {
+                return angles3;
+            }
+        }
+        public IEnumerator GetEnumerator() {
+            Angles[] angles = new Angles[] { angles1, angles2, angles3 };
+            return angles.GetEnumerator();
         }
     }
 
@@ -64,7 +86,7 @@ namespace Filetypes {
     #endregion
  
     
-    #region
+    #region Naval
     public class NavalModelFile : ModelFile<NavalModel> { }
     
     public class NavalModel : ModelContainer<NavalEntry> {
@@ -94,14 +116,11 @@ namespace Filetypes {
         }
     }
     public class NavalEntry : ModelEntry {
-        public int Unknown1 {
-            get; set;
-        }
-        public int Unknown2 {
-            get; set;
-        }
-        public int Unknown3 {
-            get; set;
+        public List<int> unknown = new List<int>();
+        public List<int> Unknown {
+            get {
+                return unknown;
+            }
         }
     }
     #endregion
