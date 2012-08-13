@@ -12,15 +12,12 @@ namespace PackFileTest {
 		SortedSet<string> wrongSize = new SortedSet<string>();
 		SortedSet<string> wrongData = new SortedSet<string>();
 		
-		public UnitVariantTest (string filepath) {
-			Packfile = filepath;
-		}
-		
 		public override bool CanTest(PackedFile file) {
 			return file.FullPath.EndsWith (".unit_variant");
 		}
 		
 		public override void TestFile(PackedFile file) {
+            allTestedFiles.Add(file.FullPath);
             byte[] original = file.Data;
             UnitVariantFile uvFile = null;
             using (MemoryStream stream = new MemoryStream(original, 0, original.Length)) {

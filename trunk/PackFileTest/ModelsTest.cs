@@ -19,6 +19,17 @@ namespace PackFileTest {
                 return successes.Count + countErrors.Count + generalErrors.Count;
             }
         }
+
+        public override List<string> FailedTests {
+            get {
+                List<string> result = base.FailedTests;
+                if (countErrors.Count > 0) {
+                    result.Add("Wrong content count:");
+                    result.AddRange(countErrors);
+                }
+                return result;
+            }
+        }
         
         List<string> countErrors = new List<string>();
         List<string> successes = new List<string>();
@@ -29,6 +40,7 @@ namespace PackFileTest {
         }
         
         public override void TestFile(PackedFile packed) {
+            allTestedFiles.Add(packed.FullPath);
             if (packed.Data.Length == 0) {
                 emptyFiles.Add(packed.FullPath);
                 return;
