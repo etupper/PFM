@@ -72,6 +72,7 @@ namespace PackFileManager
                     new GroupformationEditor { Dock = DockStyle.Fill },
                     new UnitVariantFileEditorControl { Dock = DockStyle.Fill },
                     new PackedEsfEditor { Dock = DockStyle.Fill },
+                    new BuildingModelEditor { Dock = DockStyle.Fill },
                     textFileEditorControl
                                               };
         }

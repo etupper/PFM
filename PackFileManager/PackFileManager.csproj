@@ -89,6 +89,12 @@
     <Compile Include="Editors\AtlasFileEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Editors\BuildingModelEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editors\BuildingModelEditor.Designer.cs">
+      <DependentUpon>BuildingModelEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Editors\DBFileEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -134,6 +140,9 @@
     </Compile>
     <Compile Include="PackTree.cs" />
     <Compile Include="Program.cs" />
+    <EmbeddedResource Include="Editors\BuildingModelEditor.resx">
+      <DependentUpon>BuildingModelEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Editors\DBFileEditorControl.resx">
       <DependentUpon>DBFileEditorControl.cs</DependentUpon>
     </EmbeddedResource>

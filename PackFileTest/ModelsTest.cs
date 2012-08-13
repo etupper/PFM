@@ -58,7 +58,7 @@ namespace PackFileTest {
         
         public override void PrintResults() {
             if (TestCount != 0) {
-                Console.WriteLine("BuildingModels test ({0}):", ValidTypes);
+                Console.WriteLine("Models test ({0}):", ValidTypes);
                 Console.WriteLine("Supported Files: {0}", successes.Count);
                 Console.WriteLine("Empty Files: {0}", successes.Count);
             }
