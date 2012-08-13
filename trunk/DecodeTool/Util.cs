@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using Common;
+using Filetypes;
 
 namespace DecodeTool {       
     public class Util {

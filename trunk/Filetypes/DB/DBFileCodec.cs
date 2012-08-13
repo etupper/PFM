@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using Common;
 
-namespace Common {
+namespace Filetypes {
 	/*
 	 * A class parsing dbfiles from and to data streams in packed file format.
 	 */
@@ -172,7 +173,7 @@ namespace Common {
         public void Encode(Stream stream, DBFile file) {
 			BinaryWriter writer = new BinaryWriter (stream);
             file.Header.EntryCount = (uint) file.Entries.Count;
-			writeHeader (writer, file.Header);
+			WriteHeader (writer, file.Header);
 			writeFields (writer, file);
 			writer.Flush ();
 		}
@@ -183,7 +184,7 @@ namespace Common {
             }
         }
 
-        public void writeHeader(BinaryWriter writer, DBFileHeader header) {
+        public static void WriteHeader(BinaryWriter writer, DBFileHeader header) {
 			if (header.GUID != "") {
 				writer.Write (GUID_MARKER);
 				IOFunctions.writeCAString (writer, header.GUID);

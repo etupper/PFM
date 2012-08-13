@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Common;
 
-namespace Common {
+namespace Filetypes {
 	public class UnitVariantCodec : Codec<UnitVariantFile> {
 		public static readonly UnitVariantCodec Instance = new UnitVariantCodec();
 		

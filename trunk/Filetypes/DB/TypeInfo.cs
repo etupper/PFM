@@ -2,7 +2,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace Common {
+namespace Filetypes {
 	[StructLayout(LayoutKind.Sequential)]
     public class TypeInfo {
 		public string name;

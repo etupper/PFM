@@ -77,6 +77,8 @@
     <Compile Include="UnitVariant\UnitVariantFile.cs" />
     <Compile Include="UnitVariant\UnitVariantObject.cs" />
     <Compile Include="Groupformations\Groupformation.cs" />
+    <Compile Include="Models\ModelCodecs.cs" />
+    <Compile Include="Models\Models.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
@@ -94,5 +96,6 @@
   -->
   <ItemGroup>
     <Folder Include="Groupformations\" />
+    <Folder Include="Models\" />
   </ItemGroup>
 </Project>

@@ -2,11 +2,14 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using Common;
+using Filetypes;
 
 namespace PackFileTest {
     public class DBFileTest : PackedFileTest {
         // to conveniently set breakpoints for certain tables.
+#if DEBUG
         private string debug_at = "";
+#endif
 
         private bool testTsv;
         private bool outputTable;
@@ -27,19 +30,21 @@ namespace PackFileTest {
         public SortedSet<Tuple<string, int>> tsvFails = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
         #endregion
 
-        public DBFileTest (string file, bool tsv, bool table) {
-			Packfile = file;
+        public DBFileTest (bool tsv, bool table) {
 			testTsv = tsv;
             outputTable = table;
 		}
 		
-		public override bool canTest(PackedFile packed) {
-			return packed.FullPath.StartsWith("db");
+		public override bool CanTest(PackedFile packed) {
+			bool result = packed.FullPath.StartsWith("db");
+            result &= !DBFile.typename(packed.FullPath).Equals ("models_building_tables");
+            result &= !DBFile.typename(packed.FullPath).Equals ("models_naval_tables");
+            return result;
 		}
 
         // test the given packed file as a database file
         // tests PackedFileCodec and the db definitions we have
-        public override void testFile(PackedFile file) {
+        public override void TestFile(PackedFile file) {
             if (file.Size == 0) {
                 emptyTables.Add(new Tuple<string, int>(DBFile.typename(file.FullPath), -1));
                 return;
@@ -60,7 +65,7 @@ namespace PackFileTest {
             } else if (DBTypeMap.Instance.IsSupported(type)) {
                 SortedSet<Tuple<string, int>> addTo = null;
                 try {
-#if Debug
+#if DEBUG
                     if (!string.IsNullOrEmpty(debug_at) && file.FullPath.Contains(debug_at)) {
                         Console.WriteLine("stop right here");
                     }
@@ -84,14 +89,14 @@ namespace PackFileTest {
                     } else {
                         // didn't get what we expect
                         addTo = invalidDefForVersion;
-#if Debug
+#if DEBUG
                         if (!string.IsNullOrEmpty(debug_at) && file.FullPath.EndsWith(debug_at)) {
                             Console.WriteLine("adding watched to invalid");
                         }
 #endif
                     }
                 } catch {
-#if Debug
+#if DEBUG
                     if (!string.IsNullOrEmpty(debug_at) && file.FullPath.EndsWith(debug_at)) {
                         Console.WriteLine("adding watched to invalid");
                     }
@@ -112,7 +117,7 @@ namespace PackFileTest {
                 // export to tsv
                 TextDbCodec codec = new TextDbCodec();
                 string exportPath = Path.Combine(Path.GetTempPath(), "exportTest.tsv");
-#if Debug
+#if DEBUG
                 if (originalFile.CurrentType.name.Equals(debug_at)) {
                     Console.WriteLine("stop right here");
                 }
@@ -165,22 +170,22 @@ namespace PackFileTest {
 			}
 		}
 
-		public override void printResults() {
+		public override void PrintResults() {
             if (!(supported.Count == 0 && emptyTables.Count == 0)) {
                 Console.WriteLine("Database Test:");
                 Console.WriteLine("Supported Files: {0}", supported.Count);
                 Console.WriteLine("Empty Files: {0}", emptyTables.Count);
             }
-			printList ("General errors", generalErrors);
-			printList ("No description", noDefinition);
-			printList ("no definition for version", noDefForVersion);
-			printList ("invalid description", invalidDefForVersion);
-			printList ("Tsv exports", tsvFails);
+			PrintList ("General errors", generalErrors);
+			PrintList ("No description", noDefinition);
+			PrintList ("no definition for version", noDefForVersion);
+			PrintList ("invalid description", invalidDefForVersion);
+			PrintList ("Tsv exports", tsvFails);
 			Console.WriteLine ();
 		}
 		
          #region Print Utilities
-		static void printList(string label, ICollection<Tuple<string, int>> list) {
+		static void PrintList(string label, ICollection<Tuple<string, int>> list) {
 			if (list.Count != 0) {
 				Console.WriteLine ("{0}: {1}", label, list.Count);
 				foreach (Tuple<string, int> tableVersion in list) {
@@ -189,7 +194,7 @@ namespace PackFileTest {
 			}
 		}
 
-		static void printList(string label, ICollection<Tuple<string, int, int>> list) {
+		static void PrintList(string label, ICollection<Tuple<string, int, int>> list) {
 			if (list.Count != 0) {
 				Console.WriteLine ("{0}: {1}", label, list.Count);
 				foreach (Tuple<string, int, int> tableVersion in list) {

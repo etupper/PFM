@@ -1,4 +1,5 @@
 ﻿using Common;
+using Filetypes;
 using DecodeTool;
 using PackFileManager.Properties;
 using System;

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
+using Common;
 
-namespace Common {
+namespace Filetypes {
     public class AtlasCodec : Codec<AtlasFile> {
         public static readonly AtlasCodec Instance = new AtlasCodec();
 

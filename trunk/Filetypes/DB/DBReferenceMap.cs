@@ -3,8 +3,9 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Common;
 
-namespace Common {
+namespace Filetypes {
     public class DBReferenceMap {
         public static readonly DBReferenceMap Instance = new DBReferenceMap();
         Dictionary<string, SortedSet<string>> valueCache = new Dictionary<string, SortedSet<string>>();

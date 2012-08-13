@@ -1,4 +1,4 @@
-﻿namespace Common
+﻿namespace Filetypes
 {
     using System;
     using System.Collections.Generic;

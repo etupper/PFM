@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Common;
 
-namespace Common {
+namespace Filetypes {
 	public class LocCodec : Codec<LocFile> {
 		public static readonly LocCodec Instance = new LocCodec();
 		

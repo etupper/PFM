@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Filetypes;
 using Common;
 using EsfLibrary;
 

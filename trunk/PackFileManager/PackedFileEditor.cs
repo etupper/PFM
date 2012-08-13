@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using Common;
+using Filetypes;
 
 namespace PackFileManager {
     public interface IPackedFileEditor {

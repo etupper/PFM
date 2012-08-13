@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using Common;
+using Filetypes;
 
 namespace PackFileTest {
 	public class UnitVariantTest : PackedFileTest {
@@ -15,11 +16,11 @@ namespace PackFileTest {
 			Packfile = filepath;
 		}
 		
-		public override bool canTest(PackedFile file) {
+		public override bool CanTest(PackedFile file) {
 			return file.FullPath.EndsWith (".unit_variant");
 		}
 		
-		public override void testFile(PackedFile file) {
+		public override void TestFile(PackedFile file) {
             byte[] original = file.Data;
             UnitVariantFile uvFile = null;
             using (MemoryStream stream = new MemoryStream(original, 0, original.Length)) {
@@ -41,12 +42,12 @@ namespace PackFileTest {
 			}
 		}
 		
-		public override void printResults() {
+		public override void PrintResults() {
 			if (allTestedFiles.Count != 0) {
 				Console.WriteLine ("Unit Variant Test:");
 				Console.WriteLine ("Successful: {0}/{1}", supported.Count, allTestedFiles.Count);
-				printList ("Wrong Size", wrongSize);
-				printList ("Wrong Data", wrongData);
+				PrintList ("Wrong Size", wrongSize);
+				PrintList ("Wrong Data", wrongData);
 			}
 		}
 	}

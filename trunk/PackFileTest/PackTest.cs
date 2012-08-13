@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using Common;
+using Filetypes;
 using PackFileManager;
 
 namespace PackFileTest {
@@ -24,10 +25,10 @@ namespace PackFileTest {
 		private static string OPTIONS_FILENAME = "testoptions.txt";
 
         public static void Main(string[] args) {
-            new PackTest().testAll(args);
+            new PackTest().TestAll(args);
         }
 
-        void testAll(string[] args) {
+        void TestAll(string[] args) {
 			// List<string> arguments = new List<string> ();
 			// run tests for all packs in all dirs given in the options file
 			if (File.Exists (OPTIONS_FILENAME)) {
@@ -101,7 +102,7 @@ namespace PackFileTest {
                             if (test.TestCount > 0) {
                                 Console.WriteLine(test.Packfile);
                                 // output results
-                                test.printResults();
+                                test.PrintResults();
                             }
 						}
 					}
@@ -149,17 +150,33 @@ namespace PackFileTest {
         static readonly Regex numberedFieldNameRe = new Regex("([^0-9]*)([0-9]+)");
 
         // run db tests for all files in the given directory
-        public SortedSet<PackedFileTest> testAllPacks(string dir, bool outputTable, bool testTsv = false) {
+        public ICollection<PackedFileTest> testAllPacks(string dir, bool outputTable, bool testTsv = false) {
 			SortedSet<PackedFileTest> tests = new SortedSet<PackedFileTest> ();
 			foreach (string file in Directory.EnumerateFiles(dir, "*.pack")) {
 				if (testDbFiles) {
-					DBFileTest test = new DBFileTest (file, testTsv, outputTable);
-					test.testAllFiles ();
+					PackedFileTest test = new DBFileTest (testTsv, outputTable) {
+                        Packfile = file
+                    };
+					test.TestAllFiles ();
 					tests.Add (test);
+                    test = new ModelsTest<BuildingModel, BuildingModelEntry> {
+                        Codec = BuildingModelCodec.Instance,
+                        ValidTypes = "models_building_tables",
+                        Packfile = file
+                    };
+                    test.TestAllFiles();
+                    tests.Add(test);
+                    test = new ModelsTest<NavalModel, NavalEntry> {
+                        Codec = NavalModelCodec.Instance,
+                        ValidTypes = "models_naval_tables",
+                        Packfile = file
+                    };
+                    test.TestAllFiles();
+                    tests.Add(test);
 				}
 				if (testUnitVariants) {
 					UnitVariantTest test = new UnitVariantTest (file);
-					test.testAllFiles ();
+					test.TestAllFiles ();
 					tests.Add (test);
 				}
 			}
@@ -173,11 +190,11 @@ namespace PackFileTest {
 		public SortedSet<string> generalErrors = new SortedSet<string> ();
 		public SortedSet<string> allTestedFiles = new SortedSet<string>();
 		
-		public abstract bool canTest(PackedFile file);
+		public abstract bool CanTest(PackedFile file);
 		
-		public abstract void testFile(PackedFile file);
+		public abstract void TestFile(PackedFile file);
 
-		public abstract void printResults();
+		public abstract void PrintResults();
 
         public virtual int TestCount {
             get {
@@ -186,13 +203,13 @@ namespace PackFileTest {
         }
 
 		// tests all files in this test's pack
-		public void testAllFiles() {
+		public void TestAllFiles() {
 			PackFile packFile = new PackFileCodec ().Open (Packfile);
 			foreach (PackedFile packed in packFile.Files) {
 				try {
-					if (canTest (packed)) {
+					if (CanTest (packed)) {
 						allTestedFiles.Add (packed.FullPath);
-						testFile (packed);
+						TestFile (packed);
 					}
 				} catch (Exception x) {
 					generalErrors.Add (string.Format ("reading {0}: {1}", packed.FullPath, x.Message));
@@ -204,11 +221,14 @@ namespace PackFileTest {
 			int result = 0;
 			if (o is PackedFileTest) {
 				result = Packfile.CompareTo ((o as PackedFileTest).Packfile);
+                if (result == 0) {
+                    result = GetType().GetHashCode() - o.GetType().GetHashCode();
+                }
 			}
 			return result;
 		}
 		
-		public static void printList(string label, ICollection<string> list) {
+		public static void PrintList(string label, ICollection<string> list) {
 			if (list.Count != 0) {
 				Console.WriteLine ("{0}: {1}", label, list.Count);
 				foreach (string toPrint in list) {

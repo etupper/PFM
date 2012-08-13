@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using System.IO;
 using System.Collections.Generic;
 
-namespace Common {
+namespace Filetypes {
     public class DBTypeMap {
         public static readonly string SCHEMA_FILE_NAME = "schema.xml";
         public static readonly string MASTER_SCHEMA_FILE_NAME = "master_schema.xml";
