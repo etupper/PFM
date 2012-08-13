@@ -30,6 +30,30 @@ namespace PackFileTest {
         public SortedSet<Tuple<string, int>> tsvFails = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
         #endregion
 
+        public override List<string> FailedTests {
+            get {
+                List<string> result = base.FailedTests;
+                result.AddRange(FormatAllFails("No Definition:", noDefinition));
+                result.AddRange(FormatAllFails("No Definition for version:", noDefForVersion));
+                result.AddRange(FormatAllFails("Invalid Definition for version:", invalidDefForVersion));
+                result.AddRange(FormatAllFails("TSV fails:", tsvFails));
+                return result;
+            }
+        }
+        List<string> FormatAllFails(string title, ICollection<Tuple<string, int>> fails) {
+            List<string> result = new List<string>();
+            if (fails.Count > 0) {
+                result.Add(title);
+                foreach (Tuple<string, int> fail in fails) {
+                    result.Add(FormatFailedTest(fail));
+                }
+            }
+            return result;
+        }
+        string FormatFailedTest(Tuple<string, int> tableAndVersion) {
+            return string.Format("{0} - version {1}", tableAndVersion.Item1, tableAndVersion.Item2);
+        }
+
         public DBFileTest (bool tsv, bool table) {
 			testTsv = tsv;
             outputTable = table;
@@ -45,6 +69,7 @@ namespace PackFileTest {
         // test the given packed file as a database file
         // tests PackedFileCodec and the db definitions we have
         public override void TestFile(PackedFile file) {
+            allTestedFiles.Add(file.FullPath);
             if (file.Size == 0) {
                 emptyTables.Add(new Tuple<string, int>(DBFile.typename(file.FullPath), -1));
                 return;
