@@ -1,8 +1,8 @@
-﻿using Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using Filetypes;
 
 namespace DecodeTool {
     public partial class TypeSelection : UserControl {

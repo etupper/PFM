@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 
-namespace Common {
+namespace Filetypes {
     using GuidList = List<GuidTypeInfo>;
     using FieldInfoList = List<FieldInfo>;
     

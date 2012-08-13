@@ -36,6 +36,11 @@
             }
             return builder2.ToString();
         }
+        
+        public static void WriteZeroTerminatedAscii(BinaryWriter writer, string toWrite) {
+            writer.Write(toWrite.ToCharArray());
+            writer.Write((byte) 0);
+        }
 
         public static void writeCAString(BinaryWriter writer, string value)
         {

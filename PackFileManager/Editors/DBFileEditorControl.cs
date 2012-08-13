@@ -1,4 +1,5 @@
 ﻿using Common;
+using Filetypes;
 using DataGridViewAutoFilter;
 using PackFileManager.Properties;
 using System;

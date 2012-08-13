@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Schema;
 
-namespace Common {
+namespace Filetypes {
     public class TableConstraint {
         public string Name { get; set; }
 

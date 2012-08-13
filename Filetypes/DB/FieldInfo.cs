@@ -3,8 +3,9 @@ using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Common;
 
-namespace Common
+namespace Filetypes
 {
 	public class Types {
 		public static FieldInfo FromTypeName(string typeName) {

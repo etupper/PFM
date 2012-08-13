@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Common {
+namespace Filetypes {
 	/*
 	 * Class representing the first bytes in a db file;
 	 * these contain information about db version, maybe an id,

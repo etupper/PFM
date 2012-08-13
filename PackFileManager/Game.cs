@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Common;
+using Filetypes;
 using Microsoft.Win32;
 using PackFileManager.Properties;
 using System.Windows.Forms;

@@ -3,7 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Common {
+namespace Filetypes {
     public interface Codec<T> {
         T Decode(Stream file);
         void Encode(Stream stream, T toEncode);

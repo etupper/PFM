@@ -1,6 +1,7 @@
 ﻿namespace PackFileManager
 {
     using Common;
+    using Filetypes;
     using System;
     using System.ComponentModel;
     using System.Drawing;

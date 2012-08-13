@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Common;
+using Filetypes;
 
 namespace DecodeTool {
     public partial class DecodeTool : Form {

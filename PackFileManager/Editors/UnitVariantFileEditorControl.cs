@@ -1,6 +1,7 @@
 ﻿namespace PackFileManager {
     using BrightIdeasSoftware;
     using Common;
+    using Filetypes;
     using System;
     using System.Collections;
     using System.Collections.Generic;
