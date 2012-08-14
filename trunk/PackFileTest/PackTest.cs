@@ -150,7 +150,7 @@ namespace PackFileTest {
                 SortedSet<PackedFileTest> tests = new SortedSet<PackedFileTest>();
                 if (testDbFiles) {
                     //tests.Add(new DBFileTest (testTsv, outputTable));
-                    tests.Add(new ModelsTest<NavalModel, NavalEntry> {
+                    tests.Add(new ModelsTest<NavalModel, ShipPart> {
                         Codec = NavalModelCodec.Instance,
                         ValidTypes = "models_naval_tables"
                     });
@@ -177,7 +177,9 @@ namespace PackFileTest {
                     Console.WriteLine(string.Format("{0} - {1}", 
                         Path.GetFileName(Path.GetDirectoryName(Path.GetDirectoryName(file))), Path.GetFileName(file)));
                     Console.WriteLine("Dir: {0}\nTests Run:{1}", dir, tests.Count);
-                    failedTests.ForEach(f => Console.WriteLine(f));
+                    Console.Out.Flush();
+                    string all = string.Join("\n", failedTests);
+                    Console.WriteLine(all);
                 }
                 Console.Out.Flush();
             }
@@ -193,6 +195,11 @@ namespace PackFileTest {
                             test.TestFile(packed);
                         }
                     } catch (Exception x) {
+                        using (var outstream = File.Create(string.Format("failed_{0}.packed", packed.Name))) {
+                            using (var datastream = new MemoryStream(packed.Data)) {
+                                datastream.CopyTo(outstream);
+                            }
+                        }
                         test.generalErrors.Add(string.Format("reading {0}: {1}", packed.FullPath, x.Message));
                     }
                 }

@@ -1,18 +1,20 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Common;
 
 namespace Filetypes {
-    public abstract class ModelCodec<M, E> : Codec<ModelFile<M>>
-        where E : ModelEntry
-    where M : ModelContainer<E> {
+    public abstract class ModelCodec<M, E> : Codec<ModelFile<M>> 
+    where M : EntryContainer<E> {
+        
         public ModelFile<M> Decode(Stream stream) {
             ModelFile<M> result = null;
             using (var reader = new BinaryReader(stream)) {
                 result = CreateFile();
                 try {
                     result.Header = PackedFileDbCodec.readHeader(reader);
+                    // LastReadHeader = result.Header;
 #if DEBUG
                 // Console.WriteLine("Reading {0} models", result.Header.EntryCount);
 #endif
@@ -29,21 +31,13 @@ namespace Filetypes {
                     } catch (Exception ex) {
                         throw new InvalidDataException(string.Format("Failed to read model data {0}", modelIndex), ex);
                     }
-                    uint itemCount = reader.ReadUInt32();
-#if DEBUG
-                    // Console.WriteLine("Reading {0} entries", itemCount);
-#endif
-                    for (uint j = 0; j < itemCount; j++) {
-                        try {
-                            E entry = ReadEntry(reader);
-#if DEBUG
-                        // Console.WriteLine("Read entry {0}: {1}", j, entry);
-#endif
-                            model.Entries.Add(entry);
-                        } catch (Exception ex) {
-                            throw new InvalidDataException(string.Format("Failed to read entry {0} in {1}", j, model), ex);
-                        }
+                    try {
+                        List<E> entries = new List<E>(ReadList(reader, ReadEntry, false));
+                        model.Entries.AddRange(entries);
+                    } catch (Exception ex) {
+                        throw new InvalidDataException(string.Format("Failed to entries for model {0}", modelIndex), ex);
                     }
+                    
                     result.Models.Add(model);
                 }
             }
@@ -69,22 +63,44 @@ namespace Filetypes {
         protected abstract void WriteModel(BinaryWriter writer, M model);
         protected abstract void WriteEntry(BinaryWriter writer, E entry, int index);
         
-        protected void WriteAngles(BinaryWriter writer, E entry) {
-            foreach(Angles angle in entry) {
+        protected void WriteCoordinates(BinaryWriter writer, IEnumerable entry) {
+            foreach(Coordinates angle in entry) {
                 foreach(float f in angle) {
                     writer.Write (f); 
                 }
             }
         }
-        protected void ReadAngles(BinaryReader reader, E entry) {
-            foreach (Angles angle in entry) {
-                angle.XAngle = reader.ReadSingle();
-                angle.YAngle = reader.ReadSingle();
-                angle.ZAngle = reader.ReadSingle();
+        protected void ReadCoordinates(BinaryReader reader, ModelEntry entry) {
+            foreach (Coordinates angle in entry) {
+                ReadCoordinate(angle, reader);
             }
         }
+        protected virtual void ReadCoordinate(Coordinates coordinates, BinaryReader reader) {
+            coordinates.XCoordinate = reader.ReadSingle();
+            coordinates.YCoordinate = reader.ReadSingle();
+            coordinates.ZCoordinate = reader.ReadSingle();
+        }
+
+        public delegate T ItemReader<T>(BinaryReader reader);
+        public static List<T> ReadList<T>(BinaryReader reader, ItemReader<T> readItem, bool skipIndex = true) {
+            List<T> result = new List<T>();
+            int itemCount = reader.ReadInt32();
+            for (int i = 0; i < itemCount; i++) {
+                try {
+                    if (skipIndex) {
+                        reader.ReadInt32();
+                    }
+                    result.Add(readItem(reader));
+                } catch (Exception ex) {
+                    throw new InvalidDataException(string.Format("Failed to read item {0}", i), ex);
+                }
+            }
+            return result;
+        }
     }
+        
     
+    #region Building Model Codec
     /*
      * Building models codec.
      */
@@ -110,7 +126,7 @@ namespace Filetypes {
                 Name = IOFunctions.readCAString(reader),
                 Unknown = reader.ReadInt32()
             };
-            ReadAngles(reader, entry);
+            ReadCoordinates(reader, entry);
             return entry;
         }
         protected override void WriteModel(BinaryWriter writer, BuildingModel model) {
@@ -121,14 +137,15 @@ namespace Filetypes {
         protected override void WriteEntry(BinaryWriter writer, BuildingModelEntry entry, int unused) {
             IOFunctions.writeCAString(writer, entry.Name);
             writer.Write(entry.Unknown);
-            WriteAngles(writer, entry);
+            WriteCoordinates(writer, entry);
         }
     }
+    #endregion
  
     /*
      * Naval models codec.
      */
-    public class NavalModelCodec : ModelCodec<NavalModel, NavalEntry> {
+    public class NavalModelCodec : ModelCodec<NavalModel, ShipPart> {
         private static readonly NavalModelCodec instance = new NavalModelCodec();
         public static NavalModelCodec Instance {
             get {
@@ -140,48 +157,88 @@ namespace Filetypes {
             return new NavalModelFile();
         }
         protected override NavalModel ReadModel(BinaryReader reader) {
+#if DEBUG
+            long readModelStart = reader.BaseStream.Position;
+            Console.WriteLine("Model starting at {0:x}", readModelStart);
+#endif
+            
             NavalModel result = new NavalModel {
                 ModelId = IOFunctions.readCAString(reader),
                 RiggingLogicPath = IOFunctions.readCAString(reader),
                 Unknown = reader.ReadBoolean(),
                 RigidModelPath = IOFunctions.readCAString(reader)
             };
-            Console.WriteLine("read model {0}, {1}, {2}, {3}", result.ModelId, result.RiggingLogicPath, result.Unknown, result.RigidModelPath);
+   
+#if DEBUG
+            Console.WriteLine("read ship model {0}, {1}, {2}, {3}", 
+                              result.ModelId, result.RiggingLogicPath, result.Unknown, result.RigidModelPath);
             Console.Out.Flush();
-            if (!result.Unknown) {
-                int camCount = reader.ReadInt32();
-                for (int camIndex = 0; camIndex < camCount; camIndex++) {
-                    NavalCam cam = new NavalCam {
-                        Name = IOFunctions.readCAString(reader)
-                    };
-                    for (int dataIndex = 0; dataIndex < cam.Data.Count; dataIndex++) {
-                        cam.Data[dataIndex] = reader.ReadUInt32();
-                    }
-                    result.NavalCams.Add(cam);
-                }
-            } else {
-                using (var writer = new BinaryWriter(File.Create("debug"))) {
-                    WriteModel(writer, result);
-                    reader.BaseStream.CopyTo(writer.BaseStream);
-                }
-                throw new Exception();
-                //Console.WriteLine("nanu?");
-            }
+#endif
+            result.NavalCams.AddRange(ReadList(reader, ReadNavalCam, false));
+            result.PositionInfos.AddRange(ReadList(reader, ReadPositionEntry));
+
             return result;
         }
-        protected override NavalEntry ReadEntry(BinaryReader reader) {
-            // skip the item number, we don't care... is just its index in the list
-            int entryIndex = reader.ReadInt32();
-            Console.WriteLine("reading entry {0}", entryIndex);
-            NavalEntry entry = new NavalEntry();
-            ReadAngles(reader, entry);
+        
+        NavalCam ReadNavalCam(BinaryReader reader) {
+#if DEBUG
+            Console.WriteLine("Reading cams starting at {0}", reader.BaseStream.Position);
+#endif
+            NavalCam cam = new NavalCam {
+                Name = IOFunctions.readCAString(reader)
+            };
+            for (int dataIndex = 0; dataIndex < 16; dataIndex++) {
+                cam.Entries.Add(reader.ReadUInt32());
+            }
+            return cam;
+        }
+
+        PartPositionInfo ReadPositionEntry(BinaryReader reader) {
+#if DEBUG
+            Console.WriteLine("Reading position entry at {0}", reader.BaseStream.Position);
+#endif
+            PartPositionInfo entry = new PartPositionInfo();
+            ReadCoordinates(reader, entry);
+            
             int moreEntries = reader.ReadInt32();
             for (int i = 0; i < moreEntries; i++) {
-                entry.Unknown.Add(reader.ReadInt32());
+                entry.Unknown.Add(reader.ReadUInt32());
             }
-            Console.WriteLine("read entry {0}", string.Join(",", entry.Unknown));
             Console.Out.Flush();
             return entry;
+        }
+        
+        protected override ShipPart ReadEntry(BinaryReader reader) {
+#if DEBUG
+            Console.WriteLine("Reading Ship Part at {0}", reader.BaseStream.Position);
+#endif
+            string name = IOFunctions.readCAString(reader);
+            ShipPart part = new ShipPart {
+                PartName = name,
+                Unknown2 = reader.ReadUInt32()
+            };
+            Console.WriteLine("Reading ship part {0}", part.PartName);
+            part.Entries.AddRange(ReadList(reader, ReadPartEntry));
+            
+            return part;
+        }
+        private PartEntry ReadPartEntry(BinaryReader reader) {
+#if DEBUG
+            Console.WriteLine("Reading Ship Part entry at {0}", reader.BaseStream.Position);
+#endif
+            PartEntry part = new PartEntry {
+                Unknown = reader.ReadUInt32()
+            };
+            Coordinates[] coords = { part.Coordinates1, part.Coordinates2, part.Coordinates3 };
+            foreach(Coordinates coord in coords) {
+                ReadCoordinate(coord, reader);
+                part.FlagCoordinate(coord, reader.ReadBoolean());
+            }
+            part.Side1 = reader.ReadUInt32();
+            part.Side2 = reader.ReadUInt32();
+            part.Side3 = reader.ReadUInt32();
+            part.Side4 = reader.ReadUInt32();
+            return part;
         }
         
         protected override void WriteModel(BinaryWriter writer, NavalModel model) {
@@ -192,16 +249,14 @@ namespace Filetypes {
             writer.Write(model.NavalCams.Count);
             model.NavalCams.ForEach(cam => {
                 IOFunctions.writeCAString(writer, cam.Name);
-                cam.Data.ForEach(b => {
+                cam.Entries.ForEach(b => {
                     writer.Write(b);
                 });
             });
+            throw new NotSupportedException();
         }
-        protected override void WriteEntry(BinaryWriter writer, NavalEntry entry, int index) {
-            writer.Write(index);
-            WriteAngles(writer, entry);
-            writer.Write(entry.Unknown.Count);
-            entry.Unknown.ForEach(u => writer.Write(u));
+        protected override void WriteEntry(BinaryWriter writer, ShipPart entry, int index) {
+            throw new NotSupportedException();
         }
     }
 }
