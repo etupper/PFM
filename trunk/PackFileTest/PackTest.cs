@@ -14,7 +14,8 @@ namespace PackFileTest {
 		// -uv: unit variant files; -ot: create output of tables
         // -pr: prepare release... split schemata into each of the games'
         // -w : write schema_user.xml after iterating all db files
-        private static string[] OPTIONS = { "-t", "-db", "uv", "gf", "-ot", "-pr", "-w" };
+        // -mt: run models test
+        private static string[] OPTIONS = { "-t", "-db", "uv", "gf", "-ot", "-pr", "-w", "-mt" };
 #pragma warning restore 414
 
 		bool testDbFiles = false;
@@ -41,6 +42,7 @@ namespace PackFileTest {
             // List<string> arguments = new List<string> ();
             bool saveSchema = false;
             bool outputTables = false;
+            bool runModelTests = false;
             foreach (string dir in arguments) {
                 if (dir.StartsWith("#")) {
                     continue;
@@ -66,6 +68,9 @@ namespace PackFileTest {
                 } else if (dir.Equals("-t")) {
                     Console.WriteLine("TSV export/import enabled");
                     testTsvExport = true;
+                } else if (dir.Equals("-mt")) {
+                    runModelTests = true;
+                    Console.WriteLine("models test enabled");
                 } else if (dir.Equals("-db")) {
                     Console.WriteLine("Database Test enabled");
                     testDbFiles = true;
@@ -102,7 +107,7 @@ namespace PackFileTest {
                         Console.WriteLine("Optimizer removed {0} entries from schema {1}", optimizer.RemovedEntries, schemaFile);
                     }
 
-                    testAllPacks(dir, outputTables, testTsvExport);
+                    testAllPacks(dir, outputTables, runModelTests, testTsvExport);
                 }
             }
             if (saveSchema) {
@@ -145,19 +150,22 @@ namespace PackFileTest {
         static readonly Regex numberedFieldNameRe = new Regex("([^0-9]*)([0-9]+)");
 
         // run db tests for all files in the given directory
-        public void testAllPacks(string dir, bool outputTable, bool testTsv = false) {
+        public void testAllPacks(string dir, bool outputTable, bool testModels, bool testTsv = false) {
 			foreach (string file in Directory.EnumerateFiles(dir, "*.pack")) {
                 SortedSet<PackedFileTest> tests = new SortedSet<PackedFileTest>();
                 if (testDbFiles) {
-                    //tests.Add(new DBFileTest (testTsv, outputTable));
-                    tests.Add(new ModelsTest<NavalModel, ShipPart> {
-                        Codec = NavalModelCodec.Instance,
-                        ValidTypes = "models_naval_tables"
-                    });
-                    //tests.Add(new ModelsTest<BuildingModel, BuildingModelEntry> {
-                    //    Codec = BuildingModelCodec.Instance,
-                    //    ValidTypes = "models_building_tables"
-                    //});
+                    tests.Add(new DBFileTest (testTsv, outputTable));
+
+                    if (testModels) {
+                        tests.Add(new ModelsTest<NavalModel, ShipPart> {
+                            Codec = NavalModelCodec.Instance,
+                            ValidTypes = "models_naval_tables"
+                        });
+                        tests.Add(new ModelsTest<BuildingModel, BuildingModelEntry> {
+                            Codec = BuildingModelCodec.Instance,
+                            ValidTypes = "models_building_tables"
+                        });
+                    }
 				}
 				if (testUnitVariants) {
                     tests.Add(new UnitVariantTest());

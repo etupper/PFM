@@ -11,7 +11,7 @@ namespace PackFileManager {
             InitializeComponent();
 
             modelGridView.SelectionChanged += new EventHandler(SetEntrySource);
-            entryGridView.SelectionChanged += new EventHandler(SetAngles);
+            entryGridView.SelectionChanged += new EventHandler(SetCoordinates);
         }
 
         public bool CanEdit(PackedFile file) {
@@ -55,15 +55,15 @@ namespace PackFileManager {
             }
         }
 
-        private void SetAngles(object o, EventArgs args) {
+        private void SetCoordinates(object o, EventArgs args) {
             int index = SelectedRowIndex(entryGridView);
             if (index != -1) {
                 BuildingModelEntry entry = ((List<BuildingModelEntry>)entrySource.DataSource)[index];
-                angle1Source.DataSource = new Angles[] { entry.Angles1 };
-                angle2Source.DataSource = new Angles[] { entry.Angles2 };
-                angle3Source.DataSource = new Angles[] { entry.Angles3 };
+                angle1Source.DataSource = new Coordinates[] { entry.Coordinates1 };
+                angle2Source.DataSource = new Coordinates[] { entry.Coordinates2 };
+                angle3Source.DataSource = new Coordinates[] { entry.Coordinates3 };
             } else {
-                angle1Source.DataSource = angle2Source.DataSource = angle3Source.DataSource = new List<Angles>();
+                angle1Source.DataSource = angle2Source.DataSource = angle3Source.DataSource = new List<Coordinates>();
             }
         }
 
