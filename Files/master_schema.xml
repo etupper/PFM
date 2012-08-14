@@ -167,7 +167,7 @@
     <field name='unknown11' type='boolean' />
     <field name='attribute' type='string' />
     <field name='religion' type='optstring' />
-    <field name='unknown13' type='int' />
+    <field name='unknown13' type='int' version_start='1' />
     <field name='unknown14' type='int' version_start='1' />
     <field name='Recruitment cost' type='int' version_start='4' />
     <field name='Voice Selected' type='string' version_start='4' />
