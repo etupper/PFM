@@ -6,8 +6,7 @@ using Filetypes;
 
 namespace PackFileTest {
     public class ModelsTest<T, E> : PackedFileTest 
-    where T : ModelContainer<E> 
-    where E : ModelEntry {
+    where T : EntryContainer<E> {
         public ModelCodec<T, E> Codec {
             get; set;
         }
@@ -16,22 +15,31 @@ namespace PackFileTest {
         }
         public override int TestCount {
             get {
-                return successes.Count + countErrors.Count + generalErrors.Count;
+                return successes.Count + countErrors.Count + generalErrors.Count + incompleteReads.Count;
             }
         }
 
         public override List<string> FailedTests {
             get {
                 List<string> result = base.FailedTests;
+                if (generalErrors.Count > 0) {
+                    result.Add("General errors:");
+                    result.AddRange(countErrors);
+                }
                 if (countErrors.Count > 0) {
                     result.Add("Wrong content count:");
                     result.AddRange(countErrors);
+                }
+                if (incompleteReads.Count > 0) {
+                    result.Add("Not all Data read::");
+                    result.AddRange(incompleteReads);
                 }
                 return result;
             }
         }
         
         List<string> countErrors = new List<string>();
+        List<string> incompleteReads = new List<string>();
         List<string> successes = new List<string>();
         List<string> emptyFiles = new List<string>();
         
