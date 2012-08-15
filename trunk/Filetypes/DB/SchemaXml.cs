@@ -13,7 +13,17 @@ namespace Filetypes {
     public class XmlImporter {
         // table to contained fields
         public SortedDictionary<string, FieldInfoList> descriptions = new SortedDictionary<string, FieldInfoList>();
+        public SortedDictionary<string, FieldInfoList> Descriptions {
+            get {
+                return descriptions;
+            }
+        }
         public SortedDictionary<GuidTypeInfo, FieldInfoList> guidToDescriptions = new SortedDictionary<GuidTypeInfo, FieldInfoList>();
+        public SortedDictionary<GuidTypeInfo, FieldInfoList> GuidToDescriptions {
+            get {
+                return guidToDescriptions;
+            }
+        }
         
         private static string[] GUID_SEPARATOR = { "," };
         
@@ -44,7 +54,7 @@ namespace Filetypes {
                         if (unify) {
                             id = UnifyName (id);
                         }
-                        descriptions.Add(id, fields);
+                        Descriptions.Add(id, fields);
                     } else {
                         // table with GUIDs
                         id = tableNode.Attributes[GUID_TAG].Value.Trim();
@@ -55,8 +65,8 @@ namespace Filetypes {
                         foreach(string s in guids) {
                             string guid = s.Trim();
                             GuidTypeInfo info = new GuidTypeInfo(guid, table_name, int.Parse(table_version));
-                            if (!guidToDescriptions.ContainsKey(info)) {
-                                guidToDescriptions.Add(info, fields);
+                            if (!GuidToDescriptions.ContainsKey(info)) {
+                                GuidToDescriptions.Add(info, fields);
                             } else {
                                 verifyEquality = true;
                             }
@@ -84,7 +94,7 @@ namespace Filetypes {
                         foreach(string s in guids) {
                             string guid = s.Trim();
                             GuidTypeInfo info = new GuidTypeInfo(guid, table_name, int.Parse(table_version));
-                            FieldInfoList existing = guidToDescriptions[info];
+                            FieldInfoList existing = GuidToDescriptions[info];
                             if (!Enumerable.SequenceEqual<FieldInfo>(fields, existing)) {
                                 Console.WriteLine("{0} was:", info.Guid);
                                 existing.ForEach(f => Console.WriteLine(f));

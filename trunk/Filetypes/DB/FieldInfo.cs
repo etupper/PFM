@@ -47,8 +47,8 @@ namespace Filetypes
         public bool Optional { get; set; }
 
         public int StartVersion { get; set; }
-        int lastVersion = int.MaxValue;
 
+        int lastVersion = int.MaxValue;
         public int LastVersion {
             set {
                 lastVersion = value;
@@ -92,6 +92,11 @@ namespace Filetypes
         public override int GetHashCode() {
             return 2*Name.GetHashCode() +
                 3*TypeName.GetHashCode();
+        }
+        
+        public override string ToString() {
+            return TypeName;
+            // return string.Format("{0} - {1}", TypeName, Name);
         }
 	}
 

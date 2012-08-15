@@ -82,6 +82,8 @@
     <Compile Include="UnitVariantTest.cs" />
     <Compile Include="GroupformationTest.cs" />
     <Compile Include="ModelsTest.cs" />
+    <Compile Include="PackedFileTest.cs" />
+    <Compile Include="SchemaIntegrator.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

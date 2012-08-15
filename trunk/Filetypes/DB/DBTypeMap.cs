@@ -19,6 +19,8 @@ namespace Filetypes {
         private DBTypeMap() {
             // prevent instantiation
         }
+        
+        #region Type Maps
         public SortedDictionary<string, List<FieldInfo>> TypeMap {
             get {
                 return new SortedDictionary<string, List<FieldInfo>>(typeMap);
@@ -34,7 +36,23 @@ namespace Filetypes {
                 return typeMap.Count != 0 || guidMap.Count != 0;
             }
         }
+        #endregion
 
+        public TypeInfo GetVersionedInfo(string guid, string key, int version) {
+            TypeInfo result = new TypeInfo(key);
+            GuidTypeInfo info = new GuidTypeInfo(guid, key, version);
+            if (!string.IsNullOrEmpty(guid) && guidMap.ContainsKey(info)) {
+                result.fields.AddRange(guidMap[info]);
+            } else {
+                List<FieldInfo> list;
+                if (typeMap.TryGetValue(key, out list)) {
+                    result.fields.AddRange(FilterForVersion(list, version));
+                }
+            }
+            return result;
+        }
+
+        #region Initialization / IO
         public void initializeTypeMap(string basePath) {
             foreach(string file in SCHEMA_FILENAMES) {
                 string xmlFile = Path.Combine(basePath, file);
@@ -50,15 +68,12 @@ namespace Filetypes {
                 importer = new XmlImporter(stream);
                 importer.Import();
             }
-            typeMap = importer.descriptions;
-            guidMap = importer.guidToDescriptions;
+            typeMap = importer.Descriptions;
+            guidMap = importer.GuidToDescriptions;
         }
 
         public void loadFromXsd(string xsdFile) {
             //            typeMap = new XsdParser (xsdFile).loadXsd ();
-        }
-        public string GetUserFilename(string suffix) {
-            return string.Format(string.Format("schema_{0}.xml", suffix));
         }
 
         public void saveToFile(string path, string suffix) {
@@ -74,7 +89,9 @@ namespace Filetypes {
                 File.Delete(backupName);
             }
         }
-
+        #endregion
+  
+        #region Setting Changed Definitions
         public void SetByName(string key, List<FieldInfo> setTo) {
             typeMap[key] = setTo;
         }
@@ -82,16 +99,30 @@ namespace Filetypes {
             GuidTypeInfo info = new GuidTypeInfo(guid, tableName, version);
             guidMap[info] = setTo;
         }
+        #endregion
 
-        private static List<TypeInfo> retrieveOrAdd<T>(IDictionary<T, List<TypeInfo>> dict, T key) {
-            List<TypeInfo> list;
-            if (!dict.TryGetValue(key, out list)) {
-                list = new List<TypeInfo>();
-                dict.Add(key, list);
+        #region Utilities
+        /*
+         * Create a list containing only the items valid for the given version.
+         */
+        public static List<FieldInfo> FilterForVersion(List<FieldInfo> list, int version) {
+            List<FieldInfo> result = new List<FieldInfo>();
+            foreach (FieldInfo d in list) {
+                if (d.StartVersion <= version && d.LastVersion >= version) {
+                    result.Add(d);
+                }
             }
-            return list;
+            return result;
         }
+        public string GetUserFilename(string suffix) {
+            return string.Format(string.Format("schema_{0}.xml", suffix));
+        }
+        #endregion
 
+        #region Supported Type/Version Queries
+        /*
+         * Retrieve all supported Type Names.
+         */
         public List<string> DBFileTypes {
             get {
                 SortedSet<string> result = new SortedSet<string>(typeMap.Keys);
@@ -101,35 +132,10 @@ namespace Filetypes {
                 return new List<string>(result);
             }
         }
-
-        public TypeInfo GetVersionedInfo(string guid, string key, int version) {
-            TypeInfo result = new TypeInfo(key);
-            GuidTypeInfo info = new GuidTypeInfo(guid, key, version);
-            if (!string.IsNullOrEmpty(guid) && guidMap.ContainsKey(info)) {
-                result.fields.AddRange(guidMap[info]);
-            } else {
-                List<FieldInfo> list;
-                if (typeMap.TryGetValue(key, out list)) {
-                    foreach (FieldInfo d in list) {
-                        if (d.StartVersion <= version && d.LastVersion >= version) {
-                            result.fields.Add(d);
-                        }
-                    }
-                }
-            }
-            return result;
-        }
-
-        public List<string> GetGuidsForInfo(string type, int version) {
-            List<string> result = new List<string>();
-            foreach(GuidTypeInfo info in guidMap.Keys) {
-                if (info.Version == version && info.TypeName.Equals(type)) {
-                    result.Add(info.Guid);
-                }
-            }
-            return result;
-        }
-
+  
+        /*
+         * Retrieve the highest version for the given type.
+         */
         public int MaxVersion(string type) {
             int result = 0;
             bool found = false;
@@ -148,6 +154,9 @@ namespace Filetypes {
             }
             return result;
         }
+        /*
+         * Query if the given type is supported at all.
+         */
         public bool IsSupported(string type) {
             bool result = typeMap.ContainsKey(type);
             if (!result) {
@@ -159,6 +168,7 @@ namespace Filetypes {
             }
             return result;
         }
+        #endregion
     }
     
     public class GuidTypeInfo : IComparable<GuidTypeInfo> {

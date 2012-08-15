@@ -1073,7 +1073,7 @@ namespace PackFileManager
 
         TypeInfo GetTargetTypeInfo(string key, int maxVersion, out string guid) {
             TypeInfo targetInfo = null;
-            List<string> newGuid = DBTypeMap.Instance.GetGuidsForInfo(key, maxVersion);
+            List<string> newGuid = GetGuidsForInfo(key, maxVersion);
             guid = null;
             if (newGuid.Count == 0) {
                 guid = "";
@@ -1094,6 +1094,17 @@ namespace PackFileManager
             }
             return targetInfo;
         }
+        private List<string> GetGuidsForInfo(string type, int version) {
+            List<string> result = new List<string>();
+            foreach(GuidTypeInfo info in DBTypeMap.Instance.GuidMap.Keys) {
+                if (info.Version == version && info.TypeName.Equals(type)) {
+                    result.Add(info.Guid);
+                }
+            }
+            return result;
+        }
+  
+
         #endregion
 
         #region Options Menu

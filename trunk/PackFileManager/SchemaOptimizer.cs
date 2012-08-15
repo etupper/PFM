@@ -5,6 +5,12 @@ using Common;
 using Filetypes;
 
 namespace PackFileManager {
+    
+    /*
+     * Will go through all packs in a given directory, 
+     * and remove all table/version definitions from the DBTypeMap
+     * that are not used in any db file in any pack.
+     */
     public class SchemaOptimizer {
 
         // the directory to iterate pack files of

@@ -11,8 +11,20 @@ namespace PackFileTest {
         private string debug_at = "";
 #endif
 
-        private bool testTsv;
-        private bool outputTable;
+        public bool TestTsv {
+            get; set;
+        }
+
+        public bool OutputTable {
+            get; set;
+        }
+
+        public override bool CanTest(PackedFile packed) {
+            bool result = packed.FullPath.StartsWith("db");
+            result &= !DBFile.typename(packed.FullPath).Equals ("models_building_tables");
+            result &= !DBFile.typename(packed.FullPath).Equals ("models_naval_tables");
+            return result;
+        }
 
         public override int TestCount {
             get {
@@ -20,15 +32,6 @@ namespace PackFileTest {
                     invalidDefForVersion.Count + emptyTables.Count + tsvFails.Count;
             }
         }
-
-        #region Result lists
-        public SortedSet<Tuple<string, int>> supported = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
-        public SortedSet<Tuple<string, int>> noDefinition = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
-        public SortedSet<Tuple<string, int>> noDefForVersion = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
-        public SortedSet<Tuple<string, int>> invalidDefForVersion = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
-        public SortedSet<Tuple<string, int>> emptyTables = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
-        public SortedSet<Tuple<string, int>> tsvFails = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
-        #endregion
 
         public override List<string> FailedTests {
             get {
@@ -40,32 +43,17 @@ namespace PackFileTest {
                 return result;
             }
         }
-        List<string> FormatAllFails(string title, ICollection<Tuple<string, int>> fails) {
-            List<string> result = new List<string>();
-            if (fails.Count > 0) {
-                result.Add(title);
-                foreach (Tuple<string, int> fail in fails) {
-                    result.Add(FormatFailedTest(fail));
-                }
-            }
-            return result;
-        }
-        string FormatFailedTest(Tuple<string, int> tableAndVersion) {
-            return string.Format("{0} - version {1}", tableAndVersion.Item1, tableAndVersion.Item2);
-        }
 
-        public DBFileTest (bool tsv, bool table) {
-			testTsv = tsv;
-            outputTable = table;
-		}
-		
-		public override bool CanTest(PackedFile packed) {
-			bool result = packed.FullPath.StartsWith("db");
-            result &= !DBFile.typename(packed.FullPath).Equals ("models_building_tables");
-            result &= !DBFile.typename(packed.FullPath).Equals ("models_naval_tables");
-            return result;
-		}
+        #region Result lists
+        public SortedSet<Tuple<string, int>> supported = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
+        public SortedSet<Tuple<string, int>> emptyTables = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
 
+        public SortedSet<Tuple<string, int>> noDefinition = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
+        public SortedSet<Tuple<string, int>> noDefForVersion = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
+        public SortedSet<Tuple<string, int>> invalidDefForVersion = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
+        public SortedSet<Tuple<string, int>> tsvFails = new SortedSet<Tuple<string, int>>(VERSION_COMPARE);
+        #endregion
+        
         // test the given packed file as a database file
         // tests PackedFileCodec and the db definitions we have
         public override void TestFile(PackedFile file) {
@@ -79,7 +67,7 @@ namespace PackFileTest {
             string type = DBFile.typename(file.FullPath);
             DBFileHeader header = PackedFileDbCodec.readHeader(file);
             Tuple<string, int> tuple = new Tuple<string, int>(string.Format("{0} # {1}", type, header.GUID), header.Version);
-            if (outputTable) {
+            if (OutputTable) {
                 Console.WriteLine("TABLE:{0}#{1}#{2}", type, header.Version, header.GUID);
             }
             Console.Out.Flush();
@@ -108,8 +96,8 @@ namespace PackFileTest {
                         
                         // only test tsv import/export if asked,
                         // it takes some time more than just the read checks
-                        if (testTsv) {
-                            testTsvExport(dbFile);
+                        if (TestTsv) {
+                            TestTsvExport(dbFile);
                         }
                     } else {
                         // didn't get what we expect
@@ -135,7 +123,7 @@ namespace PackFileTest {
         }
 
         // test the tsv codec
-        public void testTsvExport(DBFile originalFile) {
+        public void TestTsvExport(DBFile originalFile) {
             Tuple<string, int> tuple = new Tuple<string, int>(originalFile.CurrentType.name, originalFile.Header.Version);
             DBFile reimport;
             try {
@@ -171,7 +159,7 @@ namespace PackFileTest {
         }
 
          // write files that failed to filesystem individually for later inspection
-		void extractFiles(string dir, PackFile pack, ICollection<Tuple<string, int>> toExtract) {
+		void ExtractFiles(string dir, PackFile pack, ICollection<Tuple<string, int>> toExtract) {
 			if (toExtract.Count != 0) {
 				string path = Path.Combine (dir, "failed");
 				Directory.CreateDirectory (path);
@@ -209,7 +197,7 @@ namespace PackFileTest {
 			Console.WriteLine ();
 		}
 		
-         #region Print Utilities
+        #region Print Utilities
 		static void PrintList(string label, ICollection<Tuple<string, int>> list) {
 			if (list.Count != 0) {
 				Console.WriteLine ("{0}: {1}", label, list.Count);
@@ -228,6 +216,23 @@ namespace PackFileTest {
 			}
 		}
         #endregion
+  
+        #region Error Message Formatting utilities
+        List<string> FormatAllFails(string title, ICollection<Tuple<string, int>> fails) {
+            List<string> result = new List<string>();
+            if (fails.Count > 0) {
+                result.Add(title);
+                foreach (Tuple<string, int> fail in fails) {
+                    result.Add(FormatFailedTest(fail));
+                }
+            }
+            return result;
+        }
+        string FormatFailedTest(Tuple<string, int> tableAndVersion) {
+            return string.Format("{0} - version {1}", tableAndVersion.Item1, tableAndVersion.Item2);
+        }
+        #endregion
+
 
 		// i like sorted things
         class TableVersionComparer : IComparer<Tuple<string, int>> {

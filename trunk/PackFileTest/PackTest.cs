@@ -10,18 +10,34 @@ namespace PackFileTest {
     class PackTest {
 #pragma warning disable 414
         // just to keep track of what's available in testAll:
-		// -db: test db files; -t: tsv test for db files
-		// -uv: unit variant files; -ot: create output of tables
-        // -pr: prepare release... split schemata into each of the games'
-        // -w : write schema_user.xml after iterating all db files
-        // -mt: run models test
-        private static string[] OPTIONS = { "-t", "-db", "uv", "gf", "-ot", "-pr", "-w", "-mt" };
+        // -mt: run building models test
+        // -mb: run naval models test
+        private static string[] OPTIONS = { 
+            // -db: test db files; -t: also run tsv export/reimport test
+            "-db", "-t",
+            // -Xm: run building/naval model tests
+            "-bm", "-nm",
+            // -uv: run unit variant tests
+            "-uv", 
+            // -gf: run group formation tests
+            "-gf", 
+            // -os: optimize schema
+            "-os", 
+            // -pr: prepare release... split schemata into each of the games'
+            "-pr", 
+            // -w : write schema_user.xml after iterating all db files
+            "-w",
+            // -i : integrate other schema file
+            "-i"
+        };
 #pragma warning restore 414
 
-		bool testDbFiles = false;
 		bool testTsvExport = false;
-		bool testUnitVariants = false;
-        // bool testGroupformations = false;
+        bool outputTables = false;
+
+
+        // private List<PackedFileTest> tests = new List<PackedFileTest>();
+        private List<PackedFileTest.TestFactory> testFactories = new List<PackedFileTest.TestFactory>();
 
 		private static string OPTIONS_FILENAME = "testoptions.txt";
 
@@ -40,11 +56,11 @@ namespace PackFileTest {
                 }
             }
             // List<string> arguments = new List<string> ();
+            DBTypeMap.Instance.initializeTypeMap(Directory.GetCurrentDirectory());
+            
             bool saveSchema = false;
-            bool outputTables = false;
-            bool runModelTests = false;
             foreach (string dir in arguments) {
-                if (dir.StartsWith("#")) {
+                if (dir.StartsWith("#") || dir.Trim().Equals("")) {
                     continue;
                 }
                 if (dir.Equals("-pr")) {
@@ -64,20 +80,25 @@ namespace PackFileTest {
                             Console.WriteLine("{0} entries removed for {1}", optimizer.RemovedEntries, game.Id);
                         }
                     }
-                    return;
+                } else if (dir.StartsWith("-i")) {
+                    string integrateFrom = dir.Substring(2);
+                    new SchemaIntegrator{
+                        Verbose = false
+                    }.IntegrateFile(integrateFrom);
                 } else if (dir.Equals("-t")) {
                     Console.WriteLine("TSV export/import enabled");
                     testTsvExport = true;
-                } else if (dir.Equals("-mt")) {
-                    runModelTests = true;
-                    Console.WriteLine("models test enabled");
+                } else if (dir.Equals("-bm")) {
+                    testFactories.Add(CreateBuildingModelTest);
+                    Console.WriteLine("building models test enabled");
+                } else if (dir.Equals("-nm")) {
+                    testFactories.Add(CreateNavalModelTest);
+                    Console.WriteLine("naval models test enabled");
                 } else if (dir.Equals("-db")) {
                     Console.WriteLine("Database Test enabled");
-                    testDbFiles = true;
-                    DBTypeMap.Instance.initializeTypeMap(Directory.GetCurrentDirectory());
                 } else if (dir.Equals("-uv")) {
                     Console.WriteLine("Unit Variant Test enabled");
-                    testUnitVariants = true;
+                    testFactories.Add(CreateUnitVariantTest);
                 } else if (dir.StartsWith("-gf")) {
                     Console.WriteLine("Group formations test enabled");
                     // testGroupformations = true;
@@ -90,37 +111,50 @@ namespace PackFileTest {
                     outputTables = true;
                     Console.WriteLine("will output tables of db files");
                 } else {
-                    if (outputTables) {
-                        string schemaFile = "schema_optimized.xml";
-                        if (dir.Contains("stw")) {
-                            schemaFile = "schema_stw.xml";
-                        } else if (dir.Contains("ntw")) {
-                            schemaFile = "schema_ntw.xml";
-                        } else if (dir.Contains("etw")) {
-                            schemaFile = "schema_etw.xml";
-                        }
-                        SchemaOptimizer optimizer = new SchemaOptimizer() {
-                            PackDirectory = dir,
-                            SchemaFilename = schemaFile
-                        };
-                        optimizer.FilterExistingPacks();
-                        Console.WriteLine("Optimizer removed {0} entries from schema {1}", optimizer.RemovedEntries, schemaFile);
-                    }
-
-                    testAllPacks(dir, outputTables, runModelTests, testTsvExport);
+                    PackedFileTest.TestAllPacks(testFactories, dir);
                 }
             }
             if (saveSchema) {
-                foreach (List<FieldInfo> typeInfos in DBTypeMap.Instance.TypeMap.Values) {
-                    MakeFieldNamesUnique(typeInfos);
-                }
-                foreach (List<FieldInfo> typeInfos in DBTypeMap.Instance.GuidMap.Values) {
-                    MakeFieldNamesUnique(typeInfos);
-                }
-                DBTypeMap.Instance.saveToFile(Directory.GetCurrentDirectory(), "user");
+                SaveSchema();
             }
-            Console.Error.WriteLine("Test run finished, press any key");
+            Console.WriteLine("Test run finished, press any key");
             Console.ReadKey();
+        }
+
+        #region Test Factory Methods
+        PackedFileTest CreateBuildingModelTest() {
+            return new ModelsTest<NavalModel, ShipPart> {
+                Codec = NavalModelCodec.Instance,
+                ValidTypes = "models_naval_tables"
+            };
+        }
+        PackedFileTest CreateNavalModelTest() {
+            return new ModelsTest<BuildingModel, BuildingModelEntry> {
+                Codec = BuildingModelCodec.Instance,
+                ValidTypes = "models_building_tables"
+            };
+        }
+        PackedFileTest CreateUnitVariantTest() {
+            return new UnitVariantTest();
+        }
+        PackedFileTest CreateDbTest() {
+            return new DBFileTest {
+                TestTsv = testTsvExport,
+                OutputTable = outputTables
+            };
+        }
+        #endregion
+
+        #region Save Schema
+        static readonly Regex NumberedFieldNameRe = new Regex("([^0-9]*)([0-9]+)");
+        void SaveSchema() {
+            foreach (List<FieldInfo> typeInfos in DBTypeMap.Instance.TypeMap.Values) {
+                MakeFieldNamesUnique(typeInfos);
+            }
+            foreach (List<FieldInfo> typeInfos in DBTypeMap.Instance.GuidMap.Values) {
+                MakeFieldNamesUnique(typeInfos);
+            }
+            DBTypeMap.Instance.saveToFile(Directory.GetCurrentDirectory(), "user");
         }
         void MakeFieldNamesUnique(List<FieldInfo> fields) {
             List<string> used = new List<string>();
@@ -137,8 +171,8 @@ namespace PackFileTest {
             string result = name;
             int number = index;
             while (alreadyUsed.Contains(result)) {
-                if (numberedFieldNameRe.IsMatch(result)) {
-                    Match match = numberedFieldNameRe.Match(result);
+                if (NumberedFieldNameRe.IsMatch(result)) {
+                    Match match = NumberedFieldNameRe.Match(result);
                     number = int.Parse(match.Groups[2].Value) + 1;
                     result = string.Format("{0}{1}", match.Groups[1].Value, number);
                 } else {
@@ -147,114 +181,7 @@ namespace PackFileTest {
             }
             return result;
         }
-        static readonly Regex numberedFieldNameRe = new Regex("([^0-9]*)([0-9]+)");
-
-        // run db tests for all files in the given directory
-        public void testAllPacks(string dir, bool outputTable, bool testModels, bool testTsv = false) {
-			foreach (string file in Directory.EnumerateFiles(dir, "*.pack")) {
-                SortedSet<PackedFileTest> tests = new SortedSet<PackedFileTest>();
-                if (testDbFiles) {
-                    tests.Add(new DBFileTest (testTsv, outputTable));
-
-                    if (testModels) {
-                        tests.Add(new ModelsTest<NavalModel, ShipPart> {
-                            Codec = NavalModelCodec.Instance,
-                            ValidTypes = "models_naval_tables"
-                        });
-                        tests.Add(new ModelsTest<BuildingModel, BuildingModelEntry> {
-                            Codec = BuildingModelCodec.Instance,
-                            ValidTypes = "models_building_tables"
-                        });
-                    }
-				}
-				if (testUnitVariants) {
-                    tests.Add(new UnitVariantTest());
-				}
-                TestAllFiles(file, tests);
-                List<string> failedTests = new List<string>();
-                foreach (PackedFileTest test in tests) {
-                    if (test.FailedTests.Count > 0) {
-                        failedTests.Add(test.ToString());
-                        failedTests.AddRange(test.FailedTests);
-                        failedTests.Add("");
-                        // output results
-                        // test.PrintResults();
-                    }
-                }
-                if (failedTests.Count > 0) {
-                    Console.WriteLine(string.Format("{0} - {1}", 
-                        Path.GetFileName(Path.GetDirectoryName(Path.GetDirectoryName(file))), Path.GetFileName(file)));
-                    Console.WriteLine("Dir: {0}\nTests Run:{1}", dir, tests.Count);
-                    Console.Out.Flush();
-                    string all = string.Join("\n", failedTests);
-                    Console.WriteLine(all);
-                }
-                Console.Out.Flush();
-            }
-		}
-
-        // tests all files in this test's pack
-        public void TestAllFiles(string packFilePath, ICollection<PackedFileTest> tests) {
-            PackFile packFile = new PackFileCodec().Open(packFilePath);
-            foreach (PackedFile packed in packFile.Files) {
-                foreach (PackedFileTest test in tests) {
-                    try {
-                        if (test.CanTest(packed)) {
-                            test.TestFile(packed);
-                        }
-                    } catch (Exception x) {
-                        using (var outstream = File.Create(string.Format("failed_{0}.packed", packed.Name))) {
-                            using (var datastream = new MemoryStream(packed.Data)) {
-                                datastream.CopyTo(outstream);
-                            }
-                        }
-                        test.generalErrors.Add(string.Format("reading {0}: {1}", packed.FullPath, x.Message));
-                    }
-                }
-            }
-        }
+        #endregion
     }
 	
-	public abstract class PackedFileTest : IComparable {
-		// public string Packfile { get; set; }
-		public SortedSet<string> generalErrors = new SortedSet<string> ();
-		public SortedSet<string> allTestedFiles = new SortedSet<string>();
-		
-		public abstract bool CanTest(PackedFile file);
-
-        public virtual List<string> FailedTests {
-            get {
-                List<string> list = new List<string>();
-                if (generalErrors.Count > 0) {
-                    list.Add("General errors:");
-                    list.AddRange(generalErrors);
-                }
-                return list;
-            }
-        }
-		
-		public abstract void TestFile(PackedFile file);
-
-		public abstract void PrintResults();
-
-        public virtual int TestCount {
-            get {
-                return 0;
-            }
-        }
-
-		public int CompareTo(object o) {
-			int result = GetType().GetHashCode() - o.GetType().GetHashCode();
-			return result;
-		}
-		
-		public static void PrintList(string label, ICollection<string> list) {
-			if (list.Count != 0) {
-				Console.WriteLine ("{0}: {1}", label, list.Count);
-				foreach (string toPrint in list) {
-					Console.WriteLine (toPrint);
-				}
-			}
-		}
-	}
 }
