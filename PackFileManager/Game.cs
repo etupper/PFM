@@ -124,32 +124,6 @@ namespace PackFileManager {
             } catch {}
             return str;
         }
-
-        #region Game-specific schema (typemap) handling
-        public void ApplyGameTypemap() {
-            try {
-                string schemaFile = DBTypeMap.Instance.GetUserFilename(Id);
-                if (!File.Exists(schemaFile)) {
-                    schemaFile = SchemaFilename;
-                    if (!File.Exists(schemaFile)) {
-                        // rebuild from master schema
-                        DBTypeMap.Instance.initializeTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
-                        CreateSchemaFile();
-                    }
-                }
-                DBTypeMap.Instance.initializeFromFile(schemaFile);
-            } catch { }
-        }
-        public void CreateSchemaFile() {
-            if (IsInstalled && !File.Exists(SchemaFilename)) {
-                SchemaOptimizer optimizer = new SchemaOptimizer() {
-                    PackDirectory = Path.Combine(GameDirectory, "data"),
-                    SchemaFilename = SchemaFilename
-                };
-                optimizer.FilterExistingPacks();
-            }
-        }
-        #endregion
     }
 
     public class GameManager {
@@ -188,7 +162,7 @@ namespace PackFileManager {
                         Settings.Default.CurrentGame = current.Id;
 
                         // load the appropriate type map
-                        current.ApplyGameTypemap();
+                        ApplyGameTypemap();
 
                         // invalidate cache of reference map cache
                         List<string> loaded = new PackLoadSequence() {
@@ -202,7 +176,36 @@ namespace PackFileManager {
                 }
             }
         }
+        
+        #region Game-specific schema (typemap) handling
+        public void ApplyGameTypemap() {
+            try {
+                Game game = CurrentGame;
+                string schemaFile = DBTypeMap.Instance.GetUserFilename(game.Id);
+                if (!File.Exists(schemaFile)) {
+                    schemaFile = game.SchemaFilename;
+                    if (!File.Exists(schemaFile)) {
+                        // rebuild from master schema
+                        DBTypeMap.Instance.InitializeTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
+                        CreateSchemaFile(game);
+                    }
+                }
+                DBTypeMap.Instance.initializeFromFile(schemaFile);
+            } catch { }
+        }
+        public void CreateSchemaFile(Game game) {
+            if (game.IsInstalled && !File.Exists(game.SchemaFilename)) {
+                SchemaOptimizer optimizer = new SchemaOptimizer() {
+                    PackDirectory = Path.Combine(game.GameDirectory, "data"),
+                    SchemaFilename = game.SchemaFilename
+                };
+                optimizer.FilterExistingPacks();
+            }
+        }
+        #endregion
     }
+    
+
     
     public class PackLoadSequence {
         private Predicate<string> ignore;

@@ -82,7 +82,7 @@ namespace PackFileManager
             editors = CreateEditors();
             try {
                 if (!DBTypeMap.Instance.Initialized) {
-                    DBTypeMap.Instance.initializeTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
+                    DBTypeMap.Instance.InitializeTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
                 }
             } catch (Exception e) {
                 if (MessageBox.Show(string.Format("Could not initialize type map: {0}.\nTry autoupdate?", e.Message),
@@ -1005,7 +1005,7 @@ namespace PackFileManager
                     MessageBox.Show(message, "Update result", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 if (update) {
-                    GameManager.Instance.CurrentGame.ApplyGameTypemap();
+                    GameManager.Instance.ApplyGameTypemap();
                 }
                 if (version != Application.ProductVersion) {
                     if (MessageBox.Show(string.Format("A new version of PFM is available ({0})\nAutoinstall?", version),
