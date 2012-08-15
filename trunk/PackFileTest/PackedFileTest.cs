@@ -10,11 +10,16 @@ namespace PackFileTest {
     public abstract class PackedFileTest : IComparable {
         public delegate PackedFileTest TestFactory();
 
-        // public string Packfile { get; set; }
         public SortedSet<string> generalErrors = new SortedSet<string> ();
         public SortedSet<string> allTestedFiles = new SortedSet<string>();
         
         public abstract bool CanTest(PackedFile file);
+        
+        public virtual int TestCount {
+            get {
+                return allTestedFiles.Count;
+            }
+        }
         
         public virtual List<string> FailedTests {
             get {
@@ -30,12 +35,6 @@ namespace PackFileTest {
         public abstract void TestFile(PackedFile file);
         
         public abstract void PrintResults();
-        
-        public virtual int TestCount {
-            get {
-                return 0;
-            }
-        }
         
         public int CompareTo(object o) {
             int result = GetType().GetHashCode() - o.GetType().GetHashCode();
@@ -58,6 +57,11 @@ namespace PackFileTest {
                 tests.Add(createTest());
             }
             foreach (string file in Directory.EnumerateFiles(dir, "*.pack")) {
+                string dirName = Path.GetFileName(Path.GetDirectoryName(Path.GetDirectoryName(file)));
+                string fileName = Path.GetFileName(file);
+                string message = string.Format("starting test for {0} - {1}", dirName, fileName);
+                Console.WriteLine(message);
+                
                 TestAllFiles(tests, file);
                 List<string> failedTests = new List<string>();
                 foreach (PackedFileTest test in tests) {
@@ -70,12 +74,13 @@ namespace PackFileTest {
                     }
                 }
                 if (failedTests.Count > 0) {
-                    Console.WriteLine(string.Format("{0} - {1}", 
-                        Path.GetFileName(Path.GetDirectoryName(Path.GetDirectoryName(file))), Path.GetFileName(file)));
+                    Console.Out.WriteLine(message);
+                    //Console.WriteLine(string.Format("{0} - {1}",  dirName, fileName));
                     Console.WriteLine("Dir: {0}\nTests Run:{1}", dir, tests.Count);
-                    Console.Out.Flush();
                     string all = string.Join("\n", failedTests);
                     Console.WriteLine(all);
+                } else {
+                    Console.WriteLine("All tests successful");
                 }
                 Console.Out.Flush();
             }

@@ -5,9 +5,8 @@ using Common;
 using Filetypes;
 
 namespace PackFileTest {
-    public class ModelsTest<T, E> : PackedFileTest 
-    where T : EntryContainer<E> {
-        public ModelCodec<T, E> Codec {
+    public class ModelsTest<T> : PackedFileTest {
+        public ModelCodec<T> Codec {
             get; set;
         }
         public string ValidTypes {
@@ -18,7 +17,8 @@ namespace PackFileTest {
                 return successes.Count + countErrors.Count + generalErrors.Count + incompleteReads.Count;
             }
         }
-
+  
+        #region Test Fails
         public override List<string> FailedTests {
             get {
                 List<string> result = base.FailedTests;
@@ -31,7 +31,7 @@ namespace PackFileTest {
                     result.AddRange(countErrors);
                 }
                 if (incompleteReads.Count > 0) {
-                    result.Add("Not all Data read::");
+                    result.Add("Not all Data read:");
                     result.AddRange(incompleteReads);
                 }
                 return result;
@@ -42,6 +42,7 @@ namespace PackFileTest {
         List<string> incompleteReads = new List<string>();
         List<string> successes = new List<string>();
         List<string> emptyFiles = new List<string>();
+        #endregion
         
         public override bool CanTest(PackedFile file) {
             return DBFile.typename(file.FullPath).Equals (ValidTypes);

@@ -79,6 +79,8 @@
     <Compile Include="Groupformations\Groupformation.cs" />
     <Compile Include="Models\ModelCodecs.cs" />
     <Compile Include="Models\Models.cs" />
+    <Compile Include="Models\Buildings.cs" />
+    <Compile Include="Models\Naval.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

@@ -55,8 +55,6 @@ namespace PackFileTest {
                     return;
                 }
             }
-            // List<string> arguments = new List<string> ();
-            DBTypeMap.Instance.initializeTypeMap(Directory.GetCurrentDirectory());
             
             bool saveSchema = false;
             foreach (string dir in arguments) {
@@ -123,15 +121,15 @@ namespace PackFileTest {
 
         #region Test Factory Methods
         PackedFileTest CreateBuildingModelTest() {
-            return new ModelsTest<NavalModel, ShipPart> {
-                Codec = NavalModelCodec.Instance,
-                ValidTypes = "models_naval_tables"
+            return new ModelsTest<BuildingModel> {
+                Codec = BuildingModelCodec.Instance,
+                ValidTypes = "models_building_tables"
             };
         }
         PackedFileTest CreateNavalModelTest() {
-            return new ModelsTest<BuildingModel, BuildingModelEntry> {
-                Codec = BuildingModelCodec.Instance,
-                ValidTypes = "models_building_tables"
+            return new ModelsTest<NavalModel> {
+                Codec = NavalModelCodec.Instance,
+                ValidTypes = "models_naval_tables"
             };
         }
         PackedFileTest CreateUnitVariantTest() {
