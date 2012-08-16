@@ -71,31 +71,37 @@ namespace Filetypes {
         #endregion
 
         #region List Reader Utility Functions
-        protected static void FillList<T>(List<T> toFill, ItemReader<T> readItem, BinaryReader reader, bool skipIndex = true) {
+        protected static void FillList<T>(List<T> toFill, ItemReader<T> readItem, BinaryReader reader, 
+                                          bool skipIndex = true, int itemCount = -1) {
             try {
-                List<T> entries = ReadList(reader, readItem, skipIndex);
-                toFill.AddRange(entries);
+
+#if DEBUG
+                long listStartPosition = reader.BaseStream.Position;
+#endif
+                if (itemCount == -1) {
+                    itemCount = reader.ReadInt32();
+                }
+#if DEBUG
+                Console.WriteLine("Reading list at {0:x}, {1} entries", listStartPosition, itemCount);
+#endif
+                for (int i = 0; i < itemCount; i++) {
+                    try {
+                        if (skipIndex) {
+                            reader.ReadInt32();
+                        }
+                        toFill.Add(readItem(reader));
+                    } catch (Exception ex) {
+                        throw new InvalidDataException(string.Format("Failed to read item {0}", i), ex);
+                    }
+                }
             } catch (Exception ex) {
                 throw new InvalidDataException(string.Format("Failed to entries for list {0}"), ex);
             }
         }
         
         public delegate T ItemReader<T>(BinaryReader reader);
-        public static List<T> ReadList<T>(BinaryReader reader, ItemReader<T> readItem, bool skipIndex = true) {
-            List<T> result = new List<T>();
-            int itemCount = reader.ReadInt32();
-            for (int i = 0; i < itemCount; i++) {
-                try {
-                    if (skipIndex) {
-                        reader.ReadInt32();
-                    }
-                    result.Add(readItem(reader));
-                } catch (Exception ex) {
-                    throw new InvalidDataException(string.Format("Failed to read item {0}", i), ex);
-                }
-            }
-            return result;
-        }
+//        public static List<T> ReadList<T>(BinaryReader reader, ItemReader<T> readItem, bool skipIndex = false, int itemCount = -1) {
+//        }
         #endregion
     }
 }

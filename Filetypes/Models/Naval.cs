@@ -5,16 +5,13 @@ using Common;
 
 namespace Filetypes {
     #region Naval Model
-    public class NavalModelFile : ModelFile<NavalModel> { }
-    public class ShipPartFile : ModelFile<ShipPart> { }
-    
-    public class NavalModel : EntryContainer<ShipPart> {
+    public class ShipModelFile : ModelFile<ShipModel> { }
+
+    public abstract class NavalModel<T> : EntryContainer<T> {
         public string ModelId { get; set; }
         public string RiggingLogicPath { get; set; }
-        public bool Unknown { get; set; }
         public string RigidModelPath { get; set; }
-        public float UnknownFloat { get; set; }
-        
+
         private List<NavalCam> cams = new List<NavalCam>();
         public List<NavalCam> NavalCams {
             get {
@@ -28,6 +25,15 @@ namespace Filetypes {
                 return partPositions;
             }
         }
+        
+        private List<T> partEntries = new List<T>();
+        public List<T> Parts {
+            get {
+                return partEntries;
+            }
+        }
+
+        public bool Unknown { get; set; }
 
         /* Four trailing ints.. probably references */
         public uint Side1 {
@@ -56,13 +62,22 @@ namespace Filetypes {
             }
         }
     }
+    #endregion
 
-    #region Ship Parts
-    public class ShipPart : EntryContainer<PartEntry> {
-        public string PartName { get; set; }
-        public uint Unknown2 { get; set; }
-
+    #region Ship Model
+    public class ShipModel : NavalModel<ShipElement> {
+        public uint UnknownUint {
+            get; set;
+        }
     }
+    
+    public class ShipElement : EntryContainer<PartEntry> {
+        public string PartName { get; set; }
+        public uint Unknown {
+            get; set;
+        }
+    }
+    
     public class PartEntry : ModelEntry {
         public uint Unknown {
             get; set;
@@ -112,42 +127,158 @@ namespace Filetypes {
             throw new InvalidOperationException();
         }
     }
-    #endregion
-    #endregion
 
-    #region Ship Part Codec
+    public class SomeList : EntryContainer<SomeEntry> {
+        public uint Unknown1 { get; set; }
+        public uint Unknown2 { get; set; }
+    }
+    
+    public class SomeEntry : ModelEntry {
+        public uint Unknown1 { get; set; }
+        public uint Coord1Tag {
+            get; set;
+        }
+        public uint Coord2Tag {
+            get; set;
+        }
+        public uint Coord3Tag {
+            get; set;
+        }
+        public void TagCoordinate(Coordinates toFlag, uint flagAs) {
+            if (toFlag == Coordinates1) {
+                Coord1Tag = flagAs;
+            } else if (toFlag == Coordinates2) {
+                Coord2Tag = flagAs;
+            } else if (toFlag == Coordinates3) {
+                Coord3Tag = flagAs;
+            }
+        }
+        public uint GetCoordinateTag(Coordinates getFor) {
+            if (getFor == Coordinates1) {
+                return Coord1Tag;
+            } else if (getFor == Coordinates2) {
+                return Coord2Tag;
+            } else if (getFor == Coordinates3) {
+                return Coord3Tag;
+            }
+            throw new InvalidOperationException();
+        }
+    }
+
+#endregion
+    
+    #region Ship Codec
+    public abstract class NavalCodec<T> : ModelCodec<T> {
+        protected NavalCam ReadNavalCam(BinaryReader reader) {
+#if DEBUG
+            //Console.WriteLine("Reading cams starting at {0:x}", reader.BaseStream.Position);
+#endif
+            NavalCam cam = new NavalCam {
+                Name = IOFunctions.readCAString(reader)
+            };
+            for (int dataIndex = 0; dataIndex < 16; dataIndex++) {
+                cam.Entries.Add(reader.ReadUInt32());
+            }
+            return cam;
+        }
+
+        protected PartPositionInfo ReadPositionEntry(BinaryReader reader) {
+#if DEBUG
+            //Console.WriteLine("Reading position entry at {0:x}", reader.BaseStream.Position);
+#endif
+            PartPositionInfo entry = new PartPositionInfo();
+            ReadCoordinates(reader, entry);
+            
+            int moreEntries = reader.ReadInt32();
+            for (int i = 0; i < moreEntries; i++) {
+                entry.Unknown.Add(reader.ReadUInt32());
+            }
+            Console.Out.Flush();
+            return entry;
+        }
+        
+    }
+    
     /*
      * The models codec for earlier games; only contains ship parts.
      */
-    public class ShipPartCodec : ModelCodec<ShipPart> {
-        private static ShipPartCodec instance = new ShipPartCodec();
-        public static ShipPartCodec Instance {
+    public class ShipModelCodec : NavalCodec<ShipModel> {
+        private static ShipModelCodec instance = new ShipModelCodec();
+        public static ShipModelCodec Instance {
             get {
                 return instance;
             }
         }
         
-        protected override ModelFile<ShipPart> CreateFile() {
-            return new ShipPartFile();
+        protected override ModelFile<ShipModel> CreateFile() {
+            return new ShipModelFile();
         }
         
-        public override ShipPart ReadModel(BinaryReader reader) {
+        
+        public override ShipModel ReadModel(BinaryReader reader) {
 #if DEBUG
-            Console.WriteLine("Reading Ship Part at {0:x}", reader.BaseStream.Position);
+            Console.WriteLine("Reading Ship Model at {0:x}", reader.BaseStream.Position);
 #endif
             string name = IOFunctions.readCAString(reader);
-            ShipPart part = new ShipPart {
-                PartName = name,
+            ShipModel ship = new ShipModel {
+                ModelId =  name,
+                RigidModelPath = IOFunctions.readCAString(reader),
+                RiggingLogicPath = IOFunctions.readCAString(reader)
+            };
+            // post-stw:
+//               ShipModel result = new ShipModel {
+//                ModelId = IOFunctions.readCAString(reader),
+//                RiggingLogicPath = IOFunctions.readCAString(reader),
+//                Unknown = reader.ReadBoolean(),
+//                RigidModelPath = IOFunctions.readCAString(reader)
+//            };
+
+            FillList(ship.NavalCams, ReadNavalCam, reader, false);
+            FillList(ship.PositionInfos, ReadPositionEntry, reader, true);
+            // ship.UnknownUint = reader.ReadUInt32();
+            FillList(ship.Parts, ReadShipElement, reader, false);
+            
+            List<object> test = new List<object>();
+            FillList(test, ReadTest, reader, false);
+            
+            return ship;
+        }
+  
+        object ReadTest(BinaryReader reader) {
+            SomeList list = new SomeList {
+                Unknown1 = reader.ReadUInt32(),
                 Unknown2 = reader.ReadUInt32()
             };
-
-            FillList(part.Entries, ReadPartEntry, reader);
-            return part;
+            FillList(list.Entries, ReadSomeEntry, reader);
+            
+            return list;
         }
-
-        public PartEntry ReadPartEntry(BinaryReader reader) {
+        
+        public SomeEntry ReadSomeEntry(BinaryReader reader) {
+            SomeEntry entry = new SomeEntry();
+            foreach(Coordinates coord in entry) {
+                ReadCoordinate(coord, reader);
+                entry.TagCoordinate(coord, reader.ReadUInt32());
+            }
+            return entry;
+        }
+        
+        public ShipElement ReadShipElement(BinaryReader reader) {
 #if DEBUG
-            //Console.WriteLine("Reading Ship Part entry at {0}", reader.BaseStream.Position);
+            // Console.WriteLine("Reading Ship Element at {0:x}", reader.BaseStream.Position);
+#endif
+            //PartEntry part = new PartEntry();
+            ShipElement element = new ShipElement {
+                PartName = IOFunctions.readCAString(reader),
+                Unknown = reader.ReadUInt32()
+            };
+            FillList(element.Entries, ReadPartEntry, reader, true);
+            return element;
+        }
+        
+        protected PartEntry ReadPartEntry(BinaryReader reader) {
+#if DEBUG
+            // Console.WriteLine("Reading Part entry at {0:x}", reader.BaseStream.Position);
 #endif
             PartEntry part = new PartEntry {
                 Unknown = reader.ReadUInt32()
@@ -164,101 +295,11 @@ namespace Filetypes {
             return part;
         }
         
-        protected override void WriteModel(BinaryWriter writer, ShipPart model) {
+        protected override void WriteModel(BinaryWriter writer, ShipModel model) {
             throw new NotImplementedException ();
         }
     }
     #endregion
     
-    #region Naval Model Codec
-    /*
-     * Naval models codec.
-     */
-    public class NavalModelCodec : ModelCodec<NavalModel> {
-        private static readonly NavalModelCodec instance = new NavalModelCodec();
-        public static NavalModelCodec Instance {
-            get {
-                return instance;
-            }
-        }
-        private ShipPartCodec partReader = new ShipPartCodec();
-        
-        protected override ModelFile<NavalModel> CreateFile() {
-            return new NavalModelFile();
-        }
-        public override NavalModel ReadModel(BinaryReader reader) {
-#if DEBUG
-            long readModelStart = reader.BaseStream.Position;
-            Console.WriteLine("Model starting at {0:x}", readModelStart);
-#endif
-            NavalModel result = new NavalModel {
-                ModelId = IOFunctions.readCAString(reader),
-                RiggingLogicPath = IOFunctions.readCAString(reader),
-                Unknown = reader.ReadBoolean(),
-                RigidModelPath = IOFunctions.readCAString(reader)
-            };
-   
-            result.NavalCams.AddRange(ReadList(reader, ReadNavalCam, false));
-            result.PositionInfos.AddRange(ReadList(reader, ReadPositionEntry));
-            FillList(result.Entries, partReader.ReadModel, reader, false);
-   
-            // result.UnknownFloat = reader.ReadSingle();
-//            result.Side1 = reader.ReadUInt32();
-//            result.Side2 = reader.ReadUInt32();
-//            result.Side3 = reader.ReadUInt32();
-//            result.Side4 = reader.ReadUInt32();
-            return result;
-        }
-        
-        NavalCam ReadNavalCam(BinaryReader reader) {
-#if DEBUG
-            // Console.WriteLine("Reading cams starting at {0}", reader.BaseStream.Position);
-#endif
-            NavalCam cam = new NavalCam {
-                Name = IOFunctions.readCAString(reader)
-            };
-            for (int dataIndex = 0; dataIndex < 16; dataIndex++) {
-                cam.Entries.Add(reader.ReadUInt32());
-            }
-            return cam;
-        }
-
-        PartPositionInfo ReadPositionEntry(BinaryReader reader) {
-#if DEBUG
-            //Console.WriteLine("Reading position entry at {0}", reader.BaseStream.Position);
-#endif
-            PartPositionInfo entry = new PartPositionInfo();
-            ReadCoordinates(reader, entry);
-            
-            int moreEntries = reader.ReadInt32();
-            for (int i = 0; i < moreEntries; i++) {
-                entry.Unknown.Add(reader.ReadUInt32());
-            }
-            Console.Out.Flush();
-            return entry;
-        }
-        
-        public ShipPart ReadPartEntry(BinaryReader reader) {
-            ShipPart part = partReader.ReadModel(reader);
-            part.Entries.AddRange(ReadList(reader, partReader.ReadPartEntry));
-            return part;
-        }
-        
-        protected override void WriteModel(BinaryWriter writer, NavalModel model) {
-//            IOFunctions.writeCAString(writer, model.ModelId);
-//            IOFunctions.writeCAString(writer, model.RiggingLogicPath);
-//            writer.Write (model.Unknown);
-//            IOFunctions.writeCAString(writer, model.RigidModelPath);
-//            writer.Write(model.NavalCams.Count);
-//            model.NavalCams.ForEach(cam => {
-//                IOFunctions.writeCAString(writer, cam.Name);
-//                cam.Entries.ForEach(b => {
-//                    writer.Write(b);
-//                });
-//            });
-            throw new NotSupportedException();
-        }
-    }
-    #endregion
 }
 

@@ -61,7 +61,7 @@ namespace PackFileTest {
                 string fileName = Path.GetFileName(file);
                 string message = string.Format("starting test for {0} - {1}", dirName, fileName);
                 Console.WriteLine(message);
-                
+
                 TestAllFiles(tests, file);
                 List<string> failedTests = new List<string>();
                 foreach (PackedFileTest test in tests) {
@@ -90,6 +90,7 @@ namespace PackFileTest {
         public static void TestAllFiles(ICollection<PackedFileTest> tests, string packFilePath) {
             PackFile packFile = new PackFileCodec().Open(packFilePath);
             foreach (PackedFile packed in packFile.Files) {
+                Console.WriteLine("Testing {0}", packed.FullPath);
                 foreach (PackedFileTest test in tests) {
                     try {
                         if (test.CanTest(packed)) {

@@ -22,7 +22,7 @@ namespace Filetypes {
             }
         }
     }
-
+    
     public abstract class ModelEntry : IEnumerable {
         Coordinates angles1 = new Coordinates();
         public Coordinates Coordinates1 {
@@ -63,9 +63,24 @@ namespace Filetypes {
             get;
             set;
         }
+        public float this[int index] {
+            get {
+                float[] angles = new float[] { XCoordinate, YCoordinate, ZCoordinate };
+                return angles[index];
+            }
+            set {
+                float[] angles = new float[] { XCoordinate, YCoordinate, ZCoordinate };
+                angles[index] = value;
+            }
+        }
         public IEnumerator GetEnumerator() {
             float[] angles = new float[] { XCoordinate, YCoordinate, ZCoordinate };
             return angles.GetEnumerator();
+        }
+    }
+    public class TaggedCoordinate<T> : Coordinates {
+        T Tag {
+            get; set;
         }
     }
     #endregion
