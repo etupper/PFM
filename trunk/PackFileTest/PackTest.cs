@@ -106,6 +106,7 @@ namespace PackFileTest {
                     Console.WriteLine("naval models test enabled");
                 } else if (dir.Equals("-db")) {
                     Console.WriteLine("Database Test enabled");
+                    testFactories.Add(CreateDbTest);
                 } else if (dir.Equals("-uv")) {
                     Console.WriteLine("Unit Variant Test enabled");
                     testFactories.Add(CreateUnitVariantTest);
@@ -121,12 +122,12 @@ namespace PackFileTest {
                     outputTables = true;
                     Console.WriteLine("will output tables of db files");
                 } else if (dir.StartsWith("-tg")) {
-                    string gameName = dir.Substring(2);
+                    string gameName = dir.Substring(3);
                     Game game = Game.ById(gameName);
-                    Console.WriteLine("Testing game {0}", game);
-                    PackedFileTest.TestAllPacks(testFactories, Path.Combine(game.DataDirectory));
+                    Console.WriteLine("Testing game {0}", gameName);
+                    PackedFileTest.TestAllPacks(testFactories, Path.Combine(game.DataDirectory), verbose);
                 } else {
-                    PackedFileTest.TestAllPacks(testFactories, dir);
+                    PackedFileTest.TestAllPacks(testFactories, dir, verbose);
                 }
             }
             if (saveSchema) {
@@ -140,13 +141,15 @@ namespace PackFileTest {
         PackedFileTest CreateBuildingModelTest() {
             return new ModelsTest<BuildingModel> {
                 Codec = BuildingModelCodec.Instance,
-                ValidTypes = "models_building_tables"
+                ValidTypes = "models_building_tables",
+                Verbose = verbose
             };
         }
         PackedFileTest CreateNavalModelTest() {
             return new ModelsTest<ShipModel> {
                 Codec = ShipModelCodec.Instance,
-                ValidTypes = "models_naval_tables"
+                ValidTypes = "models_naval_tables",
+                Verbose = verbose
             };
         }
         PackedFileTest CreateUnitVariantTest() {
@@ -155,7 +158,8 @@ namespace PackFileTest {
         PackedFileTest CreateDbTest() {
             return new DBFileTest {
                 TestTsv = testTsvExport,
-                OutputTable = outputTables
+                OutputTable = outputTables,
+                Verbose = verbose
             };
         }
         #endregion

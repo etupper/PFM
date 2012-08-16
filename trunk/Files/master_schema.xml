@@ -167,7 +167,7 @@
     <field name='Spawnable' type='boolean' />
     <field name='Attribute' type='string' />
     <field name='Religion' type='optstring' />
-    <field name='Faction Total Cap' type='int' version_start='1' />
+    <field name='Faction Total Cap' type='int' />
     <field name='unknown14' type='int' version_start='1' />
     <field name='Recruitment cost' type='int' version_start='4' />
     <field name='Voice Selected' type='string' version_start='4' />
@@ -1760,10 +1760,10 @@
     <field name='Dynamic' type='boolean' />
     <field name='Historical_Date' type='int' />
     <field name='Season' type='string' />
-    <field name='unknown1' type='boolean' version_start='2' />
-    <field name='Condition' type='string' />
+    <field name='unknown1' type='optstring' version_start='1' />
+    <field name='Condition' type='string' version_end='0' />
     <field name='Image' type='string' />
-    <field name='unknown2' type='int' version_start='2' />
+    <field name='unknown2' type='int' version_start='1' />
   </table>
   <table name='events_view_group_junct_tables'>
     <field fkey='events_tables.Event ID' name='Event' type='string' pk='true' />
