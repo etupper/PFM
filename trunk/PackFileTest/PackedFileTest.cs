@@ -54,10 +54,6 @@ namespace PackFileTest {
         
         // run db tests for all files in the given directory
         public static void TestAllPacks(ICollection<TestFactory> testFactories, string dir, bool verbose) {
-            List<PackedFileTest> tests = new List<PackedFileTest>();
-            foreach(TestFactory createTest in testFactories) {
-                tests.Add(createTest());
-            }
             List<string> fails = new List<string>();
             foreach (string file in Directory.EnumerateFiles(dir, "*.pack")) {
                 string dirName = Path.GetFileName(Path.GetDirectoryName(Path.GetDirectoryName(file)));
@@ -65,6 +61,10 @@ namespace PackFileTest {
                 string message = string.Format("starting test for {0} - {1}", dirName, fileName);
                 Console.WriteLine(message);
 
+                List<PackedFileTest> tests = new List<PackedFileTest>();
+                foreach (TestFactory createTest in testFactories) {
+                    tests.Add(createTest());
+                }
                 TestAllFiles(tests, file, verbose);
                 List<string> failedTests = new List<string>();
                 foreach (PackedFileTest test in tests) {
