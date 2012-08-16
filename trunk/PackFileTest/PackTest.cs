@@ -144,8 +144,8 @@ namespace PackFileTest {
             };
         }
         PackedFileTest CreateNavalModelTest() {
-            return new ModelsTest<NavalModel> {
-                Codec = NavalModelCodec.Instance,
+            return new ModelsTest<ShipModel> {
+                Codec = ShipModelCodec.Instance,
                 ValidTypes = "models_naval_tables"
             };
         }
