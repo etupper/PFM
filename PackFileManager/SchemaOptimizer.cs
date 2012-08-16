@@ -69,16 +69,26 @@ namespace PackFileManager {
                     List<FieldInfo> add = new List<FieldInfo>();
                     List<FieldInfo> addFrom;
                     if (masterTypes.TryGetValue(type, out addFrom)) {
-                        if (type.Equals("units")) {
+#if DEBUG
+                        if (type.Equals("agents_tables")) {
                             Console.WriteLine();
                         }
+#endif
                         int min = minVersion[type];
                         int max = maxVersion[type];
+#if DEBUG
+                        foreach(FieldInfo field in addFrom) {
+                            if (field.StartVersion <= max && field.LastVersion >= min) {
+                                add.Add(field);
+                            }
+                        }
+#else
                         addFrom.ForEach(field => {
                             if (field.StartVersion <= max && field.LastVersion >= min) {
                                 add.Add(field);
                             }
                         });
+#endif
                         typeMap[type] = add;
                     }
                 }
