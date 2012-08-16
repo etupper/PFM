@@ -2224,14 +2224,18 @@
     <field name='Government Body' type='string' />
   </table>
   <table name='missions_tables'>
-    <field name='Unknown' type='boolean' />
     <field name='Mission ID' type='string' pk='true' />
     <field name='Mission Text' type='string' />
     <field name='Header Text' type='string' />
     <field name='Type' type='string' />
     <field name='Message Icon' type='string' />
     <field name='Dilemma Icon' type='string' />
-    <field name='unknown' type='boolean' version_start='1' />
+    <field name='unknown7' type='int' />
+    <field name='unknown8' type='optstring' />
+    <field name='unknown9' type='optstring' />
+    <field name='unknown10' type='int' />
+    <field name='unknown11' type='optstring' />
+    <field name='unknown12' type='optstring' />
   </table>
   <table name='models_artilleries_tables'>
     <field name='Artillery ID' type='string' pk='true' />
