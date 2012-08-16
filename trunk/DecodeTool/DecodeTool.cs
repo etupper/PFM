@@ -249,7 +249,7 @@ namespace DecodeTool {
                 DBFileHeader header = PackedFileDbCodec.readHeader(stream);
                 if (DBTypeMap.Instance.IsSupported(TypeName)) {
                     TypeInfo info = DBTypeMap.Instance.GetVersionedInfo(header.GUID, TypeName, header.Version);
-                    types = info.fields;
+                    types = info.Fields;
                 }
                 Offset = header.Length;
             }

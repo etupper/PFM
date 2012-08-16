@@ -88,20 +88,20 @@ namespace Filetypes {
 
         public List<FieldInstance> GetNewEntry() {
 			List<FieldInstance> newEntry = new List<FieldInstance> ();
-			foreach (FieldInfo field in CurrentType.fields) {
+			foreach (FieldInfo field in CurrentType.Fields) {
 				newEntry.Add (new FieldInstance (field, field.DefaultValue));
 			}
 			return newEntry;
 		}
 
         public void Import(DBFile file) {
-			if (CurrentType.name != file.CurrentType.name) {
+			if (CurrentType.Name != file.CurrentType.Name) {
 				throw new DBFileNotSupportedException 
 					("File type of imported DB doesn't match that of the currently opened one", this);
 			}
 			// check field type compatibility
-			for (int i = 0; i < file.CurrentType.fields.Count; i++) {
-				if (file.CurrentType.fields [i].TypeCode != CurrentType.fields [i].TypeCode) {
+			for (int i = 0; i < file.CurrentType.Fields.Count; i++) {
+				if (file.CurrentType.Fields [i].TypeCode != CurrentType.Fields [i].TypeCode) {
 					throw new DBFileNotSupportedException 
 						("Data structure of imported DB doesn't match that of currently opened one at field " + i, this);
 				}

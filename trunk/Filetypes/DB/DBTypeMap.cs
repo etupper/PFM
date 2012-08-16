@@ -4,7 +4,7 @@ using System.IO;
 using System.Collections.Generic;
 
 namespace Filetypes {
-    public class DBTypeMap {
+    public class DBTypeMap : IEnumerable<TypeInfo> {
         public static readonly string SCHEMA_FILE_NAME = "schema.xml";
         public static readonly string MASTER_SCHEMA_FILE_NAME = "master_schema.xml";
         public static readonly string SCHEMA_USER_FILE_NAME = "schema_user.xml";
@@ -49,14 +49,16 @@ namespace Filetypes {
         #endregion
 
         public TypeInfo GetVersionedInfo(string guid, string key, int version) {
-            TypeInfo result = new TypeInfo(key);
+            TypeInfo result = new TypeInfo {
+                Name = key
+            };
             GuidTypeInfo info = new GuidTypeInfo(guid, key, version);
             if (!string.IsNullOrEmpty(guid) && guidMap.ContainsKey(info)) {
-                result.fields.AddRange(guidMap[info]);
+                result.Fields.AddRange(guidMap[info]);
             } else {
                 List<FieldInfo> list;
                 if (typeMap.TryGetValue(key, out list)) {
-                    result.fields.AddRange(FilterForVersion(list, version));
+                    result.Fields.AddRange(FilterForVersion(list, version));
                 }
             }
             return result;
@@ -179,6 +181,18 @@ namespace Filetypes {
             return result;
         }
         #endregion
+        
+        /*
+         * Note:
+         * The names of the TypeInfos iterated here cannot be changed using the
+         * enumeration; the FieldInfo lists and contained FieldInfos can.
+         */
+        public IEnumerator<TypeInfo> GetEnumerator() {
+            return new TypeInfoEnumerator(GuidMap.Keys, TypeMap.Keys);
+        }
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+            return GetEnumerator();
+        }
     }
     
     public class GuidTypeInfo : IComparable<GuidTypeInfo> {
@@ -231,6 +245,70 @@ namespace Filetypes {
                 result = y.Version - x.Version;
             }
             return result;
+        }
+    }
+    
+    public class TypeInfoEnumerator : IEnumerator<TypeInfo> {
+        IEnumerator<GuidTypeInfo> guidEnumerator;
+        IEnumerator<string> typeNameEnumerator;
+
+        bool usingTypes = false;
+
+        public TypeInfoEnumerator(IEnumerable<GuidTypeInfo> guids, IEnumerable<string> types) {
+            guidEnumerator = guids.GetEnumerator();
+            typeNameEnumerator = types.GetEnumerator();
+        }
+        
+        public bool UsingTypes {
+            get {
+                return usingTypes;
+            }
+        }
+        public TypeInfo Current {
+            get {
+                string typeName;
+                List<FieldInfo> result;
+                if (UsingTypes) {
+                    typeName = typeNameEnumerator.Current;
+                    result = DBTypeMap.Instance.TypeMap[typeName];
+                } else {
+                    typeName = guidEnumerator.Current.TypeName;
+                    result = DBTypeMap.Instance.GuidMap[guidEnumerator.Current];
+                }
+                return new TypeInfo(result) {
+                    Name = typeName
+                };
+            }
+        }
+        object System.Collections.IEnumerator.Current {
+            get {
+                return Current;
+            }
+        }
+        public void Reset() {
+            if (UsingTypes) {
+                usingTypes = false;
+                typeNameEnumerator.Reset();
+            }
+            guidEnumerator.Reset();
+        }
+        public bool MoveNext() {
+            bool result;
+            if (usingTypes) {
+                result = typeNameEnumerator.MoveNext();
+            } else {
+                result = guidEnumerator.MoveNext();
+                if (!result) {
+                    usingTypes = true;
+                    result = typeNameEnumerator.MoveNext();
+                }
+            }
+            return result;
+        }
+
+        public void Dispose() {
+            guidEnumerator.Dispose();
+            typeNameEnumerator.Dispose();
         }
     }
 }

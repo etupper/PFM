@@ -73,7 +73,9 @@ namespace Filetypes {
             }
             lastVersion = 0;
             currentDbFileName = type.Name;
-            currentInfo = new TypeInfo (currentDbFileName);
+            currentInfo = new TypeInfo {
+                Name = currentDbFileName
+            };
         }
 
         private void addDbAttribute(XmlSchemaAttribute attribute) {
@@ -91,7 +93,7 @@ namespace Filetypes {
 			}
 			FieldInfo fieldType = Types.FromTypeName (attribute.AttributeSchemaType.TypeCode.ToString ());
 			fieldType.Name = attribute.Name;
-			currentInfo.fields.Add (fieldType);
+			currentInfo.Fields.Add (fieldType);
 		}
 
         private void handleObject (XmlSchemaObject o) {
@@ -212,12 +214,12 @@ namespace Filetypes {
                 return -1;
             }
             int index = 0;
-            for (; index < firstInfo.fields.Count; index++) {
-                if (firstInfo.fields [index].Name == rowName) {
+            for (; index < firstInfo.Fields.Count; index++) {
+                if (firstInfo.Fields [index].Name == rowName) {
                     break;
                 }
             }
-            return (index == firstInfo.fields.Count) ? -1 : index;
+            return (index == firstInfo.Fields.Count) ? -1 : index;
         }
     }
 }

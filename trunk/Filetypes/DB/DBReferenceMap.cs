@@ -42,6 +42,10 @@ namespace Filetypes {
                 return valueCache[key];
             }
         }
+        
+        public static String FormatReference(string typename, string fieldname) {
+            return string.Format("{0}.{1}", typename, fieldname);
+        }
 
         SortedSet<string> collectValues(string tableName, string fieldName, IEnumerable<PackedFile> packedFiles) {
             SortedSet<string> result = null;
@@ -84,9 +88,9 @@ namespace Filetypes {
         void FillFromPacked(SortedSet<string> result, PackedFile packed, string fieldName) {
             DBFile dbFile = PackedFileDbCodec.Decode(packed);
             int index = -1;
-            List<PackedFile> loadedFrom = new List<PackedFile>();
-            for (int i = 0; i < dbFile.CurrentType.fields.Count; i++) {
-                if (dbFile.CurrentType.fields[i].Name.Equals(fieldName)) {
+//            List<PackedFile> loadedFrom = new List<PackedFile>();
+            for (int i = 0; i < dbFile.CurrentType.Fields.Count; i++) {
+                if (dbFile.CurrentType.Fields[i].Name.Equals(fieldName)) {
                     index = i;
                     break;
                 }

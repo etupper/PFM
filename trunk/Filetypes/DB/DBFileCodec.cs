@@ -155,15 +155,15 @@ namespace Filetypes {
 				readHeader (reader);
 			}
 			List<FieldInstance> entry = new List<FieldInstance> ();
-			for (int i = 0; i < ttype.fields.Count; ++i) {
-				FieldInfo field = ttype.fields [i];
+			for (int i = 0; i < ttype.Fields.Count; ++i) {
+				FieldInfo field = ttype.Fields [i];
 
 				try {
 					//Console.WriteLine ("decoding at {0}", reader.BaseStream.Position);
 					string value = field.Decode (reader);
 					entry.Add (new FieldInstance (field, value));
 				} catch (Exception x) {
-					throw new InvalidDataException (string.Format ("Failed to read field {0}/{1} ({2})", i, ttype.fields.Count, x.Message));
+					throw new InvalidDataException (string.Format ("Failed to read field {0}/{1} ({2})", i, ttype.Fields.Count, x.Message));
 				}
 			}
 			return entry;
@@ -273,7 +273,7 @@ namespace Filetypes {
 					strArray = str2.Split (TABS, StringSplitOptions.None);
 					List<FieldInstance> item = new List<FieldInstance> ();
 					for (int i = 0; i < strArray.Length; i++) {
-						FieldInfo fieldInfo = info.fields [i];
+						FieldInfo fieldInfo = info.Fields [i];
 						string str3 = CsvUtil.Unformat (strArray [i]);
 						item.Add (new FieldInstance (fieldInfo, str3));
 					}
@@ -292,9 +292,9 @@ namespace Filetypes {
         public void Encode(Stream stream, DBFile file) {
 			StreamWriter writer = new StreamWriter (stream);
 			// write header
-			writer.WriteLine (file.CurrentType.name);
+			writer.WriteLine (file.CurrentType.Name);
 			writer.WriteLine (Convert.ToString (file.Header.Version));
-			foreach (FieldInfo info2 in file.CurrentType.fields) {
+			foreach (FieldInfo info2 in file.CurrentType.Fields) {
 				writer.Write (info2.Name + "\t");
 			}
 			writer.WriteLine ();
