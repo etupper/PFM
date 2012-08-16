@@ -1051,9 +1051,9 @@ namespace PackFileManager
                         }
 
                         // identify FieldInstances missing in db file
-                        for (int i = dbFileInfo.fields.Count; i < targetInfo.fields.Count; i++) {
+                        for (int i = dbFileInfo.Fields.Count; i < targetInfo.Fields.Count; i++) {
                             foreach (List<FieldInstance> entry in updatedFile.Entries) {
-                                var field = new FieldInstance(targetInfo.fields[i], targetInfo.fields[i].DefaultValue);
+                                var field = new FieldInstance(targetInfo.Fields[i], targetInfo.Fields[i].DefaultValue);
                                 entry.Add(field);
                             }
                         }

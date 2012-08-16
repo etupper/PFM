@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using Common;
 using Filetypes;
 
@@ -14,6 +15,25 @@ namespace PackFileTest {
     public class SchemaIntegrator {
         public bool Verbose {
             get; set;
+        }
+        
+        private Dictionary<string, List<FieldInfo>> references = new Dictionary<string, List<FieldInfo>>();
+        
+        public SchemaIntegrator() {
+            Console.WriteLine("building reference cache");
+            foreach(TypeInfo typeInfo in DBTypeMap.Instance) {
+                foreach(FieldInfo field in typeInfo.Fields) {
+                    if (!string.IsNullOrEmpty(field.ForeignReference)) {
+                        List<FieldInfo> addTo;
+                        if (!references.TryGetValue(field.ForeignReference, out addTo)) {
+                            Console.WriteLine("Reference found: {0}", field.ForeignReference);
+                            addTo = new List<FieldInfo>();
+                        }
+                        addTo.Add(field);
+                    }
+                }
+            }
+            Console.WriteLine("ok, done");
         }
         
         private List<string> failedIntegrations = new List<String>();
@@ -41,18 +61,20 @@ namespace PackFileTest {
             }
             ICollection<int> differentVersions = GetVersions(toIntegrate);
             foreach(int version in differentVersions) {
+                List<FieldInfo> integrateFrom = DBTypeMap.FilterForVersion(toIntegrate, version);
                 ICollection<List<FieldInfo>> integrateToInfos = InfosForTypename(type, version);
                 foreach(List<FieldInfo> integrateTo in integrateToInfos) {
                     try {
                         if (Verbose) {
-                            Console.WriteLine(" Integrating to {0}", FormatTable(type, integrateTo));
+                            Console.WriteLine(" Integrating to {0}", FormatTable(type, integrateFrom));
                         }
-                        IntegrateInto(integrateTo, toIntegrate);
-                    } catch {
+                        IntegrateInto(type, integrateTo, integrateFrom);
+                    } catch (Exception ex) {
                         if (!failedIntegrations.Contains(type)) {
-                            Console.Error.WriteLine("Cannot integrate:\n{0} into \n{1}",
+                            Console.Error.WriteLine("Cannot integrate:\n{0} (version {2}) into \n{1}",
                                                     FormatTable(type, toIntegrate), 
-                                                    FormatTable(type, integrateTo));
+                                                    FormatTable(type, integrateTo), 
+                                                    version, ex.Message);
                             Console.Error.WriteLine();
                             FailedIntegrations.Add(type);
                         }
@@ -61,22 +83,45 @@ namespace PackFileTest {
             }
         }
         
-        void IntegrateInto (List<FieldInfo> integrateInto, List<FieldInfo> integrateFrom) {
-            if (integrateInto.Count != integrateFrom.Count) {
-                throw new InvalidDataException();
-            }
+        static readonly Regex UNKNOWN_RE = new Regex("[Uu]nknown");
+        void IntegrateInto (string type, List<FieldInfo> integrateInto, List<FieldInfo> integrateFrom) {
             for(int i = 0; i < integrateFrom.Count; i++) {
                 FieldInfo fromInfo = integrateFrom[i];
+                if (integrateInto.Count <= i) {
+                    Console.WriteLine(" stopping integration: can't find {0}. field in {1}", 
+                                      i, FormatTable(type, integrateInto));
+                }
                 FieldInfo to = integrateInto[i];
                 if (to.TypeCode != fromInfo.TypeCode) {
                     throw new InvalidDataException(string.Format("Field {0}: invalid Type (can't integrate {1}, original {2})",
                                                                  i, fromInfo.TypeName, to.TypeName));
                 }
+                // don't rename to "unknown"
+                if (UNKNOWN_RE.IsMatch(fromInfo.Name)) {
+                    if (Verbose) {
+                        Console.WriteLine("Not renaming {0} to {1}", fromInfo.Name, to.Name);
+                    }
+                    continue;
+                }
                 if (!to.Name.Equals(fromInfo.Name)) {
                     if (Verbose) {
-                        Console.WriteLine("Renaming {0} to {1}", to.Name, fromInfo.Name);
+                        Console.WriteLine("Renaming {0} to {1}", fromInfo.Name, to.Name);
                     }
+                    CorrectReferences(type, to, fromInfo.Name);
                     to.Name = fromInfo.Name;
+                }
+            }
+        }
+        
+        void CorrectReferences(string type, FieldInfo toInfo, string newName) {
+            string referenceString = DBReferenceMap.FormatReference(type, toInfo.Name);
+            
+            if (references.ContainsKey(referenceString)) {
+                string newReference = DBReferenceMap.FormatReference(type, newName);
+                foreach(FieldInfo info in references[referenceString]) {
+                    info.ForeignReference = newReference;
+                    Console.WriteLine("Correcting reference {0}: to {1}", 
+                                      referenceString, newReference);
                 }
             }
         }

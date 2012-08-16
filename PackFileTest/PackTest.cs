@@ -28,12 +28,17 @@ namespace PackFileTest {
             // -w : write schema_user.xml after iterating all db files
             "-w",
             // -i : integrate other schema file
-            "-i"
+            "-i",
+            // -v : verbose output
+            "-v",
+            // -tg: test game
+            "-tg"
         };
 #pragma warning restore 414
 
 		bool testTsvExport = false;
         bool outputTables = false;
+        bool verbose = false;
 
 
         // private List<PackedFileTest> tests = new List<PackedFileTest>();
@@ -78,11 +83,18 @@ namespace PackFileTest {
                             Console.WriteLine("{0} entries removed for {1}", optimizer.RemovedEntries, game.Id);
                         }
                     }
+                } else if (dir.Equals("-v")) {
+                    Console.WriteLine("Running in verbose mode");
+                    verbose = true;
                 } else if (dir.StartsWith("-i")) {
                     string integrateFrom = dir.Substring(2);
-                    new SchemaIntegrator{
-                        Verbose = false
-                    }.IntegrateFile(integrateFrom);
+                    SchemaIntegrator integrator = new SchemaIntegrator{
+                        Verbose = verbose
+                    };
+                    string[] files = integrateFrom.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach(string file in files) {
+                        integrator.IntegrateFile(file);
+                    }
                 } else if (dir.Equals("-t")) {
                     Console.WriteLine("TSV export/import enabled");
                     testTsvExport = true;
@@ -108,6 +120,11 @@ namespace PackFileTest {
                 } else if (dir.Equals("-ot")) {
                     outputTables = true;
                     Console.WriteLine("will output tables of db files");
+                } else if (dir.StartsWith("-tg")) {
+                    string gameName = dir.Substring(2);
+                    Game game = Game.ById(gameName);
+                    Console.WriteLine("Testing game {0}", game);
+                    PackedFileTest.TestAllPacks(testFactories, Path.Combine(game.DataDirectory));
                 } else {
                     PackedFileTest.TestAllPacks(testFactories, dir);
                 }

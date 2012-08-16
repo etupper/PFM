@@ -258,7 +258,7 @@ namespace PackFileManager {
             var dataSource = dataGridView.DataSource as BindingSource;
             if (dataSource == null) throw new Exception("DataGridView has no DataSource");
 
-            if ((((EditedFile.CurrentType.fields.Count > 1) && useFirstColumnAsRowHeader.Checked) && ((e.ColumnIndex == -1) && (e.RowIndex > -1))) && (e.RowIndex < dataSource.Count))
+            if ((((EditedFile.CurrentType.Fields.Count > 1) && useFirstColumnAsRowHeader.Checked) && ((e.ColumnIndex == -1) && (e.RowIndex > -1))) && (e.RowIndex < dataSource.Count))
             {
                 var dataRowView = dataSource[e.RowIndex] as DataRowView;
                 if (dataRowView == null) throw new Exception(string.Format("No DataRowView for RowIndex {0}", e.RowIndex));
@@ -298,7 +298,7 @@ namespace PackFileManager {
         private void importButton_Click(object sender, EventArgs e) {
             OpenFileDialog openDBFileDialog = new OpenFileDialog {
                 InitialDirectory = Settings.Default.ImportExportDirectory,
-                FileName = Settings.Default.TsvFile(EditedFile.CurrentType.name)
+                FileName = Settings.Default.TsvFile(EditedFile.CurrentType.Name)
             };
 
             if (openDBFileDialog.ShowDialog() == DialogResult.OK) {
@@ -403,23 +403,23 @@ namespace PackFileManager {
             CurrentPackedFile = packedFile;
             Codec = PackedFileDbCodec.FromFilename(packedFile.FullPath);
             TypeInfo info = EditedFile.CurrentType;
-            currentDataSet = new DataSet(info.name + "_DataSet");
-            currentDataTable = new DataTable(info.name + "_DataTable");
+            currentDataSet = new DataSet(info.Name + "_DataSet");
+            currentDataTable = new DataTable(info.Name + "_DataTable");
             currentDataTable.Columns.Add(new DataColumn("#", Type.GetType("System.Int32")));
             var dataGridViewColumn = new DataGridViewTextBoxColumn { DataPropertyName = "#", Visible = false };
             dataGridView.Columns.Add(dataGridViewColumn);
 
             int num;
-            for (num = 0; num < info.fields.Count; num++) {
+            for (num = 0; num < info.Fields.Count; num++) {
                 string columnName = num.ToString();
                 var column = new DataColumn(columnName) {
                     DataType =
-                        info.fields[num].TypeCode == TypeCode.Empty
+                        info.Fields[num].TypeCode == TypeCode.Empty
                             ? Type.GetType("System.String")
-                            : Type.GetType("System." + info.fields[num].TypeCode)
+                            : Type.GetType("System." + info.Fields[num].TypeCode)
                 };
                 currentDataTable.Columns.Add(column);
-                dataGridView.Columns.Add(createColumn(columnName, info.fields[num], info.fields.Count));
+                dataGridView.Columns.Add(createColumn(columnName, info.Fields[num], info.Fields.Count));
             }
 
             currentDataSet.Tables.Add(currentDataTable);
@@ -440,7 +440,7 @@ namespace PackFileManager {
                 currentDataTable.Rows.Add(row);
             }
 
-            dataGridView.DataSource = new BindingSource(currentDataSet, info.name + "_DataTable");
+            dataGridView.DataSource = new BindingSource(currentDataSet, info.Name + "_DataTable");
             addNewRowButton.Enabled = true;
             importButton.Enabled = true;
             exportButton.Enabled = true;
@@ -512,7 +512,7 @@ namespace PackFileManager {
 
         private void setReferenceTarget(DataGridViewColumn column) {
             var info = (FieldInfo)column.Tag;
-            string tableName = EditedFile.CurrentType.name;
+            string tableName = EditedFile.CurrentType.Name;
             if (!tableName.EndsWith("_tables")) {
                 tableName += "_tables";
             }

@@ -5,19 +5,26 @@ using System.Runtime.InteropServices;
 namespace Filetypes {
 	[StructLayout(LayoutKind.Sequential)]
     public class TypeInfo {
-		public string name;
-		public List<FieldInfo> fields = new List<FieldInfo> ();
+		public string Name {
+            get; set;
+        }
+		List<FieldInfo> fields = new List<FieldInfo> ();
+        public List<FieldInfo> Fields {
+            get {
+                return fields;
+            }
+        }
 
 		public TypeInfo () {
 		}
 
-		public TypeInfo (string n) {
-			name = n;
+		public TypeInfo (List<FieldInfo> addFields) {
+			Fields.AddRange(addFields);
 		}
 
 		public TypeInfo (TypeInfo toCopy) {
-			name = toCopy.name;
-			fields.AddRange (toCopy.fields);
+			Name = toCopy.Name;
+			Fields.AddRange (toCopy.Fields);
 		}
 	}
 }

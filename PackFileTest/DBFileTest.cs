@@ -124,14 +124,14 @@ namespace PackFileTest {
 
         // test the tsv codec
         public void TestTsvExport(DBFile originalFile) {
-            Tuple<string, int> tuple = new Tuple<string, int>(originalFile.CurrentType.name, originalFile.Header.Version);
+            Tuple<string, int> tuple = new Tuple<string, int>(originalFile.CurrentType.Name, originalFile.Header.Version);
             DBFile reimport;
             try {
                 // export to tsv
                 TextDbCodec codec = new TextDbCodec();
                 string exportPath = Path.Combine(Path.GetTempPath(), "exportTest.tsv");
 #if DEBUG
-                if (originalFile.CurrentType.name.Equals(debug_at)) {
+                if (originalFile.CurrentType.Name.Equals(debug_at)) {
                     Console.WriteLine("stop right here");
                 }
 #endif
@@ -143,7 +143,7 @@ namespace PackFileTest {
                     reimport = codec.Decode(filestream);
                     // check all read values against original ones
                     for (int row = 0; row < originalFile.Entries.Count; row++) {
-                        for (int column = 0; column < originalFile.CurrentType.fields.Count; column++) {
+                        for (int column = 0; column < originalFile.CurrentType.Fields.Count; column++) {
                             FieldInstance originalValue = originalFile[row, column];
                             FieldInstance reimportValue = reimport[row, column];
                             if (!originalValue.Equals(reimportValue)) {

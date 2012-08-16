@@ -57,6 +57,11 @@ namespace PackFileManager {
                 return string.IsNullOrEmpty(dir) ? null : dir;
             }
         }
+        public string DataDirectory {
+            get {
+                return Path.Combine(GameDirectory, "data");
+            }
+        }
         public string ScriptFilename {
             get;
             private set;
