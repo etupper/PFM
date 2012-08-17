@@ -66,6 +66,7 @@
     <Compile Include="PackedFile.cs" />
     <Compile Include="PackFile.cs" />
     <Compile Include="PackFileCodec.cs" />
+    <Compile Include="ParseException.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

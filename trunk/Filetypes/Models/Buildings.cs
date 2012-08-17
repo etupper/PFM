@@ -45,7 +45,7 @@ namespace Filetypes {
                 Unknown = reader.ReadInt32()
             };
 
-            FillList(result.Entries, ReadBuildingEntry, reader);
+            IOFunctions.FillList(result.Entries, ReadBuildingEntry, reader);
             return result;
         }
 
