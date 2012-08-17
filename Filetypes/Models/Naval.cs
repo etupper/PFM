@@ -214,7 +214,6 @@ namespace Filetypes {
             return new ShipModelFile();
         }
         
-        
         public override ShipModel ReadModel(BinaryReader reader) {
 #if DEBUG
             Console.WriteLine("Reading Ship Model at {0:x}", reader.BaseStream.Position);
@@ -233,13 +232,13 @@ namespace Filetypes {
 //                RigidModelPath = IOFunctions.readCAString(reader)
 //            };
 
-            FillList(ship.NavalCams, ReadNavalCam, reader, false);
-            FillList(ship.PositionInfos, ReadPositionEntry, reader, true);
+            IOFunctions.FillList(ship.NavalCams, ReadNavalCam, reader, false);
+            IOFunctions.FillList(ship.PositionInfos, ReadPositionEntry, reader, true);
             // ship.UnknownUint = reader.ReadUInt32();
-            FillList(ship.Parts, ReadShipElement, reader, false);
+            IOFunctions.FillList(ship.Parts, ReadShipElement, reader, false);
             
             List<object> test = new List<object>();
-            FillList(test, ReadTest, reader, false);
+            IOFunctions.FillList(test, ReadTest, reader, false);
             
             return ship;
         }
@@ -249,7 +248,7 @@ namespace Filetypes {
                 Unknown1 = reader.ReadUInt32(),
                 Unknown2 = reader.ReadUInt32()
             };
-            FillList(list.Entries, ReadSomeEntry, reader);
+            IOFunctions.FillList(list.Entries, ReadSomeEntry, reader);
             
             return list;
         }
@@ -272,7 +271,7 @@ namespace Filetypes {
                 PartName = IOFunctions.readCAString(reader),
                 Unknown = reader.ReadUInt32()
             };
-            FillList(element.Entries, ReadPartEntry, reader, true);
+            IOFunctions.FillList(element.Entries, ReadPartEntry, reader, true);
             return element;
         }
         

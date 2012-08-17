@@ -54,6 +54,38 @@
             Encoding.Unicode.GetBytes(value).CopyTo(array, 0);
             writer.Write(array);
         }
+
+        public static void FillList<T>(List<T> toFill, ItemReader<T> readItem, BinaryReader reader, 
+                                          bool skipIndex = true, int itemCount = -1) {
+            try {
+
+#if DEBUG
+                long listStartPosition = reader.BaseStream.Position;
+#endif
+                if (itemCount == -1) {
+                    itemCount = reader.ReadInt32();
+                }
+#if DEBUG
+                Console.WriteLine("Reading list at {0:x}, {1} entries", listStartPosition, itemCount);
+#endif
+                for (int i = 0; i < itemCount; i++) {
+                    try {
+                        if (skipIndex) {
+                            reader.ReadInt32();
+                        }
+                        toFill.Add(readItem(reader));
+                    } catch (Exception ex) {
+                        throw new ParseException(string.Format("Failed to read item {0}", i), 
+                                                 reader.BaseStream.Position, ex);
+                    }
+                }
+            } catch (Exception ex) {
+                throw new ParseException(string.Format("Failed to entries for list {0}"), 
+                                         reader.BaseStream.Position, ex);
+            }
+        }
+        
+        public delegate T ItemReader<T>(BinaryReader reader);
     }
 }
 
