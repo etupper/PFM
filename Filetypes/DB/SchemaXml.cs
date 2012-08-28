@@ -72,44 +72,32 @@ namespace Filetypes {
                             }
                         }
                     }
-     
-                    // add all fields
-					for (int i = 0; i < tableNode.ChildNodes.Count; i++) {
-						XmlNode fieldNode = tableNode.ChildNodes [i];
-						FieldInfo field = FromNode (fieldNode, unify);
-						if (unify) {
-							field.Name = UnifyName (field.Name);
-						}
-						fields.Add (field);
-					}
+
+                    FillFieldList(fields, tableNode.ChildNodes, unify);
 
                     // defensive code block.
                     // used when the guid part was first introduced to make sure that
                     // guids didn't get shared across games
                     if (verifyEquality) {
-                        id = tableNode.Attributes[GUID_TAG].Value.Trim();
-                        string table_name = tableNode.Attributes["table_name"].Value.Trim();
-                        string table_version = tableNode.Attributes["table_version"].Value.Trim();
-                        string[] guids = id.Split(GUID_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
-                        foreach(string s in guids) {
-                            string guid = s.Trim();
-                            GuidTypeInfo info = new GuidTypeInfo(guid, table_name, int.Parse(table_version));
-                            FieldInfoList existing = GuidToDescriptions[info];
-                            if (!Enumerable.SequenceEqual<FieldInfo>(fields, existing)) {
-                                Console.WriteLine("{0} was:", info.Guid);
-                                existing.ForEach(f => Console.WriteLine(f));
-                                Console.WriteLine("is:");
-                                fields.ForEach(f => Console.WriteLine(f));
-                                throw new InvalidDataException();
-                            }
-                        }
+                        VerifyEquality(tableNode, fields);
                     }
 
                     verifyEquality = false;
 				}
 			}
 		}
-  
+        
+        void FillFieldList(FieldInfoList fields, XmlNodeList nodes, bool unify = false) {
+            // add all fields
+            foreach(XmlNode fieldNode in nodes) {
+                FieldInfo field = FromNode (fieldNode, unify);
+                if (unify) {
+                    field.Name = UnifyName (field.Name);
+                }
+                fields.Add (field);
+            }
+        }
+        
         /* 
          * Collect the given node's attributes and create a field from them. 
          */
@@ -135,8 +123,33 @@ namespace Filetypes {
 			if (attributes ["pk"] != null) {
 				description.PrimaryKey = true;
 			}
+            
+            ListType list = description as ListType;
+            if (list != null) {
+                FillFieldList(list.Infos, fieldNode.ChildNodes, unify);
+            }
+                
 			return description;
 		}
+
+        void VerifyEquality(XmlNode tableNode, FieldInfoList fields) {
+            string id = tableNode.Attributes[GUID_TAG].Value.Trim();
+            string table_name = tableNode.Attributes["table_name"].Value.Trim();
+            string table_version = tableNode.Attributes["table_version"].Value.Trim();
+            string[] guids = id.Split(GUID_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
+            foreach(string s in guids) {
+                string guid = s.Trim();
+                GuidTypeInfo info = new GuidTypeInfo(guid, table_name, int.Parse(table_version));
+                FieldInfoList existing = GuidToDescriptions[info];
+                if (!Enumerable.SequenceEqual<FieldInfo>(fields, existing)) {
+                    Console.WriteLine("{0} was:", info.Guid);
+                    existing.ForEach(f => Console.WriteLine(f));
+                    Console.WriteLine("is:");
+                    fields.ForEach(f => Console.WriteLine(f));
+                    throw new InvalidDataException();
+                }
+            }
+        }
     }
 
     public class XmlExporter {
@@ -149,6 +162,10 @@ namespace Filetypes {
         public XmlExporter (Stream stream) {
 			writer = new StreamWriter (stream);
         }
+        
+        public void Export() {
+            Export(DBTypeMap.Instance.TypeMap, DBTypeMap.Instance.GuidMap);
+        }
 
         public void Export(SortedDictionary<string, FieldInfoList> nameMap, SortedDictionary<GuidTypeInfo, FieldInfoList> guidMap) {
 			writer.WriteLine ("<schema>");
@@ -159,6 +176,60 @@ namespace Filetypes {
 			writer.Close ();
 		}
         
+        private void WriteTables<T>(SortedDictionary<T, FieldInfoList> tableDescriptions, TableInfoFormatter<T> formatter) {
+            foreach (T name in tableDescriptions.Keys) {
+                FieldInfoList descriptions = tableDescriptions[name];
+                WriteTable(name, descriptions, formatter);
+            }
+        }
+        
+        void WriteTable<T>(T id, FieldInfoList descriptions, TableInfoFormatter<T> format) {
+            if (LogWriting) {
+                Console.WriteLine ("writing table {0}", id);
+            }
+			writer.WriteLine (format.FormatHeader(id));
+            WriteFieldInfos (descriptions);
+			writer.WriteLine ("  </table>");
+            writer.Flush();
+		}
+        
+        void WriteFieldInfos(FieldInfoList descriptions, int indent = 4) {
+            foreach (FieldInfo description in descriptions) {
+                StringBuilder builder = new StringBuilder(new string(' ', indent));
+                builder.Append("<field ");
+                if (!description.ForeignReference.Equals ("")) {
+                    builder.Append (string.Format ("fkey='{0}' ", description.ForeignReference));
+                }
+                builder.Append (string.Format ("name='{0}' ", description.Name));
+                builder.Append (string.Format ("type='{0}' ", description.TypeName));
+                if (description.PrimaryKey) {
+                    builder.Append ("pk='true' ");
+                }
+                if (description.StartVersion != 0) {
+                    builder.Append ("version_start='" + description.StartVersion + "' ");
+                }
+                if (description.LastVersion < int.MaxValue) {
+                 builder.Append ("version_end='" + description.LastVersion + "' ");
+                }
+                if (description.TypeCode == TypeCode.Object) {
+                    builder.Append(">");
+                    writer.WriteLine(builder.ToString());
+                    
+                    // write contained elements
+                    ListType type = description as ListType;
+                    WriteFieldInfos(type.Infos, indent + 2);
+                    
+                    // end list tag
+                    builder.Clear();
+                    builder.Append(new string(' ', indent));
+                    builder.Append("</field>");
+                } else {
+                    builder.Append ("/>");
+                }
+                writer.WriteLine (builder.ToString ());
+            }
+        }
+
         /*
          * Collect all GUIDs with the same type name and definition structure to store them in a single entry.
          */
@@ -186,40 +257,6 @@ namespace Filetypes {
             return result;
         }
         
-        private void WriteTables<T>(SortedDictionary<T, FieldInfoList> tableDescriptions, TableInfoFormatter<T> formatter) {
-            foreach (T name in tableDescriptions.Keys) {
-                FieldInfoList descriptions = tableDescriptions[name];
-                WriteTable(name, descriptions, formatter);
-            }
-        }
-        
-        void WriteTable<T>(T id, FieldInfoList descriptions, TableInfoFormatter<T> format) {
-            if (LogWriting) {
-                Console.WriteLine ("writing table {0}", id);
-            }
-			writer.WriteLine (format.FormatHeader(id));
-			foreach (FieldInfo description in descriptions) {
-				StringBuilder builder = new StringBuilder ("    <field ");
-				if (!description.ForeignReference.Equals ("")) {
-					builder.Append (string.Format ("fkey='{0}' ", description.ForeignReference));
-				}
-				builder.Append (string.Format ("name='{0}' ", description.Name));
-				builder.Append (string.Format ("type='{0}' ", description.TypeName));
-				if (description.PrimaryKey) {
-					builder.Append ("pk='true' ");
-				}
-				if (description.StartVersion != 0) {
-					builder.Append ("version_start='" + description.StartVersion + "' ");
-				}
-				if (description.LastVersion < int.MaxValue) {
-					builder.Append ("version_end='" + description.LastVersion + "' ");
-				}
-				builder.Append ("/>");
-				writer.WriteLine (builder.ToString ());
-			}
-			writer.WriteLine ("  </table>");
-            writer.Flush();
-		}
   
         /*
          * Create string from single definition entry.

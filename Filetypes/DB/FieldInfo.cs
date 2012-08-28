@@ -22,6 +22,8 @@ namespace Filetypes
 				return new SingleType ();
 			case "boolean":
 				return new BoolType ();
+            case "list":
+                return new ListType();
 			}
 			if (typeName.StartsWith ("blob")) {
 				string lengthPart = typeName.Substring (4);
@@ -32,9 +34,12 @@ namespace Filetypes
 		}
         public static FieldInfo StringType() { return new StringType() { Name = "unknown" }; }
         public static FieldInfo IntType() { return new IntType() { Name = "unknown" }; }
+        public static FieldInfo ShortType() { return new ShortType() { Name = "unknown" }; }
         public static FieldInfo BoolType() { return new BoolType() { Name = "unknown" }; }
         public static FieldInfo OptStringType() { return new OptStringType() { Name = "unknown" }; }
         public static FieldInfo SingleType() { return new SingleType() { Name = "unknown" }; }
+        public static FieldInfo ByteType() { return new VarBytesType(1) { Name = "unknown" }; }
+        public static FieldInfo ListType() { return new ListType() { Name = "unknown" }; }
     }
 	
 	[System.Diagnostics.DebuggerDisplay("{Name} - {TypeName}; {Optional}")]
@@ -68,17 +73,15 @@ namespace Filetypes
             }
         }
 
-		public string TypeName { get; set; }
+		public virtual string TypeName { get; set; }
 		public TypeCode TypeCode { get; set; }
 
-		public abstract int Length(string str);
-		public abstract void Encode(BinaryWriter writer, string val);
-		public abstract string Decode(BinaryReader reader);
-		
-		public string DefaultValue {
-			get; set;
-		}
+		// public abstract int Length(string str);
         
+        public abstract FieldInstance CreateInstance();
+//		public abstract void Encode(BinaryWriter writer, string val);
+//		public abstract string Decode(BinaryReader reader);
+		
         public override bool Equals(object other) {
             bool result = false;
             if (other is FieldInfo) {
@@ -96,156 +99,134 @@ namespace Filetypes
         
         public override string ToString() {
             return TypeName;
-            // return string.Format("{0} - {1}", TypeName, Name);
         }
 	}
 
 	class StringType : FieldInfo {
 		public StringType () {
 			TypeName = "string";
-			DefaultValue = "";
 			TypeCode = TypeCode.String;
 		}
-		public override int Length(string str) {
-			return 2 * str.Length + 2;
-		}
-		public override string Decode(BinaryReader reader) {
-			return IOFunctions.readCAString (reader).Trim();
-		}
-		public override void Encode(BinaryWriter writer, string val) {
-			IOFunctions.writeCAString (writer, val.Trim());
-		}
+        public override FieldInstance CreateInstance() {
+            return new StringField() {
+                Value = ""
+            };
+        }
 	}
 
-	abstract class FixedLengthFieldInfo : FieldInfo {
-		protected int length;
-
-		public override int Length(string str) {
-			return length;
-		}
-	}
-
-	class IntType : FixedLengthFieldInfo {
+	class IntType : FieldInfo {
 		public IntType () {
 			TypeName = "int";
-			length = 4;
-			DefaultValue = "0";
 			TypeCode = TypeCode.Int32;
 		}
-
-		public override string Decode(BinaryReader reader) {
-			return reader.ReadInt32 ().ToString ();
-		}
-		
-		public override void Encode(BinaryWriter writer, string val) {
-			writer.Write (int.Parse (val));
-		}
+        public override FieldInstance CreateInstance() {
+            return new IntField() {
+                Value = "0"
+            };
+        }
 	}
 
-	class ShortType : FixedLengthFieldInfo {
+	class ShortType : FieldInfo {
 		public ShortType () {
 			TypeName = "short";
-			length = 2;
-			DefaultValue = "0";
 			TypeCode = TypeCode.Int16;
 		}
-
-		public override string Decode(BinaryReader reader) {
-			return reader.ReadUInt16 ().ToString ();
-		}
-		public override void Encode(BinaryWriter writer, string val) {
-			writer.Write (short.Parse (val));
-		}
+        public override FieldInstance CreateInstance() {
+            return new ShortField() {
+                Value = "0"
+            };
+        }
 	}
 
-	class SingleType : FixedLengthFieldInfo {
+	class SingleType : FieldInfo {
 		public SingleType () {
 			TypeName = "float";
-			length = 4;
-			DefaultValue = "0";
 			TypeCode = TypeCode.Single;
 		}
-
-		public override string Decode(BinaryReader reader) {
-			return reader.ReadSingle ().ToString ();
-		}
-		public override void Encode(BinaryWriter writer, string val) {
-			writer.Write (float.Parse (val));
-		}
+        public override FieldInstance CreateInstance() {
+            return new SingleField() {
+                Value = "0"
+            };
+        }
 	}
 
-	class BoolType : FixedLengthFieldInfo {
+	class BoolType : FieldInfo {
 		public BoolType () {
 			TypeName = "boolean";
-			length = 1;
-			DefaultValue = false.ToString ();
 			TypeCode = TypeCode.Boolean;
 		}
-
-		public override string Decode(BinaryReader reader) {
-			byte b = reader.ReadByte ();
-			if (b == 0 || b == 1) {
-				return Convert.ToBoolean (b).ToString ();
-			}
-			return string.Format ("- invalid - ({0:x2})", b);
-		}
-		public override void Encode(BinaryWriter writer, string val) {
-			writer.Write (bool.Parse(val));
-		}
+        public override FieldInstance CreateInstance() {
+            return new BoolField() {
+                Value = "false"
+            };
+        }
 	}
 
 	class OptStringType : FieldInfo {
 		public OptStringType () {
 			TypeName = "optstring";
-			DefaultValue = "";
 			TypeCode = TypeCode.String;
 		}
-
-		public override string Decode(BinaryReader reader) {
-			string result = "";
-			byte b = reader.ReadByte ();
-			if (b == 1) {
-				result = IOFunctions.readCAString (reader);
-			} else if (b != 0) {
-				result = string.Format ("- invalid - ({0:x2})", b);
-			}
-			return result.Trim();
-		}
-
-		public override int Length(string str) {
-			return 2 * (str.Length) + (str.Length == 0 ? 1 : 3);
-		}
-		public override void Encode(BinaryWriter writer, string val) {
-			writer.Write (val.Length > 0);
-			if (val.Length > 0) {
-				IOFunctions.writeCAString (writer, val.Trim());
-			}
-		}
+        public override FieldInstance CreateInstance() {
+            return new OptStringField() {
+                Value = ""
+            };
+        }
 	}
 
-	class VarBytesType : FixedLengthFieldInfo {
-		public VarBytesType (int byteCount) {
-			TypeName = "unknown";
-			length = byteCount;
+	public class VarBytesType : FieldInfo {
+        int byteCount;
+		public VarBytesType (int bytes) {
+			TypeName = string.Format("blob{0}", byteCount);
 			TypeCode = TypeCode.Empty;
+            byteCount = bytes;
 		}
-
-		public override string Decode(BinaryReader reader) {
-			byte[] bytes = reader.ReadBytes (length);
-			if (bytes.Length == 0)
-				return "";
-			StringBuilder result = new StringBuilder (3 * bytes.Length);
-			result.Append (string.Format ("{0:x2}", bytes [0]));
-			for (int i = 1; i < bytes.Length; i++) {
-				result.Append (string.Format (" {0:x2}", bytes [i]));
-			}
-			return result.ToString ();
-		}
-		public override void Encode(BinaryWriter writer, string val) {
-			string[] split = val.Split (' ');
-			foreach (string s in split) {
-				writer.Write (byte.Parse(s, System.Globalization.NumberStyles.HexNumber));
-			}
-		}
+        public override FieldInstance CreateInstance() {
+            return new VarByteField(byteCount);
+        }
 	}
+    
+    public class ListType : FieldInfo {
+        public ListType() {
+            TypeName = "list";
+            TypeCode = TypeCode.Object;
+        }
+        
+        public override string TypeName {
+            get {
+                return "list";
+            }
+        }
+        
+        List<FieldInfo> containedInfos = new List<FieldInfo>();
+        public List<FieldInfo> Infos {
+            get {
+                return containedInfos;
+            }
+            set {
+                containedInfos.Clear();
+                if (value != null) {
+                    containedInfos.AddRange(value);
+                }
+            }
+        }
+        public override FieldInstance CreateInstance() {
+            ListField field = new ListField(this);
+            // containedInfos.ForEach(i => field.Contained.Add(i.CreateInstance()));
+            return field;
+        }
+        
+        public bool EncodeItemIndices {
+            get {
+                return false;
+            }
+            set {
+                // ignore
+            }
+        }
+        
+//        public override string ToString() {
+//            return string.Format("list ({0} fields)", Infos.Count);
+//        }
+    }
 }

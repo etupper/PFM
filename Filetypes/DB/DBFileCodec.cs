@@ -160,8 +160,9 @@ namespace Filetypes {
 
 				try {
 					//Console.WriteLine ("decoding at {0}", reader.BaseStream.Position);
-					string value = field.Decode (reader);
-					entry.Add (new FieldInstance (field, value));
+                    FieldInstance instance = field.CreateInstance();
+                    instance.Decode(reader);
+					entry.Add (instance);
 				} catch (Exception x) {
 					throw new InvalidDataException (string.Format ("Failed to read field {0}/{1} ({2})", i, ttype.Fields.Count, x.Message));
 				}
@@ -204,15 +205,15 @@ namespace Filetypes {
         }
 
         private void writeEntry(BinaryWriter writer, List<FieldInstance> fields) {
-			for (int i = 0; i < fields.Count; i++) {
+            for (int i = 0; i < fields.Count; i++) {
                 try {
-				FieldInstance field = fields [i];
-				field.Info.Encode (writer, field.Value);
+                    FieldInstance field = fields[i];
+                    field.Encode(writer);
                 } catch (Exception x) {
                     Console.WriteLine(x);
                     throw x;
-			}
-		}
+                }
+            }
 		}
         #endregion
     }
@@ -265,17 +266,18 @@ namespace Filetypes {
 			// ignore header line (type names)
 			reader.ReadLine ();
 			List<List<FieldInstance>> entries = new List<List<FieldInstance>> ();
-			string str2;
+			string line;
 			while (!reader.EndOfStream) {
-				str2 = reader.ReadLine ();
+				line = reader.ReadLine ();
 				string[] strArray;
 				try {
-					strArray = str2.Split (TABS, StringSplitOptions.None);
+					strArray = line.Split (TABS, StringSplitOptions.None);
 					List<FieldInstance> item = new List<FieldInstance> ();
 					for (int i = 0; i < strArray.Length; i++) {
-						FieldInfo fieldInfo = info.Fields [i];
-						string str3 = CsvUtil.Unformat (strArray [i]);
-						item.Add (new FieldInstance (fieldInfo, str3));
+						FieldInstance field = info.Fields [i].CreateInstance();
+						string fieldValue = CsvUtil.Unformat (strArray [i]);
+                        field.Value = fieldValue;
+						item.Add (field);
 					}
 					entries.Add (item);
 				} catch {

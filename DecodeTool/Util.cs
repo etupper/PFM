@@ -7,42 +7,30 @@ using Filetypes;
 
 namespace DecodeTool {       
     public class Util {
-        public static String formatHex(byte[] bytes) {
-			if (bytes.Length == 0)
-				return "";
-			StringBuilder result = new StringBuilder (3 * bytes.Length);
-			result.Append (string.Format ("{0:x2}", bytes [0]));
-			for (int i = 1; i < bytes.Length; i++) {
-				result.Append (string.Format (" {0:x2}", bytes[i]));
+        public static String FormatHex(byte[] bytes, long offset, long count) {
+            offset = Math.Min(offset, bytes.Length);
+            if (bytes.Length <= offset) {
+                return "";
+            }
+
+            count = Math.Min(count, bytes.Length - offset);
+   
+			StringBuilder result = new StringBuilder (3 * (int)count);
+			result.Append (string.Format ("{0:x2}", bytes [offset]));
+			for (long i = 1; i < count; i++) {
+				result.Append (string.Format (" {0:x2}", bytes[offset + i]));
 			}
 			return result.ToString ();
 		}
 
         public static string decodeSafe(FieldInfo d, BinaryReader reader) {
-            int ignored;
-            return decodeSafe(d, reader, out ignored);
-        }
-        public static string decodeSafe(FieldInfo d, BinaryReader reader, out int length) {
 			string result = "failure";
-			length = 0;
 			try {
-				result = d.Decode (reader);
-				length = d.Length (result);
-				//result = Regex.Replace (result, notAllowed, "?");
+                FieldInstance field = d.CreateInstance();
+				field.Decode (reader);
+                result = field.Value;
 			} catch (Exception x) {
 				result = x.Message.Replace ("\n", "-");
-			}
-			return result;
-		}
-
-        public static string ToString(string name, FieldInfo description) {
-			string result;
-			if (description.TypeName == "optstring") {
-				result = string.Format ("->,Boolean,1;{0},String", name);
-			} else if (description.TypeCode == TypeCode.Empty) {
-				result = string.Format ("{0},{1}", name, description.Length(""));
-			} else {
-				result = string.Format ("{0},{1}", name, description.TypeName);
 			}
 			return result;
 		}

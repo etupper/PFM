@@ -1,33 +1,266 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
+using Common;
 
 namespace Filetypes
 {
-
     [DebuggerDisplay("{Value}:{Info}; ")]
-    public class FieldInstance
+    public abstract class FieldInstance
     {
         public FieldInstance(FieldInfo fieldInfo, string value)
         {
             Info = fieldInfo;
             Value = value;
         }
+        
+        public FieldInstance(FieldInfo info) {
+            Info = info;
+            Value = "";
+        }
 
         public FieldInfo Info { get; private set; }
 
-        public string Value { get; set; }
+        public virtual string Value { get; set; }
+        
+        public virtual int Length {
+            get; protected set;
+        }
+        
+        public FieldInstance CreateCopy() {
+            FieldInstance copy = Info.CreateInstance();
+            copy.Value = Value;
+            return copy;
+        }
+        
+        public abstract void Encode(BinaryWriter writer);
+        public abstract void Decode(BinaryReader reader);
+        
+        #region Framework Overrides
+        public override bool Equals(object o) {
+            bool result = o is FieldInstance;
+            if (result) {
+                result = Value.Equals ((o as FieldInstance).Value);
+            }
+            return result;
+        }
+        public override int GetHashCode() {
+            return 2 * Info.GetHashCode () + 3 * Value.GetHashCode ();
+        }
+        #endregion
+    }
 
-		public override bool Equals(object o) {
-			bool result = o is FieldInstance;
-			if (result) {
-				result = Value.Equals ((o as FieldInstance).Value);
-			}
-			return result;
-		}
-		public override int GetHashCode() {
-			return 2 * Info.GetHashCode () + 3 * Value.GetHashCode ();
-		}
+    /*
+     * String Field.
+     */
+    public class StringField : FieldInstance {
+        public StringField() : base(Types.StringType()) {}
+        public override int Length {
+            get {
+                return 2 * Value.Length + 2;
+            }
+        }
+        public override void Decode(BinaryReader reader) {
+            Value = IOFunctions.readCAString (reader);
+        }
+        public override void Encode(BinaryWriter writer) {
+            IOFunctions.writeCAString (writer, Value.Trim());
+        }
+    }
+
+    /*
+     * 4 byte Int Field.
+     */
+    public class IntField : FieldInstance {
+        public IntField() : base(Types.IntType()) { Length = 4; }
+        public override void Decode(BinaryReader reader) {
+            Value = reader.ReadInt32 ().ToString ();
+        }
+     
+        public override void Encode(BinaryWriter writer) {
+            writer.Write (int.Parse (Value));
+        }
+    }
+    
+    /*
+     * 2-byte Short Field.
+     */
+    public class ShortField : FieldInstance {
+        public ShortField() : base(Types.ShortType()) { Length = 2; }
+        public override void Decode(BinaryReader reader) {
+            Value = reader.ReadUInt16 ().ToString ();
+        }
+        public override void Encode(BinaryWriter writer) {
+            writer.Write (short.Parse (Value));
+        }
+    }
+    
+    /*
+     * Single Field.
+     */
+    public class SingleField : FieldInstance {
+        public SingleField() : base(Types.SingleType()) { Length = 4; }
+        public override void Decode(BinaryReader reader) {
+            Value = reader.ReadSingle ().ToString ();
+        }
+        public override void Encode(BinaryWriter writer) {
+            writer.Write (float.Parse (Value));
+        }
+    }
+    
+    /*
+     * Bool Field.
+     */
+    public class BoolField : FieldInstance {
+        public BoolField() : base(Types.BoolType()) { Length = 1; }
+        public override void Decode(BinaryReader reader) {
+            byte b = reader.ReadByte ();
+            if (b == 0 || b == 1) {
+                Value = Convert.ToBoolean (b).ToString ();
+            } else {
+                throw new InvalidDataException("- invalid - ({0:x2})");
+            }
+        }
+        public override void Encode(BinaryWriter writer) {
+            writer.Write (bool.Parse(Value));
+        }
+    }
+    
+    /*
+     * Opt String Field.
+     */
+    public class OptStringField : FieldInstance {
+        public OptStringField() : base(Types.OptStringType()) {}
+        public override void Decode(BinaryReader reader) {
+            string result = "";
+            byte b = reader.ReadByte ();
+            if (b == 1) {
+                result = IOFunctions.readCAString (reader);
+            } else if (b != 0) {
+                throw new InvalidDataException (string.Format("- invalid - ({0:x2})", b));
+            }
+            Value = result;
+        }
+
+        public override int Length {
+            get {
+                return 2 * (Value.Length) + (Value.Length == 0 ? 1 : 3);
+            }
+        }
+        public override void Encode(BinaryWriter writer) {
+            writer.Write (Value.Length > 0);
+            if (Value.Length > 0) {
+                IOFunctions.writeCAString (writer, Value.Trim());
+            }
+        }
+    }
+
+    /*
+     * VarByte Field.
+     */
+    public class VarByteField : FieldInstance {
+        public VarByteField() : this(1) {}
+        public VarByteField(int len) : base(Types.ByteType()) { Length = len; }
+        public override void Decode(BinaryReader reader) {
+            if (Length == 0) {
+                Value = "";
+                return;
+            }
+            byte[] bytes = reader.ReadBytes (Length);
+            StringBuilder result = new StringBuilder (3 * bytes.Length);
+            result.Append (string.Format ("{0:x2}", bytes [0]));
+            for (int i = 1; i < bytes.Length; i++) {
+                result.Append (string.Format (" {0:x2}", bytes [i]));
+            }
+            Value = result.ToString ();
+        }
+        public override void Encode(BinaryWriter writer) {
+            string[] split = Value.Split (' ');
+            foreach (string s in split) {
+                writer.Write (byte.Parse(s, System.Globalization.NumberStyles.HexNumber));
+            }
+        }
+    }
+
+    /*
+     * List Field.
+     */
+    public class ListField : FieldInstance {
+        public ListField(ListType type) : base(type) {}
+        
+        public override string Value {
+            get {
+                return string.Format("{0} entries, length {1}", contained.Count, Length);
+            }
+        }
+        
+        public override int Length {
+            get {
+                // the item count
+                int result = 4;
+                // the items' indices, if applicable
+                if ((Info as ListType).EncodeItemIndices) {
+                    result += contained.Count * 4;
+                }
+                // added length of all contained items
+                contained.ForEach(i => i.ForEach(f => result += f.Length));
+                return result;
+            }
+        }
+        
+        private List<List<FieldInstance>> contained = new List<List<FieldInstance>>();
+        public List<List<FieldInstance>> Contained {
+            get {
+                return contained;
+            }
+        }
+        
+        public ListType ContainerType {
+            get {
+                return Info as ListType;
+            }
+        }
+        
+        public override void Encode(BinaryWriter writer) {
+            writer.Write(contained.Count);
+            for (int i = 0; i < contained.Count; i++) {
+                if (ContainerType.EncodeItemIndices) {
+                    writer.Write(i);
+                }
+                foreach(FieldInstance field in contained[i]) {
+                    field.Encode(writer);
+                }
+            }
+        }
+        
+        public override void Decode(BinaryReader reader) {
+            contained.Clear();
+            int itemCount = reader.ReadInt32();
+#if DEBUG
+            Console.WriteLine("Reading {0} items of {1} fields each", itemCount, ContainerType.Infos.Count);
+            if (itemCount > 4096) {
+                throw new InvalidDataException("too many entries");
+            }
+#endif
+            contained.Capacity = itemCount;
+            for(int i = 0; i < itemCount; i++) {
+                if (ContainerType.EncodeItemIndices) {
+                    reader.ReadInt32();
+                }
+                List<FieldInstance> entry = new List<FieldInstance>(ContainerType.Infos.Count);
+                foreach(FieldInfo info in ContainerType.Infos) {
+                    FieldInstance field = info.CreateInstance();
+                    field.Decode(reader);
+                    entry.Add(field);
+                }
+                contained.Add(entry);
+            }
+#if DEBUG
+            Console.WriteLine("Finished decoding, length now {0}", Length);
+#endif
+        }
     }
 }
 
