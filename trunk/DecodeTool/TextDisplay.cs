@@ -10,6 +10,7 @@ namespace DecodeTool {
         }
 
         private void close_Click(object sender, EventArgs e) {
+            Close ();
             Dispose();
         }
     }

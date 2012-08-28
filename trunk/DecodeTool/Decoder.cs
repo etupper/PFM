@@ -32,22 +32,22 @@ namespace DecodeTool {
                 return result;
             }
         }
-        public int DecodedByteCount {
-            get {
-                int count = 0;
-                using (BinaryReader reader = new BinaryReader(new MemoryStream(bytes))) {
-                    foreach (FieldInfo d in descriptions) {
-                        try {
-                            string decoded = d.Decode(reader);
-                            count += d.Length(decoded);
-                        } catch {
-                            break;
-                        }
-                    }
-                }
-                return count;
-            }
-        }
+//        public int DecodedByteCount {
+//            get {
+//                int count = 0;
+//                using (BinaryReader reader = new BinaryReader(new MemoryStream(bytes))) {
+//                    foreach (FieldInfo d in descriptions) {
+//                        try {
+//                            string decoded = d.Decode(reader);
+//                            count += d.Length(decoded);
+//                        } catch {
+//                            break;
+//                        }
+//                    }
+//                }
+//                return count;
+//            }
+//        }
         public void addType(FieldInfo type) {
             descriptions.Add(type);
             ChangeListener();

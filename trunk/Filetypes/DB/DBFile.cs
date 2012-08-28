@@ -89,7 +89,7 @@ namespace Filetypes {
         public List<FieldInstance> GetNewEntry() {
 			List<FieldInstance> newEntry = new List<FieldInstance> ();
 			foreach (FieldInfo field in CurrentType.Fields) {
-				newEntry.Add (new FieldInstance (field, field.DefaultValue));
+				newEntry.Add (field.CreateInstance());
 			}
 			return newEntry;
 		}

@@ -3,326 +3,543 @@ using System.Collections.Generic;
 using System.IO;
 using System.Drawing;
 using System.Text.RegularExpressions;
+using System.Text;
 using System.Windows.Forms;
 using Common;
 using Filetypes;
 
+using TableRow = System.Collections.Generic.List<Filetypes.FieldInstance>;
+
 namespace DecodeTool {
     public partial class DecodeTool : Form {
-        byte[] bytes;
-        List<FieldInfo> types = new List<FieldInfo>();
-        int offset = 0;
-        int displayIndex = 0;
-        string typeName = "";
-        int newFieldVersion = -1;
+        public DecodeTool () {
+            InitializeComponent ();
 
-        #region Attributes
+            #region Type Selection Listener Initialization
+            /* Add to the TypeSelection listeners. */
+            stringType.Factory = Types.StringType;
+            stringType.Selected += AddType;
+
+            intType.Factory = Types.IntType;
+            intType.Selected += AddType;
+
+            boolType.Factory = Types.BoolType;
+            boolType.Selected += AddType;
+
+            singleType.Factory = Types.SingleType;
+            singleType.Selected += AddType;
+
+            optStringType.Factory = Types.OptStringType;
+            optStringType.Selected += AddType;
+
+            byteType.Factory = Types.ByteType;
+            byteType.Selected += AddType;
+            #endregion
+   
+            /* Clear selection in list upon right-click. */
+            typeList.MouseUp += new MouseEventHandler (ClearSelection);
+            valueList.MouseUp += new MouseEventHandler (ClearSelection);
+            
+            /* Add a menu item for each available type transformation. */
+            foreach (ITransform transform in Transformations.TRANSFORMS) {
+                ToolStripMenuItem transformItem = new ToolStripMenuItem (transform.Name) {
+                    Tag = transform,
+                    Enabled = false
+                };
+                transformItem.Click += new EventHandler (TransformSelection);
+                this.transformToolStripMenuItem.DropDownItems.Add (transformItem);
+            }
+            /* Enable/disable them depending on selection in type list. */
+            typeList.SelectedValueChanged += new EventHandler (EnableTransforms);
+        }
+
+        /* The data currently parsed by this decode tool. */
+        byte[] bytes;
         public byte[] Bytes {
 			set {
-				bytes = value;
-				string formatted = Util.formatHex (bytes);
-				
-				// my mono on linux won't handle more...
-                int maxLength = 3 * 2048;
-				if (formatted.Length > maxLength) 
-					formatted = formatted.Substring (0, maxLength);
-				hexView.Text = formatted;
-
-                try {
-                    using (var stream = new MemoryStream(value)) {
-                        DBFileHeader header = PackedFileDbCodec.readHeader(stream);
-                        newFieldVersion = header.Version;
-                        Guid = header.GUID;
-                    }
-                } catch {
-                    newFieldVersion = -1;
-                }
-
-                showInPreview();
+                bytes = value;
+                this.parseHereToolStripMenuItem.Enabled = value != null;
+                ParseHeader();
+                ParseData();
 			}
 			get {
 				return bytes;
 			}
 		}
-        public string TypeName {
-            get { return typeName; }
-            set { typeName = value; typeNameLabel.Text = string.Format("Type: {0}", typeName); }
-        }
-        string guid = "";
-        public string Guid {
-            get { return guid; }
+       
+        #region Data Header
+        /* The header within the data (excluded from parsing of contained values). */
+        int headerLength;
+        public int HeaderLength {
+            get {
+                return headerLength;
+            }
             set {
-                typeNameLabel.Text = string.Format("Type: {0}, version {1} - {2}", TypeName, newFieldVersion, value);
-                guid = value;
+                headerLength = value;
+                headerLengthField.Text = headerLength.ToString();
+                ParseData();
             }
         }
-        public GuidTypeInfo GuidInfo {
+        /* The number of entries expected to be in the data (determined from header). */
+        uint expectedEntries = 0;
+        uint ExpectedEntries {
             get {
-                return new GuidTypeInfo(Guid, TypeName, newFieldVersion);
+                return expectedEntries;
+            }
+            set {
+                expectedEntries = value;
             }
         }
-        int Offset {
-            get { return offset; }
-            set { 
-                offset = value;
-                headerLength.Text = value.ToString();
-                setSelection(); 
-            }
-        }
-        int KnownByteCount {
+        #endregion
+        
+        #region Type Info
+        /* The type info for the current data set. Setting this will reparse data. */
+        TypeInfo currentTypeInfo = new TypeInfo {
+            Name = ""
+        };
+        TypeInfo CurrentTypeInfo {
             get {
-                int index = offset;
-                if (Bytes != null) {
-                    using (BinaryReader reader = new BinaryReader(new MemoryStream(Bytes))) {
-                        reader.BaseStream.Position = offset;
-                        types.ForEach(delegate(FieldInfo d) {
-                            int temp;
-                            Util.decodeSafe(d, reader, out temp); index += temp; 
-                        });
+                return currentTypeInfo;
+            }
+            set {
+                currentTypeInfo = value;
+                ParseData();
+                FillTypeList();
+            }
+        }        
+        /* The name of the current type (for display mostly). */
+        public string TypeName {
+            get {
+                return CurrentTypeInfo.Name;
+            }
+            set {
+                CurrentTypeInfo.Name = value;
+                typeNameLabel.Text = string.Format("Typename: {0} Version: {1}", TypeName, version);
+            }
+        }
+        /* The list of type definitions. Setting this will trigger new parsing of the data. */
+        List<FieldInfo> FieldTypes {
+            get {
+                return CurrentTypeInfo.Fields;
+            }
+            set {
+                currentTypeInfo.Fields.Clear();
+                List<FieldInfo> cleaned = new List<FieldInfo>();
+                for (int i = 0; i < value.Count; i++) {
+                    if (!value[i].TypeName.StartsWith("blob")) {
+                        cleaned.Add(value[i]);
+                    } else {
+                        // compact byte types into multi-byte entry
+                        int byteCount = value[i].CreateInstance().Length;
+                        int nextIndex = i + 1;
+                        while (nextIndex < value.Count && value[nextIndex].TypeName.StartsWith("blob")) {
+                            i++;
+                            nextIndex = i + 1;
+                            byteCount += value[i].CreateInstance().Length;
+                        }
+                        cleaned.Add(new VarBytesType(byteCount));
                     }
                 }
-                return index;
+                currentTypeInfo.Fields.AddRange(cleaned);
+                ParseData();
+                FillTypeList();
+            }
+        }
+        /* The GuidTypeInfo. */
+        string guid = "";
+        int version = 0;
+        GuidTypeInfo GuidInfo {
+            get {
+                return new GuidTypeInfo(guid, TypeName, version);
             }
         }
         #endregion
 
-        public DecodeTool() {
-            InitializeComponent();
+        #region Navigation Attributes
+        /*
+         * The index of the parsed data element (nth element within data).
+         */
+        int currentRowIndex = 0;
+        int CurrentRowIndex {
+            get {
+                return currentRowIndex;
+            }
+            set {
+                currentRowIndex = Math.Min(value, currentValues.Count - 1);
+                currentRowIndex = Math.Max(0, currentRowIndex);
+                ShowPreview();
+                FillValueList();
+            }
+        }
+        /* 
+         * The position within the data of the currently selected value in the value list.
+         * If no value is selected, returns the offset after the currently shown element.
+         */
+        long CurrentCursorPosition {
+            get {
+                long showFrom = HeaderLength;
+                if (currentValues.Count > CurrentRowIndex) {
+                    showFrom = valueStartPositions[CurrentRowIndex];
+                    if (valueList.SelectedIndex != -1) {
+                        for (int i = 0; i < valueList.SelectedIndex; i++) {
+                            showFrom += currentValues[currentRowIndex][i].Length;
+                        }
+                    } else {
+                        showFrom += CurrentValueLength;
+                    }
+                }
+                return showFrom;
+            }
+        }
+        /*
+         * The length of the currently displayed parsed data element.
+         */
+        int CurrentValueLength {
+            get {
+                int result = 0;
+                if (currentValues.Count > CurrentRowIndex) {
+                    TableRow row = currentValues[CurrentRowIndex];
+                    foreach (FieldInstance field in row) {
+                        result += field.Length;
+                    }
+                }
+                return result;
+            }
+        }
+        #endregion
 
-            stringType.Factory = Types.StringType;
-            stringType.Selected += addType;
-
-            intType.Factory = Types.IntType;
-            intType.Selected += addType;
-
-            boolType.Factory = Types.BoolType;
-            boolType.Selected += addType;
-
-            singleType.Factory = Types.SingleType;
-            singleType.Selected += addType;
-
-            optStringType.Factory = Types.OptStringType;
-            optStringType.Selected += addType;
+        List<TableRow> currentValues = new List<TableRow>();
+        List<long> valueStartPositions = new List<long>();        
+        
+        /* The types currently selected in the typeList. */
+        List<FieldInfo> SelectedTypes {
+            get {
+                List<FieldInfo> result = new List<FieldInfo> ();
+                foreach (object o in typeList.SelectedItems) {
+                    result.Add(o as FieldInfo);
+                }
+                return result;
+            }
+        }
+  
+        #region Parsing
+        /* Ignore the header bytes when parsing. */
+        public bool IgnoreHeader {
+            get; set;
+        }
+        /* 
+         * The offset within the data bytes to start parsing at.
+         * The length of the header, if it is not ignored.
+         * Can be set differently to start parsing within a file.
+         */
+        long parserStart = -1;
+        public long ParserStart {
+            get {
+                long result = parserStart;
+                if (result == -1) {
+                    result = IgnoreHeader ? parserStart : HeaderLength;
+                }
+                return result;
+            }
+            set {
+                parserStart = value;
+                Console.WriteLine("starting parsing from {0}", parserStart);
+                ParseData();
+            }
         }
 
-        #region Type Management
-        private void addType(FieldInfo type) {
-            if (newFieldVersion != -1) {
-                type.StartVersion = newFieldVersion;
+        void ParseHeader() {
+            // only read header if we have any data at all,
+            // and if we're not in list parsing mode
+            if (Bytes == null || IgnoreHeader) {
+                return;
             }
-            int insertAt = typeList.SelectedIndex;
+            using (BinaryReader reader = new BinaryReader(new MemoryStream(Bytes))) {
+                DBFileHeader header = PackedFileDbCodec.readHeader(reader);
+                if (DBTypeMap.Instance.IsSupported(TypeName) && Bytes != null) {
+                    CurrentTypeInfo = DBTypeMap.Instance.GetVersionedInfo(header.GUID, TypeName, header.Version);
+                    guid = header.GUID;
+                    version = header.Version;
+                }
+                HeaderLength = header.Length;
+                ExpectedEntries = header.EntryCount;
+            }
+        }
+        
+        /*
+         * Parse data from after the header until end of stream,
+         * or until an exception occurs for one of the fields.
+         * Fills the currentValues list with the parsing results.
+         */
+        void ParseData() {
+            currentValues.Clear();
+            valueStartPositions.Clear();
+            long readUpTo = 0;
+            if (Bytes != null && FieldTypes.Count > 0) {
+                long currentPosition = 0;
+                MemoryStream stream = new MemoryStream(Bytes);
+                using (var reader = new BinaryReader(stream)) {
+                    reader.BaseStream.Seek(ParserStart, SeekOrigin.Begin);
+                    for (uint index = 0; index < ExpectedEntries; index++) {
+                        currentPosition = reader.BaseStream.Position;
+                        try {
+                            // create new row to fill with data
+                            TableRow newRow = new TableRow();
+                            bool stopReading = false;
+                            foreach (FieldInfo info in FieldTypes) {
+                                FieldInstance result;
+                                try {
+                                    result = info.CreateInstance();
+                                    result.Decode(reader);
+                                } catch (Exception e) {
+                                    // show problems until end of this row
+                                    result = info.CreateInstance();
+                                    result.Value = string.Format("{0:x} : {1}", 
+                                                                 currentPosition, e.Message);
+                                    Console.WriteLine(e);
+                                    // finish reading for this row still
+                                    stopReading = true;
+                                }
+                                newRow.Add(result);
+                            }
+                            // store new values and their start position
+                            valueStartPositions.Add(currentPosition);
+                            currentValues.Add(newRow);
+                            // set when a problem has occurred: stop parsing
+                            if (stopReading) {
+                                break;
+                            }
+                        } catch {
+                            break;
+                        }
+                    }
+                    readUpTo = reader.BaseStream.Position;
+                }
+                repeatInfo.Text = string.Format("{0}/{1} entries, {2}/{3} bytes", 
+                                                currentValues.Count, ExpectedEntries, 
+                                                readUpTo, Bytes.Length);
+            }
+            FillValueList();
+            ShowPreview();
+        }
+        #endregion
+
+        #region Display
+        /* Show header bytes in the data preview. */
+        bool showHeader = true;
+        public bool ShowHeader {
+            get { 
+                return showHeader;
+            }
+            set {
+                showHeader = value;
+                ShowHexPreview();
+            }
+        }
+        /* Fill type list with the current infos. */
+        void FillTypeList() {
+            typeList.Items.Clear();
+            foreach (FieldInfo info in FieldTypes) {
+                typeList.Items.Add(info);
+            }
+        }
+        /* Fill value list with parsed data. */
+        void FillValueList() {
+            valueList.Items.Clear();
+            if (currentValues.Count > CurrentRowIndex) {
+                TableRow row = currentValues[CurrentRowIndex];
+                foreach (FieldInstance instance in row) {
+                    valueList.Items.Add(instance.Value);
+                }
+            }
+        }
+
+        /* Amount of bytes to show in preview field. */
+        static int showByteCount = 4096;
+        /* Show hex view in preview and value fields. */
+        void ShowPreview() {
+            ShowHexPreview();
+            ShowValuePreviews();
+        }
+        /* Show hex data in preview field. */
+        void ShowHexPreview() {
+            hexView.Text = "";
+            if (Bytes == null) {
+                return;
+            }
+            // show header if applicable
+            StringBuilder result =
+                new StringBuilder(showHeader
+                                  ? Util.FormatHex(Bytes, 0, HeaderLength) + " "
+                                  : "");
+            
+            // show data
+            if (valueStartPositions.Count > CurrentRowIndex) {
+                result.Append(Util.FormatHex(Bytes, valueStartPositions[CurrentRowIndex], showByteCount));
+            } else {
+                result.Append(Util.FormatHex(Bytes, HeaderLength, showByteCount));
+            }
+            hexView.Text = result.ToString();
+   
+            // color header if applicable
+            int selectFromIndex = 0;
+            if (ShowHeader) {
+                selectFromIndex = (HeaderLength) * 3;
+                hexView.Select(0, selectFromIndex);
+                hexView.SelectionColor = Color.Red;
+            }
+            // color data
+            hexView.Select(selectFromIndex, (CurrentValueLength) * 3);
+            hexView.SelectionColor = Color.Blue;
+        }
+
+        /* Show preview of next or selected value for each type. */
+        void ShowValuePreviews() {
+            if (Bytes == null) {
+                return;
+            }
+            TypeSelection[] selections = new TypeSelection[] {
+                intType, stringType, boolType, singleType, optStringType, byteType
+            };
+            long showFrom = CurrentCursorPosition;
+            using (var reader = new BinaryReader(new MemoryStream(Bytes))) {
+                foreach (TypeSelection selection in selections) {
+                    reader.BaseStream.Position = showFrom;
+                    selection.ShowPreview(reader);
+                }
+            }
+        }
+        #endregion
+
+        #region Type Management
+        /* Add the given type at the currently selected index in the type list,
+         * or the end if none is selected.
+         */
+        private void AddType(FieldInfo type) {
+            List<FieldInfo> types = new List<FieldInfo>(FieldTypes);
             if (typeList.SelectedIndex != -1) {
                 types.Insert(typeList.SelectedIndex, type);
             } else {
                 types.Add(type);
             }
-            setSelection();
-            if (insertAt != -1) { typeList.SelectedIndex = insertAt; }
+            FieldTypes = types;
         }
-        private void delete_Click(object sender, EventArgs e) {
-            int selectIndex = -1;
-            if (typeList.SelectedIndex == -1) {
-                if (types.Count > 0) {
-                    types.RemoveAt(types.Count - 1);
+        /* Remove selected types, or the last one if none is selected. */
+        private void DeleteType(object sender, EventArgs e) {
+            if (valueList.Items.Count == 0) {
+                return;
+            }
+            List<FieldInfo> types = new List<FieldInfo> ();
+            if (typeList.SelectedIndex != -1) {
+                for (int i = 0; i < FieldTypes.Count; i++) {
+                    if (!typeList.SelectedIndices.Contains (i)) {
+                        types.Add (FieldTypes [i]);
+                    }
                 }
             } else {
-                selectIndex = typeList.SelectedIndex;
-                types.RemoveAt(typeList.SelectedIndex);
+                types.AddRange (FieldTypes);
+                types.RemoveAt(types.Count - 1);
             }
-            setSelection();
-            if (selectIndex != -1 && selectIndex < typeList.Items.Count) {
-                typeList.SelectedIndex = selectIndex;
+            FieldTypes = types;
+        }
+        /*
+         * Menu handler for the transform menu items.
+         * Apply the corresponding Transformation on the selected types.
+         */
+        void TransformSelection(object o, EventArgs args) {
+            ITransform transformation = (o as ToolStripMenuItem).Tag as ITransform;
+            List<FieldInfo> newTypes = new List<FieldInfo> ();
+            List<FieldInfo> transformed = transformation.Transform (SelectedTypes);
+            bool added = false;
+            for (int i = 0; i < FieldTypes.Count; i++) {
+                if (!typeList.SelectedIndices.Contains (i)) {
+                    newTypes.Add (FieldTypes [i]);
+                } else if (!added) {
+                    newTypes.AddRange (transformed);
+                    added = true;
+                }
             }
+            FieldTypes = newTypes;
         }
         #endregion
 
-        private void setSelection() {
-			if (bytes == null) {
-				return;
-			}
-
-			color (0, bytes.Length, Color.Black);
-			color (offset, KnownByteCount - offset, Color.Blue);
-			color (0, offset, Color.Red);
-			hexView.Select (0, 0);
-
-			using (BinaryReader reader = new BinaryReader(new MemoryStream(bytes))) {
-				showPreview(reader, KnownByteCount);
-
-				typeList.Items.Clear ();
-				valueList.Items.Clear ();
-				skipToCurrentEntry(reader);
-				string s;
-				int start = (int)reader.BaseStream.Position;
-				int end = start;
-				types.ForEach (delegate(FieldInfo d) {
-					int length;
-					s = Util.decodeSafe (d, reader, out length);
-					typeList.Items.Add (d.TypeName);
-					valueList.Items.Add (s);
-					end += length;
-				});
-				color (start, end - start, Color.Green);
-				if (offset > 4) {
-					reader.BaseStream.Position = offset - 4;
-					int assumedEntryCount = reader.ReadInt32 ();
-					string infoString = string.Format ("trying to read {0} entries: ", assumedEntryCount);
-					uint totalBytes = 0;
-					try {
-						for (int i = 0; i < assumedEntryCount; i++) {
-							try {
-								uint tempBytes = 0;
-								types.ForEach (delegate(FieldInfo d) { 
-									s = d.Decode (reader); 
-									tempBytes += (uint)d.Length (s); 
-								});
-								totalBytes += tempBytes;
-							} catch (Exception x) {
-								infoString = string.Format ("{0} {1} at entry {2}", infoString, x.Message, i);
-								throw x;
-							}
-						}
-						infoString = string.Format ("{0} read {1} entries, {2}/{3} bytes", 
-                            infoString, assumedEntryCount, totalBytes, bytes.Length - offset);
-					} catch (Exception) {
-					}
-					repeatInfo.Text = infoString;
-				}
-			}
-		}
-
-        private void showPreview(BinaryReader reader, long position) {
-            reader.BaseStream.Position = position;
-            intType.ShowPreview(reader);
-            reader.BaseStream.Position = position;
-            stringType.ShowPreview(reader);
-            reader.BaseStream.Position = position;
-            boolType.ShowPreview(reader);
-            reader.BaseStream.Position = position;
-            singleType.ShowPreview(reader);
-            reader.BaseStream.Position = position;
-            optStringType.ShowPreview(reader);
-        }
-
-        private void skipToCurrentEntry(BinaryReader reader) {
-            reader.BaseStream.Position = offset;
-            for (int i = 0; i < displayIndex; i++) {
-                types.ForEach(delegate(FieldInfo d) {
-                    Util.decodeSafe(d, reader);
-                });
-            }
-        }
-        private void color(int from, int length, Color c) {
-            if (length != 0) {
-                hexView.SelectionStart = 3 * from;
-                hexView.SelectionLength = (3 * length) - 1;
-                hexView.SelectionColor = c;
-            }
-        }
-        
         #region Menu Handler
-        private void openToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void OpenEncodedFile(object sender, EventArgs e) {
 			OpenFileDialog dlg = new OpenFileDialog ();
 			if (dlg.ShowDialog () == DialogResult.OK) {
-				types.Clear ();
-				offset = 0;
+                // prevent superfluous re-parse
+                Bytes = null;
+                TypeName = Path.GetFileName(Path.GetDirectoryName (dlg.FileName));
+                CurrentTypeInfo.Fields.Clear();
 				Bytes = File.ReadAllBytes (dlg.FileName);
-				TypeName = Path.GetFileName(Path.GetDirectoryName (dlg.FileName));
-                showInPreview();
 			}
 		}
 
-        private void loadToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void LoadSchemaFile(object sender, EventArgs e) {
             OpenFileDialog dlg = new OpenFileDialog();
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 DBTypeMap.Instance.initializeFromFile(dlg.FileName);
-                showInPreview();
+                ParseHeader();
+                ParseData();
+                ShowPreview();
+            }
+        }
+
+        private void SaveSchemaFile(object sender, EventArgs e) {
+            SaveFileDialog dlg = new SaveFileDialog();
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+                using (FileStream stream = File.OpenWrite(dlg.FileName)) {
+                    XmlExporter exporter = new XmlExporter(stream);
+                    exporter.Export(DBTypeMap.Instance.TypeMap, DBTypeMap.Instance.GuidMap);
+                }
             }
         }
         #endregion
 
-        void showInPreview() {
-            if (bytes == null) {
-                return;
-            }
-            using (MemoryStream stream = new MemoryStream(bytes)) {
-                DBFileHeader header = PackedFileDbCodec.readHeader(stream);
-                if (DBTypeMap.Instance.IsSupported(TypeName)) {
-                    TypeInfo info = DBTypeMap.Instance.GetVersionedInfo(header.GUID, TypeName, header.Version);
-                    types = info.Fields;
-                }
-                Offset = header.Length;
-            }
-        }
-
         #region Browsing
         private void goStart_Click(object sender, EventArgs e) {
-            displayIndex = 0;
-            setSelection();
+            CurrentRowIndex = 0;
         }
 
         private void back_Click(object sender, EventArgs e) {
-            if (displayIndex > 0) {
-                displayIndex -= 1;
-                setSelection();
-            }
+            CurrentRowIndex = CurrentRowIndex - 1;
         }
 
         private void forward_Click(object sender, EventArgs e) {
-            displayIndex++;
-            setSelection();
+            CurrentRowIndex = CurrentRowIndex + 1;
         }
 
         private void goProblem_Click(object sender, EventArgs e) {
-            using (BinaryReader reader = new BinaryReader(new MemoryStream(Bytes))) {
-                reader.BaseStream.Position = offset;
-                reader.BaseStream.Position = offset - 4;
-                int assumedEntryCount = reader.ReadInt32();
-                int i = displayIndex;
-                try {
-                    for (i = 0; i < assumedEntryCount; i++) {
-                        types.ForEach(delegate(FieldInfo d) {
-                            d.Decode(reader);
-                        });
-                    }
-                } catch (Exception) {
-                    displayIndex = i;
-                }
+            if (currentValues.Count > 0) {
+                CurrentRowIndex = currentValues.Count - 1;
             }
-            setSelection();
         }
         #endregion
 
         private void setHeaderLength_Click(object sender, EventArgs e) {
-            int newValue = Offset;
-            if (int.TryParse(headerLength.Text, out newValue)) {
-                Offset = newValue;
+            int newLength;
+            if (int.TryParse(headerLengthField.Text, out newLength)) {
+                HeaderLength = newLength;
             }
         }
 
         private void showTypes_Click(object sender, EventArgs e) {
-            string text = XmlExporter.TableToString(GuidInfo, types);
+            string text = XmlExporter.TableToString(GuidInfo, FieldTypes);
 			TextDisplay d = new TextDisplay (text);
 			d.ShowDialog ();
 		}
 
-        #region Extended Type Management
-        private void more1ToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (typeList.SelectedIndex != -1) {
-                int selected = typeList.SelectedIndex;
-                if (types[typeList.SelectedIndex].TypeName == "boolean") {
-                    types[typeList.SelectedIndex] = Types.FromTypeName("optstring") ;
-                    setSelection();
-                } else if (types[typeList.SelectedIndex].TypeName == "optstring") {
-                    types[typeList.SelectedIndex] = Types.FromTypeName("boolean");
-                    setSelection();
-                }
-                typeList.SelectedIndex = selected;
-            }
+        private void setButton_Click(object sender, EventArgs e) {
+            DBTypeMap.Instance.SetByName(TypeName, FieldTypes);
         }
 
-        private void more2ToolStripMenuItem_Click(object sender, EventArgs e) {
-
+        #region Extended Type Management
+        private void ParseFromHere(object sender, EventArgs e) {
+            long dataStart = valueStartPositions[CurrentRowIndex];
+            ParserStart = dataStart;
+        }
+        private void ParseFromStart(object sender, EventArgs e) {
+            ParserStart = -1;
         }
 
         private void more3ToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -338,33 +555,73 @@ namespace DecodeTool {
         }
         #endregion
 
-        private void valueList_SelectedIndexChanged(object sender, EventArgs e) {
-            using (BinaryReader reader = new BinaryReader(new MemoryStream(bytes))) {
-                try {
-                    skipToCurrentEntry(reader);
-                    int index = (sender as ListBox).SelectedIndex;
-                    for (int i = 0; i < index; i++) {
-                        types[i].Decode(reader);
-                    }
-                    long pos = reader.BaseStream.Position;
-                    showPreview(reader, pos);
-                    color((int) pos, 1, Color.DarkRed);
-                } catch {}
+        #region List Selection
+        /*
+         * Go through each of the available transforms and enable the corresponding
+         * menu items, depending on selection in type list.
+         */
+        void EnableTransforms(object o, EventArgs args) {
+            List<FieldInfo> selected = SelectedTypes;
+            foreach (ToolStripMenuItem item in this.transformToolStripMenuItem.DropDownItems) {
+                ITransform transform = item.Tag as ITransform;
+                item.Enabled = transform.CanTransform (selected);
             }
         }
-
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e) {
-            SaveFileDialog dlg = new SaveFileDialog();
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
-                using (FileStream stream = File.OpenWrite(dlg.FileName)) {
-                    XmlExporter exporter = new XmlExporter(stream);
-                    exporter.Export(DBTypeMap.Instance.TypeMap, DBTypeMap.Instance.GuidMap);
+        private void valueList_SelectedIndexChanged(object sender, EventArgs e) {
+            // show would-be preview of values at currently selected position
+            ShowValuePreviews();
+        }
+        private void ClearSelection(object sender, MouseEventArgs args) {
+            if (args.Button == MouseButtons.Right) {
+                ListBox list = sender as ListBox;
+                if (list != null) {
+                    list.ClearSelected();
                 }
             }
         }
-
-        private void setButton_Click(object sender, EventArgs e) {
-            DBTypeMap.Instance.SetByName(TypeName, types);
-        }
+        #endregion
+  
+        #region Attic
+//        void StartList(object o, EventArgs args) {
+//            long currentPosition = CurrentCursorPosition;
+//            byte[] listBytes;
+//            uint entries;
+//            using (var source = new BinaryReader(new MemoryStream(Bytes))) {
+//                source.BaseStream.Position = currentPosition;
+//                entries = source.ReadUInt32();
+//                using (var dest = new MemoryStream()) {
+//                    source.BaseStream.CopyTo(dest);
+//                    listBytes = dest.ToArray();
+//                }
+//            }
+//            List<FieldInfo> infos = new List<FieldInfo>();
+//            if (typeList.SelectedIndex != -1) {
+//                ListType list = FieldTypes[typeList.SelectedIndex] as ListType;
+//                if (list != null) {
+//                    infos.AddRange(list.Infos);
+//                }
+//            }
+//            DecodeTool listTool = new DecodeTool() {
+//                ExpectedEntries = entries,
+//                TypeName = "",
+//                IgnoreHeader = true,
+//                FieldTypes = infos,
+//                Bytes = listBytes,
+//            };
+//            listTool.ShowDialog();
+//            if (listTool.FieldTypes.Count > 0) {
+//                infos = new List<FieldInfo>(FieldTypes);
+//                ListType listType = new ListType() {
+//                    Infos = listTool.FieldTypes
+//                };
+//                AddType(listType);
+//            }
+//            using (var stream = File.Create("schema_bak.xml")) {
+//                new XmlExporter(stream).Export();
+//            }
+//            listTool.Dispose();
+//            FillValueList();
+//        }
+        #endregion
     }
 }

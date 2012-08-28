@@ -678,7 +678,7 @@ namespace PackFileManager {
                 foreach (DataGridViewRow row in selectedRows) {
                     List<FieldInstance> toCopy = EditedFile.Entries[row.Index];
                     var copy = new List<FieldInstance>(toCopy.Count);
-                    toCopy.ForEach(field => copy.Add(new FieldInstance(field.Info, field.Value)));
+                    toCopy.ForEach(field => copy.Add(field.CreateCopy()));
                     createRow(copy, row.Index);
                 }
             } else {
