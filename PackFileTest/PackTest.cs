@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Common;
 using Filetypes;
 using PackFileManager;
@@ -32,13 +33,16 @@ namespace PackFileTest {
             // -v : verbose output
             "-v",
             // -tg: test game
-            "-tg"
+            "-tg",
+            // -x : don't wait for user input after finishing
+            "-x"
         };
 #pragma warning restore 414
 
 		bool testTsvExport = false;
         bool outputTables = false;
         bool verbose = false;
+        bool waitForKey = true;
 
 
         // private List<PackedFileTest> tests = new List<PackedFileTest>();
@@ -68,6 +72,7 @@ namespace PackFileTest {
                 }
                 if (dir.Equals("-pr")) {
                     DBTypeMap.Instance.initializeFromFile("master_schema.xml");
+                    List<Thread> threads = new List<Thread>();
                     foreach (Game game in Game.GetGames()) {
 #if DEBUG
                             //if (!game.Id.Equals("ETW")) continue;
@@ -79,13 +84,19 @@ namespace PackFileTest {
                                 PackDirectory = datapath,
                                 SchemaFilename = outfile
                             };
-                            optimizer.FilterExistingPacks();
-                            Console.WriteLine("{0} entries removed for {1}", optimizer.RemovedEntries, game.Id);
+                            ThreadStart start = new ThreadStart(optimizer.FilterExistingPacks);
+                            Thread worker = new Thread(start);
+                            threads.Add(worker);
+                            worker.Start();
+                            // Console.WriteLine("{0} entries removed for {1}", optimizer.RemovedEntries, game.Id);
                         }
                     }
+                    threads.ForEach(t => t.Join());
                 } else if (dir.Equals("-v")) {
                     Console.WriteLine("Running in verbose mode");
                     verbose = true;
+                } else if (dir.Equals("-x")) {
+                    waitForKey = false;
                 } else if (dir.StartsWith("-i")) {
                     string integrateFrom = dir.Substring(2);
                     SchemaIntegrator integrator = new SchemaIntegrator{
@@ -133,8 +144,10 @@ namespace PackFileTest {
             if (saveSchema) {
                 SaveSchema();
             }
-            Console.WriteLine("Test run finished, press any key");
-            Console.ReadKey();
+            if (waitForKey) {
+                Console.WriteLine("Test run finished, press any key");
+                Console.ReadKey();
+            }
         }
 
         #region Test Factory Methods
