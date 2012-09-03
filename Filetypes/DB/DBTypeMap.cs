@@ -10,6 +10,7 @@ namespace Filetypes {
         public static readonly string SCHEMA_FILE_NAME = "schema.xml";
         public static readonly string MASTER_SCHEMA_FILE_NAME = "master_schema.xml";
         public static readonly string SCHEMA_USER_FILE_NAME = "schema_user.xml";
+        public static readonly string MODEL_SCHEMA_FILE_NAME = "schema_models.xml";
 
         SortedDictionary<string, List<FieldInfo>> typeMap = new SortedDictionary<string, List<FieldInfo>>();
         SortedDictionary<GuidTypeInfo, List<FieldInfo>> guidMap = new SortedDictionary<GuidTypeInfo, List<FieldInfo>>();
@@ -105,6 +106,19 @@ namespace Filetypes {
             }
             typeMap = importer.Descriptions;
             guidMap = importer.GuidToDescriptions;
+            if (File.Exists(MODEL_SCHEMA_FILE_NAME)) {
+                importer = null;
+                using (Stream stream = File.OpenRead(MODEL_SCHEMA_FILE_NAME)) {
+                    importer = new XmlImporter(stream);
+                    importer.Import();
+                }
+                foreach (string key in importer.Descriptions.Keys) {
+                    typeMap.Add(key, importer.Descriptions[key]);
+                }
+                foreach (GuidTypeInfo key in importer.GuidToDescriptions.Keys) {
+                    guidMap.Add(key, importer.GuidToDescriptions[key]);
+                }
+            }
         }
 
         public void loadFromXsd(string xsdFile) {

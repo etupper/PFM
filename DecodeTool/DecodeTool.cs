@@ -289,8 +289,12 @@ namespace DecodeTool {
                             foreach (FieldInfo info in FieldTypes) {
                                 FieldInstance result;
                                 try {
-                                    result = info.CreateInstance();
-                                    result.Decode(reader);
+                                    if (stopReading) {
+                                        result = info.CreateInstance();
+                                    } else {
+                                        result = info.CreateInstance();
+                                        result.Decode(reader);
+                                    }
                                 } catch (Exception e) {
                                     // show problems until end of this row
                                     result = info.CreateInstance();

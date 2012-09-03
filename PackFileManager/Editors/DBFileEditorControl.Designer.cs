@@ -36,6 +36,7 @@ namespace PackFileManager
         private void InitializeComponent() {
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.addNewRowButton = new System.Windows.Forms.ToolStripButton();
+            this.cloneRowsButton = new System.Windows.Forms.ToolStripButton();
             this.copyToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.pasteToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -47,7 +48,6 @@ namespace PackFileManager
             this.showAllColumns = new System.Windows.Forms.CheckBox();
             this.useComboBoxCells = new System.Windows.Forms.CheckBox();
             this.dataGridView = new PackFileManager.DataGridViewExtended();
-            this.cloneRowsButton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
@@ -80,10 +80,20 @@ namespace PackFileManager
             this.addNewRowButton.ToolTipText = "Add New Row";
             this.addNewRowButton.Click += new System.EventHandler(this.addNewRowButton_Click);
             // 
+            // cloneRowsButton
+            // 
+            this.cloneRowsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.cloneRowsButton.Enabled = false;
+            this.cloneRowsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.cloneRowsButton.Name = "cloneRowsButton";
+            this.cloneRowsButton.Size = new System.Drawing.Size(81, 22);
+            this.cloneRowsButton.Text = "Clone Row(s)";
+            this.cloneRowsButton.ToolTipText = "Add New Row";
+            this.cloneRowsButton.Click += new System.EventHandler(this.cloneRowsButton_Click);
+            // 
             // copyToolStripButton
             // 
             this.copyToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.copyToolStripButton.Enabled = true;
             this.copyToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.copyToolStripButton.Name = "copyToolStripButton";
             this.copyToolStripButton.Size = new System.Drawing.Size(39, 22);
@@ -188,6 +198,7 @@ namespace PackFileManager
             this.dataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            //this.dataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
             this.dataGridView.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView.Location = new System.Drawing.Point(0, 28);
@@ -199,17 +210,7 @@ namespace PackFileManager
             this.dataGridView.Size = new System.Drawing.Size(876, 641);
             this.dataGridView.TabIndex = 1;
             this.dataGridView.VirtualMode = true;
-            // 
-            // cloneRowsButton
-            // 
-            this.cloneRowsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.cloneRowsButton.Enabled = false;
-            this.cloneRowsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.cloneRowsButton.Name = "cloneRowsButton";
-            this.cloneRowsButton.Size = new System.Drawing.Size(81, 22);
-            this.cloneRowsButton.Text = "Clone Row(s)";
-            this.cloneRowsButton.ToolTipText = "Add New Row";
-            this.cloneRowsButton.Click += new System.EventHandler(this.cloneRowsButton_Click);
+            //this.dataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView_CellFormatting);
             // 
             // DBFileEditorControl
             // 

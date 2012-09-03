@@ -12,6 +12,8 @@ namespace PackFileManager {
 
             modelGridView.SelectionChanged += new EventHandler(SetEntrySource);
             entryGridView.SelectionChanged += new EventHandler(SetCoordinates);
+
+            modelGridView.UserAddedRow += new DataGridViewRowEventHandler(AddModelRow);
         }
 
         public bool CanEdit(PackedFile file) {
@@ -24,7 +26,8 @@ namespace PackFileManager {
                 return packedFile;
             }
             set {
-                EditedFile = BuildingModelCodec.Instance.Decode(new MemoryStream(value.Data));
+                DBFile dbFile = PackedFileDbCodec.Decode(value);
+                EditedFile = new BuildingModelFile(dbFile);
                 packedFile = value;
             }
         }
@@ -32,13 +35,15 @@ namespace PackFileManager {
         public void Commit() {
         }
 
-        ModelFile<BuildingModel> file;
-        public ModelFile<BuildingModel> EditedFile {
+        BuildingModelFile file;
+        public BuildingModelFile EditedFile {
             get {
                 return file;
             }
             set {
                 file = value;
+                EntryDataSource = new List<BuildingModel>();
+                coordinatesSource.DataSource = new List<Coordinates>();
                 modelSource.DataSource = file.Models;
             }
         }
@@ -49,9 +54,22 @@ namespace PackFileManager {
                 index = SelectedRowIndex(modelGridView);
             }
             if (index != -1) {
-                entrySource.DataSource = EditedFile.Models[index].Entries;
+                try {
+                    entrySource.DataSource = EditedFile.Models[index].Entries;
+                } catch (Exception e) {
+                    Console.WriteLine(e);
+                }
             } else {
-                entrySource.DataSource = new List<BuildingModel>();
+                EntryDataSource = new List<BuildingModel>();
+                coordinatesSource.DataSource = new List<Coordinates>();
+            }
+        }
+
+        List<BuildingModel> EntryDataSource {
+            set {
+                entrySource.DataSource = value;
+                entryGridView.AllowUserToAddRows = value.Count != 0;
+                entrySource.AllowNew = value.Count != 0;
             }
         }
 
@@ -59,11 +77,10 @@ namespace PackFileManager {
             int index = SelectedRowIndex(entryGridView);
             if (index != -1) {
                 BuildingModelEntry entry = ((List<BuildingModelEntry>)entrySource.DataSource)[index];
-                angle1Source.DataSource = new Coordinates[] { entry.Coordinates1 };
-                angle2Source.DataSource = new Coordinates[] { entry.Coordinates2 };
-                angle3Source.DataSource = new Coordinates[] { entry.Coordinates3 };
+                List<Coordinates> coords = entry.Coordinates;
+                coordinatesSource.DataSource = coords;
             } else {
-                angle1Source.DataSource = angle2Source.DataSource = angle3Source.DataSource = new List<Coordinates>();
+                coordinatesSource.DataSource = new List<Coordinates>();
             }
         }
 
@@ -75,6 +92,10 @@ namespace PackFileManager {
                 index = gridView.SelectedCells[0].RowIndex;
             }
             return index;
+        }
+
+        void AddModelRow(object o, DataGridViewRowEventArgs args) {
+            Console.WriteLine("adding row");
         }
     }
 }
