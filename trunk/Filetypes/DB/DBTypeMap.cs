@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Filetypes {
@@ -48,20 +50,41 @@ namespace Filetypes {
         }
         #endregion
 
-        public TypeInfo GetVersionedInfo(string guid, string key, int version) {
-            TypeInfo result = new TypeInfo {
-                Name = key
-            };
-            GuidTypeInfo info = new GuidTypeInfo(guid, key, version);
-            if (!string.IsNullOrEmpty(guid) && guidMap.ContainsKey(info)) {
-                result.Fields.AddRange(guidMap[info]);
-            } else {
-                List<FieldInfo> list;
-                if (typeMap.TryGetValue(key, out list)) {
-                    result.Fields.AddRange(FilterForVersion(list, version));
+        public TypeInfo GetVersionedInfo(string key, int version) {
+            List<TypeInfo> infos = GetVersionedInfos(key, version);
+            return infos.Count > 0 ? infos[0] : null;
+        }
+        public List<TypeInfo> GetVersionedInfos(string key, int version) {
+            List<TypeInfo> typeInfos = new List<TypeInfo>();
+            foreach(GuidTypeInfo keyInfo in GuidMap.Keys) {
+                if (keyInfo.Version == version && keyInfo.TypeName.Equals(key)) {
+                    TypeInfo result = new TypeInfo(guidMap[keyInfo]) {
+                        Name = key, Version = version
+                    };
+                    result.ApplicableGuids.Add(keyInfo.Guid);
+                    AddOrMerge(typeInfos, result);
                 }
             }
-            return result;
+            List<FieldInfo> list = new List<FieldInfo>();
+            if (typeMap.TryGetValue(key, out list)) {
+                TypeInfo result = new TypeInfo() {
+                    Name = key, Version = version
+                };
+                result.ApplicableGuids.Add("");
+                result.Fields.AddRange(FilterForVersion(list, version));
+                AddOrMerge(typeInfos, result);
+            }
+            return typeInfos;
+        }
+        void AddOrMerge(List<TypeInfo> list, TypeInfo toAdd) {
+            foreach(TypeInfo info in list) {
+                if (Enumerable.SequenceEqual(info.Fields, toAdd.Fields)) {
+                    // merge into existing entry
+                    info.ApplicableGuids.AddRange(toAdd.ApplicableGuids);
+                    return;
+                }
+            }
+            list.Add(toAdd);
         }
 
         #region Initialization / IO

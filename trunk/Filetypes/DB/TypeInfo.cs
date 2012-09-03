@@ -8,13 +8,23 @@ namespace Filetypes {
 		public string Name {
             get; set;
         }
+        public int Version {
+            get; set;
+        }
 		List<FieldInfo> fields = new List<FieldInfo> ();
         public List<FieldInfo> Fields {
             get {
                 return fields;
             }
         }
-
+        List<string> applicableGuids = new List<string>();
+        public List<string> ApplicableGuids {
+            get {
+                return applicableGuids;
+            }
+        }
+  
+        #region Constructors
 		public TypeInfo () {
 		}
 
@@ -26,6 +36,7 @@ namespace Filetypes {
 			Name = toCopy.Name;
 			Fields.AddRange (toCopy.Fields);
 		}
+        #endregion
 	}
 }
 

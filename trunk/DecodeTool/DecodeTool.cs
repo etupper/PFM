@@ -257,7 +257,7 @@ namespace DecodeTool {
             using (BinaryReader reader = new BinaryReader(new MemoryStream(Bytes))) {
                 DBFileHeader header = PackedFileDbCodec.readHeader(reader);
                 if (DBTypeMap.Instance.IsSupported(TypeName) && Bytes != null) {
-                    CurrentTypeInfo = DBTypeMap.Instance.GetVersionedInfo(header.GUID, TypeName, header.Version);
+                    CurrentTypeInfo = DBTypeMap.Instance.GetVersionedInfo(TypeName, header.Version);
                     guid = header.GUID;
                     version = header.Version;
                 }
