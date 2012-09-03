@@ -69,22 +69,18 @@ namespace PackFileManager
 			this.DataChanged = true;
 		}
 
-        protected override bool DataChanged {
-            get { return base.DataChanged; }
-            set {
-                base.DataChanged = value;
-                if (value) {
-                    this.EditedFile.Entries.Clear();
-                    for (int i = 0; i < (this.dataGridView.Rows.Count - 1); i++) {
-                        string tag = this.dataGridView.Rows[i].Cells[0].Value.ToString();
-                        string localised = this.dataGridView.Rows[i].Cells[1].Value.ToString();
-                        bool tooltip = Convert.ToBoolean(this.dataGridView.Rows[i].Cells[2].Value);
-                        LocEntry newEntry = new LocEntry(tag, localised, tooltip);
-                        this.EditedFile.Entries.Add(newEntry);
-                    }
-                    SetData();
+        protected override void SetData() {
+            if (DataChanged) {
+                this.EditedFile.Entries.Clear();
+                for (int i = 0; i < (this.dataGridView.Rows.Count - 1); i++) {
+                    string tag = this.dataGridView.Rows[i].Cells[0].Value.ToString();
+                    string localised = this.dataGridView.Rows[i].Cells[1].Value.ToString();
+                    bool tooltip = Convert.ToBoolean(this.dataGridView.Rows[i].Cells[2].Value);
+                    LocEntry newEntry = new LocEntry(tag, localised, tooltip);
+                    this.EditedFile.Entries.Add(newEntry);
                 }
             }
+            base.SetData();
         }
 
         private void cloneCurrentRow_Click(object sender, EventArgs e)

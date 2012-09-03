@@ -98,12 +98,12 @@ namespace PackFileTest {
                 } else if (dir.Equals("-t")) {
                     Console.WriteLine("TSV export/import enabled");
                     testTsvExport = true;
-                } else if (dir.Equals("-bm")) {
-                    testFactories.Add(CreateBuildingModelTest);
-                    Console.WriteLine("building models test enabled");
-                } else if (dir.Equals("-nm")) {
-                    testFactories.Add(CreateNavalModelTest);
-                    Console.WriteLine("naval models test enabled");
+//                } else if (dir.Equals("-bm")) {
+//                    testFactories.Add(CreateBuildingModelTest);
+//                    Console.WriteLine("building models test enabled");
+//                } else if (dir.Equals("-nm")) {
+//                    testFactories.Add(CreateNavalModelTest);
+//                    Console.WriteLine("naval models test enabled");
                 } else if (dir.Equals("-db")) {
                     Console.WriteLine("Database Test enabled");
                     testFactories.Add(CreateDbTest);
@@ -138,20 +138,20 @@ namespace PackFileTest {
         }
 
         #region Test Factory Methods
-        PackedFileTest CreateBuildingModelTest() {
-            return new ModelsTest<BuildingModel> {
-                Codec = BuildingModelCodec.Instance,
-                ValidTypes = "models_building_tables",
-                Verbose = verbose
-            };
-        }
-        PackedFileTest CreateNavalModelTest() {
-            return new ModelsTest<ShipModel> {
-                Codec = ShipModelCodec.Instance,
-                ValidTypes = "models_naval_tables",
-                Verbose = verbose
-            };
-        }
+//        PackedFileTest CreateBuildingModelTest() {
+//            return new ModelsTest<BuildingModel> {
+//                Codec = BuildingModelCodec.Instance,
+//                ValidTypes = "models_building_tables",
+//                Verbose = verbose
+//            };
+//        }
+//        PackedFileTest CreateNavalModelTest() {
+//            return new ModelsTest<ShipModel> {
+//                Codec = ShipModelCodec.Instance,
+//                ValidTypes = "models_naval_tables",
+//                Verbose = verbose
+//            };
+//        }
         PackedFileTest CreateUnitVariantTest() {
             return new UnitVariantTest();
         }

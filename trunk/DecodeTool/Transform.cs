@@ -47,6 +47,7 @@ namespace DecodeTool {
                 contained.Add (infos [i]);
             }
             ListType list = new ListType () {
+                Name = "unknown",
                 Infos = contained
             };
             result.Add (list);

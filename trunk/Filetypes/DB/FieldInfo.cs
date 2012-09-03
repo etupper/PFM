@@ -11,19 +11,19 @@ namespace Filetypes
 		public static FieldInfo FromTypeName(string typeName) {
 			switch (typeName) {
 			case "string":
-				return new StringType ();
+				return StringType ();
 			case "optstring":
-				return new OptStringType ();
+				return OptStringType ();
 			case "int":
-				return new IntType ();
+				return IntType ();
 			case "short":
-				return new ShortType ();
+				return ShortType ();
 			case "float":
-				return new SingleType ();
+				return SingleType ();
 			case "boolean":
-				return new BoolType ();
+				return BoolType ();
             case "list":
-                return new ListType();
+                return ListType();
 			}
 			if (typeName.StartsWith ("blob")) {
 				string lengthPart = typeName.Substring (4);
@@ -91,14 +91,14 @@ namespace Filetypes
             }
             return result;
         }
-        
+
         public override int GetHashCode() {
             return 2*Name.GetHashCode() +
                 3*TypeName.GetHashCode();
         }
         
         public override string ToString() {
-            return TypeName;
+            return string.Format("{0}:{1}", Name, TypeName);
         }
 	}
 
@@ -109,6 +109,7 @@ namespace Filetypes
 		}
         public override FieldInstance CreateInstance() {
             return new StringField() {
+                Name = this.Name,
                 Value = ""
             };
         }
@@ -121,6 +122,7 @@ namespace Filetypes
 		}
         public override FieldInstance CreateInstance() {
             return new IntField() {
+                Name = this.Name,
                 Value = "0"
             };
         }
@@ -133,6 +135,7 @@ namespace Filetypes
 		}
         public override FieldInstance CreateInstance() {
             return new ShortField() {
+                Name = this.Name,
                 Value = "0"
             };
         }
@@ -145,6 +148,7 @@ namespace Filetypes
 		}
         public override FieldInstance CreateInstance() {
             return new SingleField() {
+                Name = this.Name,
                 Value = "0"
             };
         }
@@ -157,6 +161,7 @@ namespace Filetypes
 		}
         public override FieldInstance CreateInstance() {
             return new BoolField() {
+                Name = this.Name,
                 Value = "false"
             };
         }
@@ -169,6 +174,7 @@ namespace Filetypes
 		}
         public override FieldInstance CreateInstance() {
             return new OptStringField() {
+                Name = this.Name,
                 Value = ""
             };
         }
@@ -182,7 +188,9 @@ namespace Filetypes
             byteCount = bytes;
 		}
         public override FieldInstance CreateInstance() {
-            return new VarByteField(byteCount);
+            return new VarByteField(byteCount) {
+                Name = this.Name
+            };
         }
 	}
     
@@ -215,6 +223,11 @@ namespace Filetypes
             // containedInfos.ForEach(i => field.Contained.Add(i.CreateInstance()));
             return field;
         }
+        public List<FieldInstance> CreateContainedInstance() {
+            List<FieldInstance> result = new List<FieldInstance>();
+            containedInfos.ForEach(i => result.Add(i.CreateInstance()));
+            return result;
+        }
         
         public bool EncodeItemIndices {
             get {
@@ -223,6 +236,47 @@ namespace Filetypes
             set {
                 // ignore
             }
+        }
+        
+        int itemIndexAt = -1;
+        public int ItemIndexAt {
+            get { return itemIndexAt >= Infos.Count ? -1 : itemIndexAt; }
+            set { itemIndexAt = value; }
+        }
+        int nameAt = -1;
+        public int NameAt {
+            get {
+                int result = nameAt >= Infos.Count ? -1 : nameAt;
+                if (result == -1) {
+                    // use the first string we find
+                    for (int i = 0; i < Infos.Count; i++) {
+                        if (Infos[i].TypeCode == System.TypeCode.String) {
+                            result = i;
+                            break;
+                        }
+                    }
+                }
+                return result;
+            }
+            set { nameAt = value; }
+        }
+
+        public override bool Equals(object other) {
+            bool result = base.Equals(other);
+            if (result) {
+                ListType type = other as ListType;
+                result &= type.containedInfos.Count == containedInfos.Count;
+                if (result) {
+                    for (int i = 0; i < containedInfos.Count; i++) {
+                        result &= containedInfos[i].Equals(type.containedInfos[i]);
+                    }
+                }
+            }
+            return result;
+        }
+        
+        public override int GetHashCode() {
+            return 2*Name.GetHashCode() + 3*Infos.GetHashCode();
         }
         
 //        public override string ToString() {

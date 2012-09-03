@@ -62,7 +62,7 @@ namespace PackFileManager {
         }
 
         // implementation method to actually save data
-        protected void SetData() {
+        protected virtual void SetData() {
             using (MemoryStream stream = new MemoryStream()) {
                 codec.Encode(stream, EditedFile);
                 CurrentPackedFile.Data = stream.ToArray();

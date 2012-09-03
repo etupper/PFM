@@ -22,14 +22,29 @@ namespace Filetypes
         }
 
         public FieldInfo Info { get; private set; }
-
-        public virtual string Value { get; set; }
+        
+        public string Name {
+            get { 
+                return Info.Name; 
+            }
+            set {
+                Info.Name = value;
+            }
+        }
+  
+        string val;
+        public virtual string Value { 
+            get { 
+                return val; 
+            }
+            set { val = value; }
+        }
         
         public virtual int Length {
             get; protected set;
         }
         
-        public FieldInstance CreateCopy() {
+        public virtual FieldInstance CreateCopy() {
             FieldInstance copy = Info.CreateInstance();
             copy.Value = Value;
             return copy;
@@ -56,7 +71,7 @@ namespace Filetypes
      * String Field.
      */
     public class StringField : FieldInstance {
-        public StringField() : base(Types.StringType()) {}
+        public StringField() : base(Types.StringType(), "") {}
         public override int Length {
             get {
                 return 2 * Value.Length + 2;
@@ -74,13 +89,20 @@ namespace Filetypes
      * 4 byte Int Field.
      */
     public class IntField : FieldInstance {
-        public IntField() : base(Types.IntType()) { Length = 4; }
+        public IntField() : base(Types.IntType(), "0") { Length = 4; }
         public override void Decode(BinaryReader reader) {
             Value = reader.ReadInt32 ().ToString ();
-        }
-     
+        }     
         public override void Encode(BinaryWriter writer) {
             writer.Write (int.Parse (Value));
+        }
+        public override string Value {
+            get {
+                return base.Value;
+            }
+            set {
+                base.Value = int.Parse(value).ToString();
+            }
         }
     }
     
@@ -88,12 +110,20 @@ namespace Filetypes
      * 2-byte Short Field.
      */
     public class ShortField : FieldInstance {
-        public ShortField() : base(Types.ShortType()) { Length = 2; }
+        public ShortField() : base(Types.ShortType(), "0") { Length = 2;  }
         public override void Decode(BinaryReader reader) {
             Value = reader.ReadUInt16 ().ToString ();
         }
         public override void Encode(BinaryWriter writer) {
             writer.Write (short.Parse (Value));
+        }
+        public override string Value {
+            get {
+                return base.Value;
+            }
+            set {
+                base.Value = short.Parse(value).ToString();
+            }
         }
     }
     
@@ -101,12 +131,20 @@ namespace Filetypes
      * Single Field.
      */
     public class SingleField : FieldInstance {
-        public SingleField() : base(Types.SingleType()) { Length = 4; }
+        public SingleField() : base(Types.SingleType(), "0") { Length = 4; }
         public override void Decode(BinaryReader reader) {
             Value = reader.ReadSingle ().ToString ();
         }
         public override void Encode(BinaryWriter writer) {
             writer.Write (float.Parse (Value));
+        }
+        public override string Value {
+            get {
+                return base.Value;
+            }
+            set {
+                base.Value = float.Parse(value).ToString();
+            }
         }
     }
     
@@ -114,7 +152,7 @@ namespace Filetypes
      * Bool Field.
      */
     public class BoolField : FieldInstance {
-        public BoolField() : base(Types.BoolType()) { Length = 1; }
+        public BoolField() : base(Types.BoolType(), false.ToString()) { Length = 1; }
         public override void Decode(BinaryReader reader) {
             byte b = reader.ReadByte ();
             if (b == 0 || b == 1) {
@@ -125,6 +163,14 @@ namespace Filetypes
         }
         public override void Encode(BinaryWriter writer) {
             writer.Write (bool.Parse(Value));
+        }
+        public override string Value {
+            get {
+                return base.Value;
+            }
+            set {
+                base.Value = bool.Parse(value).ToString();
+            }
         }
     }
     
@@ -174,12 +220,26 @@ namespace Filetypes
             for (int i = 1; i < bytes.Length; i++) {
                 result.Append (string.Format (" {0:x2}", bytes [i]));
             }
-            Value = result.ToString ();
+            base.Value = result.ToString ();
         }
         public override void Encode(BinaryWriter writer) {
             string[] split = Value.Split (' ');
             foreach (string s in split) {
                 writer.Write (byte.Parse(s, System.Globalization.NumberStyles.HexNumber));
+            }
+        }
+        public override string Value {
+            get {
+                return base.Value;
+            }
+            set {
+                StringBuilder result = new StringBuilder(value.Length);
+                string[] split = value.Split(' ');
+                result.Append(string.Format("{0}", byte.Parse(split[0]).ToString()));
+                for(int i = 1; i < split.Length; i++) {
+                    result.Append(string.Format(" {0:x2}", byte.Parse(split[1]).ToString()));
+                }
+                base.Value = result.ToString();
             }
         }
     }
@@ -222,6 +282,16 @@ namespace Filetypes
                 return Info as ListType;
             }
         }
+
+        public override FieldInstance CreateCopy() {
+            ListField field = new ListField(Info as ListType);
+            contained.ForEach(l => {
+                List<FieldInstance> clone = new List<FieldInstance>(l.Count);
+                l.ForEach(i => clone.Add(i.CreateCopy()));
+                field.Contained.Add(clone);
+            });
+            return field;
+        }
         
         public override void Encode(BinaryWriter writer) {
             writer.Write(contained.Count);
@@ -238,12 +308,6 @@ namespace Filetypes
         public override void Decode(BinaryReader reader) {
             contained.Clear();
             int itemCount = reader.ReadInt32();
-#if DEBUG
-            Console.WriteLine("Reading {0} items of {1} fields each", itemCount, ContainerType.Infos.Count);
-            if (itemCount > 4096) {
-                throw new InvalidDataException("too many entries");
-            }
-#endif
             contained.Capacity = itemCount;
             for(int i = 0; i < itemCount; i++) {
                 if (ContainerType.EncodeItemIndices) {
@@ -257,9 +321,6 @@ namespace Filetypes
                 }
                 contained.Add(entry);
             }
-#if DEBUG
-            Console.WriteLine("Finished decoding, length now {0}", Length);
-#endif
         }
     }
 }

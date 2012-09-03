@@ -6,9 +6,6 @@ using Filetypes;
 
 namespace PackFileTest {
     public class ModelsTest<T> : PackedFileTest {
-        public ModelCodec<T> Codec {
-            get; set;
-        }
         public string ValidTypes {
             get; set;
         }
@@ -55,7 +52,7 @@ namespace PackFileTest {
                 return;
             }
             using (var stream = new MemoryStream(packed.Data)) {
-                ModelFile<T> bmFile = Codec.Decode(stream);
+                BuildingModelFile bmFile = new BuildingModelFile(PackedFileDbCodec.Decode(packed));
                 if (bmFile.Header.EntryCount != bmFile.Models.Count) {
                     countErrors.Add(string.Format("{0}: invalid count. Should be {1}, is {2}",
                                                   packed.Name, bmFile.Header.EntryCount, bmFile.Models.Count));

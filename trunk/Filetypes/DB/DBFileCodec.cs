@@ -22,6 +22,10 @@ namespace Filetypes {
 		static UInt32 VERSION_MARKER = BitConverter.ToUInt32 (new byte[] { 0xFC, 0xFD, 0xFE, 0xFF}, 0);
 		#endregion
 
+        public static PackedFileDbCodec GetCodec(PackedFile file) {
+            return new PackedFileDbCodec(DBFile.typename(file.FullPath));
+        }
+
         public static DBFile Decode(PackedFile file) {
             PackedFileDbCodec codec = FromFilename(file.FullPath);
             return codec.Decode(file.Data);
@@ -48,6 +52,9 @@ namespace Filetypes {
 			DBFileHeader header = readHeader (reader);
             foreach(TypeInfo realInfo in DBTypeMap.Instance.GetVersionedInfos(typeName, header.Version)) {
                 try {
+#if DEBUG
+                    Console.WriteLine("Parsing with info {0}", string.Join(",", realInfo.Fields));
+#endif  
                     DBFile result = ReadFile(reader, header, realInfo);
                     return result;
                 } catch (Exception e) {
@@ -164,13 +171,17 @@ namespace Filetypes {
 			for (int i = 0; i < ttype.Fields.Count; ++i) {
 				FieldInfo field = ttype.Fields [i];
 
+                FieldInstance instance = null;
 				try {
-					//Console.WriteLine ("decoding at {0}", reader.BaseStream.Position);
-                    FieldInstance instance = field.CreateInstance();
+#if DEBUG
+					// Console.WriteLine ("db file codec decoding {1} at {0}", reader.BaseStream.Position, field);
+#endif
+                    instance = field.CreateInstance();
                     instance.Decode(reader);
 					entry.Add (instance);
 				} catch (Exception x) {
-					throw new InvalidDataException (string.Format ("Failed to read field {0}/{1} ({2})", i, ttype.Fields.Count, x.Message));
+					throw new InvalidDataException (string.Format 
+                        ("Failed to read field {0}/{1}, type {3} ({2})", i, ttype.Fields.Count, x.Message, instance.Info.TypeName));
 				}
 			}
 			return entry;

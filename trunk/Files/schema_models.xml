@@ -1,0 +1,20 @@
+<schema>
+  <table name='models_building_tables'>
+    <field name='unknown' type='string' />
+    <field name='unknown2' type='string' />
+    <field name='unknown3' type='int' />
+    <field name='elements' type='list' >
+      <field name='Name' type='string' />
+      <field name='unknown' type='int' />
+      <field name='X1' type='float' />
+      <field name='Y1' type='float' />
+      <field name='Z1' type='float' />
+      <field name='X2' type='float' />
+      <field name='Y2' type='float' />
+      <field name='Z2' type='float' />
+      <field name='X3' type='float' />
+      <field name='Y3' type='float' />
+      <field name='Z3' type='float' />
+    </field>
+  </table>
+</schema>

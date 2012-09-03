@@ -11,8 +11,6 @@ namespace PackFileTest {
         private string debug_at = "";
 #endif
 
-        public bool Verbose { get; set; }
-
         public bool TestTsv {
             get; set;
         }

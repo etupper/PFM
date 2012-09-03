@@ -321,7 +321,6 @@ namespace PackFileManager {
         }
         bool Obsoletes(string p1, string p2) {
             PFHeader p1Header = nameToHeader[p1];
-            PFHeader p2Header = nameToHeader[p2];
             if (p1Header.ReplacedPackFileNames.Count == 0) {
                 return false;
             }

@@ -72,6 +72,8 @@ namespace PackFileManager
                     new GroupformationEditor { Dock = DockStyle.Fill },
                     new UnitVariantFileEditorControl { Dock = DockStyle.Fill },
                     new PackedEsfEditor { Dock = DockStyle.Fill },
+                    new DBFileEditorControl { Dock = DockStyle.Fill },
+                    new DBFileEditorTree { Dock = DockStyle.Fill },
                     textFileEditorControl
                                               };
         }
@@ -811,19 +813,8 @@ namespace PackFileManager
                 openReadMe(packedFile);
             } else if (packedFile.FullPath.Contains(".rigid")) {
                 // viewModel(packedFile);
-            } else if (packedFile.FullPath.StartsWith("db")) {
-                try {
-                    dbFileEditorControl.Open(packedFile);
-                    splitContainer1.Panel2.Controls.Add(dbFileEditorControl);
-                } catch (FileNotFoundException exception) {
-                    MessageBox.Show(exception.Message, "DB Type not found", 
-                                    MessageBoxButtons.OK, MessageBoxIcon.Hand);
-                } catch (Exception x) {
-                    MessageBox.Show(x.Message + "\n" + x.StackTrace, "Problem, sir!", 
-                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-        }
 
         private void CloseEditors() {
             foreach(IPackedFileEditor editor in Editors) {

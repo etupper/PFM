@@ -2609,12 +2609,6 @@
     <field name='unknown183' type='float' />
     <field name='unknown184' type='float' />
   </table>
-  <table name='models_building_tables'>
-    <field name='unknown' type='string' />
-    <field name='unknown2' type='string' />
-    <field name='unknown3' type='int' />
-    <field name='unknown4' type='float' />
-  </table>
   <table name='mount_variants_tables'>
     <field fkey='mounts_tables.Mount ID' name='Mount' type='string' pk='true' />
     <field name='Mount Variant' type='string' pk='true' />
