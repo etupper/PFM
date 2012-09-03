@@ -72,7 +72,6 @@ namespace PackFileManager
                     new GroupformationEditor { Dock = DockStyle.Fill },
                     new UnitVariantFileEditorControl { Dock = DockStyle.Fill },
                     new PackedEsfEditor { Dock = DockStyle.Fill },
-                    new BuildingModelEditor { Dock = DockStyle.Fill },
                     textFileEditorControl
                                               };
         }
@@ -1090,7 +1089,7 @@ namespace PackFileManager
             }
             
             if (guid != null) {
-                targetInfo = DBTypeMap.Instance.GetVersionedInfo(guid, key, maxVersion);
+                targetInfo = DBTypeMap.Instance.GetVersionedInfo(key, maxVersion);
             }
             return targetInfo;
         }

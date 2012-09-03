@@ -10,7 +10,6 @@ namespace Filetypes {
 	 * A class parsing dbfiles from and to data streams in packed file format.
 	 */
     public class PackedFileDbCodec : Codec<DBFile> {
-		// public static readonly PackedFileDbCodec Instance = new PackedFileDbCodec();
         string typeName;
 		
 		public delegate void EntryLoaded(FieldInfo info, string value);
@@ -22,13 +21,6 @@ namespace Filetypes {
 		static UInt32 GUID_MARKER = BitConverter.ToUInt32 (new byte[] { 0xFD, 0xFE, 0xFC, 0xFF}, 0);
 		static UInt32 VERSION_MARKER = BitConverter.ToUInt32 (new byte[] { 0xFC, 0xFD, 0xFE, 0xFF}, 0);
 		#endregion
-
-        /*public static byte[] Encode(DBFile file) {
-            using (MemoryStream stream = new MemoryStream()) {
-                PackedFileDbCodec.Instance.Encode(stream, file);
-                return stream.ToArray();
-            }
-        }*/
 
         public static DBFile Decode(PackedFile file) {
             PackedFileDbCodec codec = FromFilename(file.FullPath);
@@ -54,8 +46,15 @@ namespace Filetypes {
 			BinaryReader reader = new BinaryReader (stream);
 			reader.BaseStream.Position = 0;
 			DBFileHeader header = readHeader (reader);
-            TypeInfo realInfo = DBTypeMap.Instance.GetVersionedInfo(header.GUID, typeName, header.Version);
-            return ReadFile(reader, header, realInfo);
+            foreach(TypeInfo realInfo in DBTypeMap.Instance.GetVersionedInfos(typeName, header.Version)) {
+                try {
+                    DBFile result = ReadFile(reader, header, realInfo);
+                    return result;
+                } catch (Exception e) {
+                    Console.WriteLine(e);
+                } 
+            }
+            throw new DBFileNotSupportedException(string.Format("No applicable type definition found"));
 		}
         public DBFile ReadFile(BinaryReader reader, DBFileHeader header, TypeInfo info) {
             reader.BaseStream.Position = header.Length;
@@ -70,6 +69,13 @@ namespace Filetypes {
             }
             if (file.Entries.Count != header.EntryCount) {
                 throw new DBFileNotSupportedException (string.Format ("Expected {0} entries, got {1}", header.EntryCount, file.Entries.Count));
+            }
+            // auto-adjust header guid
+            if (!info.ApplicableGuids.Contains(header.GUID)) {
+#if DEBUG
+                Console.WriteLine("adjusting guid from {0} to {1}", header.GUID, info.ApplicableGuids[0]);
+#endif
+                header.GUID = info.ApplicableGuids[0];
             }
             return file;
         }
@@ -243,11 +249,9 @@ namespace Filetypes {
 			// another tool might have saved tabs and quotes around this 
 			// (at least open office does)
 			string typeInfoName = reader.ReadLine ().Replace ("\t", "").Trim (QUOTES);
-            string guid = "";
             string[] split = typeInfoName.Split(GUID_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
             if (split.Length == 2) {
                 typeInfoName = split[0];
-                guid = split[1];
             }
 			string versionStr = reader.ReadLine ().Replace ("\t", "").Trim (QUOTES);
 			int version;
@@ -262,31 +266,43 @@ namespace Filetypes {
 				version = int.Parse (versionStr);
 				break;
 			}
-			TypeInfo info = DBTypeMap.Instance.GetVersionedInfo(guid, typeInfoName, version);
-			// ignore header line (type names)
-			reader.ReadLine ();
-			List<List<FieldInstance>> entries = new List<List<FieldInstance>> ();
-			string line;
-			while (!reader.EndOfStream) {
-				line = reader.ReadLine ();
-				string[] strArray;
-				try {
-					strArray = line.Split (TABS, StringSplitOptions.None);
-					List<FieldInstance> item = new List<FieldInstance> ();
-					for (int i = 0; i < strArray.Length; i++) {
-						FieldInstance field = info.Fields [i].CreateInstance();
-						string fieldValue = CsvUtil.Unformat (strArray [i]);
-                        field.Value = fieldValue;
-						item.Add (field);
-					}
-					entries.Add (item);
-				} catch {
-					// Console.WriteLine (x);
-				}
-			}
-			DBFileHeader header = new DBFileHeader ("", version, (uint)entries.Count, version != 0);
-			DBFile file = new DBFile (header, info);
-			file.Entries.AddRange (entries);
+   
+            DBFile file = null;
+            long parseStart = reader.BaseStream.Position;
+            
+            bool parseSuccessful = false;
+            foreach(TypeInfo info in DBTypeMap.Instance.GetVersionedInfos(typeInfoName, version)) {
+                reader.BaseStream.Seek(parseStart, SeekOrigin.Begin);
+                string line = reader.ReadLine ();
+                string[] strArray = line.Split (TABS, StringSplitOptions.None);
+                // verify we have matching amount of fields
+                if (strArray.Length != info.Fields.Count) {
+                    continue;
+                }
+    			List<List<FieldInstance>> entries = new List<List<FieldInstance>> ();
+    			while (!reader.EndOfStream) {
+    				line = reader.ReadLine ();
+    				try {
+    					strArray = line.Split (TABS, StringSplitOptions.None);
+    					List<FieldInstance> item = new List<FieldInstance> ();
+    					for (int i = 0; i < strArray.Length; i++) {
+    						FieldInstance field = info.Fields [i].CreateInstance();
+    						string fieldValue = CsvUtil.Unformat (strArray [i]);
+                            field.Value = fieldValue;
+    						item.Add (field);
+    					}
+    					entries.Add (item);
+    				} catch {
+    					// Console.WriteLine (x);
+    				}
+    			}
+                if (parseSuccessful) {
+                    DBFileHeader header = new DBFileHeader (info.ApplicableGuids[0], version, (uint)entries.Count, version != 0);
+                    file = new DBFile (header, info);
+                    file.Entries.AddRange (entries);
+                    break;
+                }
+            }
 			return file;
 		}
 
