@@ -53,12 +53,12 @@ namespace Filetypes {
             foreach(TypeInfo realInfo in DBTypeMap.Instance.GetVersionedInfos(typeName, header.Version)) {
                 try {
 #if DEBUG
-                    Console.WriteLine("Parsing with info {0}", string.Join(",", realInfo.Fields));
+                    //Console.WriteLine("Parsing with info {0}", string.Join(",", realInfo.Fields));
 #endif  
                     DBFile result = ReadFile(reader, header, realInfo);
                     return result;
                 } catch (Exception e) {
-                    Console.WriteLine(e);
+                    // Console.WriteLine(e);
                 } 
             }
             throw new DBFileNotSupportedException(string.Format("No applicable type definition found"));

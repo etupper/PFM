@@ -35,7 +35,9 @@ namespace PackFileTest {
             // -tg: test game
             "-tg",
             // -x : don't wait for user input after finishing
-            "-x"
+            "-x",
+            // -cr: check references
+            "-cr"
         };
 #pragma warning restore 414
 
@@ -92,6 +94,26 @@ namespace PackFileTest {
                 } else if (dir.Equals("-v")) {
                     Console.WriteLine("Running in verbose mode");
                     verbose = true;
+                } else if (dir.Equals("-cr")) {
+                    List<ReferenceChecker> checkers = ReferenceChecker.CreateCheckers();
+                    foreach (string packPath in Directory.GetFiles(Game.ETW.DataDirectory, "*pack")) {
+                        Console.WriteLine("adding {0}", packPath);
+                        PackFile packFile = new PackFileCodec().Open(packPath);
+                        foreach (ReferenceChecker checker in checkers) {
+                            checker.PackFiles.Add(packFile);
+                        }
+                    }
+                    Console.WriteLine();
+                    Console.Out.Flush();
+                    foreach (ReferenceChecker checker in checkers) {
+                        checker.CheckReferences();
+                        Dictionary<PackFile, CheckResult> result = checker.FailedResults;
+                        foreach (PackFile pack in result.Keys) {
+                            CheckResult r = result[pack];
+                            Console.WriteLine("pack {0} failed reference from {1} to {2}",
+                                pack.Filepath, r.ReferencingString, r.ReferencedString, string.Join(",", r.UnfulfilledReferences));
+                        }
+                    }
                 } else if (dir.Equals("-x")) {
                     waitForKey = false;
                 } else if (dir.StartsWith("-i")) {

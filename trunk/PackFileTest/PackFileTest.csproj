@@ -79,6 +79,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="PackTest.cs" />
     <Compile Include="DBFileTest.cs" />
+    <Compile Include="ReferenceChecker.cs" />
     <Compile Include="UnitVariantTest.cs" />
     <Compile Include="GroupformationTest.cs" />
     <Compile Include="ModelsTest.cs" />
