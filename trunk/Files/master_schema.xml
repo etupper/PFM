@@ -51,7 +51,7 @@
   </table>
   <table name='advice_levels_tables'>
     <field name='Advice ID' type='string' />
-    <field fkey='advice_threads_tables.Thread IDRef' name='Advice Thread' type='string' />
+    <field fkey='advice_threads_tables.Thread ID' name='Advice Thread' type='string' />
     <field name='Advice Thread Level' type='int' />
     <field name='Points Needed' type='int' />
     <field name='Game Area' type='string' />
@@ -211,7 +211,7 @@
     <field fkey='cultures_subcultures_tables.Subculture ID' name='Subculture' type='string' pk='true' />
   </table>
   <table name='ancillary_info_tables'>
-    <field fkey='ancillaries_tables.ID' name='Ancillary ID' type='string' />
+    <field name='Ancillary ID' type='string' />
   </table>
   <table name='ancillary_to_ability_effects_tables'>
     <field name='Unused' type='string' />
@@ -1664,7 +1664,7 @@
     <field fkey='resources_tables.Resource ID' name='Resource Name' type='string' />
   </table>
   <table name='effect_bonus_value_shot_type_junctions_tables'>
-    <field fkey='effects.Effect ID' name='Effect' type='string' pk='true' />
+    <field name='Effect' type='string' pk='true' />
     <field name='Bonus Value' type='string' />
     <field fkey='projectile_shot_type_enum_tables.Projectile Shot' name='Shot Type' type='string' />
   </table>
