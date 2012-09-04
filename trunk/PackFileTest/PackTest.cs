@@ -74,9 +74,6 @@ namespace PackFileTest {
                     DBTypeMap.Instance.initializeFromFile("master_schema.xml");
                     List<Thread> threads = new List<Thread>();
                     foreach (Game game in Game.GetGames()) {
-#if DEBUG
-                            //if (!game.Id.Equals("ETW")) continue;
-#endif
                         if (game.IsInstalled) {
                             string datapath = Path.Combine(game.GameDirectory, "data");
                             string outfile = string.Format("schema_{0}.xml", game.Id);

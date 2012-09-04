@@ -56,19 +56,16 @@ namespace PackFileManager {
                     infos.ForEach(info => { if (!allUsed.Contains(info)) { allUsed.Add(info); } });
                 }
                 
-                SortedDictionary<string, List<FieldInfo>> masterTypes = DBTypeMap.Instance.TypeMap;
-                SortedDictionary<GuidTypeInfo, List<FieldInfo>> masterGuids = DBTypeMap.Instance.GuidMap;
-
                 foreach(GuidTypeInfo info in allUsed) {
                     if (!string.IsNullOrEmpty(info.Guid)) {
-                        AddSafe(info, guidMap, masterGuids);
+                        AddSafe(info, guidMap);
                         continue;
                     }
                 }
                 foreach (string type in minVersion.Keys) {
                     List<FieldInfo> add = new List<FieldInfo>();
                     List<FieldInfo> addFrom;
-                    if (masterTypes.TryGetValue(type, out addFrom)) {
+                    if (DBTypeMap.Instance.TypeMap.TryGetValue(type, out addFrom)) {
 #if DEBUG
                         if (type.Equals("agents_tables")) {
                             Console.WriteLine();
@@ -76,19 +73,8 @@ namespace PackFileManager {
 #endif
                         int min = minVersion[type];
                         int max = maxVersion[type];
-#if DEBUG
-                        foreach(FieldInfo field in addFrom) {
-                            if (field.StartVersion <= max && field.LastVersion >= min) {
-                                add.Add(field);
-                            }
-                        }
-#else
-                        addFrom.ForEach(field => {
-                            if (field.StartVersion <= max && field.LastVersion >= min) {
-                                add.Add(field);
-                            }
-                        });
-#endif
+                        
+                        add = FilterList(addFrom, min, max);
                         typeMap[type] = add;
                     }
                 }
@@ -102,11 +88,33 @@ namespace PackFileManager {
             }
         }
 
-        private void AddSafe<T>(T key, SortedDictionary<T, List<FieldInfo>> addTo, SortedDictionary<T, List<FieldInfo>> addFrom) {
+        private void AddSafe(GuidTypeInfo key, SortedDictionary<GuidTypeInfo, List<FieldInfo>> addTo) {
             List<FieldInfo> addValue;
-            if (addFrom.TryGetValue(key, out addValue) && !addTo.ContainsKey(key)) {
+            if (DBTypeMap.Instance.GuidMap.TryGetValue(key, out addValue) && !addTo.ContainsKey(key)) {
                 addTo[key] = addValue;
+            } else if (DBTypeMap.Instance.TypeMap.ContainsKey(key.TypeName)) {
+                addTo[key] = FilterList(DBTypeMap.Instance.TypeMap[key.TypeName], key.Version, key.Version);
+                // also add to guid map in DBTypeMap
+                DBTypeMap.Instance.GuidMap[key] = addTo[key];
             }
+        }
+        
+        private List<FieldInfo> FilterList(List<FieldInfo> infos, int min, int max) {
+            List<FieldInfo> result = new List<FieldInfo>();
+#if DEBUG
+            foreach(FieldInfo field in infos) {
+                if (field.StartVersion <= max && field.LastVersion >= min) {
+                    result.Add(field);
+                }
+            }
+#else
+        infos.ForEach(field => {
+                if (field.StartVersion <= max && field.LastVersion >= min) {
+                    result.Add(field);
+                }
+            });
+#endif
+            return result;
         }
 
         private List<GuidTypeInfo> GetUsedTypes(PackFile pack) {
