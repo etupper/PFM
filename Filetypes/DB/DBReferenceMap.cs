@@ -88,7 +88,7 @@ namespace Filetypes {
             return result;
         }
 
-        void FillFromPacked(SortedSet<string> result, PackedFile packed, string fieldName) {
+        public static void FillFromPacked(SortedSet<string> result, PackedFile packed, string fieldName) {
             DBFile dbFile = PackedFileDbCodec.Decode(packed);
             int index = -1;
 //            List<PackedFile> loadedFrom = new List<PackedFile>();
