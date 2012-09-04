@@ -113,7 +113,9 @@ namespace Filetypes {
                     importer.Import();
                 }
                 foreach (string key in importer.Descriptions.Keys) {
-                    typeMap.Add(key, importer.Descriptions[key]);
+                    if (!typeMap.ContainsKey(key)) {
+                        typeMap.Add(key, importer.Descriptions[key]);
+                    }
                 }
                 foreach (GuidTypeInfo key in importer.GuidToDescriptions.Keys) {
                     guidMap.Add(key, importer.GuidToDescriptions[key]);
@@ -259,6 +261,7 @@ namespace Filetypes {
             if (result) {
                 if (string.IsNullOrEmpty(Guid)) {
                     result = (obj as GuidTypeInfo).TypeName.Equals(TypeName);
+                    result &= (obj as GuidTypeInfo).Version.Equals(Version);
                 } else {
                     result = (obj as GuidTypeInfo).Guid.Equals(Guid);
                 }

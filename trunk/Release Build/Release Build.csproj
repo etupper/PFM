@@ -59,7 +59,7 @@ del "*vshost"*
 del "Pack File Manager.zip"
 
 copy "$(SolutionDir)\Files\master_schema.xml" "$(TargetDir)"
-start /wait PackFileTest.exe -pr -x
+start /wait PackFileTest.exe -pr -w -x
 copy "$(SolutionDir)\Files\schema_models.xml" "$(TargetDir)"
 
 del "PackFileTest.exe"

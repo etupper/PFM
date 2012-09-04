@@ -56,6 +56,9 @@ namespace Filetypes {
             bool found = false;
             foreach (PackedFile packed in packedFiles) {
                 string currentTable = DBFile.typename(packed.FullPath);
+                if (!packed.FullPath.StartsWith("db")) {
+                    continue;
+                }
                 if (currentTable.Equals(tableName)) {
                     found = true;
                     if (result == null) {
