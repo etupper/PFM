@@ -195,11 +195,9 @@ namespace Filetypes {
                     found = true;
                 }
             }
-            if (!found) {
-                List<FieldInfo> list = null;
-                if (typeMap.TryGetValue(type, out list)) {
-                    list.ForEach(delegate(FieldInfo d) { result = Math.Max(d.StartVersion, result); });
-                }
+            List<FieldInfo> list = null;
+            if (typeMap.TryGetValue(type, out list)) {
+                list.ForEach(delegate(FieldInfo d) { result = Math.Max(d.StartVersion, result); });
             }
             return result;
         }

@@ -1052,7 +1052,7 @@ namespace PackFileManager
                         packedFile.Data = codec.Encode(updatedFile);
 
                         if (dbFileEditorControl.CurrentPackedFile == packedFile) {
-                            dbFileEditorControl.Open(packedFile);
+                            dbFileEditorControl.Open();
                         }
                     }
                 }
