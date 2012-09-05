@@ -73,47 +73,12 @@ namespace PackFileTest {
                     continue;
                 }
                 if (dir.Equals("-pr")) {
-                    DBTypeMap.Instance.initializeFromFile("master_schema.xml");
-                    List<Thread> threads = new List<Thread>();
-                    foreach (Game game in Game.GetGames()) {
-                        if (game.IsInstalled) {
-                            string datapath = Path.Combine(game.GameDirectory, "data");
-                            string outfile = string.Format("schema_{0}.xml", game.Id);
-                            SchemaOptimizer optimizer = new SchemaOptimizer() {
-                                PackDirectory = datapath,
-                                SchemaFilename = outfile
-                            };
-                            ThreadStart start = new ThreadStart(optimizer.FilterExistingPacks);
-                            Thread worker = new Thread(start);
-                            threads.Add(worker);
-                            worker.Start();
-                            // Console.WriteLine("{0} entries removed for {1}", optimizer.RemovedEntries, game.Id);
-                        }
-                    }
-                    threads.ForEach(t => t.Join());
+                    PrepareRelease();
                 } else if (dir.Equals("-v")) {
                     Console.WriteLine("Running in verbose mode");
                     verbose = true;
                 } else if (dir.Equals("-cr")) {
-                    List<ReferenceChecker> checkers = ReferenceChecker.CreateCheckers();
-                    foreach (string packPath in Directory.GetFiles(Game.ETW.DataDirectory, "*pack")) {
-                        Console.WriteLine("adding {0}", packPath);
-                        PackFile packFile = new PackFileCodec().Open(packPath);
-                        foreach (ReferenceChecker checker in checkers) {
-                            checker.PackFiles.Add(packFile);
-                        }
-                    }
-                    Console.WriteLine();
-                    Console.Out.Flush();
-                    foreach (ReferenceChecker checker in checkers) {
-                        checker.CheckReferences();
-                        Dictionary<PackFile, CheckResult> result = checker.FailedResults;
-                        foreach (PackFile pack in result.Keys) {
-                            CheckResult r = result[pack];
-                            Console.WriteLine("pack {0} failed reference from {1} to {2}",
-                                pack.Filepath, r.ReferencingString, r.ReferencedString, string.Join(",", r.UnfulfilledReferences));
-                        }
-                    }
+                    CheckReferences();
                 } else if (dir.Equals("-x")) {
                     waitForKey = false;
                 } else if (dir.StartsWith("-i")) {
@@ -128,12 +93,6 @@ namespace PackFileTest {
                 } else if (dir.Equals("-t")) {
                     Console.WriteLine("TSV export/import enabled");
                     testTsvExport = true;
-//                } else if (dir.Equals("-bm")) {
-//                    testFactories.Add(CreateBuildingModelTest);
-//                    Console.WriteLine("building models test enabled");
-//                } else if (dir.Equals("-nm")) {
-//                    testFactories.Add(CreateNavalModelTest);
-//                    Console.WriteLine("naval models test enabled");
                 } else if (dir.Equals("-db")) {
                     Console.WriteLine("Database Test enabled");
                     testFactories.Add(CreateDbTest);
@@ -142,7 +101,6 @@ namespace PackFileTest {
                     testFactories.Add(CreateUnitVariantTest);
                 } else if (dir.StartsWith("-gf")) {
                     Console.WriteLine("Group formations test enabled");
-                    // testGroupformations = true;
                     GroupformationTest test = new GroupformationTest();
                     test.testFile(dir.Split(" ".ToCharArray())[1].Trim());
                 } else if (dir.Equals("-w")) {
@@ -156,6 +114,12 @@ namespace PackFileTest {
                     Game game = Game.ById(gameName);
                     Console.WriteLine("Testing game {0}", gameName);
                     PackedFileTest.TestAllPacks(testFactories, Path.Combine(game.DataDirectory), verbose);
+//                } else if (dir.Equals("-bm")) {
+//                    testFactories.Add(CreateBuildingModelTest);
+//                    Console.WriteLine("building models test enabled");
+//                } else if (dir.Equals("-nm")) {
+//                    testFactories.Add(CreateNavalModelTest);
+//                    Console.WriteLine("naval models test enabled");
                 } else {
                     PackedFileTest.TestAllPacks(testFactories, dir, verbose);
                 }
@@ -167,6 +131,49 @@ namespace PackFileTest {
                 Console.WriteLine("Test run finished, press any key");
                 Console.ReadKey();
             }
+        }
+        
+        void CheckReferences() {
+            List<ReferenceChecker> checkers = ReferenceChecker.CreateCheckers();
+            foreach (string packPath in Directory.GetFiles(Game.ETW.DataDirectory, "*pack")) {
+                Console.WriteLine("adding {0}", packPath);
+                PackFile packFile = new PackFileCodec().Open(packPath);
+                foreach (ReferenceChecker checker in checkers) {
+                    checker.PackFiles.Add(packFile);
+                }
+            }
+            Console.WriteLine();
+            Console.Out.Flush();
+            foreach (ReferenceChecker checker in checkers) {
+                checker.CheckReferences();
+                Dictionary<PackFile, CheckResult> result = checker.FailedResults;
+                foreach (PackFile pack in result.Keys) {
+                    CheckResult r = result[pack];
+                    Console.WriteLine("pack {0} failed reference from {1} to {2}",
+                        pack.Filepath, r.ReferencingString, r.ReferencedString, string.Join(",", r.UnfulfilledReferences));
+                }
+            }
+        }
+
+        void PrepareRelease() {
+            DBTypeMap.Instance.initializeFromFile("master_schema.xml");
+            List<Thread> threads = new List<Thread>();
+            foreach (Game game in Game.GetGames()) {
+                if (game.IsInstalled) {
+                    string datapath = Path.Combine(game.GameDirectory, "data");
+                    string outfile = string.Format("schema_{0}.xml", game.Id);
+                    SchemaOptimizer optimizer = new SchemaOptimizer() {
+                        PackDirectory = datapath,
+                        SchemaFilename = outfile
+                    };
+                    ThreadStart start = new ThreadStart(optimizer.FilterExistingPacks);
+                    Thread worker = new Thread(start);
+                    threads.Add(worker);
+                    worker.Start();
+                    // Console.WriteLine("{0} entries removed for {1}", optimizer.RemovedEntries, game.Id);
+                }
+            }
+            threads.ForEach(t => t.Join());
         }
 
         #region Test Factory Methods
