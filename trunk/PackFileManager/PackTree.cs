@@ -17,17 +17,18 @@ namespace PackFileManager {
             get { return added; }
             set {
                 added = value;
-                changeColor(Tag as PackEntry);
+                changeColor();
             }
         }
         public PackEntryNode(PackEntry entry)
             : base(entry.Name) {
             Tag = entry;
-            entry.ModifiedEvent += changeColor;
-            entry.RenameEvent += (e, name) => { renamed = true; changeColor(e); };
-            changeColor(entry);
+            entry.ModifiedEvent += delegate(PackEntry p) { changeColor(); };
+            entry.RenameEvent += (e, name) => { renamed = true; changeColor(); };
+            changeColor();
         }
-        public virtual void changeColor(PackEntry e) {
+        public virtual void changeColor() {
+            PackEntry e = Tag as PackEntry;
             ForeColor = Color.Black;
             if (added) {
                 ForeColor = Color.Green;
@@ -75,14 +76,14 @@ namespace PackFileManager {
         /*
          * Overridden to adjust to color depending on we have DB type information.
          */
-        public override void changeColor(PackEntry file) {
-            base.changeColor(file);
+        public override void changeColor() {
+            base.changeColor();
 
-            PackedFile packedFile = file as PackedFile;
-            string text = Path.GetFileName(file.Name);
+            PackedFile packedFile = Tag as PackedFile;
+            string text = Path.GetFileName(packedFile.Name);
             if (packedFile != null && packedFile.FullPath.StartsWith("db")) {
                 if (packedFile.Data.Length == 0) {
-                    text = string.Format("{0} (empty)", file.Name);
+                    text = string.Format("{0} (empty)", packedFile.Name);
                 } else {
                     string mouseover;
                     if (!PackedFileDbCodec.CanDecode(packedFile, out mouseover)) {
@@ -132,7 +133,7 @@ namespace PackFileManager {
             foreach (PackedFile file in nodeDir.Files) {
                 PackEntryNode node = new PackedFileNode(file);
                 Nodes.Add(node);
-                node.changeColor(file);
+                node.changeColor();
             }
             nodeDir.DirectoryAdded += insertNew;
             nodeDir.FileAdded += insertNew;
@@ -166,12 +167,12 @@ namespace PackFileManager {
                 }
             }
             Nodes.Insert(index, node);
-            node.changeColor(entry);
+            node.changeColor();
 
-            changeColor(Tag as PackEntry);
+            changeColor();
             PackEntryNode parent = Parent as PackEntryNode;
             while (parent != null) {
-                parent.changeColor(parent.Tag as PackEntry);
+                parent.changeColor();
                 parent = parent.Parent as PackEntryNode;
             }
 

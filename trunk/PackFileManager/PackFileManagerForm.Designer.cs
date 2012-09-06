@@ -372,13 +372,13 @@ namespace PackFileManager
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.modsToolStripMenuItem,
             this.filesMenu,
             this.editToolStripMenuItem,
-            this.updateToolStripMenuItem,
             this.gameToolStripMenuItem,
             this.extrasToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.updateToolStripMenuItem,
+            this.helpToolStripMenuItem
+            });
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(906, 24);
@@ -390,6 +390,7 @@ namespace PackFileManager
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
             this.openToolStripMenuItem,
+            this.modsToolStripMenuItem,
             this.openCAToolStripMenuItem,
             this.toolStripSeparator1,
             this.saveToolStripMenuItem,
@@ -565,13 +566,14 @@ namespace PackFileManager
             // modsToolStripMenuItem
             // 
             this.modsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripSeparator13,
             this.newModMenuItem,
+            this.deleteCurrentToolStripMenuItem,
             this.toolStripSeparator11,
             this.editModMenuItem,
             this.installModMenuItem,
-            this.uninstallModMenuItem,
-            this.deleteCurrentToolStripMenuItem,
-            this.toolStripSeparator13});
+            this.uninstallModMenuItem
+            });
             this.modsToolStripMenuItem.Name = "modsToolStripMenuItem";
             this.modsToolStripMenuItem.Size = new System.Drawing.Size(69, 20);
             this.modsToolStripMenuItem.Text = "My Mods";
