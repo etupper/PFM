@@ -120,6 +120,9 @@ namespace EsfLibrary {
             }
             return result;
         }
+        public override int GetHashCode() {
+            return 2*Name.GetHashCode() + 3*AllNodes.GetHashCode();
+        }
         
         public override string ToString() {
             return string.Format("{0} {1}", TypeCode, Name);
@@ -181,12 +184,6 @@ namespace EsfLibrary {
         }
         public override string ToString() {
             return Name;
-        }
-        public override bool Equals(object obj) {
-            bool result = false;
-            RecordNode node = obj as RecordNode;
-            result = (node != null) && base.Equals(obj);
-            return result;
         }
 
         public override EsfNode CreateCopy() {

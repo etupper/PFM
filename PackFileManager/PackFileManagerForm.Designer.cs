@@ -82,7 +82,6 @@ namespace PackFileManager
             this.installModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uninstallModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.gameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
             this.filesMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -377,6 +376,7 @@ namespace PackFileManager
             this.filesMenu,
             this.editToolStripMenuItem,
             this.updateToolStripMenuItem,
+            this.gameToolStripMenuItem,
             this.extrasToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
@@ -571,8 +571,6 @@ namespace PackFileManager
             this.installModMenuItem,
             this.uninstallModMenuItem,
             this.deleteCurrentToolStripMenuItem,
-            this.toolStripSeparator12,
-            this.gameToolStripMenuItem,
             this.toolStripSeparator13});
             this.modsToolStripMenuItem.Name = "modsToolStripMenuItem";
             this.modsToolStripMenuItem.Size = new System.Drawing.Size(69, 20);
@@ -617,11 +615,6 @@ namespace PackFileManager
             this.deleteCurrentToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.deleteCurrentToolStripMenuItem.Text = "Delete Current";
             this.deleteCurrentToolStripMenuItem.Click += new System.EventHandler(this.deleteCurrentToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator12
-            // 
-            this.toolStripSeparator12.Name = "toolStripSeparator12";
-            this.toolStripSeparator12.Size = new System.Drawing.Size(160, 6);
             // 
             // gameToolStripMenuItem
             // 
@@ -1157,7 +1150,6 @@ namespace PackFileManager
         private System.Windows.Forms.ToolStripMenuItem installModMenuItem;
         private System.Windows.Forms.ToolStripMenuItem uninstallModMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteCurrentToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
         private System.Windows.Forms.ToolStripMenuItem extractTSVFileExtensionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem csvToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tsvToolStripMenuItem;

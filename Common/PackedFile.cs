@@ -272,9 +272,9 @@ namespace Common {
          * If a file with the given name already exists and is deleted,
          * it is replaced with the given one.
          * If a file with the given name already exists and is not deleted,
-         * an exception is thrown.
+         * it will not be replaced unless the "overwrite" parameter is set to true.
          */
-        public void Add(PackedFile file) {
+        public void Add(PackedFile file, bool overwrite = false) {
             if (containedFiles.Contains (file)) {
                 PackedFile contained = null;
                 foreach (PackedFile f in containedFiles) {
@@ -283,15 +283,13 @@ namespace Common {
                         break;
                     }
                 }
-                if (contained.Deleted) {
+                if (contained.Deleted || overwrite) {
                     containedFiles.Remove (contained);
                     if (FileRemoved != null) {
                         FileRemoved (contained);
                     }
                 } else {
                     // don't add the file
-                    // probably best to add a notification event parameter
-                    // to provide feedback about this
                     return;
                 }
             }
@@ -315,7 +313,7 @@ namespace Common {
         /*
          * Adds the given file to the given path, relative to this directory.
          */
-        public void Add(string relativePath, PackedFile file) {
+        public void Add(string relativePath, PackedFile file, bool overwrite = false) {
             char[] splitAt = { Path.DirectorySeparatorChar };
             string baseDir = Path.GetDirectoryName(relativePath);
             string[] dirs = baseDir != null ? baseDir.Split(splitAt, StringSplitOptions.RemoveEmptyEntries) : new string[0];
@@ -326,7 +324,7 @@ namespace Common {
                 }
             }
             file.Parent = current;
-            current.Add(file);
+            current.Add(file, overwrite);
         }
         #endregion
     }

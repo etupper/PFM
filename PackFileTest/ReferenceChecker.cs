@@ -142,7 +142,7 @@ namespace PackFileTest {
             get {
                 SortedSet<string> values = new SortedSet<string>();
                 try {
-                    DBFile dbFile = PackedFileDbCodec.Decode(ReferencedTable);
+                    // DBFile dbFile = PackedFileDbCodec.Decode(ReferencedTable);
                     DBReferenceMap.FillFromPacked(values, ReferencedTable, ReferencedFieldName);
                 } catch {
                     // Console.WriteLine("could not determine value from {0}", ReferencedTable.FullPath);

@@ -120,6 +120,7 @@ namespace PackFileManager
             GameManager.Instance.GameChanged += EnableInstallUninstall;
             // reload when game has changed (rebuild tree etc)
             GameManager.Instance.GameChanged += OpenCurrentModPack;
+            GameManager.Instance.GameChanged += QueryModGameChange;
 
             // fill game list
             foreach (Game g in Game.GetGames()) {
@@ -150,9 +151,20 @@ namespace PackFileManager
             csvToolStripMenuItem.Checked = "csv".Equals(Settings.Default.TsvExtension);
             tsvToolStripMenuItem.Checked = "tsv".Equals(Settings.Default.TsvExtension);
         }
+        
+        private void QueryModGameChange() {
+            string currentGameId = GameManager.Instance.CurrentGame.Id;
+            string modGameId = ModManager.Instance.CurrentModSet ? ModManager.Instance.CurrentMod.Game.Id : "";
+            if (!currentGameId.Equals(modGameId)) {
+                string message = string.Format("Note that {0}'s database structure may not be compatible " +
+                                               "with the currently opened pack's.", 
+                                               currentGameId);
+                MessageBox.Show(message);
+            }
+        }
 
         private void EnableInstallUninstall() {
-            bool enabled = !string.IsNullOrEmpty(Settings.Default.CurrentMod);
+            bool enabled = ModManager.Instance.CurrentModSet;
             enabled &= GameManager.Instance.CurrentGame.IsInstalled;
             installModMenuItem.Enabled = uninstallModMenuItem.Enabled = enabled;
         }
@@ -472,10 +484,10 @@ namespace PackFileManager
             string packFileName = ModManager.Instance.AddMod();
             if (packFileName != null) {
                 // add mod entry to menu
-                if (Settings.Default.CurrentMod != "") {
+                if (ModManager.Instance.CurrentModSet) {
                     if (!oldMods.Contains(Settings.Default.CurrentMod)) {
-                        modsToolStripMenuItem.DropDownItems.Add(new ModMenuItem(Settings.Default.CurrentMod, 
-                                                                                Settings.Default.CurrentMod));
+                        modsToolStripMenuItem.DropDownItems.Add(new ModMenuItem(ModManager.Instance.CurrentMod.Name, 
+                                                                                ModManager.Instance.CurrentMod.Name));
                     }
                 }
                 if (File.Exists(packFileName)) {
@@ -504,7 +516,7 @@ namespace PackFileManager
                                 "Otherwise, the last saved version will be installed.", "Save?", MessageBoxButtons.YesNoCancel);
 
                 if (result == DialogResult.Yes) {
-                    string modPath =  (ModManager.Instance.CurrentMod != null) 
+                    string modPath =  (ModManager.Instance.CurrentModSet) 
                         ? ModManager.Instance.CurrentMod.FullModPath : CurrentPackFile.Filepath;
                     SaveAsFile(modPath);
                 } else if (result == DialogResult.Cancel) {
@@ -528,8 +540,8 @@ namespace PackFileManager
         }
 
         private void deleteCurrentToolStripMenuItem_Click(object sender, EventArgs e) {
-            string current = Settings.Default.CurrentMod;
-            if (current != "") {
+            if (ModManager.Instance.CurrentModSet) {
+                string current = ModManager.Instance.CurrentMod.Name;
                 ModManager.Instance.DeleteCurrentMod();
                 foreach (ToolStripItem item in modsToolStripMenuItem.DropDownItems) {
                     if (item.Text == current) {
@@ -542,7 +554,7 @@ namespace PackFileManager
         
         private void OpenCurrentModPack() {
             try {
-                if (ModManager.Instance.CurrentMod != null) {
+                if (ModManager.Instance.CurrentModSet) {
                     string modPath = ModManager.Instance.CurrentMod.FullModPath;
                     if (File.Exists(modPath)) {
                         OpenExistingPackFile(modPath);
@@ -582,7 +594,7 @@ namespace PackFileManager
         }
 
         private void addFileToolStripMenuItem_Click(object sender, EventArgs e) {
-            VirtualDirectory addToBase = (Settings.Default.CurrentMod != "")
+            VirtualDirectory addToBase = (ModManager.Instance.CurrentModSet)
                 ? currentPackFile.Root : AddTo;
             if (addToBase == null) {
                 return;
@@ -595,7 +607,7 @@ namespace PackFileManager
                 Settings.Default.ImportExportDirectory = Path.GetDirectoryName(addReplaceOpenFileDialog.FileName);
                 try {
                     foreach (string file in addReplaceOpenFileDialog.FileNames) {
-                        string addBase = (Settings.Default.CurrentMod != "") 
+                        string addBase = (ModManager.Instance.CurrentModSet) 
                             ? GetPathRelativeToMod(file) : Path.GetFileName(file);
                         addToBase.Add(addBase, new PackedFile(file));
                     }
@@ -645,7 +657,7 @@ namespace PackFileManager
                 try {
                     string basePath = addDirectoryFolderBrowserDialog.SelectedPath;
                     VirtualDirectory addToBase = AddTo;
-                    if (Settings.Default.CurrentMod != "" && basePath.StartsWith(ModManager.Instance.CurrentModDirectory)) {
+                    if (ModManager.Instance.CurrentModSet && basePath.StartsWith(ModManager.Instance.CurrentModDirectory)) {
                         string relativePath = GetPathRelativeToMod(basePath);
                         addToBase = CurrentPackFile.Root;
                         foreach (string pathElement in relativePath.Split(Path.DirectorySeparatorChar)) {
@@ -703,7 +715,7 @@ namespace PackFileManager
         }
 
         private void dBFileFromTSVToolStripMenuItem_Click(object sender, EventArgs e) {
-            VirtualDirectory addToBase = (Settings.Default.CurrentMod != "")
+            VirtualDirectory addToBase = (ModManager.Instance.CurrentModSet)
                 ? currentPackFile.Root : AddTo;
             if (addToBase != null) {
                 OpenFileDialog openDBFileDialog = new OpenFileDialog {
@@ -729,7 +741,7 @@ namespace PackFileManager
                                 DBFile file = new TextDbCodec().Decode(filestream);
                                 data = PackedFileDbCodec.FromFilename(openDBFileDialog.FileName).Encode(file);
                             }
-                            string addBase = (Settings.Default.CurrentMod != "")
+                            string addBase = (ModManager.Instance.CurrentModSet)
                                 ? GetPathRelativeToMod(openDBFileDialog.FileName) : Path.GetFileName(openDBFileDialog.FileName);
 
                             addToBase.Add(addBase, new PackedFile { Data = data, Name = filename });

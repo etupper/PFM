@@ -11,10 +11,10 @@ namespace EsfLibrary {
             Codec = codec;
             Convert = reader;
         }
+
         public ValueReader<T> ItemReader {
             get; set;
         }
-  
         public T[] Values {
             get {
                 throw new InvalidOperationException("Cannot show items for " + TypeCode);
@@ -24,6 +24,46 @@ namespace EsfLibrary {
         }
         public Converter<T> Convert { get; set; }
         
+        public override EsfNode CreateCopy() {
+            return new EsfArrayNode<T>(Codec, Convert) {
+                TypeCode = this.TypeCode,
+                Value = this.Value
+            };
+        }
+        public override void ToXml(TextWriter writer, string indent) {
+            writer.WriteLine("{2}<{0} Length=\"{1}\"/>", TypeCode, Value.Length, indent);
+        }        
+
+        #region ICodecNode Implementation
+        public void Decode(BinaryReader reader, EsfType type) {
+            int size = Codec.ReadSize(reader);
+            Value = reader.ReadBytes(size);
+        }
+        public void Encode(BinaryWriter writer) {
+            writer.Write ((byte) TypeCode);
+            Codec.WriteOffset(writer, Value.Length);
+            writer.Write(Value);
+        }
+        #endregion
+
+        #region Framework overrides
+        public override bool Equals(object o) {
+            EsfArrayNode<T> otherNode = o as EsfArrayNode<T>;
+            bool result = otherNode != null;
+            result &= ArraysEqual(Value, otherNode.Value);
+            return result;
+        }
+        public override int GetHashCode() {
+            return Value.GetHashCode();
+        }
+        public override string ToString() {
+            string result = Value.ToString();
+            result = string.Format("{0}{1}]", result.Substring(0, result.Length-1), Value.Length);
+            return result;
+        }
+        #endregion
+
+        #region Utility Functions
         static bool ArraysEqual<O> (O[] array1, O[] array2) {
             bool result = array1.Length == array2.Length;
             if (result) {
@@ -38,13 +78,6 @@ namespace EsfLibrary {
             }
             return result;
         }
-        public override bool Equals(object o) {
-            EsfArrayNode<T> otherNode = o as EsfArrayNode<T>;
-            bool result = otherNode != null;
-            result &= ArraysEqual(Value, otherNode.Value);
-            return result;
-        }
-        
         static O[] ParseArray<O> (string value, Converter<O> convert) {
             string[] itemStrings = value.Split(' ');
             List<O> result = new List<O>(itemStrings.Length);
@@ -53,32 +86,7 @@ namespace EsfLibrary {
             }
             return result.ToArray();
         }
-        public override string ToString() {
-            string result = Value.ToString();
-            result = string.Format("{0}{1}]", result.Substring(0, result.Length-1), Value.Length);
-            return result;
-        }
-
-        public override void ToXml(TextWriter writer, string indent) {
-            writer.WriteLine("{2}<{0} Length=\"{1}\"/>", TypeCode, Value.Length, indent);
-        }
-        
-        public void Decode(BinaryReader reader, EsfType type) {
-            int size = Codec.ReadSize(reader);
-            Value = reader.ReadBytes(size);
-        }
-        public void Encode(BinaryWriter writer) {
-            writer.Write ((byte) TypeCode);
-            Codec.WriteOffset(writer, Value.Length);
-            writer.Write(Value);
-        }
-
-        public override EsfNode CreateCopy() {
-            return new EsfArrayNode<T>(Codec, Convert) {
-                TypeCode = this.TypeCode,
-                Value = this.Value
-            };
-        }
+        #endregion
     }
     #region Typed Array Nodes
     public class BoolArrayNode : EsfArrayNode<bool> {
