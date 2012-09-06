@@ -169,7 +169,6 @@ namespace PackFileManager
             this.contextExtractMenuItem});
             this.packActionMenuStrip.Name = "packActionMenuStrip";
             this.packActionMenuStrip.Size = new System.Drawing.Size(132, 120);
-            this.packActionMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.packActionMenuStrip_Opening);
             // 
             // contextAddMenuItem
             // 
@@ -654,6 +653,7 @@ namespace PackFileManager
             this.deleteFileToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.deleteFileToolStripMenuItem.Text = "Delete";
             this.deleteFileToolStripMenuItem.Click += new System.EventHandler(this.deleteFileToolStripMenuItem_Click);
+            this.deleteFileToolStripMenuItem.Enabled = false;
             // 
             // replaceFileToolStripMenuItem
             // 
@@ -1032,12 +1032,10 @@ namespace PackFileManager
             this.MainMenuStrip = this.menuStrip;
             this.Name = "PackFileManagerForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Pack File Manager 10.0.40219.1 BETA (Total War - Shogun 2)";
+            this.Text = "Pack File Manager";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Activated += new System.EventHandler(this.PackFileManagerForm_Activated);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PackFileManagerForm_FormClosing);
-            this.Load += new System.EventHandler(this.PackFileManagerForm_Load);
-            this.Shown += new System.EventHandler(this.PackFileManagerForm_Shown);
             this.packActionMenuStrip.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             //((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();

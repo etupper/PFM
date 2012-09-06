@@ -1,5 +1,4 @@
-﻿namespace Common
-{
+﻿namespace PackFileManager {
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -8,9 +7,9 @@
     using System.IO;
     using System.Text;
     using System.Windows.Forms;
+    using Common;
 
-    public class ReadmeEditorControl : UserControl
-    {
+    public class ReadmeEditorControl : UserControl, IPackedFileEditor {
         private ToolStripButton addEntryButton;
         private ComponentResourceManager manager;
         private BindingSource bindingSource;
@@ -51,6 +50,32 @@
             this.nodeTableLinks = new Dictionary<TreeNode, DataTable>();
             this.nodeRowLinks = new Dictionary<TreeNode, DataRow>();
             this.nodeRowIndex = new Dictionary<TreeNode, int>();
+        }
+
+        public bool CanEdit(PackedFile file) {
+            return file.Name.Equals("readme.xml");
+        }
+
+        PackedFile packedFile;
+        public PackedFile CurrentPackedFile {
+            get { return packedFile; }
+            set {
+                packedFile = value;
+                this.dataSet.Clear();
+                if (packedFile.Size == 0) {
+                    this.dataSet.ReadXml(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "readme.xml"));
+                } else {
+                    using (StreamReader reader = new StreamReader(new MemoryStream(packedFile.Data, false), Encoding.ASCII)) {
+                        this.dataSet.ReadXml(reader);
+                    }
+                    this.saved = true;
+                    this.saveButton.Enabled = !this.saved;
+                }
+                this.buildNodeTreeRecursive(this.nodesTree.Nodes, this.dataSet.Tables[0]);
+            }
+        }
+        public void Commit() {
+            this.packedFile.Data = this.GetBytes();
         }
 
         private void addEntryButton_Click(object sender, EventArgs e)
@@ -105,15 +130,15 @@
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
-            if (!this.saved)
-            {
-                switch (MessageBox.Show("The ReadMe has been modified. Do you want to save your changes?", "Save changes?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation))
+            if (!this.saved) {
+                switch (MessageBox.Show("The ReadMe has been modified. Do you want to save your changes?", "Save changes?", 
+                                        MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation))
                 {
                     case DialogResult.Cancel:
                         return;
 
                     case DialogResult.Yes:
-                        this.updatePackedFile();
+                        this.Commit();
                         break;
                 }
             }
@@ -227,7 +252,9 @@
             this.textEditorBox.TabIndex = 0;
             this.textEditorBox.KeyDown += new KeyEventHandler(this.textEditorBox_KeyDown);
             this.textEditorBox.KeyPress += new KeyPressEventHandler(this.textEditorBox_KeyPress);
-            this.toolStrip1.Items.AddRange(new ToolStripItem[] { this.saveButton, this.closeButton, this.toolStripSeparator1, this.updateNode, this.revertNodeButton, this.toolStripSeparator2, this.addEntryButton, this.cloneEntryButton, this.deleteEntryButton });
+            this.toolStrip1.Items.AddRange(new ToolStripItem[] { 
+                this.saveButton, this.closeButton, this.toolStripSeparator1, this.updateNode, this.revertNodeButton, 
+                this.toolStripSeparator2, this.addEntryButton, this.cloneEntryButton, this.deleteEntryButton });
             this.toolStrip1.Location = new Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new Size(800, 0x19);
@@ -312,7 +339,8 @@
         {
             if ((this.nodeInEdit != null) && !this.nodeSaved)
             {
-                switch (MessageBox.Show("The node text has changed. Do you want to save these changes?", "Save Changes?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation))
+                switch (MessageBox.Show("The node text has changed. Do you want to save these changes?", "Save Changes?", 
+                                        MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation))
                 {
                     case DialogResult.Yes:
                         this.nodeUpdate();
@@ -329,13 +357,15 @@
                 this.textEditorBox.Text = this.nodeRowLinks[e.Node].ItemArray[this.nodeRowIndex[e.Node]].ToString();
                 this.nodeInEdit = e.Node;
             }
-            if (this.tagToChildMaxOccurs.ContainsKey(e.Node.Text.Split(new char[] { ':' })[0]) && (this.tagToChildMaxOccurs[e.Node.Text.Split(new char[] { ':' })[0]] > Convert.ToUInt32(e.Node.Nodes.Count)))
+            if (this.tagToChildMaxOccurs.ContainsKey(e.Node.Text.Split(new char[] { ':' })[0]) && 
+               (this.tagToChildMaxOccurs[e.Node.Text.Split(new char[] { ':' })[0]] > Convert.ToUInt32(e.Node.Nodes.Count)))
             {
                 this.addEntryButton.Enabled = true;
                 this.cloneEntryButton.Enabled = false;
                 this.deleteEntryButton.Enabled = false;
             }
-            else if (this.tagToMaxOccurs.ContainsKey(e.Node.Text.Split(new char[] { ':' })[0]) && (this.tagToMaxOccurs[e.Node.Text.Split(new char[] { ':' })[0]] > Convert.ToUInt32(e.Node.Parent.Nodes.Count)))
+            else if (this.tagToMaxOccurs.ContainsKey(e.Node.Text.Split(new char[] { ':' })[0]) && 
+                    (this.tagToMaxOccurs[e.Node.Text.Split(new char[] { ':' })[0]] > Convert.ToUInt32(e.Node.Parent.Nodes.Count)))
             {
                 this.addEntryButton.Enabled = false;
                 this.cloneEntryButton.Enabled = true;
@@ -369,7 +399,8 @@
             object[] itemArray = this.nodeRowLinks[this.nodeInEdit].ItemArray;
             itemArray[this.nodeRowIndex[this.nodeInEdit]] = this.textEditorBox.Text;
             this.nodeRowLinks[this.nodeInEdit].ItemArray = itemArray;
-            this.nodeInEdit.Text = this.nodeTableLinks[this.nodeInEdit].Columns[this.nodeRowIndex[this.nodeInEdit]].Caption + ": " + this.textEditorBox.Text;
+            this.nodeInEdit.Text = this.nodeTableLinks[this.nodeInEdit].Columns[this.nodeRowIndex[this.nodeInEdit]].Caption + 
+                ": " + this.textEditorBox.Text;
             this.saved = false;
             this.saveButton.Enabled = !this.saved;
             this.nodeInEdit = null;
@@ -388,29 +419,9 @@
 
         private void saveButton_Click(object sender, EventArgs e)
         {
-            this.updatePackedFile();
+            this.Commit();
             this.saved = true;
             this.saveButton.Enabled = !this.saved;
-        }
-
-        public void setPackedFile(PackedFile packedFile)
-        {
-            if (packedFile.Size == 0)
-            {
-                this.dataSet.Clear();
-                this.dataSet.ReadXml(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "readme.xml"));
-                this.buildNodeTreeRecursive(this.nodesTree.Nodes, this.dataSet.Tables[0]);
-            }
-            else
-            {
-                this.dataSet.Clear();
-                StreamReader reader = new StreamReader(new MemoryStream(packedFile.Data, false), Encoding.ASCII);
-                this.dataSet.ReadXml(reader);
-                this.buildNodeTreeRecursive(this.nodesTree.Nodes, this.dataSet.Tables[0]);
-                reader.Close();
-                this.saved = true;
-                this.saveButton.Enabled = !this.saved;
-            }
         }
 
         private void textEditorBox_KeyDown(object sender, KeyEventArgs e)
@@ -432,11 +443,6 @@
         private void updateNode_Click(object sender, EventArgs e)
         {
             this.nodeUpdate();
-        }
-
-        public void updatePackedFile()
-        {
-            // this.packedFile.ReplaceData(this.GetBytes());
         }
 
         private void updateRowIndices()
