@@ -62,8 +62,8 @@ namespace Common {
             DirAdded(Root);
         }
 
-        public void Add(string fullPath, PackedFile file) {
-            Root.Add(fullPath, file);
+        public void Add(string fullPath, PackedFile file, bool replace = false) {
+            Root.Add(fullPath, file, replace);
         }
 
         #region Entry Access

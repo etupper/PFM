@@ -62,11 +62,11 @@
     <Reference Include="System" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="IOFunctions.cs" />
-    <Compile Include="Log.cs" />
     <Compile Include="PackedFile.cs" />
     <Compile Include="PackFile.cs" />
     <Compile Include="PackFileCodec.cs" />
     <Compile Include="ParseException.cs" />
+    <Compile Include="PackLoadSequence.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

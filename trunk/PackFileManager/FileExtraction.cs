@@ -26,7 +26,7 @@ namespace PackFileManager {
 
         public static string GetExportDirectory() {
             string exportDirectory = null;
-            if (Settings.Default.CurrentMod == "") {
+            if (ModManager.Instance.CurrentModSet) {
                 FolderBrowserDialog extractFolderBrowserDialog = new FolderBrowserDialog {
                     Description = "Extract to what folder?",
                     SelectedPath = Settings.Default.LastPackDirectory
@@ -63,7 +63,7 @@ namespace PackFileManager {
                     }
                     string path = Path.Combine(exportDirectory, Preprocessor.GetFileName(file));
                     if (File.Exists(path)) {
-                        string str3;
+                        string renamedFilename;
                         if (defaultAction == FileAlreadyExistsDialog.Action.Ask) {
                             FileAlreadyExistsDialog dialog = new FileAlreadyExistsDialog(path);
                             dialog.ShowDialog(null);
@@ -83,11 +83,11 @@ namespace PackFileManager {
                                     continue;
                                 }
                             case FileAlreadyExistsDialog.Action.RenameExisting:
-                                str3 = path + ".bak";
-                                while (File.Exists(str3)) {
-                                    str3 = str3 + ".bak";
+                                renamedFilename = path + ".bak";
+                                while (File.Exists(renamedFilename)) {
+                                    renamedFilename = renamedFilename + ".bak";
                                 }
-                                File.Move(path, str3);
+                                File.Move(path, renamedFilename);
                                 break;
 
                             case FileAlreadyExistsDialog.Action.RenameNew:

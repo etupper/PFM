@@ -87,6 +87,10 @@ namespace EsfLibrary {
             }
             return result;
         }
+        
+        public override int GetHashCode() {
+            return 2*Codec.ID.GetHashCode() + 3*RootNode.GetHashCode();
+        }
     }
 
     #region Headers

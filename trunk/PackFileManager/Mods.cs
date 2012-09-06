@@ -11,6 +11,9 @@ namespace PackFileManager {
     public class Mod {
         public string Name { get; set; }
         private string dir;
+        public delegate void Notification();
+        public event Notification GameChanged;
+
         public string BaseDirectory { 
             get {
                 return dir;
@@ -26,6 +29,9 @@ namespace PackFileManager {
             }
             set {
                 game = value;
+                if (GameChanged != null) {
+                    GameChanged();
+                }
             }
         }
 
@@ -65,15 +71,27 @@ namespace PackFileManager {
         public event ModChangeEvent CurrentModChanged;
 
         private ModManager() {
-            mods = decodeMods(Settings.Default.ModList);
+            mods = DecodeMods(Settings.Default.ModList);
             GameManager.Instance.GameChanged += SetModGame;
             SetCurrentMod(Settings.Default.CurrentMod);
         }
 
         private void SetModGame() {
-            if (CurrentMod != null) {
-                CurrentMod.Game = GameManager.Instance.CurrentGame;
-                Settings.Default.ModList = encodeMods();
+            Game currentGame = GameManager.Instance.CurrentGame;
+            if (CurrentModSet && !CurrentMod.Game.Id.Equals(currentGame.Id)) {
+                string message = string.Format("Game set to {0}.\nDo you want to change the game setting for the current mod {1} (currently {2})?",
+                                               currentGame.Id, CurrentMod.Name, CurrentMod.Game.Id);
+                DialogResult answer = MessageBox.Show(message, "Modded Game Changed", MessageBoxButtons.YesNo);
+                if (answer == DialogResult.Yes) {
+                    CurrentMod.Game = currentGame;
+                    StoreToSettings();
+                }
+            }
+        }
+        
+        public bool CurrentModSet {
+            get {
+                return CurrentMod != null;
             }
         }
 
@@ -128,7 +146,7 @@ namespace PackFileManager {
         public List<string> ModNames {
             get {
                 List<string> result = new List<string>();
-                foreach (var entry in decodeMods(Settings.Default.ModList)) {
+                foreach (var entry in DecodeMods(Settings.Default.ModList)) {
                     result.Add(entry.Name);
                 }
                 return result;
@@ -138,7 +156,8 @@ namespace PackFileManager {
         #region Add, Deletion, Change of Mods
         public void AddMod(Mod mod) {
             mods.Add(mod);
-            Settings.Default.ModList = encodeMods();
+            mod.GameChanged += delegate { EncodeMods(); };
+            StoreToSettings ();
             CurrentMod = mod;
         }
         public Mod CurrentMod {
@@ -159,12 +178,15 @@ namespace PackFileManager {
         public void DeleteCurrentMod() {
             if (CurrentMod != null) {
                 mods.Remove(CurrentMod);
-                Settings.Default.ModList = encodeMods();
+                StoreToSettings ();
                 SetCurrentMod("");
             }
         }
         public void SetCurrentMod(string modname) {
             CurrentMod = FindByName(modname);
+        }
+        void StoreToSettings() {
+            Settings.Default.ModList = EncodeMods();
         }
         #endregion
   
@@ -188,6 +210,7 @@ namespace PackFileManager {
             return result;
         }
 
+        #region Install/Uninstall
         public void InstallCurrentMod() {
             if (CurrentMod == null) {
                 throw new InvalidOperationException("No mod set");
@@ -255,8 +278,10 @@ namespace PackFileManager {
                 File.WriteAllLines(scriptFile, linesToWrite, Encoding.Unicode);
             }
         }
+        #endregion
         
-        private List<Mod> decodeMods(string encoded) {
+        #region Helpers to Encode/Decode to Settings string 
+        static List<Mod> DecodeMods(string encoded) {
             List<Mod> result = new List<Mod>();
             string[] entries = encoded.Split(new string[] { "@@@" }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string entry in entries) {
@@ -275,13 +300,14 @@ namespace PackFileManager {
             }
             return result;
         }
-        public string encodeMods() {
+        static string EncodeMods() {
             string result = "";
-            foreach (var mod in mods) {
+            foreach (var mod in Instance.mods) {
                 result += string.Format("{0}{1}{2}{1}{3}{4}", mod.Name, Path.PathSeparator, mod.BaseDirectory, mod.Game.Id, "@@@");
             }
             return result;
         }
+        #endregion
     }
 
     public class ModMenuItem : ToolStripMenuItem {

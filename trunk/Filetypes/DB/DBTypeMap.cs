@@ -189,12 +189,10 @@ namespace Filetypes {
          */
         public int MaxVersion(string type) {
             int result = 0;
-            bool found = false;
             // look in the guid tables first
             foreach(GuidTypeInfo info in guidMap.Keys) {
                 if (info.TypeName.Equals(type)) {
                     result = Math.Max(result, info.Version);
-                    found = true;
                 }
             }
             List<FieldInfo> list = null;
