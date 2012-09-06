@@ -80,7 +80,16 @@ namespace PackFileManager
 
         public PackFileManagerForm (string[] args) {
             InitializeComponent();
+
             editors = CreateEditors();
+
+            try {
+                if (Settings.Default.UpdateOnStartup) {
+                    tryUpdate (false);
+                }
+            } catch {
+            }
+
             try {
                 if (!DBTypeMap.Instance.Initialized) {
                     DBTypeMap.Instance.InitializeTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
@@ -92,19 +101,13 @@ namespace PackFileManager
                 }
             }
 
+            // reflect settings in check box menu items
             updateOnStartupToolStripMenuItem.Checked = Settings.Default.UpdateOnStartup;
             showDecodeToolOnErrorToolStripMenuItem.Checked = Settings.Default.ShowDecodeToolOnError;
-
-            try {
-                if (Settings.Default.UpdateOnStartup) {
-                    tryUpdate (false);
-                }
-            } catch {
-            }
-
+            csvToolStripMenuItem.Checked = "csv".Equals(Settings.Default.TsvExtension);
+            tsvToolStripMenuItem.Checked = "tsv".Equals(Settings.Default.TsvExtension);
+   
             InitializeBrowseDialogs (args);
-
-            Text = string.Format("Pack File Manager {0}", Application.ProductVersion);
 
             // open pack file from command line if applicable
             if (args.Length == 1) {
@@ -116,11 +119,16 @@ namespace PackFileManager
 
             // fill CA file list
             FillCaPackMenu();
+            // refill CA file list for new game when changed
             GameManager.Instance.GameChanged += FillCaPackMenu;
+            // allow/disallow mod installation depending on if game is installed
             GameManager.Instance.GameChanged += EnableInstallUninstall;
             // reload when game has changed (rebuild tree etc)
             GameManager.Instance.GameChanged += OpenCurrentModPack;
+            // ask if the user also wants to change the current mod's game
             GameManager.Instance.GameChanged += QueryModGameChange;
+            // update window title to show new game setting
+            GameManager.Instance.GameChanged += RefreshTitle;
 
             // fill game list
             foreach (Game g in Game.GetGames()) {
@@ -136,20 +144,21 @@ namespace PackFileManager
                 gameToolStripMenuItem.DropDownItems.Add(item);
             }
 
+            // allow/disallow mod installation, depending on if mod is set
             EnableInstallUninstall();
             ModManager.Instance.CurrentModChanged += EnableInstallUninstall;
+            // when user selects a mod, open the corresponding pack file if it exists
             ModManager.Instance.CurrentModChanged += OpenCurrentModPack;
 
             // initialize MyMods menu
-            modsToolStripMenuItem.DropDownItems.Add(new ModMenuItem("None", ""));
+            modsToolStripMenuItem.DropDownItems.Insert(0, new ModMenuItem("None", ""));
             ModManager.Instance.ModNames.ForEach(name => 
-                                                 modsToolStripMenuItem.DropDownItems.Add(new ModMenuItem(name, name)));
+                                                 modsToolStripMenuItem.DropDownItems.Insert(1, new ModMenuItem(name, name)));
             if (args.Length == 0) {
                 OpenCurrentModPack();
             }
 
-            csvToolStripMenuItem.Checked = "csv".Equals(Settings.Default.TsvExtension);
-            tsvToolStripMenuItem.Checked = "tsv".Equals(Settings.Default.TsvExtension);
+            RefreshTitle();
         }
         
         private void QueryModGameChange() {
@@ -180,7 +189,9 @@ namespace PackFileManager
                     packFiles.Sort(NumberedFileComparator.Instance);
                     packFiles.ForEach(file => openCAToolStripMenuItem.DropDownItems.Add(
                         new ToolStripMenuItem(Path.GetFileName(file), null, 
-                                         delegate(object s, EventArgs a) { OpenExistingPackFile(file); })));
+                                         delegate(object s, EventArgs a) { 
+                        OpenExistingPackFile(file, true); 
+                    })));
                 }
             }
         }
@@ -203,7 +214,7 @@ namespace PackFileManager
             case CloseReason.ApplicationExitCall:
                 break;
             default:
-                e.Cancel = handlePackFileChangesWithUserInput() == DialogResult.Cancel;
+                e.Cancel = HandlePackFileChangesWithUserInput() == DialogResult.Cancel;
                 break;
             }
         }
@@ -318,7 +329,7 @@ namespace PackFileManager
         }
         #endregion
 
-        private DialogResult handlePackFileChangesWithUserInput()
+        private DialogResult HandlePackFileChangesWithUserInput()
         {
             if ((currentPackFile != null) && currentPackFile.IsModified)
             {
@@ -346,7 +357,7 @@ namespace PackFileManager
         #region File Menu
         #region Open Pack
         private void newToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (handlePackFileChangesWithUserInput() == System.Windows.Forms.DialogResult.No) {
+            if (HandlePackFileChangesWithUserInput() == System.Windows.Forms.DialogResult.No) {
                 NewMod("Untitled.pack");
             }
         }
@@ -356,23 +367,22 @@ namespace PackFileManager
                 InitialDirectory = Settings.Default.LastPackDirectory,
                 Filter = IOFunctions.PACKAGE_FILTER
             };
-            if ((handlePackFileChangesWithUserInput() != DialogResult.Cancel) && 
+            if ((HandlePackFileChangesWithUserInput() != DialogResult.Cancel) && 
                 (packOpenFileDialog.ShowDialog() == DialogResult.OK)) {
                 OpenExistingPackFile(packOpenFileDialog.FileName);
             }
         }
 
-        private void OpenExistingPackFile(string filepath)
-        {
+        private void OpenExistingPackFile(string filepath, bool querySaveCurrent = false) {
+            if (querySaveCurrent && HandlePackFileChangesWithUserInput() == DialogResult.Cancel) {
+                return;
+            }
             Settings.Default.LastPackDirectory = Path.GetDirectoryName(filepath);
-            try
-            {
+            try {
                 var codec = new PackFileCodec();
                 new LoadUpdater(codec, filepath, packStatusLabel, packActionProgressBar);
                 CurrentPackFile = codec.Open(filepath);
-            }
-            catch (Exception exception)
-            {
+            } catch (Exception exception) {
                 MessageBox.Show(exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 packTreeView.Enabled = true;
             }
@@ -486,15 +496,15 @@ namespace PackFileManager
                 // add mod entry to menu
                 if (ModManager.Instance.CurrentModSet) {
                     if (!oldMods.Contains(Settings.Default.CurrentMod)) {
-                        modsToolStripMenuItem.DropDownItems.Add(new ModMenuItem(ModManager.Instance.CurrentMod.Name, 
-                                                                                ModManager.Instance.CurrentMod.Name));
+                        modsToolStripMenuItem.DropDownItems.Insert(1, new ModMenuItem(ModManager.Instance.CurrentMod.Name, 
+                                                                                      ModManager.Instance.CurrentMod.Name));
                     }
                 }
                 if (File.Exists(packFileName)) {
-                    OpenExistingPackFile(packFileName);
+                    OpenExistingPackFile(packFileName, true);
                 } else {
                     NewMod(Path.Combine(ModManager.Instance.CurrentModDirectory, packFileName));
-                    OpenExistingPackFile(Path.Combine(ModManager.Instance.CurrentModDirectory, packFileName));
+                    OpenExistingPackFile(Path.Combine(ModManager.Instance.CurrentModDirectory, packFileName), true);
                 }
             }
         }
@@ -511,17 +521,8 @@ namespace PackFileManager
         }
         
         private void installModMenuItem_Click(object sender, EventArgs e) {
-            if (CurrentPackFile != null && CurrentPackFile.IsModified) {
-                var result = MessageBox.Show("The current pack has been modified. Save first?\n"+
-                                "Otherwise, the last saved version will be installed.", "Save?", MessageBoxButtons.YesNoCancel);
-
-                if (result == DialogResult.Yes) {
-                    string modPath =  (ModManager.Instance.CurrentModSet) 
-                        ? ModManager.Instance.CurrentMod.FullModPath : CurrentPackFile.Filepath;
-                    SaveAsFile(modPath);
-                } else if (result == DialogResult.Cancel) {
-                    return;
-                }
+            if (HandlePackFileChangesWithUserInput() == DialogResult.Cancel) {
+                return;
             }
             try {
                 ModManager.Instance.InstallCurrentMod();
@@ -557,7 +558,7 @@ namespace PackFileManager
                 if (ModManager.Instance.CurrentModSet) {
                     string modPath = ModManager.Instance.CurrentMod.FullModPath;
                     if (File.Exists(modPath)) {
-                        OpenExistingPackFile(modPath);
+                        OpenExistingPackFile(modPath, true);
                     }
                 }
             } catch { }
@@ -1336,14 +1337,16 @@ namespace PackFileManager
             base.Refresh();
         }
 
-        private void RefreshTitle()
-        {
-            Text = Path.GetFileName(currentPackFile.Filepath);
-            if (currentPackFile.IsModified)
-            {
-                Text = Text + " (modified)";
+        private void RefreshTitle() {
+            string file = "";
+            if (currentPackFile != null) {
+                file = Path.GetFileName(currentPackFile.Filepath);
+                if (currentPackFile.IsModified) {
+                    file = file + " (modified)";
+                }
+                file += " - ";
             }
-            Text = Text + string.Format(" - Pack File Manager {0}", Application.ProductVersion);
+            Text = string.Format("{0}Pack File Manager {1} ({2})", file, Application.ProductVersion, GameManager.Instance.CurrentGame.Id);
         }
 
         private void searchFileToolStripMenuItem_Click(object sender, EventArgs e)
