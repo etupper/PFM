@@ -207,6 +207,7 @@
     <Compile Include="Editors\ImageViewerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Editors\ExternalEditor.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
