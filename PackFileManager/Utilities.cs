@@ -100,7 +100,7 @@ namespace PackFileManager {
             currentCount++;
             if (currentCount % 10 <= 0) 
             {
-                label.Text = string.Format("Opening {0} ({1} of {2} files loaded)", packedFile, currentCount, count);
+                label.Text = string.Format("Opening {0} ({1} of {2} files loaded)", file, currentCount, count);
                 progress.PerformStep();
                 Application.DoEvents();
             }

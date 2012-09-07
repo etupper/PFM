@@ -113,14 +113,7 @@ namespace PackFileManager {
                     // create new mod file to start off with
                     result = Path.Combine(mod.BaseDirectory, string.Format("{0}.pack", modName));
                     if (Directory.Exists(mod.BaseDirectory) && !File.Exists(result)) {
-                        var header = new PFHeader("PFH3") {
-                            Type = PackType.Mod,
-                            Version = 0,
-                            FileCount = 0,
-                            ReplacedPackFileNames = new List<string>(),
-                            DataStart = 0x20
-                        };
-                        PackFile newFile = new PackFile(result, header);
+                        PackFile newFile = new PackFile(result, new PFHeader("PFH3"));
                         new PackFileCodec().writeToFile(result, newFile);
                     }
      

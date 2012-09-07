@@ -61,26 +61,19 @@ namespace Common {
             Root = new VirtualDirectory() { Name = Path.GetFileName(path) };
             DirAdded(Root);
         }
+        public PackFile(string path) : this(path, new PFHeader("PFH3") {
+            Type = PackType.Mod
+        }) {}
 
-        public void Add(string fullPath, PackedFile file, bool replace = false) {
-            Root.Add(fullPath, file, replace);
+        public void Add(PackedFile file, bool replace = false) {
+            Root.Add(file.FullPath, file, replace);
         }
 
         #region Entry Access
-        // retrieves the names of all entries (directories and packed files)
-        public List<string> FileList {
-            get {
-                List<string> result = new List<string>((int)header.FileCount);
-                listAll(result, "", Root);
-                return result;
-            }
-        }
         // lists all contained packed files
         public List<PackedFile> Files {
             get {
-                List<PackedFile> result = new List<PackedFile>((int)header.FileCount);
-                retrieveAll(result, Root);
-                return result;
+                return Root.AllFiles;
             }
         }
         // retrieves the packed file at the given path name
@@ -96,9 +89,7 @@ namespace Common {
         }
         public int FileCount {
             get {
-                List<string> result = new List<string>((int)header.FileCount);
-                listAll(result, "", Root, false);
-                return result.Count;
+                return Root.AllFiles.Count;
             }
         }
         #endregion
@@ -136,30 +127,6 @@ namespace Common {
         }
         #endregion
 
-        #region Entry Iteration utility functions
-        private static void listAll(List<string> addTo, string currentPath, VirtualDirectory filesFrom, bool includeDirs = true) {
-            // add all files from subdirectories first
-            foreach (VirtualDirectory dir in filesFrom.Subdirectories) {
-                listAll(addTo, currentPath + Path.DirectorySeparatorChar + dir.Name, dir);
-            }
-            string newPath = currentPath + Path.DirectorySeparatorChar + filesFrom;
-            if (includeDirs) {
-                // add this path
-                addTo.Add(newPath);
-            }
-            // add file names
-            foreach (PackedFile file in filesFrom.Files) {
-                addTo.Add(currentPath + Path.DirectorySeparatorChar + file.Name);
-            }
-        }
-        private static void retrieveAll(List<PackedFile> files, VirtualDirectory filesFrom) {
-            foreach (VirtualDirectory dir in filesFrom.Subdirectories) {
-                retrieveAll(files, dir);
-            }
-            files.AddRange(filesFrom.Files);
-        }
-        #endregion
-
         public IEnumerator<PackedFile> GetEnumerator() {
             return Files.GetEnumerator();
         }
@@ -175,6 +142,8 @@ namespace Common {
         string identifier;
 
         public PFHeader(string id) {
+            Type = PackType.Mod;
+            DataStart = 0x20;
             PackIdentifier = id;
             FileCount = 0;
             Version = 0;

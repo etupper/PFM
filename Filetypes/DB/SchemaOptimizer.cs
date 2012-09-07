@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Common;
-using Filetypes;
 
-namespace PackFileManager {
+namespace Filetypes {
     
     /*
      * Will go through all packs in a given directory, 

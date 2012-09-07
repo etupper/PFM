@@ -45,7 +45,7 @@ namespace Common {
                     packedFileName = packedFileName.Replace('\\', Path.DirectorySeparatorChar);
 
 					PackedFile packed = new PackedFile (file.Filepath, packedFileName, offset, size);
-					file.Add (packedFileName, packed);
+					file.Add (packed);
 					offset += size;
 					this.OnPackedFileLoaded (packed);
 				}
@@ -303,13 +303,30 @@ namespace Common {
         }
     }
 
-    public class MultiPackEnumerator : IEnumerator<PackedFile>, IDisposable {
+    public class MultiPackEnumerator : DelegatingEnumerator<PackedFile> {
         IEnumerator<string> paths;
-        IEnumerator<PackedFile> currentEnumerator;
         public MultiPackEnumerator(IEnumerable<string> files) {
             paths = files.GetEnumerator();
         }
-        public PackedFile Current {
+        public override void Reset() {
+            base.Reset();
+            paths.Reset();
+        }
+        protected override IEnumerator<PackedFile> NextEnumerator() {
+            IEnumerator<PackedFile> result = null;
+            if (paths.MoveNext()) {
+                result = new PackFileEnumerator(paths.Current);
+            }
+            return result;
+        }
+        public override void Dispose() {
+            base.Dispose();
+            paths.Dispose();
+        }
+    }
+    public abstract class DelegatingEnumerator<T> : IEnumerator<T>, IDisposable {
+        IEnumerator<T> currentEnumerator;
+        public T Current {
             get {
                 return currentEnumerator.Current;
             }
@@ -322,29 +339,20 @@ namespace Common {
         public bool MoveNext() {
             bool result = true;
             if (currentEnumerator == null || !currentEnumerator.MoveNext()) {
-                result = NextEnumerator();
+                currentEnumerator = NextEnumerator();
+                result = currentEnumerator != null && currentEnumerator.MoveNext();
             }
             return result;
         }
-        public void Reset() {
+        public virtual void Reset() {
             if (currentEnumerator != null) {
                 currentEnumerator.Dispose();
                 currentEnumerator = null;
             }
-            paths.Reset();
         }
-        private bool NextEnumerator() {
-            if (currentEnumerator != null) {
-                currentEnumerator.Dispose();
-            }
-            bool result = paths.MoveNext();
-            if (result) {
-                currentEnumerator = new PackFileEnumerator(paths.Current);
-                result = currentEnumerator.MoveNext();
-            }
-            return result;
-        }
-        public void Dispose() {
+        protected abstract IEnumerator<T> NextEnumerator();
+
+        public virtual void Dispose() {
             if (currentEnumerator != null) {
                 currentEnumerator.Dispose();
             }

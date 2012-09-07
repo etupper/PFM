@@ -178,8 +178,6 @@
     <Compile Include="Editors\GroupformationEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SchemaOptimizer.cs" />
-    <Compile Include="Game.cs" />
     <Compile Include="Editors\ReadmeEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -208,6 +206,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Editors\ExternalEditor.cs" />
+    <Compile Include="GameManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

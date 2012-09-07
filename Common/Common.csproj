@@ -67,6 +67,7 @@
     <Compile Include="PackFileCodec.cs" />
     <Compile Include="ParseException.cs" />
     <Compile Include="PackLoadSequence.cs" />
+    <Compile Include="Game.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
