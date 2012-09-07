@@ -129,7 +129,7 @@ namespace PackFileManager
             FillCaPackMenu();
             GameManager.Instance.GameChanged += FillCaPackMenu;
             // allow/disallow mod installation depending on if game is installed
-            GameManager.Instance.GameChanged += EnableInstallUninstall;
+            GameManager.Instance.GameChanged += UpdateModMenuItems;
             // reload when game has changed (rebuild tree etc)
             GameManager.Instance.GameChanged += OpenCurrentModPack;
             // ask if the user also wants to change the current mod's game
@@ -145,8 +145,8 @@ namespace PackFileManager
             }
 
             // allow/disallow mod installation, depending on if mod is set
-            EnableInstallUninstall();
-            ModManager.Instance.CurrentModChanged += EnableInstallUninstall;
+            UpdateModMenuItems();
+            ModManager.Instance.CurrentModChanged += UpdateModMenuItems;
             // when user selects a mod, open the corresponding pack file if it exists
             ModManager.Instance.CurrentModChanged += OpenCurrentModPack;
 
@@ -250,11 +250,17 @@ namespace PackFileManager
             }
         }
   
-        #region Menu Item Creation and Update
-        private void EnableInstallUninstall() {
+        #region Menu Items
+        private void UpdateModMenuItems() {
             bool enabled = ModManager.Instance.CurrentModSet;
             enabled &= GameManager.Instance.CurrentGame.IsInstalled;
-            installModMenuItem.Enabled = uninstallModMenuItem.Enabled = enabled;
+            installModMenuItem.Enabled = uninstallModMenuItem.Enabled = 
+                openModPathToolStripMenuItem.Enabled = enabled;
+            if (enabled) {
+                installModMenuItem.Text = string.Format("Install {0}", ModManager.Instance.CurrentMod.Name);
+                uninstallModMenuItem.Text = string.Format("Uninstall {0}", ModManager.Instance.CurrentMod.Name);
+                openModPathToolStripMenuItem.Tag = ModManager.Instance.CurrentModDirectory;
+            }
         }
         
         ToolStripMenuItem CreateGameItem(Game g) {
@@ -274,11 +280,11 @@ namespace PackFileManager
             UpdateDirectoryItem(openGameDirToolStripMenuItem, GameManager.Instance.CurrentGame.GameDirectory);
             UpdateDirectoryItem(openDataDirToolStripMenuItem, GameManager.Instance.CurrentGame.DataDirectory);
             UpdateDirectoryItem(openEncyclopediaDirToolStripMenuItem, 
-                                Path.Combine(GameManager.Instance.CurrentGame.GameDirectory, "encyclopedia"));
+                                Path.Combine(GameManager.Instance.CurrentGame.DataDirectory, "encyclopedia"));
             UpdateDirectoryItem(openUserDirToolStripMenuItem, GameManager.Instance.CurrentGame.UserDir);
             UpdateDirectoryItem(openReplaysDirToolStripMenuItem, 
                                 Path.Combine(GameManager.Instance.CurrentGame.UserDir, "replays"));
-            UpdateDirectoryItem(openScriptsDirToolStripMenuItem, GameManager.Instance.CurrentGame.ScriptFile);
+            UpdateDirectoryItem(openScriptsDirToolStripMenuItem, GameManager.Instance.CurrentGame.ScriptDirectory);
         }
         void UpdateDirectoryItem(ToolStripMenuItem item, string tag) {
             item.Tag = tag;
@@ -341,6 +347,13 @@ namespace PackFileManager
             renameToolStripMenuItem.Enabled = CanWriteCurrentPack && nodeSelected && !isRootNode;
             deleteFileToolStripMenuItem.Enabled = CanWriteCurrentPack && nodeSelected && !isRootNode;
             renameToolStripMenuItem.Enabled = CanWriteCurrentPack && nodeSelected && !isRootNode;
+        }
+
+        private void OpenDirectory(object sender, EventArgs args) {
+            string pathToOpen = ((ToolStripMenuItem)sender).Tag as string;
+            if (pathToOpen != null && Directory.Exists(pathToOpen)) {
+                Process.Start("explorer", pathToOpen);
+            }
         }
         #endregion
 
@@ -459,13 +472,14 @@ namespace PackFileManager
 
         #region Game Menu
         private void loadGamePacksToolStripMenuItem_Click(object sender, EventArgs args) {
-            if (MessageBox.Show("Are you sure you want to do this?\nIt takes quite long", "Can I Has Load Time?",
+            if (MessageBox.Show("Are you sure you want to do this?\nIt takes quite long.", "Can I Has Load Time?",
                                 MessageBoxButtons.YesNo) != DialogResult.Yes) {
                 return;
             }
             if (QuerySaveModifiedFile() == DialogResult.Cancel) {
                 return;
             }
+            packStatusLabel.Text = "Collecting Game files";
             List<string> packPaths = new PackLoadSequence().GetPacksLoadedFrom(GameManager.Instance.CurrentGame.GameDirectory);
             packPaths.Reverse();
             PackFile file = new PackFile("All Packs");
@@ -476,13 +490,7 @@ namespace PackFileManager
                 pack.Files.ForEach(f => file.Add(f, true));
             }
             CurrentPackFile = file;
-        }
-        
-        private void OpenDirectory(object sender, EventArgs args) {
-            string pathToOpen = ((ToolStripMenuItem)sender).Tag as string;
-            if (pathToOpen != null && Directory.Exists(pathToOpen)) {
-                Process.Start("explorer", pathToOpen);
-            }
+            CurrentPackFile.IsModified = false;
         }
         #endregion
         
@@ -1120,7 +1128,7 @@ namespace PackFileManager
         private void QueryModGameChange() {
             string currentGameId = GameManager.Instance.CurrentGame.Id;
             string modGameId = ModManager.Instance.CurrentModSet ? ModManager.Instance.CurrentMod.Game.Id : "";
-            if (!currentGameId.Equals(modGameId)) {
+            if (CurrentPackFile != null &&  ModManager.Instance.CurrentModSet && !currentGameId.Equals(modGameId)) {
                 string message = string.Format("Note that {0}'s database structure may not be compatible " +
                                                "with the currently opened pack's.", 
                                                currentGameId);

@@ -36,7 +36,7 @@ namespace PackFileManager {
                 packedFile = value;
                 openFilePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(packedFile.FullPath));
                 File.WriteAllBytes(openFilePath, packedFile.Data);
-                ProcessStartInfo startInfo = new ProcessStartInfo(openFilePath) {
+                ProcessStartInfo startInfo = new ProcessStartInfo(openFilePath, "openas") {
                     ErrorDialog = true
                 };
                 ExternalProcess = Process.Start(startInfo);

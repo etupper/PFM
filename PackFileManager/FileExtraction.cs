@@ -26,7 +26,7 @@ namespace PackFileManager {
 
         public static string GetExportDirectory() {
             string exportDirectory = null;
-            if (ModManager.Instance.CurrentModSet) {
+            if (!ModManager.Instance.CurrentModSet) {
                 FolderBrowserDialog extractFolderBrowserDialog = new FolderBrowserDialog {
                     Description = "Extract to what folder?",
                     SelectedPath = Settings.Default.LastPackDirectory

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -52,6 +52,8 @@ copy "$(SolutionDir)\Files\xmlversion" "$(TargetDir)"
   <PropertyGroup>
     <PostBuildEvent>copy "$(SolutionDir)\PackFileTest\bin\*.exe" "$(TargetDir)"
 copy "$(SolutionDir)\PackFileTest\bin\*.dll" "$(TargetDir)"
+copy "$(SolutionDir)\PackFileManager\bin\Release\*.exe" "$(TargetDir)"
+copy "$(SolutionDir)\PackFileManager\bin\Release\*.dll" "$(TargetDir)"
 
 cd "$(TargetDir)"
 del "Release Build.dll"
@@ -59,7 +61,7 @@ del "*vshost"*
 del "Pack File Manager.zip"
 
 copy "$(SolutionDir)\Files\master_schema.xml" "$(TargetDir)"
-start /wait PackFileTest.exe -pr -w -x
+start /wait PackFileTest.exe -pr -x
 copy "$(SolutionDir)\Files\schema_models.xml" "$(TargetDir)"
 
 del "PackFileTest.exe"
