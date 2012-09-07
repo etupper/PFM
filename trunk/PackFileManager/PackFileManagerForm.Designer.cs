@@ -57,6 +57,15 @@ namespace PackFileManager
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
+            this.newModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
+            this.editModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.installModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uninstallModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openModPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openCAToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -75,25 +84,6 @@ namespace PackFileManager
             this.exportFileListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.modsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
-            this.editModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.installModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.uninstallModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.gameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadGamePacksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openGameDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openDataDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openEncyclopediaDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openUserDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openReplaysDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openScriptsDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
             this.filesMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.replaceFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -118,6 +108,24 @@ namespace PackFileManager
             this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
+            this.loadGamePacksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
+            this.openGameDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openDataDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openEncyclopediaDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
+            this.openUserDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openReplaysDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openScriptsDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.extrasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cAPacksAreReadOnlyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.updateOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showDecodeToolOnErrorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.extractTSVFileExtensionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.csvToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsvToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchForUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fromXsdFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -126,13 +134,6 @@ namespace PackFileManager
             this.updateDBFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.extrasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cAPacksAreReadOnlyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.updateOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showDecodeToolOnErrorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.extractTSVFileExtensionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.csvToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsvToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.indexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -143,7 +144,7 @@ namespace PackFileManager
             this.packStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.packActionProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.packActionMenuStrip.SuspendLayout();
-            //((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.menuStrip.SuspendLayout();
@@ -386,8 +387,7 @@ namespace PackFileManager
             this.gameToolStripMenuItem,
             this.extrasToolStripMenuItem,
             this.updateToolStripMenuItem,
-            this.helpToolStripMenuItem
-            });
+            this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(906, 24);
@@ -431,6 +431,73 @@ namespace PackFileManager
             this.openToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.openToolStripMenuItem.Text = "&Open...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // modsToolStripMenuItem
+            // 
+            this.modsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripSeparator13,
+            this.newModMenuItem,
+            this.deleteCurrentToolStripMenuItem,
+            this.toolStripSeparator11,
+            this.editModMenuItem,
+            this.installModMenuItem,
+            this.uninstallModMenuItem,
+            this.openModPathToolStripMenuItem});
+            this.modsToolStripMenuItem.Name = "modsToolStripMenuItem";
+            this.modsToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.modsToolStripMenuItem.Text = "My Mods";
+            // 
+            // toolStripSeparator13
+            // 
+            this.toolStripSeparator13.Name = "toolStripSeparator13";
+            this.toolStripSeparator13.Size = new System.Drawing.Size(160, 6);
+            // 
+            // newModMenuItem
+            // 
+            this.newModMenuItem.Name = "newModMenuItem";
+            this.newModMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.newModMenuItem.Text = "New";
+            this.newModMenuItem.Click += new System.EventHandler(this.newModMenuItem_Click);
+            // 
+            // deleteCurrentToolStripMenuItem
+            // 
+            this.deleteCurrentToolStripMenuItem.Name = "deleteCurrentToolStripMenuItem";
+            this.deleteCurrentToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.deleteCurrentToolStripMenuItem.Text = "Delete Current";
+            this.deleteCurrentToolStripMenuItem.Click += new System.EventHandler(this.deleteCurrentToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator11
+            // 
+            this.toolStripSeparator11.Name = "toolStripSeparator11";
+            this.toolStripSeparator11.Size = new System.Drawing.Size(160, 6);
+            // 
+            // editModMenuItem
+            // 
+            this.editModMenuItem.Name = "editModMenuItem";
+            this.editModMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.editModMenuItem.Text = "Edit Current";
+            this.editModMenuItem.Visible = false;
+            // 
+            // installModMenuItem
+            // 
+            this.installModMenuItem.Name = "installModMenuItem";
+            this.installModMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.installModMenuItem.Text = "Install Current";
+            this.installModMenuItem.Click += new System.EventHandler(this.installModMenuItem_Click);
+            // 
+            // uninstallModMenuItem
+            // 
+            this.uninstallModMenuItem.Name = "uninstallModMenuItem";
+            this.uninstallModMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.uninstallModMenuItem.Text = "Uninstall Current";
+            this.uninstallModMenuItem.Click += new System.EventHandler(this.uninstallModMenuItem_Click);
+            // 
+            // openModPathToolStripMenuItem
+            // 
+            this.openModPathToolStripMenuItem.Name = "openModPathToolStripMenuItem";
+            this.openModPathToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.openModPathToolStripMenuItem.Text = "Open Data Path";
+            this.openModPathToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
             // 
             // openCAToolStripMenuItem
             // 
@@ -572,150 +639,6 @@ namespace PackFileManager
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
-            // modsToolStripMenuItem
-            // 
-            this.modsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripSeparator13,
-            this.newModMenuItem,
-            this.deleteCurrentToolStripMenuItem,
-            this.toolStripSeparator11,
-            this.editModMenuItem,
-            this.installModMenuItem,
-            this.uninstallModMenuItem
-            });
-            this.modsToolStripMenuItem.Name = "modsToolStripMenuItem";
-            this.modsToolStripMenuItem.Size = new System.Drawing.Size(69, 20);
-            this.modsToolStripMenuItem.Text = "My Mods";
-            // 
-            // newModMenuItem
-            // 
-            this.newModMenuItem.Name = "newModMenuItem";
-            this.newModMenuItem.Size = new System.Drawing.Size(163, 22);
-            this.newModMenuItem.Text = "New";
-            this.newModMenuItem.Click += new System.EventHandler(this.newModMenuItem_Click);
-            // 
-            // toolStripSeparator11
-            // 
-            this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(160, 6);
-            // 
-            // editModMenuItem
-            // 
-            this.editModMenuItem.Name = "editModMenuItem";
-            this.editModMenuItem.Size = new System.Drawing.Size(163, 22);
-            this.editModMenuItem.Text = "Edit Current";
-            this.editModMenuItem.Visible = false;
-            // 
-            // installModMenuItem
-            // 
-            this.installModMenuItem.Name = "installModMenuItem";
-            this.installModMenuItem.Size = new System.Drawing.Size(163, 22);
-            this.installModMenuItem.Text = "Install Current";
-            this.installModMenuItem.Click += new System.EventHandler(this.installModMenuItem_Click);
-            // 
-            // uninstallModMenuItem
-            // 
-            this.uninstallModMenuItem.Name = "uninstallModMenuItem";
-            this.uninstallModMenuItem.Size = new System.Drawing.Size(163, 22);
-            this.uninstallModMenuItem.Text = "Uninstall Current";
-            this.uninstallModMenuItem.Click += new System.EventHandler(this.uninstallModMenuItem_Click);
-            // 
-            // deleteCurrentToolStripMenuItem
-            // 
-            this.deleteCurrentToolStripMenuItem.Name = "deleteCurrentToolStripMenuItem";
-            this.deleteCurrentToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
-            this.deleteCurrentToolStripMenuItem.Text = "Delete Current";
-            this.deleteCurrentToolStripMenuItem.Click += new System.EventHandler(this.deleteCurrentToolStripMenuItem_Click);
-            // 
-            // gameToolStripMenuItem
-            // 
-            this.gameToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                toolStripSeparator14,
-                loadGamePacksToolStripMenuItem,
-                toolStripSeparator15,
-                openGameDirToolStripMenuItem,
-                openDataDirToolStripMenuItem,
-                openEncyclopediaDirToolStripMenuItem,
-                toolStripSeparator16,
-                openUserDirToolStripMenuItem,
-                openReplaysDirToolStripMenuItem,
-                openScriptsDirToolStripMenuItem
-            });
-            this.gameToolStripMenuItem.Name = "gameToolStripMenuItem";
-            this.gameToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
-            this.gameToolStripMenuItem.Text = "Game";
-            // 
-            // openGameDirToolStripMenuItem
-            // 
-            this.openGameDirToolStripMenuItem.Name = "openGameDirToolStripMenuItem";
-            this.openGameDirToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
-            this.openGameDirToolStripMenuItem.Text = "Open Game Directory";
-            this.openGameDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
-            this.openGameDirToolStripMenuItem.Enabled = true;
-            // 
-            // openDataDirToolStripMenuItem
-            // 
-            this.openDataDirToolStripMenuItem.Name = "openDataDirToolStripMenuItem";
-            this.openDataDirToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
-            this.openDataDirToolStripMenuItem.Text = "Open Data Directory";
-            this.openDataDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
-            this.openDataDirToolStripMenuItem.Enabled = true;
-            // 
-            // openEncyclopediaDirToolStripMenuItem
-            // 
-            this.openEncyclopediaDirToolStripMenuItem.Name = "openEncyclopediaDirToolStripMenuItem";
-            this.openEncyclopediaDirToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
-            this.openEncyclopediaDirToolStripMenuItem.Text = "Open Encyclopedia Directory";
-            this.openEncyclopediaDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
-            this.openEncyclopediaDirToolStripMenuItem.Enabled = true;
-            // 
-            // openUserDirToolStripMenuItem
-            // 
-            this.openUserDirToolStripMenuItem.Name = "openUserDirToolStripMenuItem";
-            this.openUserDirToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
-            this.openUserDirToolStripMenuItem.Text = "Open User Directory";
-            this.openUserDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
-            this.openUserDirToolStripMenuItem.Enabled = true;
-            // 
-            // openReplaysDirToolStripMenuItem
-            // 
-            this.openReplaysDirToolStripMenuItem.Name = "openReplaysDirToolStripMenuItem";
-            this.openReplaysDirToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
-            this.openReplaysDirToolStripMenuItem.Text = "Open Replays Directory";
-            this.openReplaysDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
-            this.openReplaysDirToolStripMenuItem.Enabled = true;
-            // 
-            // openScriptsDirToolStripMenuItem
-            // 
-            this.openScriptsDirToolStripMenuItem.Name = "openScriptsDirToolStripMenuItem";
-            this.openScriptsDirToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
-            this.openScriptsDirToolStripMenuItem.Text = "Open Scripts Directory";
-            this.openScriptsDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
-            this.openScriptsDirToolStripMenuItem.Enabled = true;
-            // 
-            // loadGamePacksToolStripMenuItem
-            // 
-            this.loadGamePacksToolStripMenuItem.Name = "loadGamePacksToolStripMenuItem";
-            this.loadGamePacksToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
-            this.loadGamePacksToolStripMenuItem.Text = "Load all Game Packs";
-            this.loadGamePacksToolStripMenuItem.Click += new System.EventHandler(this.loadGamePacksToolStripMenuItem_Click);
-            this.loadGamePacksToolStripMenuItem.Enabled = true;
-            // 
-            // toolStripSeparator15
-            // 
-            this.toolStripSeparator15.Name = "toolStripSeparator15";
-            this.toolStripSeparator15.Size = new System.Drawing.Size(160, 6);
-            // 
-            // toolStripSeparator14
-            // 
-            this.toolStripSeparator14.Name = "toolStripSeparator14";
-            this.toolStripSeparator14.Size = new System.Drawing.Size(160, 6);
-            // 
-            // toolStripSeparator13
-            // 
-            this.toolStripSeparator13.Name = "toolStripSeparator13";
-            this.toolStripSeparator13.Size = new System.Drawing.Size(160, 6);
-            // 
             // filesMenu
             // 
             this.filesMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -736,12 +659,12 @@ namespace PackFileManager
             // 
             // deleteFileToolStripMenuItem
             // 
+            this.deleteFileToolStripMenuItem.Enabled = false;
             this.deleteFileToolStripMenuItem.Name = "deleteFileToolStripMenuItem";
             this.deleteFileToolStripMenuItem.ShortcutKeyDisplayString = "Del";
             this.deleteFileToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.deleteFileToolStripMenuItem.Text = "Delete";
             this.deleteFileToolStripMenuItem.Click += new System.EventHandler(this.deleteFileToolStripMenuItem_Click);
-            this.deleteFileToolStripMenuItem.Enabled = false;
             // 
             // replaceFileToolStripMenuItem
             // 
@@ -907,6 +830,152 @@ namespace PackFileManager
             this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.selectAllToolStripMenuItem.Text = "Select &All";
             // 
+            // gameToolStripMenuItem
+            // 
+            this.gameToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripSeparator14,
+            this.loadGamePacksToolStripMenuItem,
+            this.toolStripSeparator15,
+            this.openGameDirToolStripMenuItem,
+            this.openDataDirToolStripMenuItem,
+            this.openEncyclopediaDirToolStripMenuItem,
+            this.toolStripSeparator16,
+            this.openUserDirToolStripMenuItem,
+            this.openScriptsDirToolStripMenuItem,
+            this.openReplaysDirToolStripMenuItem});
+            this.gameToolStripMenuItem.Name = "gameToolStripMenuItem";
+            this.gameToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
+            this.gameToolStripMenuItem.Text = "Game";
+            // 
+            // toolStripSeparator14
+            // 
+            this.toolStripSeparator14.Name = "toolStripSeparator14";
+            this.toolStripSeparator14.Size = new System.Drawing.Size(224, 6);
+            // 
+            // loadGamePacksToolStripMenuItem
+            // 
+            this.loadGamePacksToolStripMenuItem.Name = "loadGamePacksToolStripMenuItem";
+            this.loadGamePacksToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.loadGamePacksToolStripMenuItem.Text = "Load all Game Packs";
+            this.loadGamePacksToolStripMenuItem.Click += new System.EventHandler(this.loadGamePacksToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator15
+            // 
+            this.toolStripSeparator15.Name = "toolStripSeparator15";
+            this.toolStripSeparator15.Size = new System.Drawing.Size(224, 6);
+            // 
+            // openGameDirToolStripMenuItem
+            // 
+            this.openGameDirToolStripMenuItem.Name = "openGameDirToolStripMenuItem";
+            this.openGameDirToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.openGameDirToolStripMenuItem.Text = "Open Game Directory";
+            this.openGameDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
+            // 
+            // openDataDirToolStripMenuItem
+            // 
+            this.openDataDirToolStripMenuItem.Name = "openDataDirToolStripMenuItem";
+            this.openDataDirToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.openDataDirToolStripMenuItem.Text = "Open Data Directory";
+            this.openDataDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
+            // 
+            // openEncyclopediaDirToolStripMenuItem
+            // 
+            this.openEncyclopediaDirToolStripMenuItem.Name = "openEncyclopediaDirToolStripMenuItem";
+            this.openEncyclopediaDirToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.openEncyclopediaDirToolStripMenuItem.Text = "Open Encyclopedia Directory";
+            this.openEncyclopediaDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
+            // 
+            // toolStripSeparator16
+            // 
+            this.toolStripSeparator16.Name = "toolStripSeparator16";
+            this.toolStripSeparator16.Size = new System.Drawing.Size(224, 6);
+            // 
+            // openUserDirToolStripMenuItem
+            // 
+            this.openUserDirToolStripMenuItem.Name = "openUserDirToolStripMenuItem";
+            this.openUserDirToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.openUserDirToolStripMenuItem.Text = "Open User Directory";
+            this.openUserDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
+            // 
+            // openReplaysDirToolStripMenuItem
+            // 
+            this.openReplaysDirToolStripMenuItem.Name = "openReplaysDirToolStripMenuItem";
+            this.openReplaysDirToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.openReplaysDirToolStripMenuItem.Text = "Open Replays Directory";
+            this.openReplaysDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
+            // 
+            // openScriptsDirToolStripMenuItem
+            // 
+            this.openScriptsDirToolStripMenuItem.Name = "openScriptsDirToolStripMenuItem";
+            this.openScriptsDirToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.openScriptsDirToolStripMenuItem.Text = "Open Scripts Directory";
+            this.openScriptsDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
+            // 
+            // extrasToolStripMenuItem
+            // 
+            this.extrasToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cAPacksAreReadOnlyToolStripMenuItem,
+            this.updateOnStartupToolStripMenuItem,
+            this.showDecodeToolOnErrorToolStripMenuItem,
+            this.extractTSVFileExtensionToolStripMenuItem});
+            this.extrasToolStripMenuItem.Name = "extrasToolStripMenuItem";
+            this.extrasToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.extrasToolStripMenuItem.Text = "Options";
+            // 
+            // cAPacksAreReadOnlyToolStripMenuItem
+            // 
+            this.cAPacksAreReadOnlyToolStripMenuItem.Checked = true;
+            this.cAPacksAreReadOnlyToolStripMenuItem.CheckOnClick = true;
+            this.cAPacksAreReadOnlyToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cAPacksAreReadOnlyToolStripMenuItem.Name = "cAPacksAreReadOnlyToolStripMenuItem";
+            this.cAPacksAreReadOnlyToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.cAPacksAreReadOnlyToolStripMenuItem.Text = "CA Packs Are Read Only";
+            this.cAPacksAreReadOnlyToolStripMenuItem.ToolTipText = "If checked, the original pack files for the game can be viewed but not edited.";
+            this.cAPacksAreReadOnlyToolStripMenuItem.CheckedChanged += new System.EventHandler(this.cAPacksAreReadOnlyToolStripMenuItem_CheckStateChanged);
+            // 
+            // updateOnStartupToolStripMenuItem
+            // 
+            this.updateOnStartupToolStripMenuItem.CheckOnClick = true;
+            this.updateOnStartupToolStripMenuItem.Name = "updateOnStartupToolStripMenuItem";
+            this.updateOnStartupToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.updateOnStartupToolStripMenuItem.Text = "Update on Startup";
+            this.updateOnStartupToolStripMenuItem.Click += new System.EventHandler(this.updateOnStartupToolStripMenuItem_Click);
+            // 
+            // showDecodeToolOnErrorToolStripMenuItem
+            // 
+            this.showDecodeToolOnErrorToolStripMenuItem.CheckOnClick = true;
+            this.showDecodeToolOnErrorToolStripMenuItem.Name = "showDecodeToolOnErrorToolStripMenuItem";
+            this.showDecodeToolOnErrorToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.showDecodeToolOnErrorToolStripMenuItem.Text = "Show Decode Tool on Error";
+            this.showDecodeToolOnErrorToolStripMenuItem.Click += new System.EventHandler(this.showDecodeToolOnErrorToolStripMenuItem_Click);
+            // 
+            // extractTSVFileExtensionToolStripMenuItem
+            // 
+            this.extractTSVFileExtensionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.csvToolStripMenuItem,
+            this.tsvToolStripMenuItem});
+            this.extractTSVFileExtensionToolStripMenuItem.Name = "extractTSVFileExtensionToolStripMenuItem";
+            this.extractTSVFileExtensionToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.extractTSVFileExtensionToolStripMenuItem.Text = "Extract TSV File Extension";
+            // 
+            // csvToolStripMenuItem
+            // 
+            this.csvToolStripMenuItem.Checked = true;
+            this.csvToolStripMenuItem.CheckOnClick = true;
+            this.csvToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.csvToolStripMenuItem.Name = "csvToolStripMenuItem";
+            this.csvToolStripMenuItem.Size = new System.Drawing.Size(91, 22);
+            this.csvToolStripMenuItem.Text = "csv";
+            this.csvToolStripMenuItem.Click += new System.EventHandler(this.extensionSelectionChanged);
+            // 
+            // tsvToolStripMenuItem
+            // 
+            this.tsvToolStripMenuItem.CheckOnClick = true;
+            this.tsvToolStripMenuItem.Name = "tsvToolStripMenuItem";
+            this.tsvToolStripMenuItem.Size = new System.Drawing.Size(91, 22);
+            this.tsvToolStripMenuItem.Text = "tsv";
+            this.tsvToolStripMenuItem.Click += new System.EventHandler(this.extensionSelectionChanged);
+            // 
             // updateToolStripMenuItem
             // 
             this.updateToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -971,71 +1040,6 @@ namespace PackFileManager
             this.updateAllToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.updateAllToolStripMenuItem.Text = "Update All";
             this.updateAllToolStripMenuItem.Click += new System.EventHandler(this.updateAllToolStripMenuItem_Click);
-            // 
-            // extrasToolStripMenuItem
-            // 
-            this.extrasToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.cAPacksAreReadOnlyToolStripMenuItem,
-            this.updateOnStartupToolStripMenuItem,
-            this.showDecodeToolOnErrorToolStripMenuItem,
-            this.extractTSVFileExtensionToolStripMenuItem});
-            this.extrasToolStripMenuItem.Name = "extrasToolStripMenuItem";
-            this.extrasToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
-            this.extrasToolStripMenuItem.Text = "Options";
-            // 
-            // cAPacksAreReadOnlyToolStripMenuItem
-            // 
-            this.cAPacksAreReadOnlyToolStripMenuItem.Checked = true;
-            this.cAPacksAreReadOnlyToolStripMenuItem.CheckOnClick = true;
-            this.cAPacksAreReadOnlyToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cAPacksAreReadOnlyToolStripMenuItem.Name = "cAPacksAreReadOnlyToolStripMenuItem";
-            this.cAPacksAreReadOnlyToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
-            this.cAPacksAreReadOnlyToolStripMenuItem.Text = "CA Packs Are Read Only";
-            this.cAPacksAreReadOnlyToolStripMenuItem.ToolTipText = "If checked, the original pack files for the game can be viewed but not edited.";
-            this.cAPacksAreReadOnlyToolStripMenuItem.CheckedChanged += new System.EventHandler(cAPacksAreReadOnlyToolStripMenuItem_CheckStateChanged);
-            // 
-            // updateOnStartupToolStripMenuItem
-            // 
-            this.updateOnStartupToolStripMenuItem.CheckOnClick = true;
-            this.updateOnStartupToolStripMenuItem.Name = "updateOnStartupToolStripMenuItem";
-            this.updateOnStartupToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
-            this.updateOnStartupToolStripMenuItem.Text = "Update on Startup";
-            this.updateOnStartupToolStripMenuItem.Click += new System.EventHandler(this.updateOnStartupToolStripMenuItem_Click);
-            // 
-            // showDecodeToolOnErrorToolStripMenuItem
-            // 
-            this.showDecodeToolOnErrorToolStripMenuItem.CheckOnClick = true;
-            this.showDecodeToolOnErrorToolStripMenuItem.Name = "showDecodeToolOnErrorToolStripMenuItem";
-            this.showDecodeToolOnErrorToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
-            this.showDecodeToolOnErrorToolStripMenuItem.Text = "Show Decode Tool on Error";
-            this.showDecodeToolOnErrorToolStripMenuItem.Click += new System.EventHandler(this.showDecodeToolOnErrorToolStripMenuItem_Click);
-            // 
-            // extractTSVFileExtensionToolStripMenuItem
-            // 
-            this.extractTSVFileExtensionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.csvToolStripMenuItem,
-            this.tsvToolStripMenuItem});
-            this.extractTSVFileExtensionToolStripMenuItem.Name = "extractTSVFileExtensionToolStripMenuItem";
-            this.extractTSVFileExtensionToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
-            this.extractTSVFileExtensionToolStripMenuItem.Text = "Extract TSV File Extension";
-            // 
-            // csvToolStripMenuItem
-            // 
-            this.csvToolStripMenuItem.Checked = true;
-            this.csvToolStripMenuItem.CheckOnClick = true;
-            this.csvToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.csvToolStripMenuItem.Name = "csvToolStripMenuItem";
-            this.csvToolStripMenuItem.Size = new System.Drawing.Size(91, 22);
-            this.csvToolStripMenuItem.Text = "csv";
-            this.csvToolStripMenuItem.Click += new System.EventHandler(this.extensionSelectionChanged);
-            // 
-            // tsvToolStripMenuItem
-            // 
-            this.tsvToolStripMenuItem.CheckOnClick = true;
-            this.tsvToolStripMenuItem.Name = "tsvToolStripMenuItem";
-            this.tsvToolStripMenuItem.Size = new System.Drawing.Size(91, 22);
-            this.tsvToolStripMenuItem.Text = "tsv";
-            this.tsvToolStripMenuItem.Click += new System.EventHandler(this.extensionSelectionChanged);
             // 
             // helpToolStripMenuItem
             // 
@@ -1126,7 +1130,7 @@ namespace PackFileManager
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PackFileManagerForm_FormClosing);
             this.packActionMenuStrip.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
-            //((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
@@ -1253,5 +1257,6 @@ namespace PackFileManager
         private System.Windows.Forms.ToolStripMenuItem openUserDirToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openReplaysDirToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openScriptsDirToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openModPathToolStripMenuItem;
     }
 }

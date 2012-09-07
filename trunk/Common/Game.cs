@@ -49,7 +49,10 @@ namespace Common {
                 if (string.IsNullOrEmpty(dir)) {
                     dir = GetInstallLocation(WIN_NODE);
                 }
-                return gameDirectory;
+                if (string.IsNullOrEmpty(dir)) {
+                    dir = gameDirectory;
+                }
+                return dir;
             }
             set {
                 gameDirectory = value;
@@ -64,9 +67,14 @@ namespace Common {
             get;
             private set;
         }
+        public string ScriptDirectory {
+            get {
+                return Path.Combine(UserDir, "scripts");
+            }
+        }
         public string ScriptFile {
             get {
-                string result = Path.Combine(UserDir, "scripts", ScriptFilename);
+                string result = Path.Combine(ScriptDirectory, ScriptFilename);
                 return result;
             }
         }
