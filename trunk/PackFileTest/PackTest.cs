@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Common;
 using Filetypes;
-using PackFileManager;
 
 namespace PackFileTest {
     class PackTest {
@@ -158,7 +157,7 @@ namespace PackFileTest {
         void PrepareRelease() {
             DBTypeMap.Instance.initializeFromFile("master_schema.xml");
             List<Thread> threads = new List<Thread>();
-            foreach (Game game in Game.GetGames()) {
+            foreach (Game game in Game.Games) {
                 if (game.IsInstalled) {
                     string datapath = Path.Combine(game.GameDirectory, "data");
                     string outfile = string.Format("schema_{0}.xml", game.Id);

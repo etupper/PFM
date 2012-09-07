@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 
 namespace Common {
-
+ 
     /*
      * Any entry in the Pack file.
      * Has a name and a path designating its full position.
@@ -107,8 +107,10 @@ namespace Common {
             get {
                 if (Parent != null) {
                     return base.FullPath;
-                } else {
+                } else if (fullPath != null) {
                     return fullPath;
+                } else {
+                    return Name;
                 }
             }
         }
@@ -168,7 +170,7 @@ namespace Common {
      * with "Deleted" and just not added anymore when the full model is rebuilt
      * the next time around.
      */
-    public class VirtualDirectory : PackEntry {
+    public class VirtualDirectory : PackEntry, IEnumerable<PackedFile> {
         public delegate void ContentsEvent(PackEntry entry);
         // triggered when content is added
         public event ContentsEvent DirectoryAdded;
@@ -182,12 +184,7 @@ namespace Common {
                 return base.Deleted;
             }
             set {
-                foreach (PackedFile file in containedFiles) {
-                    file.Deleted = value;
-                }
-                foreach (VirtualDirectory dir in subdirectories) {
-                    dir.Deleted = value;
-                }
+                AllEntries.ForEach(e => e.Deleted = value);
                 base.Deleted = value;
             }
         }
@@ -200,6 +197,7 @@ namespace Common {
                 return subdirectories;
             }
         }
+
         // the contained files
         private SortedSet<PackedFile> containedFiles = new SortedSet<PackedFile> ();
         public SortedSet<PackedFile> Files {
@@ -207,6 +205,38 @@ namespace Common {
                 return containedFiles;
             }
         }
+  
+        // retrieve all files contained in this and all subdirectories
+        public List<PackedFile> AllFiles {
+            get {
+                List<PackedFile> files = new List<PackedFile>();
+                foreach(VirtualDirectory subDirectory in Subdirectories) {
+                    files.AddRange(subDirectory.AllFiles);
+                }
+                files.AddRange(Files);
+                return files;
+            }
+        }
+        public List<PackEntry> AllEntries {
+            get {
+                List<PackEntry> result = new List<PackEntry>();
+                result.Add(this);
+                foreach(VirtualDirectory directory in Subdirectories) {
+                    result.AddRange(directory.AllEntries);
+                }
+                result.AddRange(Files);
+                return result;
+            }
+        }
+  
+        // enumerates all files
+        public IEnumerator<PackedFile> GetEnumerator() {
+            return AllFiles.GetEnumerator();
+        }
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+            return GetEnumerator();
+        }
+        
         /*
          * Retrieve a list with all contained entries (files and directories).
          */
@@ -328,7 +358,8 @@ namespace Common {
         }
         #endregion
     }
-
+ 
+    #region Data Sources
     /*
      * A class providing data for a PackedFile content object.
      */
@@ -353,6 +384,7 @@ namespace Common {
             return File.ReadAllBytes(filepath);
         }
     }
+
     /* Provides data from heap memory */
     [DebuggerDisplay("From Memory")]
     public class MemorySource : DataSource {
@@ -365,6 +397,7 @@ namespace Common {
             return data;
         }
     }
+
     /* Provides data from within a pack file */
     [DebuggerDisplay("{Offset}@{filepath}")]
     public class PackedFileSource : DataSource {
@@ -387,4 +420,5 @@ namespace Common {
             return data;
         }
     }
+    #endregion
 }

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -10,7 +10,6 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Release_Build</RootNamespace>
     <AssemblyName>Release Build</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -33,13 +32,14 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\PackFileTest\PackFileTest.csproj">
       <Project>{C3A9D2C3-E35C-4160-9ED9-68B8A5BF5F9C}</Project>
       <Name>PackFileTest</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PackFileManager\PackFileManager.csproj">
+      <Project>{BED0F2F6-BD7B-4D6D-8959-98A6E9B6F88A}</Project>
+      <Name>PackFileManager</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

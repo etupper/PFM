@@ -41,7 +41,8 @@ namespace PackFileManager
         }
 
         private CustomMessageBox search;
-
+        DBFileUpdate dbUpdater = new DBFileUpdate();
+        
         #region Editors
         private readonly DBFileEditorControl dbFileEditorControl = new DBFileEditorControl {
             Dock = DockStyle.Fill
@@ -79,6 +80,7 @@ namespace PackFileManager
             InitializeComponent();
 
             editors = CreateEditors();
+            dbUpdater.DetermineGuid = QueryGuid;
 
             try {
                 if (Settings.Default.UpdateOnStartup) {
@@ -123,9 +125,8 @@ namespace PackFileManager
                 OpenExistingPackFile(args[0]);
             }
 
-            // fill CA file list
+            // fill CA file list and refill for new game when changed
             FillCaPackMenu();
-            // refill CA file list for new game when changed
             GameManager.Instance.GameChanged += FillCaPackMenu;
             // allow/disallow mod installation depending on if game is installed
             GameManager.Instance.GameChanged += EnableInstallUninstall;
@@ -135,19 +136,12 @@ namespace PackFileManager
             GameManager.Instance.GameChanged += QueryModGameChange;
             // update window title to show new game setting
             GameManager.Instance.GameChanged += RefreshTitle;
+            UpdateGameDirectoryItems();
+            GameManager.Instance.GameChanged += UpdateGameDirectoryItems;
 
             // fill game list
-            foreach (Game g in Game.GetGames()) {
-                ToolStripMenuItem item = new ToolStripMenuItem(g.Id);
-                item.Enabled = g.IsInstalled;
-                item.Checked = GameManager.Instance.CurrentGame == g;
-                item.Click += new EventHandler(delegate(object o, EventArgs unused) { 
-                    GameManager.Instance.CurrentGame = Game.ById(item.Text); 
-                });
-                GameManager.Instance.GameChanged += delegate() {
-                    item.Checked = GameManager.Instance.CurrentGame.Id.Equals(item.Text);
-                };
-                gameToolStripMenuItem.DropDownItems.Add(item);
+            for (int i = Game.Games.Count - 1; i >= 0; i--) {
+                gameToolStripMenuItem.DropDownItems.Insert(0, CreateGameItem(Game.Games[i]));
             }
 
             // allow/disallow mod installation, depending on if mod is set
@@ -167,30 +161,6 @@ namespace PackFileManager
             RefreshTitle();
         }
         
-        private void EnableInstallUninstall() {
-            bool enabled = ModManager.Instance.CurrentModSet;
-            enabled &= GameManager.Instance.CurrentGame.IsInstalled;
-            installModMenuItem.Enabled = uninstallModMenuItem.Enabled = enabled;
-        }
-        
-        private void FillCaPackMenu() {
-            string shogunPath = GameManager.Instance.CurrentGame.GameDirectory;
-            openCAToolStripMenuItem.DropDownItems.Clear();
-            openCAToolStripMenuItem.Enabled = shogunPath != null;
-            if (shogunPath != null) {
-                shogunPath = Path.Combine(shogunPath, "data");
-                if (Directory.Exists(shogunPath)) {
-                    List<string> packFiles = new List<string> (Directory.GetFiles(shogunPath, "*.pack"));
-                    packFiles.Sort(NumberedFileComparator.Instance);
-                    packFiles.ForEach(file => openCAToolStripMenuItem.DropDownItems.Add(
-                        new ToolStripMenuItem(Path.GetFileName(file), null, 
-                                         delegate(object s, EventArgs a) { 
-                        OpenExistingPackFile(file, true); 
-                    })));
-                }
-            }
-        }
-
         #region Form Management
         private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
             base.Close();
@@ -209,7 +179,7 @@ namespace PackFileManager
             case CloseReason.ApplicationExitCall:
                 break;
             default:
-                e.Cancel = HandlePackFileChangesWithUserInput() == DialogResult.Cancel;
+                e.Cancel = QuerySaveModifiedFile() == DialogResult.Cancel;
                 break;
             }
         }
@@ -279,6 +249,59 @@ namespace PackFileManager
                 }
             }
         }
+  
+        #region Menu Item Creation and Update
+        private void EnableInstallUninstall() {
+            bool enabled = ModManager.Instance.CurrentModSet;
+            enabled &= GameManager.Instance.CurrentGame.IsInstalled;
+            installModMenuItem.Enabled = uninstallModMenuItem.Enabled = enabled;
+        }
+        
+        ToolStripMenuItem CreateGameItem(Game g) {
+            ToolStripMenuItem item = new ToolStripMenuItem(g.Id);
+            item.Enabled = g.IsInstalled;
+            item.Checked = GameManager.Instance.CurrentGame == g;
+            item.Click += new EventHandler(delegate(object o, EventArgs unused) { 
+                GameManager.Instance.CurrentGame = Game.ById(item.Text); 
+            });
+            GameManager.Instance.GameChanged += delegate() {
+                item.Checked = GameManager.Instance.CurrentGame.Id.Equals(item.Text);
+            };
+            return item;
+        }
+
+        void UpdateGameDirectoryItems() {
+            UpdateDirectoryItem(openGameDirToolStripMenuItem, GameManager.Instance.CurrentGame.GameDirectory);
+            UpdateDirectoryItem(openDataDirToolStripMenuItem, GameManager.Instance.CurrentGame.DataDirectory);
+            UpdateDirectoryItem(openEncyclopediaDirToolStripMenuItem, 
+                                Path.Combine(GameManager.Instance.CurrentGame.GameDirectory, "encyclopedia"));
+            UpdateDirectoryItem(openUserDirToolStripMenuItem, GameManager.Instance.CurrentGame.UserDir);
+            UpdateDirectoryItem(openReplaysDirToolStripMenuItem, 
+                                Path.Combine(GameManager.Instance.CurrentGame.UserDir, "replays"));
+            UpdateDirectoryItem(openScriptsDirToolStripMenuItem, GameManager.Instance.CurrentGame.ScriptFile);
+        }
+        void UpdateDirectoryItem(ToolStripMenuItem item, string tag) {
+            item.Tag = tag;
+            item.Enabled = Directory.Exists(tag);
+        }
+        
+        private void FillCaPackMenu() {
+            string shogunPath = GameManager.Instance.CurrentGame.GameDirectory;
+            openCAToolStripMenuItem.DropDownItems.Clear();
+            openCAToolStripMenuItem.Enabled = shogunPath != null;
+            if (shogunPath != null) {
+                shogunPath = Path.Combine(shogunPath, "data");
+                if (Directory.Exists(shogunPath)) {
+                    List<string> packFiles = new List<string> (Directory.GetFiles(shogunPath, "*.pack"));
+                    packFiles.Sort(NumberedFileComparator.Instance);
+                    packFiles.ForEach(file => openCAToolStripMenuItem.DropDownItems.Add(
+                        new ToolStripMenuItem(Path.GetFileName(file), null, 
+                                         delegate(object s, EventArgs a) { 
+                        OpenExistingPackFile(file, true); 
+                    })));
+                }
+            }
+        }
 
         protected void EnableMenuItems() {
             createReadMeToolStripMenuItem.Enabled = !CanWriteCurrentPack;
@@ -319,29 +342,11 @@ namespace PackFileManager
             deleteFileToolStripMenuItem.Enabled = CanWriteCurrentPack && nodeSelected && !isRootNode;
             renameToolStripMenuItem.Enabled = CanWriteCurrentPack && nodeSelected && !isRootNode;
         }
-
-        #region Packed from Tree
-        private List<TreeNode> getTreeViewBranch(TreeNodeCollection trunk)
-        {
-            List<TreeNode> nodes = new List<TreeNode>();
-            getTreeViewBranch(nodes, trunk);
-            return nodes;
-        }
-
-        private void getTreeViewBranch(List<TreeNode> nodes, TreeNodeCollection trunk)
-        {
-            foreach (TreeNode node in trunk)
-            {
-                nodes.Add(node);
-                getTreeViewBranch(nodes, node.Nodes);
-            }
-        }
         #endregion
 
-        #region File Menu
         #region Open Pack
         private void newToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (HandlePackFileChangesWithUserInput() == System.Windows.Forms.DialogResult.No) {
+            if (QuerySaveModifiedFile() == System.Windows.Forms.DialogResult.No) {
                 NewMod("Untitled.pack");
             }
         }
@@ -351,14 +356,14 @@ namespace PackFileManager
                 InitialDirectory = Settings.Default.LastPackDirectory,
                 Filter = IOFunctions.PACKAGE_FILTER
             };
-            if ((HandlePackFileChangesWithUserInput() != DialogResult.Cancel) && 
+            if ((QuerySaveModifiedFile() != DialogResult.Cancel) && 
                 (packOpenFileDialog.ShowDialog() == DialogResult.OK)) {
                 OpenExistingPackFile(packOpenFileDialog.FileName);
             }
         }
 
         private void OpenExistingPackFile(string filepath, bool querySaveCurrent = false) {
-            if (querySaveCurrent && HandlePackFileChangesWithUserInput() == DialogResult.Cancel) {
+            if (querySaveCurrent && QuerySaveModifiedFile() == DialogResult.Cancel) {
                 return;
             }
             Settings.Default.LastPackDirectory = Path.GetDirectoryName(filepath);
@@ -372,6 +377,7 @@ namespace PackFileManager
             }
         }
         #endregion
+
         #region Save Pack
         private bool CanWriteCurrentPack {
             get {
@@ -441,38 +447,46 @@ namespace PackFileManager
             }
         }
         #endregion
-        
+
         private void packTypeToolStripMenuItem_Click(object sender, EventArgs e) {
-            bootToolStripMenuItem.Checked = object.ReferenceEquals (sender, bootToolStripMenuItem);
-            bootXToolStripMenuItem.Checked = object.ReferenceEquals (sender, bootXToolStripMenuItem);
-            releaseToolStripMenuItem.Checked = object.ReferenceEquals (sender, releaseToolStripMenuItem);
-            patchToolStripMenuItem.Checked = object.ReferenceEquals (sender, patchToolStripMenuItem);
-            movieToolStripMenuItem.Checked = object.ReferenceEquals (sender, movieToolStripMenuItem);
-            shaderToolStripMenuItem.Checked = object.ReferenceEquals (sender, shaderToolStripMenuItem);
-            shader2ToolStripMenuItem.Checked = object.ReferenceEquals(sender, shader2ToolStripMenuItem);
-            modToolStripMenuItem.Checked = object.ReferenceEquals(sender, modToolStripMenuItem);
-            if (bootToolStripMenuItem.Checked) {
-                currentPackFile.Type = PackType.Boot;
-            } else if (bootXToolStripMenuItem.Checked) {
-                currentPackFile.Type = PackType.BootX;
-            } else if (releaseToolStripMenuItem.Checked) {
-                currentPackFile.Type = PackType.Release;
-            } else if (patchToolStripMenuItem.Checked) {
-                currentPackFile.Type = PackType.Patch;
-            } else if (movieToolStripMenuItem.Checked) {
-                currentPackFile.Type = PackType.Movie;
-            } else if (modToolStripMenuItem.Checked) {
-                currentPackFile.Type = PackType.Mod;
-            } else if (shaderToolStripMenuItem.Checked) {
-                currentPackFile.Type = PackType.Shader1;
-            } else if (shader2ToolStripMenuItem.Checked) {
-                currentPackFile.Type = PackType.Shader2;
+            foreach (ToolStripMenuItem item in changePackTypeToolStripMenuItem.DropDownItems) {
+                item.Checked = (sender == item);
+                if (item.Checked) {
+                    currentPackFile.Type = (PackType) item.Tag;
+                }
             }
         }
 
+        #region Game Menu
+        private void loadGamePacksToolStripMenuItem_Click(object sender, EventArgs args) {
+            if (MessageBox.Show("Are you sure you want to do this?\nIt takes quite long", "Can I Has Load Time?",
+                                MessageBoxButtons.YesNo) != DialogResult.Yes) {
+                return;
+            }
+            if (QuerySaveModifiedFile() == DialogResult.Cancel) {
+                return;
+            }
+            List<string> packPaths = new PackLoadSequence().GetPacksLoadedFrom(GameManager.Instance.CurrentGame.GameDirectory);
+            packPaths.Reverse();
+            PackFile file = new PackFile("All Packs");
+            PackFileCodec codec = new PackFileCodec();
+            foreach(string path in packPaths) {
+                new LoadUpdater(codec, path, packStatusLabel, packActionProgressBar);
+                PackFile pack = codec.Open(path);
+                pack.Files.ForEach(f => file.Add(f, true));
+            }
+            CurrentPackFile = file;
+        }
+        
+        private void OpenDirectory(object sender, EventArgs args) {
+            string pathToOpen = ((ToolStripMenuItem)sender).Tag as string;
+            if (pathToOpen != null && Directory.Exists(pathToOpen)) {
+                Process.Start("explorer", pathToOpen);
+            }
+        }
         #endregion
-
-        #region MyMod Menu
+        
+        #region MyMod
         private void newModMenuItem_Click(object sender, EventArgs e) {
             List<string> oldMods = ModManager.Instance.ModNames;
             string packFileName = ModManager.Instance.AddMod();
@@ -494,18 +508,11 @@ namespace PackFileManager
         }
 
         private void NewMod(string name) {
-            var header = new PFHeader("PFH3") {
-                Type = PackType.Mod,
-                Version = 0,
-                FileCount = 0,
-                ReplacedPackFileNames = new List<string>(),
-                DataStart = 0x20
-            };
-            CurrentPackFile = new PackFile(name, header);
+            CurrentPackFile = new PackFile(name, new PFHeader("PFH3"));
         }
         
         private void installModMenuItem_Click(object sender, EventArgs e) {
-            if (HandlePackFileChangesWithUserInput() == DialogResult.Cancel) {
+            if (QuerySaveModifiedFile() == DialogResult.Cancel) {
                 return;
             }
             try {
@@ -549,7 +556,6 @@ namespace PackFileManager
         }
         #endregion
 
-        #region Files Menu
         #region Entry Add/Delete
         VirtualDirectory AddTo {
             get {
@@ -602,25 +608,21 @@ namespace PackFileManager
             }
         }
 
-        private void deleteFileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void deleteFileToolStripMenuItem_Click(object sender, EventArgs e) {
             if (packTreeView.SelectedNode == null) {
                 return;
             }
             var packedFiles = new List<PackedFile>();
-            if ((packTreeView.SelectedNode == packTreeView.Nodes[0]) || (packTreeView.SelectedNode.Nodes.Count > 0))
-            {
+            if ((packTreeView.SelectedNode == packTreeView.Nodes[0]) || (packTreeView.SelectedNode.Nodes.Count > 0)) {
                 getPackedFilesFromBranch(packedFiles, packTreeView.SelectedNode.Nodes);
-            }
-            else
-            {
+            } else {
                 packedFiles.Add(packTreeView.SelectedNode.Tag as PackedFile);
             }
-            foreach (PackedFile file in packedFiles)
-            {
+            foreach (PackedFile file in packedFiles) {
                 file.Deleted = true;
             }
         }
+
         private void getPackedFilesFromBranch(List<PackedFile> packedFiles, TreeNodeCollection trunk, Predicate<PackedFile> filter = null) {
             foreach (TreeNode node in trunk)
             {
@@ -661,7 +663,7 @@ namespace PackFileManager
 
         private void createReadMeToolStripMenuItem_Click(object sender, EventArgs e) {
             var readme = new PackedFile { Name = "readme.xml", Data = new byte[0] };
-            currentPackFile.Add("readme.xml", readme);
+            currentPackFile.Add(readme);
             OpenPackedFile(readme);
         }
 
@@ -741,9 +743,9 @@ namespace PackFileManager
         }
         #endregion
 
-        #region Open Packed
+        #region Open Packed File
         private void openAsTextMenuItem_Click(object sender, EventArgs e) {
-            OpenWithEditor(textFileEditorControl, packTreeView.SelectedNode.Tag as PackedFile);
+            OpenPackedFile(textFileEditorControl, packTreeView.SelectedNode.Tag as PackedFile);
         }
 
         private void openFileToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -783,14 +785,14 @@ namespace PackFileManager
                 }
             }
             
-            OpenWithEditor(editor, packedFile);
+            OpenPackedFile(editor, packedFile);
 
             if (packedFile.FullPath.Contains(".rigid")) {
                 // viewModel(packedFile);
             }
         }
         
-        private void OpenWithEditor(IPackedFileEditor editor, PackedFile packedFile) {
+        private void OpenPackedFile(IPackedFileEditor editor, PackedFile packedFile) {
             if (editor != null) {
                 try {
                     editor.CurrentPackedFile = packedFile;
@@ -820,7 +822,7 @@ namespace PackFileManager
         }
         #endregion
 
-        #region Extract
+        #region Extract Packed Files
         private void extractAllTsv_Click(object sender, EventArgs e) {
             List<PackedFile> files = new List<PackedFile>();
             IExtractionPreprocessor tsvExport = new TsvExtractionPreprocessor();
@@ -865,7 +867,6 @@ namespace PackFileManager
             result &= !PackedFileDbCodec.CanDecode (file, out buffer);
             return result;
         }
-        #endregion
         #endregion
         
         #region DB Descriptions Menu
@@ -951,80 +952,15 @@ namespace PackFileManager
             }
         }
 
-        // this could do with an update; since the transition to schema.xml,
-        // we also know obsolete fields and can remove them,
-        // and we can add fields in the middle instead of assuming they got appended.
         private void UpdatePackedFile(PackedFile packedFile) {
             try {
-                string key = DBFile.typename(packedFile.FullPath);
-                if (DBTypeMap.Instance.IsSupported(key)) {
-                    PackedFileDbCodec codec = PackedFileDbCodec.FromFilename(packedFile.FullPath);
-                    int maxVersion = DBTypeMap.Instance.MaxVersion(key);
-                    DBFileHeader header = PackedFileDbCodec.readHeader(packedFile);
-                    if (header.Version < maxVersion) {
-                        // found a more recent db definition; read data from db file
-                        DBFile updatedFile = PackedFileDbCodec.Decode(packedFile);
-
-                        TypeInfo dbFileInfo = updatedFile.CurrentType;
-                        string guid;
-                        TypeInfo targetInfo = GetTargetTypeInfo (key, maxVersion, out guid);
-                        if (targetInfo == null) {
-                            MessageBox.Show("Will not update this table: can't decide new structure.");
-                            return;
-                        }
-
-                        // identify FieldInstances missing in db file
-                        for (int i = dbFileInfo.Fields.Count; i < targetInfo.Fields.Count; i++) {
-                            foreach (List<FieldInstance> entry in updatedFile.Entries) {
-                                var field = targetInfo.Fields[i].CreateInstance();
-                                entry.Add(field);
-                            }
-                        }
-                        updatedFile.Header.GUID = guid;
-                        updatedFile.Header.Version = maxVersion;
-                        packedFile.Data = codec.Encode(updatedFile);
-
-                        if (dbFileEditorControl.CurrentPackedFile == packedFile) {
-                            dbFileEditorControl.Open();
-                        }
-                    }
+                dbUpdater.UpdatePackedFile(packedFile);
+                if (dbFileEditorControl.CurrentPackedFile == packedFile) {
+                    dbFileEditorControl.Open();
                 }
             } catch (Exception x) {
                 MessageBox.Show(string.Format("Could not update {0}: {1}", Path.GetFileName(packedFile.FullPath), x.Message));
             }
-        }
-
-        TypeInfo GetTargetTypeInfo(string key, int maxVersion, out string guid) {
-            TypeInfo targetInfo = null;
-            List<string> newGuid = GetGuidsForInfo(key, maxVersion);
-            guid = null;
-            if (newGuid.Count == 0) {
-                guid = "";
-            } else if (newGuid.Count == 1) {
-                guid = newGuid[0];
-            } if (newGuid.Count > 1) {
-                for (int index = 0; newGuid.Count > index && guid == null; index++) {
-                    string message = string.Format("There are more than one definitions for the maximum version {0}.\nUse GUID {1}?",
-                                                   maxVersion, newGuid[index]);
-                    if (MessageBox.Show(message, "Choose GUID", MessageBoxButtons.YesNo) == DialogResult.Yes) {
-                        guid = newGuid[index];
-                    }
-                }
-            }
-            
-            if (guid != null) {
-                targetInfo = DBTypeMap.Instance.GetVersionedInfo(key, maxVersion);
-            }
-            return targetInfo;
-        }
-        private List<string> GetGuidsForInfo(string type, int version) {
-            List<string> result = new List<string>();
-            foreach(GuidTypeInfo info in DBTypeMap.Instance.GuidMap.Keys) {
-                if (info.Version == version && info.TypeName.Equals(type)) {
-                    result.Add(info.Guid);
-                }
-            }
-            return result;
         }
         #endregion
 
@@ -1117,8 +1053,7 @@ namespace PackFileManager
             EnableMenuItems();
         }
 
-        private void packTreeView_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
+        private void packTreeView_MouseDoubleClick(object sender, MouseEventArgs e) {
             TreeNode nodeAt = packTreeView.GetNodeAt(e.Location);
             if ((nodeAt != null) && (e.Button == MouseButtons.Right)) {
                 packTreeView.SelectedNode = nodeAt;
@@ -1128,16 +1063,14 @@ namespace PackFileManager
             }
         }
 
-        private void packTreeView_MouseDown(object sender, MouseEventArgs e)
-        {
+        private void packTreeView_MouseDown(object sender, MouseEventArgs e) {
             TreeNode nodeAt = packTreeView.GetNodeAt(e.Location);
             if ((nodeAt != null) && (e.Button == MouseButtons.Right)) {
                 packTreeView.SelectedNode = nodeAt;
             }
         }
 
-        private void packTreeView_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
+        private void packTreeView_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e) {
             switch (e.KeyCode) {
                 case Keys.Insert:
                     if (!e.Shift) {
@@ -1195,17 +1128,16 @@ namespace PackFileManager
             }
         }
 
-        private DialogResult HandlePackFileChangesWithUserInput()
-        {
-            if ((currentPackFile != null) && currentPackFile.IsModified)
-            {
-                switch (MessageBox.Show(@"You modified the pack file. Do you want to save your changes?", @"Save Changes?", 
-                                        MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button3))
-                {
+        private DialogResult QuerySaveModifiedFile() {
+            if ((currentPackFile != null) && currentPackFile.IsModified) {
+                switch (MessageBox.Show("You modified the pack file. Do you want to save your changes?", 
+                                        "Save Changes?", 
+                                        MessageBoxButtons.YesNoCancel, 
+                                        MessageBoxIcon.Exclamation, 
+                                        MessageBoxDefaultButton.Button3)) {
                     case DialogResult.Yes:
                         saveToolStripMenuItem_Click(this, EventArgs.Empty);
-                        if (!currentPackFile.IsModified)
-                        {
+                        if (!currentPackFile.IsModified) {
                             break;
                         }
                         return DialogResult.Cancel;
@@ -1219,12 +1151,39 @@ namespace PackFileManager
             }
             return DialogResult.No;
         }
+
+        private string QueryGuid(List<string> newGuid) {
+            string guid = null;
+            for (int index = 0; newGuid.Count > index && guid == null; index++) {
+                string message = string.Format("There are more than one definitions for the maximum version.\nUse GUID {0}?",
+                                               newGuid[index]);
+                if (MessageBox.Show(message, "Choose GUID", MessageBoxButtons.YesNo) == DialogResult.Yes) {
+                    guid = newGuid[index];
+                }
+            }
+            return guid;
+        }
         #endregion
   
+        #region Nodes from Tree
+        private List<TreeNode> GetAllContainedNodes(TreeNodeCollection trunk) {
+            List<TreeNode> nodes = new List<TreeNode>();
+            GetAllContainedNodes(nodes, trunk);
+            return nodes;
+        }
+
+        private void GetAllContainedNodes(List<TreeNode> nodes, TreeNodeCollection trunk) {
+            foreach (TreeNode node in trunk) {
+                nodes.Add(node);
+                GetAllContainedNodes(nodes, node.Nodes);
+            }
+        }
+        #endregion
+
         public override void Refresh() {
             // save currently opened nodes
             var expandedNodes = new List<string>();
-            foreach (TreeNode node in getTreeViewBranch(packTreeView.Nodes)) {
+            foreach (TreeNode node in GetAllContainedNodes(packTreeView.Nodes)) {
                 if (node.IsExpanded && node is PackEntryNode) {
                     expandedNodes.Add((node.Tag as PackEntry).FullPath);
                 }
@@ -1241,7 +1200,7 @@ namespace PackFileManager
             packTreeView.Nodes.Add(node2);
 
             // recover opened nodes and selection
-            foreach (TreeNode node in getTreeViewBranch(packTreeView.Nodes)) {
+            foreach (TreeNode node in GetAllContainedNodes(packTreeView.Nodes)) {
                 string path = (node.Tag as PackEntry).FullPath;
                 if (expandedNodes.Contains(path)) {
                     node.Expand();
@@ -1266,9 +1225,9 @@ namespace PackFileManager
             }
             Text = string.Format("{0}Pack File Manager {1} ({2})", file, Application.ProductVersion, GameManager.Instance.CurrentGame.Id);
         }
-
-        private void searchFileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+  
+        #region Search
+        private void searchFileToolStripMenuItem_Click(object sender, EventArgs e) {
             search = new CustomMessageBox();
             AddOwnedForm(search);
             search.lblMessage.Text = "Query:";
@@ -1283,6 +1242,7 @@ namespace PackFileManager
                 findChild(node);
             }
         }
+        #endregion
     }
 }
 

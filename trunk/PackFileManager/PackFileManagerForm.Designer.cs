@@ -83,7 +83,17 @@ namespace PackFileManager
             this.uninstallModMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadGamePacksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openGameDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openDataDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openEncyclopediaDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openUserDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openReplaysDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openScriptsDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
             this.filesMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.replaceFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -619,9 +629,87 @@ namespace PackFileManager
             // 
             // gameToolStripMenuItem
             // 
+            this.gameToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+                toolStripSeparator14,
+                loadGamePacksToolStripMenuItem,
+                toolStripSeparator15,
+                openGameDirToolStripMenuItem,
+                openDataDirToolStripMenuItem,
+                openEncyclopediaDirToolStripMenuItem,
+                toolStripSeparator16,
+                openUserDirToolStripMenuItem,
+                openReplaysDirToolStripMenuItem,
+                openScriptsDirToolStripMenuItem
+            });
             this.gameToolStripMenuItem.Name = "gameToolStripMenuItem";
             this.gameToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.gameToolStripMenuItem.Text = "Game";
+            // 
+            // openGameDirToolStripMenuItem
+            // 
+            this.openGameDirToolStripMenuItem.Name = "openGameDirToolStripMenuItem";
+            this.openGameDirToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.openGameDirToolStripMenuItem.Text = "Open Game Directory";
+            this.openGameDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
+            this.openGameDirToolStripMenuItem.Enabled = true;
+            // 
+            // openDataDirToolStripMenuItem
+            // 
+            this.openDataDirToolStripMenuItem.Name = "openDataDirToolStripMenuItem";
+            this.openDataDirToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.openDataDirToolStripMenuItem.Text = "Open Data Directory";
+            this.openDataDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
+            this.openDataDirToolStripMenuItem.Enabled = true;
+            // 
+            // openEncyclopediaDirToolStripMenuItem
+            // 
+            this.openEncyclopediaDirToolStripMenuItem.Name = "openEncyclopediaDirToolStripMenuItem";
+            this.openEncyclopediaDirToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.openEncyclopediaDirToolStripMenuItem.Text = "Open Encyclopedia Directory";
+            this.openEncyclopediaDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
+            this.openEncyclopediaDirToolStripMenuItem.Enabled = true;
+            // 
+            // openUserDirToolStripMenuItem
+            // 
+            this.openUserDirToolStripMenuItem.Name = "openUserDirToolStripMenuItem";
+            this.openUserDirToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.openUserDirToolStripMenuItem.Text = "Open User Directory";
+            this.openUserDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
+            this.openUserDirToolStripMenuItem.Enabled = true;
+            // 
+            // openReplaysDirToolStripMenuItem
+            // 
+            this.openReplaysDirToolStripMenuItem.Name = "openReplaysDirToolStripMenuItem";
+            this.openReplaysDirToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.openReplaysDirToolStripMenuItem.Text = "Open Replays Directory";
+            this.openReplaysDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
+            this.openReplaysDirToolStripMenuItem.Enabled = true;
+            // 
+            // openScriptsDirToolStripMenuItem
+            // 
+            this.openScriptsDirToolStripMenuItem.Name = "openScriptsDirToolStripMenuItem";
+            this.openScriptsDirToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.openScriptsDirToolStripMenuItem.Text = "Open Scripts Directory";
+            this.openScriptsDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
+            this.openScriptsDirToolStripMenuItem.Enabled = true;
+            // 
+            // loadGamePacksToolStripMenuItem
+            // 
+            this.loadGamePacksToolStripMenuItem.Name = "loadGamePacksToolStripMenuItem";
+            this.loadGamePacksToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.loadGamePacksToolStripMenuItem.Text = "Load all Game Packs";
+            this.loadGamePacksToolStripMenuItem.Click += new System.EventHandler(this.loadGamePacksToolStripMenuItem_Click);
+            this.loadGamePacksToolStripMenuItem.Enabled = true;
+            // 
+            // toolStripSeparator15
+            // 
+            this.toolStripSeparator15.Name = "toolStripSeparator15";
+            this.toolStripSeparator15.Size = new System.Drawing.Size(160, 6);
+            // 
+            // toolStripSeparator14
+            // 
+            this.toolStripSeparator14.Name = "toolStripSeparator14";
+            this.toolStripSeparator14.Size = new System.Drawing.Size(160, 6);
             // 
             // toolStripSeparator13
             // 
@@ -1155,5 +1243,15 @@ namespace PackFileManager
         private System.Windows.Forms.ToolStripMenuItem tsvToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gameToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
+        private System.Windows.Forms.ToolStripMenuItem loadGamePacksToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator15;
+        private System.Windows.Forms.ToolStripMenuItem openGameDirToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openDataDirToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openEncyclopediaDirToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator16;
+        private System.Windows.Forms.ToolStripMenuItem openUserDirToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openReplaysDirToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openScriptsDirToolStripMenuItem;
     }
 }
