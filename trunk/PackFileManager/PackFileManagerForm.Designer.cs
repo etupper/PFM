@@ -117,8 +117,8 @@ namespace PackFileManager
             this.openEncyclopediaDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
             this.openUserDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openReplaysDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openScriptsDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openReplaysDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extrasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cAPacksAreReadOnlyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -143,6 +143,7 @@ namespace PackFileManager
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.packStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.packActionProgressBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.packFileTree1 = new PackFileManager.PackFileTree();
             this.packActionMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -153,14 +154,15 @@ namespace PackFileManager
             // 
             // packTreeView
             // 
+            this.packTreeView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.packTreeView.ContextMenuStrip = this.packActionMenuStrip;
-            this.packTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.packTreeView.ForeColor = System.Drawing.SystemColors.WindowText;
             this.packTreeView.HideSelection = false;
             this.packTreeView.Indent = 19;
             this.packTreeView.Location = new System.Drawing.Point(0, 0);
             this.packTreeView.Name = "packTreeView";
-            this.packTreeView.Size = new System.Drawing.Size(198, 599);
+            this.packTreeView.Size = new System.Drawing.Size(210, 265);
             this.packTreeView.TabIndex = 2;
             this.packTreeView.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.packTreeView_AfterLabelEdit);
             this.packTreeView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.packTreeView_ItemDrag);
@@ -372,9 +374,10 @@ namespace PackFileManager
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.packFileTree1);
             this.splitContainer1.Panel1.Controls.Add(this.packTreeView);
-            this.splitContainer1.Size = new System.Drawing.Size(909, 603);
-            this.splitContainer1.SplitterDistance = 202;
+            this.splitContainer1.Size = new System.Drawing.Size(964, 518);
+            this.splitContainer1.SplitterDistance = 214;
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 9;
             // 
@@ -390,7 +393,7 @@ namespace PackFileManager
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(906, 24);
+            this.menuStrip.Size = new System.Drawing.Size(961, 24);
             this.menuStrip.TabIndex = 10;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -897,19 +900,19 @@ namespace PackFileManager
             this.openUserDirToolStripMenuItem.Text = "Open User Directory";
             this.openUserDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
             // 
-            // openReplaysDirToolStripMenuItem
-            // 
-            this.openReplaysDirToolStripMenuItem.Name = "openReplaysDirToolStripMenuItem";
-            this.openReplaysDirToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
-            this.openReplaysDirToolStripMenuItem.Text = "Open Replays Directory";
-            this.openReplaysDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
-            // 
             // openScriptsDirToolStripMenuItem
             // 
             this.openScriptsDirToolStripMenuItem.Name = "openScriptsDirToolStripMenuItem";
             this.openScriptsDirToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.openScriptsDirToolStripMenuItem.Text = "Open Scripts Directory";
             this.openScriptsDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
+            // 
+            // openReplaysDirToolStripMenuItem
+            // 
+            this.openReplaysDirToolStripMenuItem.Name = "openReplaysDirToolStripMenuItem";
+            this.openReplaysDirToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.openReplaysDirToolStripMenuItem.Text = "Open Replays Directory";
+            this.openReplaysDirToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
             // 
             // extrasToolStripMenuItem
             // 
@@ -1092,9 +1095,9 @@ namespace PackFileManager
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.packStatusLabel,
             this.packActionProgressBar});
-            this.statusStrip.Location = new System.Drawing.Point(0, 628);
+            this.statusStrip.Location = new System.Drawing.Point(0, 543);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(906, 22);
+            this.statusStrip.Size = new System.Drawing.Size(961, 22);
             this.statusStrip.TabIndex = 11;
             this.statusStrip.Text = "statusStrip1";
             // 
@@ -1111,11 +1114,21 @@ namespace PackFileManager
             this.packActionProgressBar.Name = "packActionProgressBar";
             this.packActionProgressBar.Size = new System.Drawing.Size(120, 16);
             // 
+            // packFileTree1
+            // 
+            this.packFileTree1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.packFileTree1.Location = new System.Drawing.Point(3, 271);
+            this.packFileTree1.Name = "packFileTree1";
+            this.packFileTree1.Size = new System.Drawing.Size(207, 244);
+            this.packFileTree1.TabIndex = 3;
+            // 
             // PackFileManagerForm
             // 
             this.AutoScroll = true;
             this.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.ClientSize = new System.Drawing.Size(906, 650);
+            this.ClientSize = new System.Drawing.Size(961, 565);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip);
@@ -1258,5 +1271,6 @@ namespace PackFileManager
         private System.Windows.Forms.ToolStripMenuItem openReplaysDirToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openScriptsDirToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openModPathToolStripMenuItem;
+        private PackFileTree packFileTree1;
     }
 }
