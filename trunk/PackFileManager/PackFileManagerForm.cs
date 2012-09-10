@@ -103,8 +103,12 @@ namespace PackFileManager
             // reflect settings in check box menu items
             updateOnStartupToolStripMenuItem.Checked = Settings.Default.UpdateOnStartup;
             showDecodeToolOnErrorToolStripMenuItem.Checked = Settings.Default.ShowDecodeToolOnError;
-            csvToolStripMenuItem.Checked = "csv".Equals(Settings.Default.TsvExtension);
+
             tsvToolStripMenuItem.Checked = "tsv".Equals(Settings.Default.TsvExtension);
+            csvToolStripMenuItem.Checked = !tsvToolStripMenuItem.Checked;
+            if (!"tsv".Equals(Settings.Default.TsvExtension) && !"csv".Equals(Settings.Default.TsvExtension)) {
+                Settings.Default.TsvExtension = "csv";
+            }
    
             bootToolStripMenuItem.Tag = PackType.Boot;
             bootXToolStripMenuItem.Tag = PackType.BootX;
@@ -491,6 +495,7 @@ namespace PackFileManager
             }
             CurrentPackFile = file;
             CurrentPackFile.IsModified = false;
+            DBReferenceMap.Instance.CurrentPack = CurrentPackFile;
         }
         #endregion
         
