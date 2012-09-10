@@ -176,7 +176,7 @@ namespace PackFileManager {
         }
         void FillRowHeaders(int start = 0, int offset = 0) {
             for (int i = start; i < dataGridView.Rows.Count; i++) {
-                this.dataGridView.Rows[i].HeaderCell.Value = (i + offset).ToString();
+                this.dataGridView.Rows[i].HeaderCell.Value = (i + offset + 1).ToString();
             }
         }
         private void showDBFileNotSupportedMessage(string message) 
