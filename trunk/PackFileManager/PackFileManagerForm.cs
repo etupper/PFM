@@ -121,14 +121,6 @@ namespace PackFileManager
 
             InitializeBrowseDialogs (args);
 
-            // open pack file from command line if applicable
-            if (args.Length == 1) {
-                if (!File.Exists(args[0])) {
-                    throw new ArgumentException("path is not a file or path does not exist");
-                }
-                OpenExistingPackFile(args[0]);
-            }
-
             // fill CA file list and refill for new game when changed
             FillCaPackMenu();
             GameManager.Instance.GameChanged += FillCaPackMenu;
@@ -160,6 +152,12 @@ namespace PackFileManager
                                                  modsToolStripMenuItem.DropDownItems.Insert(1, new ModMenuItem(name, name)));
             if (args.Length == 0) {
                 OpenCurrentModPack();
+            } else if (args.Length == 1) {
+                // open pack file from command line if applicable
+                if (!File.Exists(args[0])) {
+                    throw new ArgumentException("path is not a file or path does not exist");
+                }
+                OpenExistingPackFile(args[0]);
             }
 
             RefreshTitle();
@@ -925,6 +923,9 @@ namespace PackFileManager
             OpenFileDialog dlg = new OpenFileDialog();
             if (dlg.ShowDialog() == DialogResult.OK) {
                 DBTypeMap.Instance.initializeFromFile(dlg.FileName);
+            }
+            if (CurrentPackFile != null) {
+                Refresh();
             }
         }
   
