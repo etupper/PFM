@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\PackFileTest\PackFileTest.csproj">
       <Project>{C3A9D2C3-E35C-4160-9ED9-68B8A5BF5F9C}</Project>
