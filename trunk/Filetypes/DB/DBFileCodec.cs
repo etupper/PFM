@@ -279,11 +279,14 @@ namespace Filetypes {
 				version = int.Parse (versionStr);
 				break;
 			}
+
+            // ignore the table name header line
+            reader.ReadLine();
    
             DBFile file = null;
             long parseStart = reader.BaseStream.Position;
             
-            bool parseSuccessful = false;
+            bool parseSuccessful = true;
             foreach(TypeInfo info in DBTypeMap.Instance.GetVersionedInfos(typeInfoName, version)) {
                 reader.BaseStream.Seek(parseStart, SeekOrigin.Begin);
                 string line = reader.ReadLine ();
@@ -307,6 +310,8 @@ namespace Filetypes {
     					entries.Add (item);
     				} catch {
     					// Console.WriteLine (x);
+                        parseSuccessful = false;
+                        break;
     				}
     			}
                 if (parseSuccessful) {
