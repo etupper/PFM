@@ -284,12 +284,6 @@ namespace PackFileManager {
         private void useFirstColumnAsRowHeader_CheckedChanged(object sender, EventArgs e) 
         {
             FirstColumnAsRowHeader = useFirstColumnAsRowHeader.Checked;
-//            if (dataGridView.Columns.Count > 0) 
-//            {
-//                toggleFirstColumnAsRowHeader(useFirstColumnAsRowHeader.Checked);
-//                Settings.Default.UseFirstColumnAsRowHeader = useFirstColumnAsRowHeader.Checked;
-//                Settings.Default.Save();
-//            }
         }
         bool FirstColumnAsRowHeader {
             set {
@@ -338,12 +332,9 @@ namespace PackFileManager {
                 }
             }
         }
-        private void showAllColumns_CheckedChanged(object sender, EventArgs e) 
-        {
+        private void showAllColumns_CheckedChanged(object sender, EventArgs e) {
             Settings.Default.ShowAllColumns = showAllColumns.Checked;
-            Settings.Default.Save();
-            if (CurrentPackedFile != null) 
-            {
+            if (CurrentPackedFile != null) {
                 applyColumnVisibility();
             }
         }
