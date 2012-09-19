@@ -47,7 +47,7 @@ namespace PfmCL {
                     action = ListPack;
                     break;
                 case "u":
-                    action = UpdatePack;
+                    action = UpdatePackReplace;
                     break;
                 case "a":
                     action = UpdatePackAddOnly;
@@ -138,7 +138,7 @@ namespace PfmCL {
          * Updates the given pack file, adding the files from the given list.
          * Will replace files already present in the pack when the replace parameter is true (default).
          */
-        void UpdatePack(string packFileName, List<string> toAdd, bool replace = true) {
+        void UpdatePack(string packFileName, List<string> toAdd, bool replace) {
             try {
                 PackFile toUpdate = new PackFileCodec().Open(packFileName);
                 foreach (string file in toAdd) {
@@ -155,6 +155,10 @@ namespace PfmCL {
             } catch (Exception e) {
                 Console.Error.WriteLine("Failed to update {0}: {1}", packFileName, e.Message);
             }
+        }
+
+        void UpdatePackReplace(string packFileName, List<string> toAdd) {
+            UpdatePack(packFileName, toAdd, true);
         }
         
         /*
