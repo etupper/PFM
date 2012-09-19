@@ -60,9 +60,13 @@ namespace PackFileManager
             {
                 int currentVersion = -1;
                 StreamReader currentVersionReader = new StreamReader(VERSION_FILE);
-                if (int.TryParse(currentVersionReader.ReadLine(), out currentVersion))
-                {
-                    needsUpdate = (currentVersion < highestVersion) || !File.Exists(Path.Combine(targetDir, "schema.xml"));
+                if (int.TryParse(currentVersionReader.ReadLine(), out currentVersion)) {
+                    needsUpdate = (currentVersion < highestVersion);
+                }
+                if (!needsUpdate) {
+                    foreach(Game g in Game.Games) {
+                        needsUpdate |= !File.Exists(Path.Combine(targetDir, g.SchemaFilename));
+                    }
                 }
                 currentVersionReader.Close();
             }
