@@ -10,7 +10,12 @@ namespace PfmCL {
         public delegate void PackAction(string packFileName, List<string> containedFiles);
 
         static void Main(string[] args) {
-            List<string> arguments = new List<string>(args.Length - 2);
+            if (args.Length < 1) {
+                Usage();
+                return;
+            }
+
+            List<string> arguments = new List<string>(args.Length - 1);
             for (int i = 2; i < args.Length; i++) {
                 arguments.Add(args[i]);
             }
@@ -44,6 +49,9 @@ namespace PfmCL {
                 case "u":
                     action = UpdatePack;
                     break;
+                case "a":
+                    action = UpdatePackAddOnly;
+                    break;
             }
         }
 
@@ -55,7 +63,7 @@ namespace PfmCL {
             }
         }
 
-        void Usage() {
+        static void Usage() {
             Console.WriteLine("usage: pfm <command> <packFile> [<file1>,...]");
             Console.WriteLine("available commands:");
             Console.WriteLine("'c' to create");
@@ -128,13 +136,14 @@ namespace PfmCL {
 
         /*
          * Updates the given pack file, adding the files from the given list.
+         * Will replace files already present in the pack when the replace parameter is true (default).
          */
-        void UpdatePack(string packFileName, List<string> toAdd) {
+        void UpdatePack(string packFileName, List<string> toAdd, bool replace = true) {
             try {
                 PackFile toUpdate = new PackFileCodec().Open(packFileName);
                 foreach (string file in toAdd) {
                     try {
-                        toUpdate.Add(new PackedFile(file), true);
+                        toUpdate.Add(new PackedFile(file), replace);
                     } catch (Exception e) {
                         Console.Error.WriteLine("Failed to add {0}: {1}", file, e.Message);
                     }
@@ -146,6 +155,14 @@ namespace PfmCL {
             } catch (Exception e) {
                 Console.Error.WriteLine("Failed to update {0}: {1}", packFileName, e.Message);
             }
+        }
+        
+        /*
+         * Updates the given pack file, adding the files from the list;
+         * will not replace files already present in the pack.
+         */
+        void UpdatePackAddOnly(string packFileName, List<string> toAdd) {
+            UpdatePack(packFileName, toAdd, false);
         }
     }
 }
