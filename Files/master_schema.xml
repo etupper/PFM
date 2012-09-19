@@ -308,7 +308,7 @@
     <field name='unknown6' type='int' version_start='5' />
   </table>
   <table name='avatar_army_makeup_traits_tables'>
-    <field name='unknown1' type='float' />
+    <field name='unknown1' type='int' />
     <field name='unknown2' type='string' />
     <field name='unknown3' type='string' />
   </table>
@@ -3939,7 +3939,7 @@
                a3b93e45-9dec-45fc-981c-f06c35fa4915,
                d2df9b6f-9902-42fa-894e-fb472f9369de'>
     <field name='Advice ID' type='string' />
-    <field fkey='advice_threads_tables.Thread IDRef' name='Advice Thread' type='string' />
+    <field fkey='advice_threads_tables.Thread ID' name='Advice Thread' type='string' />
     <field name='Advice Thread Level' type='int' />
     <field name='Points Needed' type='int' />
     <field name='Game Area' type='string' />
@@ -4186,7 +4186,7 @@
                4597a2a8-ab31-4e76-bab1-dd31868f483d,
                7418f023-53d0-4a9e-9e18-e60d1ab806ec,
                90c39984-cece-45ed-8b06-6d04973d1c28'>
-    <field fkey='ancillaries_tables.ID' name='Ancillary ID' type='string' />
+    <field name='Ancillary ID' type='string' />
   </table>
   <table table_name='ancillary_to_effects_tables'
          table_version='0'
@@ -4406,7 +4406,7 @@
   <table table_name='avatar_army_makeup_traits_tables'
          table_version='0'
          guid='26d0128c-8ec1-4b15-bbce-47194f32f03f'>
-    <field name='unknown1' type='float' />
+    <field name='unknown1' type='int' />
     <field name='unknown2' type='string' />
     <field name='unknown3' type='string' />
   </table>

@@ -70,6 +70,7 @@ namespace PfmCL {
             Console.WriteLine("'x' to extract (no file arguments: extract all)");
             Console.WriteLine("'t' to list contents (ignores file arguments)");
             Console.WriteLine("'u' to update (replaces files with same path)");
+            Console.WriteLine("'a' to add (does not replace files with same path)");
         }
 
         /*

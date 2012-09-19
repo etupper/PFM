@@ -44,6 +44,10 @@
       <Project>{BED0F2F6-BD7B-4D6D-8959-98A6E9B6F88A}</Project>
       <Name>PackFileManager</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PfmCL\PfmCL.csproj">
+      <Project>{C8E2294E-525D-4EBF-95B1-5ACFBB556DC9}</Project>
+      <Name>PfmCL</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
