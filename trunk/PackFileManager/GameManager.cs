@@ -62,36 +62,22 @@ namespace PackFileManager {
             }
         }
         
-        private string GAME_DIR_FILE = "gamedirs.txt";
-        void CheckGameDirectories() {
+        public static void CheckGameDirectories() {
             foreach(Game g in Game.Games) {
                 if (g.GameDirectory == null) {
-                    // empty string will be marker that gamedir file has been read, but was empty
-                    string dir = null;
-                    if (File.Exists(GAME_DIR_FILE)) {
-                        foreach (string line in File.ReadAllLines(GAME_DIR_FILE)) {
-                            string[] split = line.Split(new char[] { Path.PathSeparator });
-                            if (split[0].Equals(g.Id)) {
-                                dir = split[1];
-                                break;
-                            }
-                        }
-                    }
                     // if there was an empty entry in file, don't ask again
-                    if (dir == null) {
                         FolderBrowserDialog dlg = new FolderBrowserDialog() {
                             Description = string.Format("Please point to Location of {0}\nCancel if not installed.", g.Id)
                         };
                         if (dlg.ShowDialog() == DialogResult.OK) {
-                            dir = dlg.SelectedPath;
+                            g.GameDirectory = dlg.SelectedPath;
                         } else {
                             // add empty entry to file for next time
-                            dir = "";
+                            g.GameDirectory = Game.NOT_INSTALLED;
                         }
-                        string gameDir = string.Format("{0}{1}{2}{3}", g.Id, Path.PathSeparator, dir, Environment.NewLine);
-                        File.AppendAllLines(GAME_DIR_FILE, new string[] { gameDir });
-                    }
-                    g.GameDirectory = string.IsNullOrEmpty(dir) ? null : dir;
+                } else if (g.GameDirectory.Equals(Game.NOT_INSTALLED)) {
+                    // mark as invalid
+                    g.GameDirectory = null;
                 }
             }
         }

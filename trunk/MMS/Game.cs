@@ -43,56 +43,20 @@ namespace Common {
             get; private set;
         }
         string gameDirectory;
-
-        private static string GAME_DIR_FILE = "gamedirs.txt";
-        public static readonly string NOT_INSTALLED = "";
-
-        // returns the install location of the game.
-        // if it is not 
         public string GameDirectory {
             get {
-                string dir = null;
-                foreach (RetrieveLocation retrieveLocation in retrievers) {
-                    dir = retrieveLocation();
-                    if (dir != null) {
-                        break;
-                    }
+                string dir = GetInstallLocation(WOW_NODE);
+                if (string.IsNullOrEmpty(dir)) {
+                    dir = GetInstallLocation(WIN_NODE);
+                }
+                if (!string.IsNullOrEmpty(gameDirectory)) {
+                    dir = gameDirectory;
                 }
                 return dir;
             }
             set {
                 gameDirectory = value;
-                // save to file
-                List<string> entries = new List<string>();
-                foreach (string entry in File.ReadAllLines(GAME_DIR_FILE)) {
-                    string write = entry;
-                    if (entry.StartsWith(Id)) {
-                        write = string.Format("{0}{1}{2}{3}", Id, Path.PathSeparator, 
-                            gameDirectory == null ? NOT_INSTALLED : gameDirectory, Environment.NewLine);
-                    }
-                    entries.Add(write);
-                }
-                File.WriteAllLines(GAME_DIR_FILE, entries);
             }
-        }
-        delegate string RetrieveLocation();
-        RetrieveLocation[] retrievers;
-
-        public string LoadLocationFromFile() {
-            string result = null;
-            // load from file
-            if (File.Exists(GAME_DIR_FILE)) {
-                // marker that file was present
-                result = "";
-                foreach (string line in File.ReadAllLines(GAME_DIR_FILE)) {
-                    string[] split = line.Split(new char[] { Path.PathSeparator });
-                    if (split[0].Equals(Id)) {
-                        result = split[1];
-                        break;
-                    }
-                }
-            }
-            return result;
         }
         public string DataDirectory {
             get {
@@ -131,13 +95,6 @@ namespace Common {
             UserDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                                    "The Creative Assembly", gameDir);
             ScriptFilename = scriptFile;
-
-            retrievers = new RetrieveLocation[] {
-                    delegate() { return gameDirectory; },
-                    delegate() { return LoadLocationFromFile(); },
-                    delegate() { return GetInstallLocation(WOW_NODE); },
-                    delegate() { return GetInstallLocation(WIN_NODE); }
-                };
         }
 
         private string GetInstallLocation(string node) {
