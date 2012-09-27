@@ -36,7 +36,9 @@ namespace PackFileTest {
             // -x : don't wait for user input after finishing
             "-x",
             // -cr: check references
-            "-cr"
+            "-cr",
+            // -mx: find corresponding fields in mod tools xml files
+            "-mx"
         };
 #pragma warning restore 414
 
@@ -119,6 +121,9 @@ namespace PackFileTest {
 //                } else if (dir.Equals("-nm")) {
 //                    testFactories.Add(CreateNavalModelTest);
 //                    Console.WriteLine("naval models test enabled");
+                } else if (dir.StartsWith("-mx")) {
+                    string[] split = dir.Substring(3).Split(Path.PathSeparator);
+                    FindCorrespondingFields(split[0], split[1]);
                 } else {
                     PackedFileTest.TestAllPacks(testFactories, dir, verbose);
                 }
@@ -130,6 +135,16 @@ namespace PackFileTest {
                 Console.WriteLine("Test run finished, press any key");
                 Console.ReadKey();
             }
+        }
+        
+        void FindCorrespondingFields(string packFile, string xmlDirectory) {
+            TableNameCorrespondencyManager manager = new TableNameCorrespondencyManager();
+            FieldCorrespondencyFinder finder = new FieldCorrespondencyFinder(packFile, xmlDirectory);
+            finder.FindAllCorrespondencies();
+            foreach (string tableName in finder.CorrespondingFields.Keys) {
+                manager.TableMapping.Add(tableName, finder.CorrespondingFields[tableName]);
+            }
+            manager.SaveToFile();
         }
         
         void CheckReferences() {

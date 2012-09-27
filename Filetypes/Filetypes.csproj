@@ -83,6 +83,8 @@
     <Compile Include="Models\Naval.cs" />
     <Compile Include="DB\DBFileUpdate.cs" />
     <Compile Include="DB\SchemaOptimizer.cs" />
+    <Compile Include="DB\TextDbCodec.cs" />
+    <Compile Include="DB\ModToolDBCodec.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

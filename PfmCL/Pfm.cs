@@ -52,6 +52,9 @@ namespace PfmCL {
                 case "a":
                     action = UpdatePackAddOnly;
                     break;
+                case "m":
+                    action = ExportToModToolXml;
+                    break;
             }
         }
 
@@ -71,6 +74,7 @@ namespace PfmCL {
             Console.WriteLine("'t' to list contents (ignores file arguments)");
             Console.WriteLine("'u' to update (replaces files with same path)");
             Console.WriteLine("'a' to add (does not replace files with same path)");
+//            Console.WriteLine("'m' to export to official mod tool format XML");
         }
 
         /*
@@ -168,6 +172,10 @@ namespace PfmCL {
          */
         void UpdatePackAddOnly(string packFileName, List<string> toAdd) {
             UpdatePack(packFileName, toAdd, false);
+        }
+        
+        void ExportToModToolXml(string packFileName, List<string> unused) {
+            
         }
     }
 }

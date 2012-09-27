@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Common;
 
 namespace MMS {
     /*
@@ -109,6 +110,47 @@ namespace MMS {
 
                 synchronizedFiles.Add(file);
             }
+        }
+    }
+    
+    public class DirectoryEnumerable : IEnumerable<string> {
+        string directory;
+        public DirectoryEnumerable(string dir) {
+            directory = dir;
+        }
+        public IEnumerator<string> GetEnumerator() {
+            return new DirectoryEnumerator(directory);
+        }
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+            return new DirectoryEnumerator(directory);
+        }
+    }
+    public class DirectoryEnumerator : DelegatingEnumerator<string> {
+        string directory;
+
+        // the files in this enumerator's directory
+        IEnumerator<string> files;
+
+        // the directories in this enumerator's directory
+        IEnumerator<string> directories;
+
+        public DirectoryEnumerator(string dir) {
+            directory = dir;
+            Reset ();
+        }
+        
+        protected override IEnumerator<string> NextEnumerator() {
+            if (directories.MoveNext()) {
+                // recursively iterate contained directories
+                return new DirectoryEnumerator(directories.Current);
+            }
+            return files;
+        }
+        
+        public override void Reset() {
+            base.Reset ();
+            files = (IEnumerator<string>) Directory.GetFiles(directory).GetEnumerator();
+            directories = (IEnumerator<string>) Directory.GetDirectories(directory).GetEnumerator();
         }
     }
 }

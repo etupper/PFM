@@ -12,6 +12,8 @@ namespace MMS {
                 if (args.KeyCode == Keys.Return || args.KeyCode == Keys.Enter) {
                     CloseWithOk();
                     args.Handled = true;
+                } else if (args.KeyCode == Keys.Escape) {
+                    CloseWithCancel();
                 }
             };
         }
