@@ -148,12 +148,22 @@ namespace MMS {
             if (SelectedMod != null) {
                 try {
                     SetMod();
-                    
-                    if (SelectedMod.EditedAfterPackCreation.Count > 0) {
+
+                    // it's normal to have the rules.bob file edited.
+                    if (SelectedMod.EditedAfterPackCreation.Count > 1) {
                         string message = string.Join("\n", SelectedMod.EditedAfterPackCreation);
                         message = "The following files were edited after pack creation:\n" + message + "\n" +
                             "Do you want to install it anyway?";
                         if (MessageBox.Show(message, "Really install mod?", MessageBoxButtons.YesNo) == DialogResult.No) {
+                            return;
+                        }
+                    }
+
+                    if (File.Exists(SelectedMod.InstalledPackPath)) {
+                        if (MessageBox.Show(string.Format("The mod file {0} already exists. Overwrite?", SelectedMod.InstalledPackPath),
+                            "Overwrite existing pack?", MessageBoxButtons.OKCancel) == DialogResult.OK) {
+                            File.Delete(SelectedMod.InstalledPackPath);
+                        } else {
                             return;
                         }
                     }
@@ -182,19 +192,6 @@ namespace MMS {
             }
         }
 
-        #region External Processes
-        private void LaunchBob(object sender, EventArgs e) {
-            LaunchWithMod("BOB.Release.exe");
-        }
-
-        private void LaunchTweak(object sender, EventArgs e) {
-            LaunchWithMod("TWeak.Release.exe");
-        }
-
-        private void LaunchShogun(object sender, EventArgs e) {
-            Process.Start(Path.Combine(Game.STW.GameDirectory, "Shogun2.exe"));
-        }
-
         private void ImportExistingPack(object sender, EventArgs e) {
             OpenFileDialog dialog = new OpenFileDialog {
                 Filter = "Pack Files (*.pack)|*.pack|All files (*.*)|*.*"
@@ -209,31 +206,37 @@ namespace MMS {
             }
         }
 
+        #region External Processes
+        private void LaunchBob(object sender, EventArgs e) {
+            LaunchWithMod("BOB");
+        }
+
+        private void LaunchTweak(object sender, EventArgs e) {
+            LaunchWithMod("TWeak");
+        }
+
+        private void LaunchShogun(object sender, EventArgs e) {
+            ProcessStartInfo info = new ProcessStartInfo {
+                Arguments = "-applaunch 34330"
+            };
+            ExternalProcesses.Launch("Steam", info);
+        }
+
         private void LaunchWithMod(string executable, string[] args = null) {
             if (SelectedMod != null) {
                 SetMod();
-                Launch(executable, args);
+                ProcessStartInfo info = new ProcessStartInfo(executable) {
+                    WorkingDirectory = ModTools.Instance.BinariesPath
+                };
+                Process process = ExternalProcesses.Launch(executable, info);
+                if (process != null) {
+                    process.EnableRaisingEvents = true;
+                    process.Exited += ProcessExited;
+                    startedProcesses.Add(process);
+                }
             } else {
                 MessageBox.Show("Select or set a mod to work with.", "No active mod", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
-        }
-
-        private Process Launch(string executable, string[] args = null) {
-#if DEBUG
-            Console.WriteLine("Launching {0}", executable);
-#endif
-            string argString = "";
-            if (args != null) {
-                argString = string.Join(" ", args);
-            }
-            ProcessStartInfo info = new ProcessStartInfo(executable, argString) {
-                WorkingDirectory = ModTools.Instance.BinariesPath
-            };
-            Process process = Process.Start(info);
-            process.EnableRaisingEvents = true;
-            process.Exited += ProcessExited;
-            startedProcesses.Add(process);
-            return process;
         }
 
         void ProcessExited(object o, EventArgs e) {

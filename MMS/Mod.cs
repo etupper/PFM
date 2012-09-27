@@ -79,42 +79,42 @@ namespace MMS {
                 throw new FileNotFoundException("Pack file not present");
             }
             File.Copy(PackFilePath, InstalledPackPath);
-            bool contained = false;
-            List<string> writeLines = new List<string>();
-            if (File.Exists(Game.STW.ScriptFile)) {
-                foreach (string line in File.ReadAllLines(Game.STW.ScriptFile)) {
-                    string addLine = line;
-                    if (line.Contains(PackFileName)) {
-                        addLine = ScriptFileEntry;
-                        contained = true;
-                    }
-                    writeLines.Add(addLine);
-                }
-            }
-            if (!contained) {
-                writeLines.Add(ScriptFileEntry);
-            }
-            File.WriteAllLines(Game.STW.ScriptFile, writeLines);
+            //bool contained = false;
+            //List<string> writeLines = new List<string>();
+            //if (File.Exists(Game.STW.ScriptFile)) {
+            //    foreach (string line in File.ReadAllLines(Game.STW.ScriptFile)) {
+            //        string addLine = line;
+            //        if (line.Contains(PackFileName)) {
+            //            addLine = ScriptFileEntry;
+            //            contained = true;
+            //        }
+            //        writeLines.Add(addLine);
+            //    }
+            //}
+            //if (!contained) {
+            //    writeLines.Add(ScriptFileEntry);
+            //}
+            //File.WriteAllLines(Game.STW.ScriptFile, writeLines);
         }
         public void Uninstall() {
             if (File.Exists(InstalledPackPath)) {
                 File.Delete(InstalledPackPath);
             }
-            if (File.Exists(Game.STW.ScriptFile)) {
-                List<string> writeLines = new List<string>();
-                foreach (string line in File.ReadAllLines(Game.STW.ScriptFile)) {
-                    string addLine = line;
-                    if (line.Contains(PackFileName) && !line.StartsWith("#")) {
-                        addLine = string.Format("#{0}", ScriptFileEntry);
-                    }
-                    writeLines.Add(addLine);
-                }
-                File.WriteAllLines(Game.STW.ScriptFile, writeLines);
-            }
+            //if (File.Exists(Game.STW.ScriptFile)) {
+            //    List<string> writeLines = new List<string>();
+            //    foreach (string line in File.ReadAllLines(Game.STW.ScriptFile)) {
+            //        string addLine = line;
+            //        if (line.Contains(PackFileName) && !line.StartsWith("#")) {
+            //            addLine = string.Format("#{0}", ScriptFileEntry);
+            //        }
+            //        writeLines.Add(addLine);
+            //    }
+            //    File.WriteAllLines(Game.STW.ScriptFile, writeLines);
+            //}
         }
         #endregion
 
-        string InstalledPackPath {
+        public string InstalledPackPath {
             get {
                 return Path.Combine(Game.STW.DataDirectory, PackFileName);
             }

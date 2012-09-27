@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -142,15 +143,40 @@ namespace MMS {
         protected override IEnumerator<string> NextEnumerator() {
             if (directories.MoveNext()) {
                 // recursively iterate contained directories
-                return new DirectoryEnumerator(directories.Current);
+                return new DirectoryEnumerator(directories.Current.ToString());
             }
             return files;
         }
         
         public override void Reset() {
             base.Reset ();
-            files = (IEnumerator<string>) Directory.GetFiles(directory).GetEnumerator();
-            directories = (IEnumerator<string>) Directory.GetDirectories(directory).GetEnumerator();
+            files = new StringEnumerator(Directory.GetFiles(directory).GetEnumerator());
+            directories = new StringEnumerator(Directory.GetDirectories(directory).GetEnumerator());
+        }
+    }
+    public class StringEnumerator : IEnumerator<string> {
+        private IEnumerator delegateTo;
+        public StringEnumerator(IEnumerator enumerator) {
+            delegateTo = enumerator;
+        }
+        public bool MoveNext() {
+            return delegateTo.MoveNext();
+        }
+        public string Current {
+            get {
+                return delegateTo.Current.ToString();
+            }
+        }
+        object System.Collections.IEnumerator.Current {
+            get {
+                return delegateTo.Current;
+            }
+        }
+        public void Reset() {
+            delegateTo.Reset();
+        }
+        public void Dispose() {
+            delegateTo = null;
         }
     }
 }
