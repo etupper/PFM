@@ -216,6 +216,25 @@ namespace MMS {
         }
 
         private void LaunchShogun(object sender, EventArgs e) {
+            List<string> notYetInstalled = new List<string>();
+            if (SelectedMod != null && SelectedMod.EditedAfterPackCreation.Count > 1) {
+                if (MessageBox.Show(
+                    string.Format("The current mod ({0}) contains data that was not yet added to its pack.\nStart anyway?", SelectedMod.Name),
+                    "Non-current mods detected", MessageBoxButtons.YesNo) == DialogResult.No) {
+                    return;
+                }
+            }
+            foreach (Mod mod in MultiMods.Instance.Mods) {
+                if (File.GetLastWriteTime(mod.InstalledPackPath) < File.GetLastWriteTime(mod.PackFilePath)) {
+                    notYetInstalled.Add(string.Format("- {0}", mod.Name));
+                }
+            }
+            if (notYetInstalled.Count > 0 && MessageBox.Show(
+                string.Format("The packs for the following mods are more recent than the one installed:\n{0}\nStart anyway?", 
+                string.Join("\n", notYetInstalled)),
+                "Non-current mods detected", MessageBoxButtons.YesNo) == DialogResult.No) {
+                    return;
+            }
             ProcessStartInfo info = new ProcessStartInfo {
                 Arguments = "-applaunch 34330"
             };
