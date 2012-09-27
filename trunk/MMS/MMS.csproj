@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DirectorySynchronizer.cs" />
+    <Compile Include="ExternalProcesses.cs" />
     <Compile Include="IFileDataAccessor.cs" />
     <Compile Include="InputBox.cs">
       <SubType>Form</SubType>
@@ -87,7 +88,9 @@
     </Compile>
     <Compile Include="PackImporter.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Files\executables.txt" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{6D23F5FB-04D4-4D7E-BDFF-FCA718309298}</Project>
@@ -111,4 +114,7 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(ProjectDir)\Files\executables.txt" "$(TargetDir)"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

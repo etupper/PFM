@@ -34,7 +34,7 @@ namespace PackFileTest {
             }
         }
 
-        public FieldCorrespondencyFinder (string xmlDir, string packFile) {
+        public FieldCorrespondencyFinder (string packFile, string xmlDir) {
             DBTypeMap.Instance.InitializeTypeMap(Directory.GetCurrentDirectory());
             // initialize patchFileValues from pack file
             PackFile pack = new PackFileCodec().Open(packFile);
