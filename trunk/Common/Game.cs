@@ -64,17 +64,27 @@ namespace Common {
                 gameDirectory = value;
                 // save to file
                 List<string> entries = new List<string>();
-                foreach (string entry in File.ReadAllLines(GAME_DIR_FILE)) {
-                    string write = entry;
-                    if (entry.StartsWith(Id)) {
-                        write = string.Format("{0}{1}{2}{3}", Id, Path.PathSeparator, 
-                            gameDirectory == null ? NOT_INSTALLED : gameDirectory, Environment.NewLine);
+                if (File.Exists(GAME_DIR_FILE)) {
+                    foreach (string entry in File.ReadAllLines(GAME_DIR_FILE)) {
+                        string write = entry;
+                        if (entry.StartsWith(Id)) {
+                            write = GamedirFileEntry;
+                        }
+                        entries.Add(write);
                     }
-                    entries.Add(write);
+                } else {
+                    entries.Add(GamedirFileEntry);
                 }
                 File.WriteAllLines(GAME_DIR_FILE, entries);
             }
         }
+        string GamedirFileEntry {
+            get {
+                return string.Format("{0}{1}{2}{3}", Id, Path.PathSeparator, 
+                                     gameDirectory == null ? NOT_INSTALLED : gameDirectory, Environment.NewLine);
+            }
+        }
+        
         delegate string RetrieveLocation();
         RetrieveLocation[] retrievers;
 

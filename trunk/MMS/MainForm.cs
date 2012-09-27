@@ -16,7 +16,6 @@ namespace MMS {
             
             CheckShogunInstallation();
             
-            // string modPath = Settings.Default.ModToolPath;
             if (string.IsNullOrEmpty(Settings.Default.ModToolPath) || !Directory.Exists(Settings.Default.ModToolPath)) {
                 SetInstallDirectory();
                 if (ModTools.Instance.InstallDirectory == null) {
@@ -58,7 +57,6 @@ namespace MMS {
             if (MultiMods.Instance.CurrentMod != null) {
                 MultiMods.Instance.CurrentMod.IsActive = false;
             }
-            // ModTools.RestoreOriginalData();
         }
   
         /*
@@ -79,6 +77,7 @@ namespace MMS {
          */
         private void SetInstallDirectory(object sender = null, EventArgs e = null) {
             FolderBrowserDialog folderBrowser = new FolderBrowserDialog() {
+                Description = "Please point to the location of your mod tools installation"
             };
             if (folderBrowser.ShowDialog() == DialogResult.OK) {
                 ModTools.Instance.InstallDirectory = folderBrowser.SelectedPath;
@@ -87,10 +86,25 @@ namespace MMS {
             }
         }
         void CheckShogunInstallation() {
+            Game g = Game.STW;
             // prefer loaded from file so the user can force an installation location
-            if (!Game.STW.IsInstalled) {
-                throw new InvalidOperationException("Cannot find Shogun installation directory.\n"+
-                                                    "If you do have it, enter its path in a file called 'gamedirs.txt' and restart.");
+            if (g.GameDirectory == null) {
+                // if there was an empty entry in file, don't ask again
+                FolderBrowserDialog dlg = new FolderBrowserDialog() {
+                    Description = string.Format("Please point to Location of {0}\nCancel if not installed.", g.Id)
+                };
+                if (dlg.ShowDialog() == DialogResult.OK) {
+                    g.GameDirectory = dlg.SelectedPath;
+                } else {
+                    // add empty entry to file for next time
+                    g.GameDirectory = Game.NOT_INSTALLED;
+                }
+            } else if (g.GameDirectory.Equals(Game.NOT_INSTALLED)) {
+                // mark as invalid
+                g.GameDirectory = null;
+            }
+            if (g.GameDirectory == null) {
+                throw new InvalidOperationException("Cannot find Shogun installation directory.\n");
             }
         }
 
@@ -111,7 +125,7 @@ namespace MMS {
                 Text = "Enter new Mod name"
             };
             if (inputBox.ShowDialog() == DialogResult.OK) {
-                Mod newMod = MultiMods.Instance.AddMod(inputBox.InputValue);
+                MultiMods.Instance.AddMod(inputBox.InputValue);
             }
         }
 
@@ -134,6 +148,16 @@ namespace MMS {
             if (SelectedMod != null) {
                 try {
                     SetMod();
+                    
+                    if (SelectedMod.EditedAfterPackCreation.Count > 0) {
+                        string message = string.Join("\n", SelectedMod.EditedAfterPackCreation);
+                        message = "The following files were edited after pack creation:\n" + message + "\n" +
+                            "Do you want to install it anyway?";
+                        if (MessageBox.Show(message, "Really install mod?", MessageBoxButtons.YesNo) == DialogResult.No) {
+                            return;
+                        }
+                    }
+                    
                     SelectedMod.Install();
                     MessageBox.Show("Mod Installed!");
                 } catch (Exception ex) {
@@ -171,47 +195,13 @@ namespace MMS {
             Process.Start(Path.Combine(Game.STW.GameDirectory, "Shogun2.exe"));
         }
 
-        static readonly Regex PACK_FILE_RE = new Regex(".pack");
         private void ImportExistingPack(object sender, EventArgs e) {
             OpenFileDialog dialog = new OpenFileDialog {
                 Filter = "Pack Files (*.pack)|*.pack|All files (*.*)|*.*"
             };
             if (dialog.ShowDialog() == DialogResult.OK) {
                 try {
-                    string modName = Path.GetFileName(dialog.FileName);
-                    modName = PACK_FILE_RE.Replace(modName, "");
-                    Mod newMod = new Mod(modName);
-
-                    // ToolDataBuilder can't handle paths with spaces in it...
-                    // avoid this problem by working on temporary data
-                    string tempDir = Path.Combine(ModTools.Instance.BinariesPath, "temp");
-                    Directory.CreateDirectory(tempDir);
-                    string tempPack = Path.Combine(ModTools.Instance.BinariesPath, "temp.pack");
-                    File.Copy(dialog.FileName, tempPack);
-
-                    string[] args = new string[] { "unpack", "temp.pack", "temp" };
-                    string toolbuilder = "ToolDataBuilder.Release.exe";
-#if __MonoCS__
-                    toolbuilder = "ToolDataBuilder.bash";
-#endif
-                    Process p = Launch(toolbuilder, args);
-                    if (p != null) {
-                        // wait with setting until all data are there
-                        p.WaitForExit();
-                    }
-
-                    // copy extracted temporary data to actual target directory
-                    DirectorySynchronizer copyToModDir = new DirectorySynchronizer {
-                        SourceAccessor = new FileSystemDataAccessor(tempDir),
-                        TargetAccessor = newMod.Accessor,
-                        CopyFile = DirectorySynchronizer.AlwaysCopy
-                    };
-                    copyToModDir.Synchronize();
-
-                    Directory.Delete(tempDir, true);
-                    File.Delete(tempPack);
-
-                    MultiMods.Instance.AddMod(modName);
+                    new PackImporter().ImportExistingPack(dialog.FileName);
                 } catch (Exception ex) {
                     MessageBox.Show(ex.ToString(), "Failed to import mod", 
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -232,7 +222,6 @@ namespace MMS {
 #if DEBUG
             Console.WriteLine("Launching {0}", executable);
 #endif
-            // string executablePath = Path.Combine(ModTools.Instance.BinariesPath, executable);
             string argString = "";
             if (args != null) {
                 argString = string.Join(" ", args);
@@ -256,6 +245,12 @@ namespace MMS {
         #endregion
 
         private void RestoreData(object sender, EventArgs e) {
+            if (SelectedMod != null) {
+                if (MessageBox.Show("This will undo all changes for the currently set mod.\nContinue?", 
+                                    "Really restore data?", MessageBoxButtons.OKCancel) == DialogResult.Cancel) {
+                    return;
+                }
+            }
             ModTools.RestoreOriginalData();
         }
     }

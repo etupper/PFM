@@ -66,15 +66,15 @@ namespace PackFileManager {
             foreach(Game g in Game.Games) {
                 if (g.GameDirectory == null) {
                     // if there was an empty entry in file, don't ask again
-                        FolderBrowserDialog dlg = new FolderBrowserDialog() {
-                            Description = string.Format("Please point to Location of {0}\nCancel if not installed.", g.Id)
-                        };
-                        if (dlg.ShowDialog() == DialogResult.OK) {
-                            g.GameDirectory = dlg.SelectedPath;
-                        } else {
-                            // add empty entry to file for next time
-                            g.GameDirectory = Game.NOT_INSTALLED;
-                        }
+                    FolderBrowserDialog dlg = new FolderBrowserDialog() {
+                        Description = string.Format("Please point to Location of {0}\nCancel if not installed.", g.Id)
+                    };
+                    if (dlg.ShowDialog() == DialogResult.OK) {
+                        g.GameDirectory = dlg.SelectedPath;
+                    } else {
+                        // add empty entry to file for next time
+                        g.GameDirectory = Game.NOT_INSTALLED;
+                    }
                 } else if (g.GameDirectory.Equals(Game.NOT_INSTALLED)) {
                     // mark as invalid
                     g.GameDirectory = null;

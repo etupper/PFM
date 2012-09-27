@@ -68,6 +68,8 @@
     <Compile Include="ParseException.cs" />
     <Compile Include="PackLoadSequence.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="Util.cs" />
+    <Compile Include="PackFileEnumeration.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

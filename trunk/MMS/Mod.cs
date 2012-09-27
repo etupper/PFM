@@ -75,11 +75,10 @@ namespace MMS {
 
         #region Mod Install/Uninstall
         public void Install() {
-            string packFilePath = Path.Combine(ModTools.Instance.RetailPath, "data", PackFileName);
-            if (!File.Exists(packFilePath)) {
+            if (!File.Exists(PackFilePath)) {
                 throw new FileNotFoundException("Pack file not present");
             }
-            File.Copy(packFilePath, InstalledPackPath);
+            File.Copy(PackFilePath, InstalledPackPath);
             bool contained = false;
             List<string> writeLines = new List<string>();
             if (File.Exists(Game.STW.ScriptFile)) {
@@ -128,6 +127,24 @@ namespace MMS {
         public string PackFileName {
             get {
                 return string.Format("{0}.pack", Name);
+            }
+        }
+        public string PackFilePath {
+            get {
+                return Path.Combine(ModTools.Instance.RetailPath, "data", PackFileName);
+            }
+        }
+
+        public ICollection<string> EditedAfterPackCreation {
+            get {
+                List<string> newerInWorkingSet = new List<string>();
+                DateTime packFileTime = File.GetLastWriteTime(PackFilePath);
+                foreach (string file in new DirectoryEnumerable(ModTools.Instance.WorkingDataPath)) {
+                    if (File.GetLastWriteTime(file) > packFileTime) {
+                        newerInWorkingSet.Add(file);
+                    }
+                }
+                return newerInWorkingSet;
             }
         }
 
