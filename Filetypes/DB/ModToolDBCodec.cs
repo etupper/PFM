@@ -8,10 +8,41 @@ using NameMapping = System.Tuple<string, string>;
 
 namespace Filetypes {
     public class ModToolDBCodec : Codec<DBFile> {
+        TableNameCorrespondencyManager nameManager;
+        
+        public ModToolDBCodec(TableNameCorrespondencyManager corMan) {
+            nameManager = corMan;
+        }
+        
         public DBFile Decode(Stream stream) {
             throw new NotSupportedException();
         }
+        
+        // write given file to given stream in ca xml format
         public void Encode(Stream dbFile, DBFile file) {
+            using (var writer = new StreamWriter(dbFile)) {
+                writer.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+                writer.WriteLine("<dataroot>");
+                if (!string.IsNullOrEmpty(file.Header.GUID)) {
+                    writer.WriteLine(string.Format("<edit_uuid>{0}</edit_uuid>", file.Header.GUID));
+                }
+                foreach(List<FieldInstance> fields in file.Entries) {
+                    writer.WriteLine(" <{0}>", file.CurrentType.Name);
+                    foreach (FieldInstance field in fields) {
+                        string fieldName;
+                        try {
+                            fieldName = nameManager.GetXmlFieldName(file.CurrentType.Name, field.Name);
+                        } catch {
+                            Console.Error.WriteLine("No xml field name for {0}:{1}", file.CurrentType.Name, field.Name);
+                            fieldName = field.Name;
+                        }
+                        string toWrite = field.Value;
+                        writer.WriteLine("  <{0}>{1}</{0}>", fieldName, toWrite);
+                    }
+                    writer.WriteLine(" </{0}>", file.CurrentType.Name);
+                }
+                writer.WriteLine("</dataroot>");
+            }
         }
     }
 
@@ -26,6 +57,7 @@ namespace Filetypes {
         
         public TableNameCorrespondencyManager() {}
         
+        // load name correspondencies from file
         public TableNameCorrespondencyManager(string filename = DEFAULT_FILE_NAME) {
             XmlDocument xmlFile = new XmlDocument();
             xmlFile.Load(filename);
@@ -42,6 +74,7 @@ namespace Filetypes {
             }
         }
         
+        // store to file
         public void SaveToFile(string filename = DEFAULT_FILE_NAME) {
             using (var file = File.CreateText(filename)) {
                 file.WriteLine("<correspondencies>");
@@ -55,7 +88,8 @@ namespace Filetypes {
                 file.WriteLine("</correspondencies>");
             }
         }
-
+  
+        // retrieve ca xml tag for given db schema table/field combination
         public string GetXmlFieldName(string table, string field) {
             NameMapping result = null;
             List<NameMapping> mapping = tableMapping[table];
