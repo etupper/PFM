@@ -1,0 +1,1968 @@
+<correspondencies>
+ <table name="abilities" guid="ad69ca94-658d-428c-bb43-736f59bceec2">
+  <field pack="Agent Ability ID" xml="ability"/>
+  <field pack="Cursor Mode" xml="associated_cursor_mode"/>
+  <field pack="Active" xml="is_active"/>
+ </table>
+ <table name="achievements" guid="98be6fc7-31bb-4ffe-bfe9-84ba10f0175f">
+  <field pack="Key" xml="key"/>
+ </table>
+ <table name="advice_levels" guid="d2df9b6f-9902-42fa-894e-fb472f9369de">
+  <field pack="Advice ID" xml="key"/>
+  <field pack="Advice Thread" xml="advice_thread"/>
+  <field pack="Advice Thread Level" xml="advice_thread_level"/>
+  <field pack="Points Needed" xml="points_needed"/>
+  <field pack="Game Area" xml="game_area"/>
+  <field pack="Category" xml="category"/>
+  <field pack="Sub Category" xml="sub_category"/>
+  <field pack="Max Repeat Count" xml="max_repeat_count"/>
+  <field pack="Repeat Interval" xml="repeat_interval"/>
+  <field pack="Pause Battle" xml="pause_battle"/>
+  <field pack="Priority Level" xml="priority_level"/>
+  <field pack="High Verbosity Only" xml="high_verbosity_only"/>
+  <field pack="Locatable" xml="locatable"/>
+  <field pack="Parameter" xml="parameter"/>
+  <field pack="Suppressible" xml="suppressible"/>
+  <field pack="audio clip" xml="audio_clip"/>
+  <field pack="unknown19" xml="advisor_name"/>
+  <field pack="unknown20" xml="for_loading_screen"/>
+ </table>
+ <table name="agent_culture_details" guid="969819cf-4946-443d-9f2a-c735933a72c4">
+  <field pack="Agent IDRef" xml="agent"/>
+  <field pack="Culture" xml="culture"/>
+  <field pack="Model Path" xml="model"/>
+  <field pack="unknown5" xml="key"/>
+  <field pack="unknown7" xml="level"/>
+ </table>
+ <table name="agents" guid="35ede24a-eb31-4944-9c63-5610f1fe487c">
+  <field pack="Agent ID" xml="key"/>
+  <field pack="Movement Points" xml="move_points"/>
+  <field pack="Line of Sight" xml="line_of_sight"/>
+  <field pack="Zone of Control" xml="zone_of_control"/>
+  <field pack="Is Playable" xml="playable"/>
+  <field pack="Is Spawnable" xml="is_spawnable"/>
+  <field pack="Primary Attribute" xml="primary_attribute"/>
+  <field pack="Faction Total Cap" xml="faction_total_cap"/>
+  <field pack="unknown14" xml="faction_cap_lower_bound"/>
+  <field pack="Recruitment cost" xml="cost"/>
+  <field pack="Voice Selected" xml="audio_selected"/>
+  <field pack="Voice Move Ordered" xml="audio_move"/>
+  <field pack="Voice Completed" xml="audio_move_complete"/>
+  <field pack="Voice Move OutofAP" xml="audio_move_complete_can_move_again"/>
+  <field pack="Voice Move Illegal" xml="audio_move_illegal"/>
+  <field pack="Voice Embark" xml="audio_embark"/>
+  <field pack="Voice Disembark" xml="audio_disembark"/>
+  <field pack="Voice Death" xml="audio_death"/>
+  <field pack="audio clip" xml="VO_actor_numbers"/>
+ </table>
+ <table name="ancillaries" guid="0a33ec9e-cb5a-456c-9c0a-c2503ec5f552">
+  <field pack="Ancillary ID" xml="key"/>
+  <field pack="icon" xml="type"/>
+  <field pack="ancillary type" xml="applies_to"/>
+  <field pack="Unique to World" xml="unique_to_world"/>
+  <field pack="Unique to Faction" xml="unique_to_faction"/>
+  <field pack="Precedence" xml="precedence"/>
+  <field pack="Start Date" xml="start_date"/>
+  <field pack="End Date" xml="end_date"/>
+  <field pack="unknown12" xml="legendary_item"/>
+  <field pack="unknown13" xml="mp_localised_source"/>
+  <field pack="unknown14" xml="mp_exclusive"/>
+  <field pack="unknown15" xml="mp_drop_probability"/>
+  <field pack="unknown16" xml="product"/>
+ </table>
+ <table name="avatar_aesthetic_sets" guid="de9225ae-1506-4e2b-8eea-fa0482a7844f">
+  <field pack="Set Name" xml="key"/>
+  <field pack="Screen Name" xml="localised_name"/>
+  <field pack="Unknown" xml="icon_path"/>
+  <field pack="Product IDRef" xml="product"/>
+ </table>
+ <table name="avatar_aesthetics_localised_source_lookups" guid="531f935b-2c94-4f28-b91d-bd09b203338e">
+  <field pack="unknown1" xml="key"/>
+ </table>
+ <table name="avatar_aesthetics" guid="67436e9a-26c9-4b6c-9ae9-446bf7050eeb">
+  <field pack="unknown3" xml="key"/>
+  <field pack="unknown4" xml="armour_set"/>
+  <field pack="Source IDRef" xml="source"/>
+  <field pack="Probability IDRef" xml="grouping"/>
+  <field pack="unknown8" xml="localised_name"/>
+  <field pack="unknown9" xml="icon_path"/>
+  <field pack="unknown10" xml="model_path"/>
+  <field pack="unknown11" xml="category"/>
+  <field pack="unknown12" xml="onscreen_source"/>
+  <field pack="unknown13" xml="default_item"/>
+  <field pack="unknown14" xml="unique_index"/>
+  <field pack="unknown" xml="product"/>
+ </table>
+ <table name="avatar_ancillaries_to_effects_junctions" guid="be6855e0-6717-469c-8afe-52e5a1168bb6">
+  <field pack="effect ID" xml="effect"/>
+  <field pack="Ancillary IDRef" xml="key"/>
+  <field pack="unknown3" xml="value"/>
+  <field pack="unknown4" xml="multiplier"/>
+  <field pack="unknown5" xml="debuff"/>
+  <field pack="unknown6" xml="string_order"/>
+ </table>
+ <table name="avatar_campaign_maps" guid="8a8cb936-abcd-49e6-bd31-a239758a99b4">
+  <field pack="unknown" xml="adjacent_1"/>
+  <field pack="unknown17" xml="is_land"/>
+  <field pack="unknown18" xml="is_starting_region"/>
+  <field pack="unknown19" xml="key"/>
+  <field pack="unknown22" xml="red"/>
+  <field pack="unknown23" xml="green"/>
+  <field pack="unknown24" xml="blue"/>
+  <field pack="unknown25" xml="onscreen_name"/>
+  <field pack="unknown27" xml="unique_index"/>
+  <field pack="unknown28" xml="product"/>
+  <field pack="unknown29" xml="region"/>
+ </table>
+ <table name="avatar_clan_specialisms" guid="a4a37c4a-bc5f-4e82-b6fb-c6aaf908accd">
+ </table>
+ <table name="avatar_dojo_chains" guid="37ff9ac5-b7b6-4292-b7bb-9b97495515b2">
+  <field pack="unknown1" xml="key"/>
+  <field pack="unknown2" xml="onscreen_name"/>
+  <field pack="Product IDRef" xml="product"/>
+ </table>
+ <table name="avatar_dojos" guid="62367217-a939-40b4-b153-fcbb6567f644">
+  <field pack="unknown4" xml="level"/>
+  <field pack="Product IDRef" xml="product"/>
+ </table>
+ <table name="avatar_faction_flags" guid="d475db4b-2546-4a5f-a421-88782965d625">
+ </table>
+ <table name="avatar_gempei_dojos" guid="acdf4a14-a990-4289-aa17-495b2acaa106">
+  <field pack="unknown4" xml="level"/>
+  <field pack="Unit ref" xml="unit"/>
+ </table>
+ <table name="avatar_ranks" guid="e7a6a9a4-3d02-11e1-8001-6cf049ef02b0">
+  <field pack="unknown1" xml="ancillary_slots"/>
+  <field pack="unknown2" xml="key"/>
+  <field pack="unknown4" xml="onscreen_name"/>
+  <field pack="unknown7" xml="veteran_slots"/>
+  <field pack="unknown8" xml="xp"/>
+  <field pack="unknown9" xml="avatar_unit_cost"/>
+  <field pack="unknown10" xml="times_reset"/>
+  <field pack="Product ID" xml="product"/>
+ </table>
+ <table name="avatar_skill_effects_juncs" guid="da87d68c-fd4e-41d9-a13f-c5bc22955097">
+  <field pack="Effect IDRef" xml="effect"/>
+  <field pack="unknown2" xml="effect_value"/>
+  <field pack="Skill IDRef" xml="skill"/>
+  <field pack="unknown4" xml="multiplier"/>
+ </table>
+ <table name="avatar_skill_sets" guid="unknown">
+ </table>
+ <table name="avatar_skills" guid="1bd7929c-446d-4647-9447-8b90decf34da">
+  <field pack="Skill ID" xml="key"/>
+  <field pack="Level" xml="level"/>
+  <field pack="Skill Lookup IDRef" xml="skill_chain"/>
+  <field pack="unknown4" xml="icon"/>
+  <field pack="unknown6" xml="advanced_skill"/>
+  <field pack="unknown8" xml="clan_tokens_required"/>
+  <field pack="unknown9" xml="skill_sub_chain"/>
+  <field pack="unknown10" xml="cost"/>
+  <field pack="unknown12" xml="unique_index"/>
+  <field pack="unknown13" xml="product"/>
+ </table>
+ <table name="avatar_special_abilities" guid="unknown">
+ </table>
+ <table name="avatar_units" guid="99478b6e-bc3e-42b0-a75e-007673c6d84d">
+  <field pack="Unit IDRef" xml="key"/>
+  <field pack="unknown2" xml="xp_scaling_factor"/>
+  <field pack="unknown3" xml="default_avatar_general_model_unit"/>
+  <field pack="unknown4" xml="unique_index"/>
+  <field pack="Avatar UI Category IDRef" xml="unit_ui_category"/>
+  <field pack="unknown7" xml="unit_ui_category_order"/>
+  <field pack="unknown8" xml="hero_unit"/>
+  <field pack="Product IDRef" xml="product"/>
+  <field pack="unknown9" xml="start_unit_as_veteran"/>
+ </table>
+ <table name="battle_autoresolver_balances" guid="eb26dbed-0ead-4db5-af59-9e38e5a95a8d">
+ </table>
+ <table name="battle_cameras" guid="f74f00b3-ae5d-41a3-a066-96f179088ed1">
+  <field pack="Battle Type" xml="key"/>
+  <field pack="Max Zoom Out" xml="max_height_large"/>
+  <field pack="unknown" xml="max_height_small"/>
+  <field pack="unknown4" xml="min_fort_max_height"/>
+  <field pack="Min Zoom Out" xml="min_height"/>
+  <field pack="Move at Height 0 Factor" xml="move_speed_min_multiplier"/>
+  <field pack="unknown9" xml="move_fast_multiplier"/>
+ </table>
+ <table name="battle_climate_weather_descriptions" guid="4c06a848-9b2d-438d-92ee-1231ee73a460">
+  <field pack="Weather ID" xml="key"/>
+  <field pack="Local Climate" xml="climate_type"/>
+  <field pack="Season" xml="season"/>
+  <field pack="Weather Type" xml="weather_type"/>
+ </table>
+ <table name="battle_entities" guid="2e35f755-81c0-48d0-90a0-d07c395af0e3">
+  <field pack="Battle Entity ID" xml="key"/>
+  <field pack="Category" xml="class_validation"/>
+  <field pack="Type" xml="type"/>
+  <field pack="Walk Speed" xml="walk_speed"/>
+  <field pack="Run Speed" xml="run_speed"/>
+  <field pack="Acceleration" xml="acceleration"/>
+  <field pack="Deceleration" xml="deceleration"/>
+  <field pack="Charge Speed" xml="charge_speed"/>
+  <field pack="Crawl Speed" xml="crawl_speed"/>
+  <field pack="Distance to Begin Charge" xml="charge_distance_commence_run"/>
+  <field pack="Radius" xml="radius"/>
+  <field pack="Shape" xml="shape"/>
+  <field pack="Radii_Ratio" xml="radii_ratio"/>
+  <field pack="Entity Mass" xml="mass"/>
+  <field pack="Entity Height" xml="height"/>
+  <field pack="Firing Arc closed" xml="fire_arc_close"/>
+  <field pack="Firing Arc loose" xml="fire_arc_loose"/>
+  <field pack="Turn Speed" xml="turn_speed"/>
+  <field pack="Hit Points" xml="hit_points"/>
+ </table>
+ <table name="battle_personalities" guid="b1f8da45-fd20-43bf-ae89-8393121c2749">
+  <field pack="Personality ID" xml="key"/>
+  <field pack="Unit Model" xml="soldier_model"/>
+  <field pack="Behavior" xml="man_animations_table"/>
+  <field pack="Warscape Equipment Theme IDRef" xml="equipment_theme"/>
+  <field pack="Role" xml="type"/>
+ </table>
+ <table name="battle_terrain_farms" guid="907319f8-3199-409e-87ba-059caf2891b6">
+  <field pack="Farm" xml="farm"/>
+  <field pack="Tile Model" xml="tile_model"/>
+  <field pack="Colour Map Model" xml="blend_map_model"/>
+  <field pack="Blend_map Model" xml="alternate_blend_map_model"/>
+  <field pack="Grass_map Model" xml="road_blend_map_model"/>
+  <field pack="Alternate Colour Map Model" xml="colour_map_model"/>
+  <field pack="Alternate Blend Map Model" xml="alternate_colour_map_model"/>
+  <field pack="Alternate Grass Map Model" xml="road_colour_map_model"/>
+  <field pack="Road Colour Map Model" xml="grass_map_model"/>
+  <field pack="Road Blend Map Model" xml="alternate_grass_map_model"/>
+  <field pack="Road Grass Map Model" xml="road_grass_map_model"/>
+  <field pack="Wall Texture" xml="wall_texture"/>
+  <field pack="Wall End" xml="wall_end"/>
+  <field pack="Wall Cross Section" xml="wall_cross_section"/>
+ </table>
+ <table name="battle_type_faction_presets" guid="3efab3bf-0761-4aab-8dc2-188f45391fba">
+  <field pack="Faction IDRef" xml="faction"/>
+  <field pack="weighting type" xml="weighting_type"/>
+  <field pack="id" xml="id"/>
+ </table>
+ <table name="battle_type_setup_limits" guid="190633c8-c62f-4676-b04a-c778625db778">
+  <field pack="Battle Type IDRef" xml="battle_type"/>
+  <field pack="Unit Type" xml="weighting_type"/>
+  <field pack="Army Size" xml="army_size"/>
+  <field pack="Era" xml="era"/>
+  <field pack="Max Infantry" xml="max_infantry"/>
+  <field pack="Max Cavalry" xml="max_cavalry"/>
+  <field pack="Max Artillery" xml="max_artillery"/>
+  <field pack="unknown7" xml="id"/>
+ </table>
+ <table name="battle_weather_types" guid="e4f1091d-4c97-4f45-9265-a79f29743dc0">
+  <field pack="Weather ID" xml="key"/>
+  <field pack="Naval Appropriate" xml="naval_appropriate"/>
+ </table>
+ <table name="battlefield_buildings" guid="ef532910-26e5-47ea-b663-bd99542fbf8f">
+  <field pack="Battlefield Building ID" xml="key"/>
+  <field pack="Type" xml="category"/>
+  <field pack="Building 2" xml="model"/>
+  <field pack="Material" xml="audio_material"/>
+  <field pack="Hit points" xml="hit_points"/>
+  <field pack="unknown6" xml="capacity_in_men"/>
+  <field pack="unknown7" xml="ignition_threshold"/>
+ </table>
+ <table name="bob_building_breech_loading_ship_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_bridge_railway_02_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_bridge_repeater_destroyable_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_candy1_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_candy2_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_castle_01_tower_02_noemitters_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_cinematic_barrel_apple_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_cinematic_barrel_apple_large_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_american_scroll_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_audience_tent_noprops_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_audience_tent_props_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_drum_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_european_trunk_closed_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_european_trunk_open_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_factory_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_lavish_balcony_rigged_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_palace_shogun_int_no_table_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_pouch1_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_pouch2_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_pouch3_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_weight1_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_weight2_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_weight3_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_spencer_rifle_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_wharf_lowerend_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_front_end_train_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_bridge_a_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_bridge_b_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_bridgesupport_a_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_bridgesupport_b_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_platform_a_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_platform_b_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_tracks_left_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_tracks_right_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_tracks_stop_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_gatling_gun_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_lantern_tree_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_lighthouse_modern_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_lighthouse_traditional_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_parrott_gun_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_port_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_sign_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_snowman_01_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_snowman_02_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_snowman_03_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_snowman_04_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_03_line_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_03_line_short_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_03_lineend_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_04_line_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_04_line_short_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_04_lineend_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_04_turn_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_torii_shrine_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="bob_building_tree_battlefield_buildings" guid="unknown">
+ </table>
+ <table name="battlefield_deployable_siege_items" guid="11b2dbc2-99a4-4904-9d96-c0b9408f21ca">
+  <field pack="Siege_Point_Cost" xml="siege_point_cost"/>
+  <field pack="Turns_To_Build" xml="turns_to_build"/>
+  <field pack="Description" xml="string"/>
+  <field pack="Info Pic" xml="info_pic"/>
+ </table>
+ <table name="battles" guid="f1cc110e-afc9-4192-b1bd-23a3623aacea">
+  <field pack="Map Name" xml="key"/>
+  <field pack="Map Type" xml="type"/>
+  <field pack="Is Naval" xml="is_naval"/>
+  <field pack="Specification" xml="specification"/>
+  <field pack="Team Size 1" xml="team_size_1"/>
+  <field pack="Team Size 2" xml="team_size_2"/>
+  <field pack="Release" xml="release"/>
+  <field pack="Multiplayer" xml="multiplayer"/>
+  <field pack="Singleplayer" xml="singleplayer"/>
+  <field pack="unknown13" xml="year"/>
+  <field pack="unknown14" xml="defender_funds_ratio"/>
+  <field pack="unknown15" xml="has_key_buildings"/>
+  <field pack="unknown16" xml="matchmaking"/>
+ </table>
+ <table name="building_chains" guid="cc92c6ba-dce4-4465-8144-43f99ed35f2d">
+  <field pack="Building Chain ID" xml="key"/>
+  <field pack="Chain Category" xml="chain_category"/>
+  <field pack="unknown5" xml="in_encyclopedia"/>
+ </table>
+ <table name="building_culture_variants" guid="01150b45-44c3-4673-bc1d-4d00c7ddd92a">
+  <field pack="Building" xml="building"/>
+  <field pack="Culture" xml="culture"/>
+  <field pack="Fort Model" xml="battlefield_building"/>
+  <field pack="Description" xml="description"/>
+  <field pack="Icon" xml="icon"/>
+ </table>
+ <table name="building_level_armed_citizenry_junctions" guid="1b875bd0-4af5-4a98-bea2-9618d375f0df">
+  <field pack="unknown1" xml="building_level"/>
+  <field pack="unknown2" xml="id"/>
+  <field pack="unknown4" xml="priority"/>
+  <field pack="unknown5" xml="unit"/>
+ </table>
+ <table name="building_levels" guid="cf1b4e5d-cd05-451c-a116-89dc424169dd">
+  <field pack="Building ID" xml="level_name"/>
+  <field pack="Category" xml="chain"/>
+  <field pack="Level" xml="level"/>
+  <field pack="Turns to Build" xml="create_time"/>
+  <field pack="Cost" xml="create_cost"/>
+  <field pack="unknown8" xml="demolition_cost"/>
+  <field pack="unknown26" xml="destruction_terminator"/>
+  <field pack="unknown27" xml="faction_unique"/>
+  <field pack="unknown31" xml="working_model"/>
+  <field pack="unknown32" xml="unique_index"/>
+ </table>
+ <table name="building_units_allowed" guid="163cdf64-712b-4ff4-892c-8e133daf6992">
+  <field pack="Building IDRef" xml="building"/>
+  <field pack="Unit" xml="unit"/>
+  <field pack="Experience" xml="XP"/>
+  <field pack="Unique ID" xml="key"/>
+ </table>
+ <table name="cai_base_building_context_values" guid="d41ceeab-4787-4fbc-a40e-c922a86f8b93">
+  <field pack="Building IDRef" xml="building_key"/>
+  <field pack="unknown" xml="economic_value"/>
+  <field pack="unknown4" xml="happiness_value"/>
+  <field pack="unknown5" xml="military_value"/>
+  <field pack="unknown7" xml="existing_buildings_apply_discount_over_limit"/>
+  <field pack="unknown8" xml="existing_buildings_discount_per_building"/>
+  <field pack="unknown9" xml="existing_buildings_maximum_discount"/>
+ </table>
+ <table name="cai_personalities_budget_allocations" guid="5cfe15b3-2d95-4316-99eb-43e6efb96aa5">
+  <field pack="unknown" xml="agents_funding_cap"/>
+  <field pack="unknown2" xml="agents_funds_allocation_percentage"/>
+  <field pack="unknown3" xml="agents_percentage_of_pool_to_save_on_fail"/>
+  <field pack="unknown5" xml="army_funding_cap"/>
+  <field pack="unknown6" xml="army_funds_allocation_percentage"/>
+  <field pack="unknown7" xml="army_percentage_of_pool_to_save_on_fail"/>
+  <field pack="unknown8" xml="army_turns_of_inactivity_until_cap"/>
+  <field pack="unknown9" xml="construction_funding_cap"/>
+  <field pack="unknown10" xml="construction_funds_allocation_percentage"/>
+  <field pack="unknown11" xml="construction_percentage_of_pool_to_save_on_fail"/>
+  <field pack="unknown12" xml="construction_turns_of_inactivity_until_cap"/>
+  <field pack="unknown13" xml="diplomacy_funding_cap"/>
+  <field pack="unknown14" xml="diplomacy_funds_allocation_percentage"/>
+  <field pack="unknown15" xml="diplomacy_percentage_of_pool_to_save_on_fail"/>
+  <field pack="unknown16" xml="diplomacy_turns_of_inactivity_until_cap"/>
+  <field pack="unknown17" xml="key"/>
+  <field pack="unknown18" xml="navy_funding_cap"/>
+  <field pack="unknown19" xml="navy_funds_allocation_percentage"/>
+  <field pack="unknown20" xml="navy_percentage_of_pool_to_save_on_fail"/>
+  <field pack="unknown22" xml="minimum_settable_tax_level"/>
+  <field pack="unknown23" xml="maximum_settable_tax_level"/>
+ </table>
+ <table name="cai_personalities_building_synergies" guid="d554d702-985d-4650-a2e6-cc145102004a">
+  <field pack="unknown" xml="existing_building_chain_key"/>
+  <field pack="unknown4" xml="potential_buiding_chain_key"/>
+  <field pack="Synergy Level IDRef" xml="synergy_level_key"/>
+  <field pack="Synergy Policy IDRef" xml="synergy_policy_key"/>
+ </table>
+ <table name="cai_personalities_construction_preference_policy_building_junctions" guid="8248d78b-8979-41ea-969d-dcd96eaaa721">
+  <field pack="Building ID" xml="building_key"/>
+  <field pack="Construction Preference Policy ID" xml="policy_key"/>
+  <field pack="unknown5" xml="absolute_adjustment"/>
+  <field pack="unknown6" xml="building_discount_limit_adjustment"/>
+ </table>
+ <table name="campaign_character_anim_set_agent_junctions" guid="179faceb-cdfa-44cb-816c-5c5a411f4095">
+  <field pack="ID" xml="key"/>
+  <field pack="Character Animation Type" xml="anim_set"/>
+  <field pack="Agent" xml="agent_key"/>
+ </table>
+ <table name="campaign_character_anims_junctions" guid="cceac9a2-0e97-4527-9d64-f6930b217fcc">
+  <field pack="ID" xml="key"/>
+  <field pack="Character Animation Type" xml="anim_set_key"/>
+  <field pack="Animation Status" xml="anim_status"/>
+  <field pack="Animation Filepath" xml="anim"/>
+  <field pack="Animation Type" xml="anim_type"/>
+  <field pack="Idle Weighting" xml="idle_weighting"/>
+ </table>
+ <table name="campaign_character_art_sets" guid="bf88b4bf-a546-4610-9faf-9c35da51adf7">
+  <field pack="unknown2" xml="art_set_id"/>
+  <field pack="unknown5" xml="is_custom"/>
+  <field pack="unknown6" xml="is_male"/>
+  <field pack="unknown7" xml="is_married"/>
+ </table>
+ <table name="campaign_character_arts" guid="bdebb92a-412e-4efc-9c32-72f41177c39c">
+  <field pack="unknown1" xml="art_set_id"/>
+  <field pack="unknown3" xml="level"/>
+  <field pack="unknown4" xml="age"/>
+  <field pack="unknown6" xml="season"/>
+  <field pack="unknown10" xml="health"/>
+ </table>
+ <table name="campaign_difficulty_handicap_effects" guid="27af8bb0-ba0d-426b-b1c6-33f1583cbd79">
+  <field pack="Difficulty" xml="campaign_difficulty_handicap"/>
+  <field pack="Is Human" xml="human"/>
+  <field pack="Effect IDRef" xml="effect"/>
+  <field pack="Magnitude" xml="effect_value"/>
+ </table>
+ <table name="campaign_map_playable_areas" guid="358c97e5-ba09-420b-9f69-7dfcd292de81">
+  <field pack="Index" xml="index"/>
+  <field pack="Sea Trade Area" xml="preview_border"/>
+  <field pack="Map File" xml="map_file"/>
+  <field pack="Overlay File" xml="overlay_file"/>
+  <field pack="Radar File" xml="radar_file"/>
+  <field pack="Meaningful ID" xml="meaningful_id"/>
+  <field pack="Preview Width" xml="preview_width"/>
+  <field pack="Preview Height" xml="preview_height"/>
+  <field pack="Preview Border" xml="preview_border"/>
+ </table>
+ <table name="campaign_map_tooltips" guid="eb014d73-e009-4ffc-931c-ec952d125aad">
+  <field pack="Army Feature" xml="select_context"/>
+  <field pack="Map Feature" xml="over_context"/>
+ </table>
+ <table name="campaign_map_towns_and_ports" guid="77734080-a5a6-4143-af92-6137cc1eabdc">
+ </table>
+ <table name="campaign_unit_art_set_junctions" guid="f8277b7a-43fb-4ff7-b602-ef271bdd0691">
+ </table>
+ <table name="campaign_variables" guid="24962825-9cb8-46a4-ac61-250acc600b1e">
+  <field pack="Variable" xml="variable_key"/>
+ </table>
+ <table name="campaigns_campaign_variables_junctions" guid="2b096b1e-e3c2-49d1-b9bb-3b290a4f41d3">
+  <field pack="Unknown" xml="variable_key"/>
+  <field pack="Unknown2" xml="campaign_name"/>
+  <field pack="unknown3" xml="value"/>
+ </table>
+ <table name="cdir_campaign_junctions" guid="c4116602-cb60-47d4-a444-aa8d58e343ff">
+  <field pack="Campaign ID" xml="key"/>
+ </table>
+ <table name="cdir_configs" guid="49c1592a-7e89-4f7e-98e1-2ddf6433ebf3">
+  <field pack="Unknown" xml="campaign_key"/>
+  <field pack="unknown3" xml="faction_key"/>
+  <field pack="unknown4" xml="cdir_config_key"/>
+  <field pack="unknown6" xml="value"/>
+ </table>
+ <table name="cdir_events_dilemma_option_junctions" guid="a0e9313d-4997-4b14-a354-6921e546f122">
+  <field pack="unknown1" xml="dilemma_key"/>
+  <field pack="unknown2" xml="id"/>
+  <field pack="unknown4" xml="option_key"/>
+ </table>
+ <table name="cdir_events_dilemma_payloads" guid="e6b91532-7471-42b2-b079-fa7c3690e960">
+  <field pack="unknown1" xml="choice_key"/>
+  <field pack="unknown2" xml="dilemma_key"/>
+  <field pack="unknown3" xml="id"/>
+  <field pack="unknown5" xml="payload_key"/>
+  <field pack="unknown7" xml="value"/>
+ </table>
+ <table name="cdir_events_incident_option_junctions" guid="400960fa-92f2-4b40-86f9-3a54e60009b4">
+  <field pack="unknown1" xml="id"/>
+  <field pack="unknown3" xml="incident_key"/>
+  <field pack="unknown4" xml="option_key"/>
+ </table>
+ <table name="cdir_events_incident_payloads" guid="7ce5d517-5b20-4900-a5a3-3a4d0c62484a">
+  <field pack="unknown1" xml="id"/>
+  <field pack="unknown3" xml="incident_key"/>
+  <field pack="unknown4" xml="payload_key"/>
+  <field pack="unknown5" xml="value"/>
+ </table>
+ <table name="cdir_events_mission_option_junctions" guid="d28cbab0-7964-4113-9a36-e1084755c20e">
+  <field pack="unknown1" xml="id"/>
+  <field pack="unknown3" xml="mission_key"/>
+  <field pack="unknown4" xml="option_key"/>
+ </table>
+ <table name="cdir_events_mission_payloads" guid="47dcf61f-4fb7-4ce7-af11-6647a4f6e4a2">
+  <field pack="unknown1" xml="id"/>
+  <field pack="unknown3" xml="mission_key"/>
+  <field pack="unknown4" xml="payload_key"/>
+  <field pack="unknown5" xml="status_key"/>
+  <field pack="unknown6" xml="value"/>
+ </table>
+ <table name="cdir_events_payloads" guid="af477ad2-0f2b-482f-a685-ebc737dc32b6">
+  <field pack="unknown2" xml="payload_key"/>
+ </table>
+ <table name="cdir_faction_junctions" guid="76e448e6-2bb3-4354-9d6a-0d0535c15215">
+ </table>
+ <table name="character_experience_skill_tiers" guid="614f6a2c-0ec4-4962-8cfd-cded15743a67">
+  <field pack="unknown1" xml="agent_key"/>
+  <field pack="unknown2" xml="experience_threshold"/>
+  <field pack="unknown3" xml="skill_points"/>
+  <field pack="unknown4" xml="skill_tier_level"/>
+ </table>
+ <table name="character_skill_node_sets" guid="7bd2787e-f297-412c-9f70-f8823f576754">
+  <field pack="unknown2" xml="agent_key"/>
+  <field pack="Skill Type ID" xml="key"/>
+ </table>
+ <table name="character_skill_nodes" guid="5e34afab-f4a2-4d32-9775-73df52c66371">
+  <field pack="Effect IDRefRef" xml="character_skill_key"/>
+  <field pack="Skill Type IDRef" xml="character_skill_node_set_key"/>
+  <field pack="unknown5" xml="indent"/>
+  <field pack="Skill Node ID" xml="key"/>
+  <field pack="unknown7" xml="tier"/>
+ </table>
+ <table name="character_skills" guid="001fb237-b070-4a0a-8e04-b16fa934e2f3">
+  <field pack="Skill ID" xml="image_path"/>
+  <field pack="Effect IDRef" xml="key"/>
+  <field pack="Description" xml="localised_description"/>
+  <field pack="Name" xml="localised_name"/>
+ </table>
+ <table name="character_traits" guid="5e7bb5bd-8c71-4ec2-a7d1-f666058e4c7b">
+  <field pack="Trait ID" xml="key"/>
+  <field pack="Trait Category" xml="icon"/>
+ </table>
+ <table name="climates" guid="d1d272e4-b4dd-4bd5-a343-db580b5a2cf4">
+  <field pack="Local Climate ID" xml="climate_type"/>
+  <field pack="Colour Index" xml="colour_index"/>
+  <field pack="Land" xml="is_land"/>
+ </table>
+ <table name="cultures" guid="c75446e4-9385-482e-9a0a-497613481d6d">
+  <field pack="Culture ID" xml="key"/>
+  <field pack="Index" xml="index"/>
+ </table>
+ <table name="cursors" guid="e735cdc6-c5d9-404e-8703-f1c4e3787117">
+  <field pack="Cursor ID" xml="key"/>
+  <field pack="Image Path" xml="image"/>
+  <field pack="Frames" xml="frames"/>
+  <field pack="Frame Rate" xml="framerate"/>
+ </table>
+ <table name="diplomacy_negotiation_faction_override_strings" guid="0ba96496-51ba-48f7-966c-0dc0db4a8a40">
+ </table>
+ <table name="diplomatic_relations_government_type" guid="f5cd7e7f-9748-46ab-9968-7b40581e9b35">
+ </table>
+ <table name="diplomatic_relations_religion" guid="ff6e2148-63c3-4135-81a6-920e5f60eb62">
+  <field pack="Religion" xml="religion_A"/>
+  <field pack="Religion2" xml="religion_B"/>
+  <field pack="Relations_Modifier" xml="relations_modifier"/>
+ </table>
+ <table name="encyclopedia_blocks" guid="54f4ea3f-7f78-438c-be87-573dfe3a56e5">
+  <field pack="unknown1" xml="block_key"/>
+  <field pack="unknown2" xml="class"/>
+  <field pack="unknown4" xml="image_class"/>
+  <field pack="unknown5" xml="order"/>
+  <field pack="unknown6" xml="page_key"/>
+ </table>
+ <table name="encyclopedia_page_linkages" guid="86483a2d-6904-40fc-8049-1e1099753a7d">
+  <field pack="unknown2" xml="page_key"/>
+  <field pack="unknown3" xml="parent_key"/>
+ </table>
+ <table name="event_log_descriptions" guid="47315b0f-f761-4374-af4b-e53fd0ab707d">
+  <field pack="unknown1" xml="event_key"/>
+  <field pack="unknown3" xml="has_position"/>
+  <field pack="unknown4" xml="icon"/>
+  <field pack="unknown5" xml="is_region_position"/>
+ </table>
+ <table name="experience_triggers" guid="0af5f416-eb06-4a6d-b77c-3ca5f1ad8715">
+  <field pack="unknown2" xml="trigger_key"/>
+ </table>
+ <table name="faction_banners" guid="e6ff167f-e3bb-433a-a585-2d0d64965ef9">
+  <field pack="Faction IDRef" xml="key"/>
+  <field pack="B1" xml="primary_blue"/>
+  <field pack="G1" xml="primary_green"/>
+  <field pack="R1" xml="primary_red"/>
+  <field pack="B2" xml="secondary_blue"/>
+  <field pack="G2" xml="secondary_green"/>
+  <field pack="R2" xml="secondary_red"/>
+  <field pack="B3" xml="tertiary_blue"/>
+  <field pack="G3" xml="tertiary_green"/>
+  <field pack="R3" xml="tertiary_red"/>
+ </table>
+ <table name="faction_variables_optional_overrides" guid="03ace6ea-f931-4e44-9790-1232a6113379">
+  <field pack="unknown" xml="campaign_key"/>
+  <field pack="unknown4" xml="faction_key"/>
+  <field pack="unknown5" xml="faction_variable_key"/>
+  <field pack="unknown6" xml="value"/>
+ </table>
+ <table name="factions" guid="480950d3-58a6-4efb-b0f9-4042838baf89">
+  <field pack="Faction IDRef" xml="key"/>
+  <field pack="Index" xml="index"/>
+  <field pack="Subculture" xml="subculture"/>
+  <field pack="Type" xml="category"/>
+  <field pack="Nation" xml="screen_name"/>
+  <field pack="Nationality" xml="screen_adjective"/>
+  <field pack="Names group" xml="name_group"/>
+  <field pack="Skin" xml="skin"/>
+  <field pack="Rebels" xml="is_rebel"/>
+  <field pack="Faction Icon" xml="icons_path_units"/>
+  <field pack="Faction Flag" xml="flags_path"/>
+  <field pack="R1" xml="primary_colour_r"/>
+  <field pack="G1" xml="primary_colour_g"/>
+  <field pack="B1" xml="primary_colour_b"/>
+  <field pack="R2" xml="alt_primary_colour_r"/>
+  <field pack="G2" xml="alt_primary_colour_g"/>
+  <field pack="B2" xml="alt_primary_colour_b"/>
+  <field pack="R3" xml="secondary_colour_r"/>
+  <field pack="G3" xml="secondary_colour_g"/>
+  <field pack="B3" xml="secondary_colour_b"/>
+  <field pack="R4" xml="alt_secondary_colour_r"/>
+  <field pack="G4" xml="alt_secondary_colour_g"/>
+  <field pack="B4" xml="alt_secondary_colour_b"/>
+  <field pack="Military Group" xml="military_group"/>
+  <field pack="Rebels Faction" xml="settler_rebellion_faction"/>
+  <field pack="R" xml="rebel_colour_r"/>
+  <field pack="G" xml="rebel_colour_g"/>
+  <field pack="B" xml="rebel_colour_b"/>
+  <field pack="Death Movie" xml="movie_death_event"/>
+  <field pack="Faction Audio" xml="audio_faction_string"/>
+  <field pack="Attacking Text" xml="attack_desc"/>
+  <field pack="Defending Text" xml="defend_desc"/>
+  <field pack="Faction Type" xml="pre_battle_speech_parameter"/>
+  <field pack="unknown53" xml="audio_language"/>
+ </table>
+ <table name="fort_underlay_climate_jcts" guid="fb1771ec-ac50-4b2c-b036-aaa36e97fd55">
+ </table>
+ <table name="frontend_faction_leaders" guid="f7fa8630-102d-4656-a55b-5dc7b61a5c7b">
+  <field pack="unknown1" xml="animation"/>
+  <field pack="unknown2" xml="equipment_theme"/>
+  <field pack="unknown3" xml="faction"/>
+  <field pack="unknown4" xml="uniform"/>
+ </table>
+ <table name="general_command_star_level_effects" guid="a3f329e4-0ca4-4bbc-9d00-ae084952b7c9">
+  <field pack="unknown1" xml="alive_morale_bonus"/>
+  <field pack="unknown2" xml="command_star_level"/>
+  <field pack="unknown5" xml="nearby_morale_bonus"/>
+ </table>
+ <table name="historical_characters" guid="19dfa33b-50a8-4e20-a4e4-cf654971c5ac">
+  <field pack="Character IDRef" xml="key"/>
+  <field pack="Genre" xml="gender"/>
+  <field pack="Agent ID" xml="agent_type"/>
+  <field pack="Faction ID" xml="faction"/>
+  <field pack="Date Birth" xml="spawning_window_start"/>
+  <field pack="Date Death" xml="spawning_window_end"/>
+  <field pack="Notes" xml="spawn_conditions"/>
+  <field pack="unknown" xml="name_key"/>
+  <field pack="unknown10" xml="surname_key"/>
+ </table>
+ <table name="message_event_strings" guid="55c58d4f-1e6e-4d1d-9209-3712315c4ae8">
+  <field pack="Event IDRef" xml="event"/>
+  <field pack="Culture ID" xml="culture"/>
+  <field pack="Region ID" xml="text"/>
+  <field pack="Message ID" xml="image"/>
+  <field pack="Message Image" xml="layout"/>
+  <field pack="Requires Response" xml="requires_response"/>
+  <field pack="Instant Open" xml="instant_open"/>
+  <field pack="Message Icon" xml="icon"/>
+  <field pack="Sound Event" xml="sound_event"/>
+ </table>
+ <table name="ministerial_positions_switching_loyalty_effects" guid="28d2923c-b028-4f34-b602-c20962510792">
+  <field pack="unknown3" xml="position_from"/>
+  <field pack="unknown4" xml="position_to"/>
+ </table>
+ <table name="missions" guid="a09f5555-2cbc-44b7-887e-31f4d0ba248a">
+  <field pack="Unknown" xml="generate"/>
+  <field pack="Mission ID" xml="key"/>
+  <field pack="Header Text" xml="localised_title"/>
+  <field pack="Type" xml="mission_type"/>
+  <field pack="Message Icon" xml="ui_icon"/>
+  <field pack="Dilemma Icon" xml="ui_image"/>
+  <field pack="unknown" xml="prioritised"/>
+ </table>
+ <table name="models_artillery" guid="c6351015-9c2f-4c03-a439-fbcc2ad2dbf4">
+  <field pack="Artillery ID" xml="key"/>
+ </table>
+ <table name="bob_building_barrel_wooden_large_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_barrel_wooden_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_breech_loading_ship_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_bridge_a_30metre_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_bridge_railway_01_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_bridge_railway_02_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_bridge_repeater_destroyable_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_bridge_repeater_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_bus_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_candy1_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_candy2_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_castle_01_tower_02_noemitters_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_castle_03_90corner_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_castle_03_90cornerin_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_castle_03_anglewall_groundshort_01_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_castle_03_anglewall_groundshort_02_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_castle_03_anglewall_groundshort_03_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_castle_03_anglewall_groundshort_04_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_castle_03_gate_02_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_castle_03_gate_04_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_castle_03_wall_10_01_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_castle_03_wall_20_01_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_castle_03_wall_40_01_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematic_barrel_apple_large_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematic_barrel_apple_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_american_scroll_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_audience_tent_noprops_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_audience_tent_props_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_drum_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_european_trunk_closed_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_european_trunk_open_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_factory_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_lavish_balcony_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_lavish_balcony_rigged_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_palace_shogun_int_no_table_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_pouch1_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_pouch2_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_pouch3_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_weight1_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_weight2_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_weight3_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_spencer_rifle_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_trader_premises_interior_prop_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_wharf_lowerend_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_compoundwall_v2_wood_low_endcap_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_compoundwall_v2_wood_low_straight_2m_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_compoundwall_v2_wood_low_straight_6m_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_compoundwall_wood_low_corner_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_compoundwall_wood_low_diag_corner_2m2m_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_compoundwall_wood_low_diag_ext_6m2m_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_compoundwall_wood_low_diag_ext_straight_2m2m_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_compoundwall_wood_low_diag_int_6m2m_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_compoundwall_wood_low_diag_int_straight_2m2m_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_compoundwall_wood_low_straight_2m_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_compoundwall_wood_low_straight_6m_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_closed_large_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_closed_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_empty_large_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_empty_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_lid_ajar_large_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_lid_ajar_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_open_large_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_open_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_pile_01_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_pile_02_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_pile_03_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_front_end_train_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_bridge_a_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_bridge_b_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_bridgesupport_a_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_bridgesupport_b_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_platform_a_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_platform_b_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_tracks_left_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_tracks_right_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_tracks_stop_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_gatling_gun_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_lantern_tree_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_lighthouse_modern_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_lighthouse_traditional_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_market_stall_fish_market_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_parrott_gun_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_plains_village_buildings_large_house_01_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_plains_village_buildings_large_house_02_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_plains_village_buildings_large_house_03_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_plains_village_buildings_large_house_04_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_plains_village_buildings_small_house_01_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_plains_village_buildings_small_house_02_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_plains_village_buildings_small_house_03_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_plains_village_buildings_small_house_04_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_port_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_samurai_walled_farmhouse_unoccupied_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_shinto_shrine_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_shinto_shrine_unoccupied_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_sign_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_snowman_01_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_snowman_02_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_snowman_03_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_snowman_04_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_stronghold_pagoda_building_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_stronghold_temple_building_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_stronghold_temple2_building_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_sword_dojo_unoccupied_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_03_line_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_03_line_short_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_03_lineend_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_04_line_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_04_line_short_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_04_lineend_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_04_turn_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_the_black_ship_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_torii_shrine_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_01_level_01_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_01_level_02_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_01_level_03_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_01_level_04_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_02_level_01_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_02_level_02_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_02_level_03_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_02_level_04_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_03_level_01_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_03_level_02_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_03_level_03_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_03_level_04_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tower_wood_01_level_01_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tower_wood_01_level_02_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tower_wood_01_level_03_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tower_wood_01_level_04_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tower_wood_03_level_01_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tower_wood_03_level_02_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tower_wood_03_level_03_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tower_wood_03_level_04_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_track_256m_bend_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_track_256m_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_tree_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_wagon_withcargo_models_building" guid="unknown">
+ </table>
+ <table name="bob_building_wagon_withoutcargo_models_building" guid="unknown">
+ </table>
+ <table name="models_building" guid="c0c45009-74bb-44e6-964d-cb85b949ac37">
+  <field pack="unknown" xml="key"/>
+ </table>
+ <table name="mp_force_gen_template_junctions" guid="51aadcd8-2ad5-42d5-824a-239fd244d30c">
+  <field pack="unknown1" xml="balance_key"/>
+  <field pack="unknown2" xml="budget_key"/>
+  <field pack="unknown3" xml="general_pct"/>
+  <field pack="unknown4" xml="priority"/>
+  <field pack="unknown8" xml="upgrade_pct"/>
+ </table>
+ <table name="mp_force_gen_upgrade_probabilities" guid="9fc6dbe4-0da1-4e3d-ba00-7b8cf5e0ade4">
+  <field pack="unknown1" xml="armour_upgrade_probability"/>
+  <field pack="unknown2" xml="experience_upgrade_probability"/>
+  <field pack="unknown3" xml="unit_category"/>
+ </table>
+ <table name="mp_general_command_ratings" guid="3c317566-17a6-49a6-b1c4-52332cf3eb20">
+  <field pack="General ID" xml="unit_key"/>
+ </table>
+ <table name="naval_uniforms" guid="5efcf52e-3dd0-4495-828d-59a2d4754a26">
+  <field pack="unit variant set" xml="Filename"/>
+  <field pack="unknown5" xml="ManAnimation"/>
+  <field pack="Uniform ID" xml="Uniform_Name"/>
+  <field pack="Unit ID" xml="Unit"/>
+ </table>
+ <table name="population_classes" guid="79a08d0a-3d26-4424-9851-4298b63ae92d">
+  <field pack="Class ID" xml="population_class"/>
+  <field pack="Riots" xml="riots"/>
+ </table>
+ <table name="pre_battle_speeches" guid="76eff428-d48f-4065-8c82-4e09e3becf1b">
+  <field pack="unknown1" xml="key"/>
+  <field pack="unknown3" xml="type"/>
+ </table>
+ <table name="projectile_impacts" guid="c0c300c5-272f-4b2b-ac46-6e519300671f">
+  <field pack="Impact ID" xml="key"/>
+  <field pack="Ship" xml="ship"/>
+  <field pack="Water" xml="water"/>
+  <field pack="Sails" xml="sails"/>
+  <field pack="Building" xml="buildings"/>
+  <field pack="Mud" xml="mud"/>
+  <field pack="Grass" xml="grass"/>
+  <field pack="Animal" xml="animal"/>
+  <field pack="Foliage" xml="foliage"/>
+  <field pack="Glass" xml="glass"/>
+  <field pack="Size" xml="size"/>
+ </table>
+ <table name="projectile_shot_type_enum" guid="74c27fc8-fbe8-4790-8d91-be8c2b4923bf">
+  <field pack="Projectile Shot" xml="key"/>
+  <field pack="Researchable technology" xml="requires_effect_enabling"/>
+  <field pack="Grenade" xml="is_grenade"/>
+  <field pack="Small Arms" xml="is_smallarms"/>
+  <field pack="Artillery" xml="is_artillery"/>
+ </table>
+ <table name="projectiles_explosions" guid="28746bd5-da35-4c6a-9680-f217a82ca75c">
+  <field pack="Projectile Explosion" xml="key"/>
+  <field pack="Trigger Type" xml="detonator_type"/>
+  <field pack="Explosive Concussion Type" xml="detonation_type"/>
+  <field pack="Concussive Blast Area" xml="detonation_radius"/>
+  <field pack="Effect Duration" xml="detonation_duration"/>
+  <field pack="Detonation Speed" xml="detonation_speed"/>
+  <field pack="Frag Damage" xml="detonation_damage"/>
+  <field pack="Frag Launch Type" xml="particle_type"/>
+  <field pack="Num of Projectiles Shrapnel" xml="particle_number"/>
+  <field pack="Particle effects" xml="explosion_particle_effect"/>
+  <field pack="Distance from Target" xml="distance_from_target"/>
+  <field pack="Error Margin" xml="error_margin"/>
+ </table>
+ <table name="projectiles" guid="a70189a0-c6b6-4824-9430-db7d80e8f58c">
+  <field pack="Projectile ID" xml="key"/>
+  <field pack="category" xml="category"/>
+  <field pack="Shot Type" xml="shot_type"/>
+  <field pack="Missile type" xml="missile_type"/>
+  <field pack="Trail" xml="trail"/>
+  <field pack="Spin" xml="spin_type"/>
+  <field pack="Number of Pellets" xml="projectile_number"/>
+  <field pack="Trajectory Sight" xml="trajectory_sight"/>
+  <field pack="Range" xml="effective_range"/>
+  <field pack="Minimum Range" xml="minimum_range"/>
+  <field pack="Max Elevation" xml="max_elevation"/>
+  <field pack="Velocity" xml="muzzle_velocity"/>
+  <field pack="Marksmanship Bonus" xml="marksmanship_bonus"/>
+  <field pack="spread" xml="spread"/>
+  <field pack="Damage" xml="damage"/>
+  <field pack="Collision Radius" xml="collision_radius"/>
+  <field pack="Base Reload Time Added to Animation" xml="base_reload_time"/>
+  <field pack="Sail Damage Modifier" xml="sail_damage_modifier"/>
+  <field pack="Below Waterline Damage Modifer" xml="below_waterline_damage_modifer"/>
+  <field pack="Launch Audio" xml="launch_audio"/>
+  <field pack="Hit Audio" xml="hit_audio"/>
+  <field pack="unknown24" xml="gun_type"/>
+  <field pack="unknown36" xml="calibration_distance"/>
+  <field pack="unknown37" xml="calibration_area"/>
+  <field pack="unknown38" xml="can_penetrate_fortwall"/>
+  <field pack="unknown39" xml="gravity"/>
+ </table>
+ <table name="public_order_factors" guid="9753d3dd-4b16-420b-a137-33a05ddf052a">
+  <field pack="Factor ID" xml="factor"/>
+  <field pack="Icon1" xml="positive_pip_path"/>
+  <field pack="Icon2" xml="negative_pip_path"/>
+ </table>
+ <table name="random_localisation_strings" guid="a4f6ccec-328f-4623-991a-f46b330fbb7e">
+ </table>
+ <table name="region_groups" guid="16510a20-9172-4577-adcd-633644a6b340">
+  <field pack="Region Group ID" xml="group_key"/>
+  <field pack="unknown9" xml="round"/>
+ </table>
+ <table name="resources" guid="564d3596-96de-42cd-9a15-0ec12cd0e05b">
+  <field pack="Resource ID" xml="key"/>
+  <field pack="Slot ID" xml="slot_bed"/>
+  <field pack="Trade Value" xml="trade_value"/>
+  <field pack="Pip Icon" xml="icon_filepath"/>
+  <field pack="Unknown6" xml="strategic_value"/>
+ </table>
+ <table name="sea_surfaces" guid="351087ac-a8cd-4f93-9e83-728329e90e33">
+  <field pack="Wind Level" xml="key"/>
+  <field pack="Wind Speed" xml="sea_wind_speed"/>
+  <field pack="Choppiness" xml="sea_choppiness"/>
+  <field pack="Swell Wind Speed" xml="swell_wind_speed"/>
+  <field pack="Foam" xml="foam_enabled"/>
+  <field pack="Foam Fade Time" xml="foam_fade_in_time"/>
+  <field pack="Foam Cut Off Value" xml="foam_cut_off_value"/>
+  <field pack="Froth Value" xml="froth_value"/>
+  <field pack="Froth Distortion Speed" xml="froth_distortion_speed"/>
+  <field pack="Froth Distortion Amount" xml="froth_distortion_amount"/>
+  <field pack="Spray Cut Off Value" xml="spray_cut_off_value"/>
+  <field pack="Spray Speed" xml="spray_speed"/>
+  <field pack="Spray Duration" xml="spray_duration"/>
+  <field pack="Sea Shinine" xml="sea_shininess"/>
+ </table>
+ <table name="seasons" guid="816faaa9-458a-41df-a660-48687c74d624">
+ </table>
+ <table name="slots_art" guid="c1a3e507-5ef1-4384-8560-b7762935e7d3">
+  <field pack="Slot Type" xml="slot"/>
+  <field pack="Culture" xml="culture"/>
+  <field pack="Underlay Differs with_Building" xml="underlay_differs_with_building"/>
+  <field pack="Template Model" xml="template_model"/>
+  <field pack="Template Differs at_Quality Zero" xml="template_differs_at_quality_zero"/>
+  <field pack="unknown14" xml="empty_building_model"/>
+ </table>
+ <table name="start_pos_faction_effect_bundles" guid="e1da1a30-98fb-4871-825f-bbe870cd489a">
+  <field pack="unknown3" xml="effect_bundle"/>
+  <field pack="unknown4" xml="start_pos_faction"/>
+ </table>
+ <table name="stats" guid="ae177c31-babb-4f76-9ce2-a20dbf5653f6">
+  <field pack="unknown1" xml="key"/>
+  <field pack="unknown3" xml="public"/>
+  <field pack="unknown4" xml="ladder"/>
+  <field pack="unknown5" xml="order"/>
+ </table>
+ <table name="subtitles" guid="f133a3c8-56d7-46fb-92ed-3bcb0ac91cc7">
+  <field pack="Subtitle ID" xml="subtitle_key"/>
+ </table>
+ <table name="taxes_effects_jct" guid="7e45ef69-fc0e-41e8-8e00-85f794cfa438">
+  <field pack="Tax Effect IDRef" xml="tax_name"/>
+  <field pack="Effect IDRef" xml="effect"/>
+  <field pack="Magnitude" xml="value"/>
+ </table>
+ <table name="technologies" guid="f3cf0cf3-3ad2-4c9b-a41a-4b328019c020">
+  <field pack="Technology IDRef" xml="key"/>
+  <field pack="Building IDRef" xml="building_level"/>
+  <field pack="Tech Tree Position" xml="position_index"/>
+  <field pack="Research Points" xml="research_points_required"/>
+  <field pack="Icon Name" xml="icon_name"/>
+  <field pack="Researched Message Picture" xml="info_pic"/>
+  <field pack="index" xml="unique_index"/>
+ </table>
+ <table name="technology_node_sets" guid="a22c1f40-964f-4810-8d34-ca5d30078255">
+  <field pack="Campaign Ref" xml="campaign_key"/>
+  <field pack="unknown3" xml="key"/>
+  <field pack="Technology Category IDRef" xml="technology_category"/>
+ </table>
+ <table name="technology_nodes" guid="cc51ca72-73bc-40f6-9332-2a97f1ae3acc">
+  <field pack="unknown3" xml="indent"/>
+  <field pack="Technology Node ID" xml="key"/>
+  <field pack="unknown5" xml="technology_key"/>
+  <field pack="Technology Category IDRef" xml="technology_node_set"/>
+ </table>
+ <table name="trait_categories" guid="78a0e346-81c6-4ea9-bad5-d4e6f22c6974">
+ </table>
+ <table name="trees" guid="unknown">
+ </table>
+ <table name="ui_unit_stats" guid="30be54b7-7bd8-4b09-8ad0-b85352ae33a8">
+  <field pack="unknown1" xml="key"/>
+  <field pack="unknown2" xml="onscreen_name"/>
+  <field pack="unknown3" xml="max_value"/>
+  <field pack="unknown5" xml="campaign_only"/>
+ </table>
+ <table name="uniform_to_faction_colours" guid="6df7d3ab-1ef5-4fe2-9f75-ff90d25b2d6e">
+  <field pack="Uniform IDRef" xml="uniform_name"/>
+  <field pack="R1" xml="primary_colour_r"/>
+  <field pack="G1" xml="primary_colour_g"/>
+  <field pack="B1" xml="primary_colour_b"/>
+  <field pack="R2" xml="secondary_colour_r"/>
+  <field pack="G2" xml="secondary_colour_g"/>
+  <field pack="B2" xml="secondary_colour_b"/>
+  <field pack="R3" xml="tertiary_colour_r"/>
+  <field pack="G3" xml="tertiary_colour_g"/>
+  <field pack="B3" xml="tertiary_colour_b"/>
+  <field pack="Apply to which part of the unit" xml="type"/>
+ </table>
+ <table name="uniforms" guid="f4326b95-3e94-49cd-9f30-135c3dde027f">
+  <field pack="Uniforms ID" xml="Uniform_Name"/>
+  <field pack="Soldier unit variant" xml="Filename"/>
+  <field pack="Unit ID" xml="Unit"/>
+  <field pack="Officer unit variant" xml="officer_filename"/>
+ </table>
+ <table name="unit_abilities" guid="0dd50271-15ae-4f7a-b283-ed78ea471c73">
+  <field pack="Ability ID" xml="key"/>
+  <field pack="Stationary for Turn" xml="stationary_for_turn"/>
+  <field pack="Disabled by Default" xml="requires_effect_enabling"/>
+ </table>
+ <table name="unit_castes" guid="89ff2575-c6a0-4317-8cf8-0228f3514b94">
+  <field pack="unknown1" xml="caste"/>
+ </table>
+ <table name="unit_category" guid="cdd0b690-39af-4fd1-945d-e9d38d51699b">
+  <field pack="Category ID" xml="key"/>
+  <field pack="unknown1" xml="r_colour"/>
+  <field pack="unknown2" xml="g_colour"/>
+  <field pack="unknown3" xml="b_colour"/>
+ </table>
+ <table name="unit_special_abilities" guid="93d92080-7c6f-495b-8e1c-0038f5375467">
+  <field pack="Ability ID" xml="key"/>
+  <field pack="Duration" xml="active_time"/>
+  <field pack="Cooldown" xml="recharge_time"/>
+  <field pack="Uses" xml="num_uses"/>
+  <field pack="Range" xml="effect_range"/>
+  <field pack="unknown6" xml="affect_self"/>
+  <field pack="unknown7" xml="num_effected_friendly_units"/>
+  <field pack="unknown8" xml="num_effected_enemy_units"/>
+  <field pack="unknown10" xml="update_targets_every_frame"/>
+  <field pack="unknown11" xml="initial_recharge"/>
+  <field pack="unknown13" xml="can_autotrigger"/>
+ </table>
+ <table name="unit_stats_land_experience_bonuses" guid="a3f25a2a-c69f-4ea7-8c49-d08d23ae9d58">
+  <field pack="Experience Level" xml="xp_level"/>
+  <field pack="Melee Attack Bonus" xml="melee_attack"/>
+  <field pack="Melee Defense Bonus" xml="melee_defence"/>
+  <field pack="Morale Bonus" xml="morale"/>
+  <field pack="Fatigue" xml="fatigue"/>
+  <field pack="MP Fixed Cost" xml="mp_fixed_cost"/>
+  <field pack="MP Experience Cost Multiplier" xml="mp_experience_cost_multiplier"/>
+ </table>
+ <table name="unit_stats_land" guid="35d5ac1c-6202-4e36-a7a3-25873fc8240d">
+  <field pack="Unit IDRef" xml="key"/>
+  <field pack="Unit Size" xml="men"/>
+  <field pack="Number of Horses" xml="horse"/>
+  <field pack="Number of Artillery" xml="guns"/>
+  <field pack="Officer" xml="officer"/>
+  <field pack="Model Name" xml="soldier_model"/>
+  <field pack="Infantry Battle Entity" xml="man_entity"/>
+  <field pack="Animation Table" xml="man_animations_table"/>
+  <field pack="Warscape Equipment Theme IDRef" xml="equipment_theme"/>
+  <field pack="Armour" xml="armour"/>
+  <field pack="Armour Type" xml="armour_audio"/>
+  <field pack="Man Health" xml="man_health"/>
+  <field pack="field17" xml="mount_armour"/>
+  <field pack="field18" xml="mount_health"/>
+  <field pack="Accuracy" xml="core_marksmanship"/>
+  <field pack="Reloading Skill" xml="core_loading_skill"/>
+  <field pack="Firing Mechanism" xml="firing_mechanism"/>
+  <field pack="Ammo" xml="ammo"/>
+  <field pack="Melee Weapon" xml="melee_weapon_type"/>
+  <field pack="Melee Skill" xml="melee_attack"/>
+  <field pack="Charge Bonus" xml="charge_bonus"/>
+  <field pack="Dismounted Melee Skill" xml="dismounted_melee_attack"/>
+  <field pack="Dismounted Defence skill" xml="dismounted_charge_bonus"/>
+  <field pack="Defense Skill" xml="melee_defence"/>
+  <field pack="Skeleton Melee" xml="skeleton_melee"/>
+  <field pack="Drill Set" xml="unit_drill_set"/>
+  <field pack="Training" xml="unit_training_level"/>
+  <field pack="Morale" xml="morale"/>
+  <field pack="Rank Depth" xml="rank_depth"/>
+  <field pack="Close File Spacing" xml="close_formation_spacing_horizontal"/>
+  <field pack="Close Rank Spacing" xml="close_formation_spacing_vertical"/>
+  <field pack="Loose File Spacing" xml="loose_formation_spacing_horizontal"/>
+  <field pack="Loose Rank Spacing" xml="loose_formation_spacing_vertical"/>
+  <field pack="Dismounted File Spacing" xml="dismounted_close_formation_spacing_horizontal"/>
+  <field pack="Dismounted Rank Spacing" xml="dismounted_close_formation_spacing_vertical"/>
+  <field pack="Base Density" xml="dismounted_loose_formation_spacing_horizontal"/>
+  <field pack="unknown61" xml="dismounted_loose_formation_spacing_vertical"/>
+  <field pack="unknown62" xml="base_density"/>
+  <field pack="Anti Cavalry Bonus" xml="melee_bonus_vs_cavalry"/>
+  <field pack="Can Skirmish" xml="skirmish"/>
+  <field pack="Can Guard" xml="guard_mode"/>
+  <field pack="Can Dismount" xml="can_dismount"/>
+  <field pack="Can Place Stakes" xml="can_place_stakes"/>
+  <field pack="Is Slow Moving" xml="cannot_run"/>
+  <field pack="Can Hide in Woodland" xml="hide_medium_woodland"/>
+  <field pack="Can Hide in Light Scrub" xml="hide_scrub"/>
+  <field pack="Can Hide in Long Grass" xml="hide_long_grass"/>
+  <field pack="Can Hide in Buildings" xml="hide_buildings"/>
+  <field pack="Can Hide when Walking" xml="can_stalk"/>
+  <field pack="Can Hide While Firing" xml="can_snipe"/>
+  <field pack="Tree Spot Distance" xml="tree_spot_distance"/>
+  <field pack="Scrub Spot Distance" xml="scrub_spot_distance"/>
+  <field pack="Long Grass Spot Distance" xml="long_grass_spot_distance"/>
+  <field pack="Morale Shock Resistant" xml="disciplined"/>
+  <field pack="Heat Resistant" xml="inspire"/>
+  <field pack="Cold Resistant" xml="fatigue_resistant"/>
+  <field pack="Can Do Formed Attack" xml="siege_ladders"/>
+  <field pack="Immune to Attrition" xml="can_do_formed_attack"/>
+  <field pack="Cavalry Unit New can Dismount" xml="is_immune_to_attrition"/>
+  <field pack="Unknown" xml="all_ranks_fire"/>
+  <field pack="Deployable outside standard deployment area" xml="guerrilla_deployment"/>
+  <field pack="unknown105" xml="audio_selected"/>
+  <field pack="unknown106" xml="audio_retreat"/>
+  <field pack="unknown107" xml="audio_engaged_in_battle"/>
+  <field pack="unknown108" xml="audio_idle"/>
+  <field pack="unknown109" xml="audio_enemy_approaching"/>
+  <field pack="unknown110" xml="audio_being_charged"/>
+  <field pack="unknown111" xml="audio_being_flanked"/>
+  <field pack="unknown112" xml="audio_wavering"/>
+  <field pack="Unknown106" xml="can_climb_fast"/>
+  <field pack="Unknown107" xml="can_fire_at_buildings"/>
+  <field pack="Unknown110" xml="armour_piercing_melee_attack"/>
+  <field pack="Unknown111" xml="loose_formation"/>
+  <field pack="Unknown112" xml="close_formation_spacing_variation"/>
+  <field pack="Unknown113" xml="loose_formation_spacing_variation"/>
+  <field pack="Unknown114" xml="dismounted_close_formation_spacing_variation"/>
+  <field pack="Unknown115" xml="dismounted_loose_formation_spacing_variation"/>
+  <field pack="Unknown116" xml="bulletproof"/>
+ </table>
+ <table name="unit_stats_naval_crew" guid="66e9a0ad-76a3-4c8b-8397-59ca8bf4d68c">
+  <field pack="Crew ID" xml="unit_type"/>
+  <field pack="Accuracy" xml="core_marksmanship"/>
+  <field pack="Melee Skill" xml="melee_attack"/>
+  <field pack="Melee defence" xml="melee_defence"/>
+  <field pack="Melee Weapon" xml="melee_weapon_type"/>
+  <field pack="unknown6" xml="ammo"/>
+  <field pack="unknown7" xml="battle_entity"/>
+  <field pack="Model" xml="soldier_model"/>
+  <field pack="Animation" xml="man_animations_table"/>
+  <field pack="Warscape Equipment Theme" xml="equipment_theme"/>
+  <field pack="unknown10" xml="armour_audio"/>
+  <field pack="unknown11" xml="armour"/>
+  <field pack="unknown12" xml="spacing"/>
+  <field pack="unknown13" xml="discipline"/>
+ </table>
+ <table name="unit_stats_naval_crew_to_ship_categories" guid="cf708198-006e-4639-9cfe-771aaf4c8f18">
+  <field pack="Ship Category" xml="key"/>
+  <field pack="Crew IDRef" xml="marine_type"/>
+  <field pack="Seamen IDRef" xml="seaman_type"/>
+  <field pack="Gun Crew IDRef" xml="gunner_type"/>
+  <field pack="Admiral Unit IDRef" xml="admiral"/>
+  <field pack="Commodore IDRef" xml="officer_1"/>
+  <field pack="Officer Unit IDRef" xml="officer_2"/>
+ </table>
+ <table name="unit_stats_naval_experience_bonuses" guid="08c20819-f92c-4c37-9117-968282df7787">
+  <field pack="Core Gunner Loading Skill" xml="core_gunner_loading_skill"/>
+  <field pack="Core Gunner Marksmanship" xml="core_gunner_marksmanship"/>
+  <field pack="Morale" xml="morale"/>
+  <field pack="MP Fixed Cost" xml="mp_fixed_cost"/>
+  <field pack="MP Experience Cost Multiplier" xml="mp_experience_cost_multiplier"/>
+ </table>
+ <table name="unit_stats_naval" guid="ad88c54f-3e8c-42b8-968f-5d2d6918356d">
+  <field pack="Unit IDRef" xml="key"/>
+  <field pack="Morale" xml="morale"/>
+  <field pack="Hull Strength" xml="mothball_cost"/>
+  <field pack="Crew Size" xml="reactivate_cost"/>
+  <field pack="Ship" xml="ship_model"/>
+  <field pack="Marines" xml="num_marines"/>
+  <field pack="Seamen" xml="num_seamen"/>
+  <field pack="Gun Crewmen" xml="num_gunners"/>
+  <field pack="Accuracy" xml="core_gunner_marksmanship"/>
+  <field pack="Reloading Skill" xml="core_gunner_loading_skill"/>
+  <field pack="Technology" xml="firing_mechanism"/>
+  <field pack="Water Bail Out Modifier" xml="water_bail_out_modifier"/>
+  <field pack="Flood Threshold to Sink" xml="flood_threshold_to_sink"/>
+  <field pack="Fire Risk Modifier" xml="fire_risk_modifier"/>
+  <field pack="unknown" xml="mass"/>
+  <field pack="Collision Momentum Modifer" xml="collision_momentum_modifer"/>
+  <field pack="Formation Distance" xml="formation_distance"/>
+  <field pack="Minimum Distance" xml="minimum_distance"/>
+  <field pack="Formation Integrity" xml="formation_integrity"/>
+  <field pack="General Speed" xml="top_speed"/>
+  <field pack="Acceleration" xml="acceleration"/>
+  <field pack="Stopping Threshold" xml="stopping_threshold"/>
+  <field pack="Heel Factor" xml="heel_factor"/>
+  <field pack="Beating Angle" xml="beating_angle"/>
+  <field pack="Max Yard Angle" xml="max_yard_angle"/>
+  <field pack="Sail Furl Angle" xml="sail_furl_angle"/>
+  <field pack="Speed Coefficient 0 Degrees" xml="speed_wind_astern"/>
+  <field pack="Speed Coefficient 25-30 Degrees" xml="speed_30_deg"/>
+  <field pack="Speed Coefficient 55-60 Degrees" xml="speed_60_deg"/>
+  <field pack="Speed Coefficient 70-75 Degrees" xml="speed_75_deg"/>
+  <field pack="Speed Coefficient 85-90 Degrees" xml="speed_90_deg"/>
+  <field pack="Speed Coefficient 100-105 Degrees" xml="speed_105_deg"/>
+  <field pack="Speed Coefficient 115-120 Degrees" xml="speed_120_deg"/>
+  <field pack="Speed Coefficient 130-135 Degrees" xml="speed_135_deg"/>
+  <field pack="Speed Coefficient 140-145 Degrees" xml="speed_145_deg"/>
+  <field pack="Speed Coefficient 165-180 Degrees" xml="speed_180_deg"/>
+  <field pack="Bound by Waves" xml="position_damping"/>
+  <field pack="Pitch by Waves" xml="rotation_damping"/>
+  <field pack="Turn Rate Stopped" xml="turn_rate_at_full_speed"/>
+  <field pack="Turn Rate at 10 Percent Speed" xml="turn_rate_at_10_percent"/>
+  <field pack="Turn Rate at 20 Percent Speed" xml="turn_rate_at_20_percent"/>
+  <field pack="Turn Rate at 35 Percent Speed" xml="turn_rate_at_35_percent"/>
+  <field pack="Turn Rate at 50 Percent Speed" xml="turn_rate_at_50_percent"/>
+  <field pack="Turn Rate at 65 Percent Speed" xml="turn_rate_at_65_percent"/>
+  <field pack="Turn Rate at 80 Percent Speed" xml="turn_rate_at_80_percent"/>
+  <field pack="Turn Rate at 100 Percent Speed" xml="turn_rate_stopped"/>
+  <field pack="Top Gallants Allowed" xml="top_gallants_allowed"/>
+  <field pack="Side Panels Above Water 1 Top Hits" xml="side_panels_above_water_1_top_hits"/>
+  <field pack="Side Panels Above Water 1 Top Critical" xml="side_panels_above_water_1_top_critical"/>
+  <field pack="Side Panels Above Water 2 Armour" xml="side_panels_above_water_2_armour"/>
+  <field pack="Side Panels Above Water 2 Hits" xml="side_panels_above_water_2_hits"/>
+  <field pack="Side Panels Below Water Armour" xml="side_panels_below_water_armour"/>
+  <field pack="Prow Panels Above Water Hits" xml="prow_panels_above_water_hits"/>
+  <field pack="Stern Panels Above Water Armour" xml="stern_panels_above_water_armour"/>
+  <field pack="Stern Panels Above Water Hits" xml="stern_panels_above_water_hits"/>
+  <field pack="Stern Panels Above Water Critical" xml="stern_panels_above_water_critical"/>
+  <field pack="Top Sails Hits" xml="top_sails_hits"/>
+  <field pack="Middle Sails Hits" xml="middle_sails_hits"/>
+  <field pack="Bottom Sails Hits" xml="bottom_sails_hits"/>
+  <field pack="Top Gallants Sails Hits" xml="top_gallants_sails_hits"/>
+  <field pack="Magazine Armour" xml="magazine_armour"/>
+  <field pack="Magazine Hits" xml="magazine_hits"/>
+  <field pack="Magazine Critical" xml="magazine_critical"/>
+  <field pack="unknown98" xml="stat_bar_manoeuvrability_rating"/>
+  <field pack="Hull Strength 1" xml="stat_bar_hull_strength"/>
+  <field pack="unknown122" xml="category"/>
+  <field pack="unknown123" xml="ship_crew_category"/>
+  <field pack="unknown124" xml="naval_mine_ability"/>
+  <field pack="unknown126" xml="audio_selected"/>
+  <field pack="unknown127" xml="bombard_ability"/>
+  <field pack="unknown128" xml="torpedo_ability"/>
+  <field pack="unknown129" xml="ramming_ability"/>
+  <field pack="unknown130" xml="audio_material"/>
+  <field pack="unknown131" xml="forward_facing"/>
+  <field pack="unknown132" xml="camera_ellipse_width"/>
+  <field pack="unknown133" xml="camera_ellipse_length"/>
+  <field pack="unknown134" xml="camera_ellipse_height"/>
+  <field pack="unknown135" xml="camera_ellipse_offset"/>
+  <field pack="unknown136" xml="boardable"/>
+ </table>
+ <table name="units" guid="7077b9a6-bac0-4752-8a94-008ceb748f35">
+  <field pack="Unit ID" xml="key"/>
+  <field pack="Screen Name" xml="on_screen_name"/>
+  <field pack="Category" xml="category"/>
+  <field pack="Class" xml="class"/>
+  <field pack="Turns to Build" xml="create_time"/>
+  <field pack="Cost" xml="create_cost"/>
+  <field pack="Upkeep" xml="upkeep_cost"/>
+  <field pack="Campaign Map Action Points" xml="campaign_action_points"/>
+  <field pack="Voice" xml="voice"/>
+  <field pack="Unit Icon Path" xml="icon_name"/>
+  <field pack="Unit Info Pic Path" xml="info_pic"/>
+  <field pack="Localisation Key" xml="unit_description_text"/>
+  <field pack="Unit Limit" xml="total_cap"/>
+  <field pack="MP Category" xml="multiplayer_category"/>
+  <field pack="Garrison Availability" xml="armed_citizenry"/>
+  <field pack="MP Unit Limit" xml="total_cap_mp"/>
+  <field pack="Units Soldier Group" xml="unit_caste"/>
+  <field pack="unknown31" xml="in_encyclopedia"/>
+  <field pack="Unique ID" xml="unique_index"/>
+  <field pack="unknown" xml="is_male"/>
+  <field pack="unknown35" xml="num_audio_VO_variations"/>
+  <field pack="unknown36" xml="audio_language"/>
+  <field pack="unknown37" xml="VO_actor_numbers"/>
+  <field pack="unknown38" xml="supports_first_person"/>
+ </table>
+ <table name="bob_rigid_boshin_boat_1_anim_warscape_animated_lod" guid="unknown">
+ </table>
+ <table name="bob_rigid_boshin_boat_2_anim_warscape_animated_lod" guid="unknown">
+ </table>
+ <table name="bob_rigid_boshin_boat_3_anim_warscape_animated_lod" guid="unknown">
+ </table>
+ <table name="bob_rigid_boshin_boat_4_anim_warscape_animated_lod" guid="unknown">
+ </table>
+ <table name="bob_rigid_boshin_sailboat_1_anim_warscape_animated_lod" guid="unknown">
+ </table>
+ <table name="bob_rigid_boshin_sailboat_2_anim_warscape_animated_lod" guid="unknown">
+ </table>
+ <table name="bob_rigid_boshin_sailboat_3_anim_warscape_animated_lod" guid="unknown">
+ </table>
+ <table name="bob_rigid_boshin_sailboat_4_anim_warscape_animated_lod" guid="unknown">
+ </table>
+ <table name="bob_rigid_boshin_windmill_anim_warscape_animated_lod" guid="unknown">
+ </table>
+ <table name="bob_rigid_castle_under_siege_boshin_anim_warscape_animated_lod" guid="unknown">
+ </table>
+ <table name="bob_rigid_castle_under_siege_boshin_single_cannon_anim_warscape_animated_lod" guid="unknown">
+ </table>
+ <table name="bob_rigid_boshin_boat_1_anim_warscape_animated" guid="unknown">
+ </table>
+ <table name="bob_rigid_boshin_boat_2_anim_warscape_animated" guid="unknown">
+ </table>
+ <table name="bob_rigid_boshin_boat_3_anim_warscape_animated" guid="unknown">
+ </table>
+ <table name="bob_rigid_boshin_boat_4_anim_warscape_animated" guid="unknown">
+ </table>
+ <table name="bob_rigid_boshin_sailboat_1_anim_warscape_animated" guid="unknown">
+ </table>
+ <table name="bob_rigid_boshin_sailboat_2_anim_warscape_animated" guid="unknown">
+ </table>
+ <table name="bob_rigid_boshin_sailboat_3_anim_warscape_animated" guid="unknown">
+ </table>
+ <table name="bob_rigid_boshin_sailboat_4_anim_warscape_animated" guid="unknown">
+ </table>
+ <table name="bob_rigid_boshin_windmill_anim_warscape_animated" guid="unknown">
+ </table>
+ <table name="bob_rigid_castle_under_siege_boshin_anim_warscape_animated" guid="unknown">
+ </table>
+ <table name="bob_rigid_castle_under_siege_boshin_single_cannon_anim_warscape_animated" guid="unknown">
+ </table>
+ <table name="warscape_equipment_themes" guid="1930512d-03a5-415b-9623-d9ac085bc582">
+  <field pack="Warscape Equipment Theme ID" xml="theme"/>
+ </table>
+ <table name="bob_building_barrel_wooden_large_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_barrel_wooden_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_breech_loading_ship_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_bridge_a_30metre_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_bridge_railway_02_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_bridge_repeater_destroyable_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_candy1_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_candy2_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_castle_01_tower_02_noemitters_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_cinematic_barrel_apple_large_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_cinematic_barrel_apple_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_american_scroll_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_audience_tent_noprops_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_audience_tent_props_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_drum_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_european_trunk_closed_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_european_trunk_open_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_factory_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_lavish_balcony_rigged_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_lavish_balcony_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_palace_shogun_int_no_table_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_pouch1_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_pouch2_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_pouch3_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_weight1_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_weight2_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_weight3_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_spencer_rifle_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_closed_large_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_closed_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_empty_large_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_empty_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_lid_ajar_large_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_lid_ajar_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_open_large_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_open_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_pile_01_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_pile_02_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_pile_03_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_front_end_train_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_bridge_a_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_bridge_b_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_bridgesupport_a_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_bridgesupport_b_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_platform_a_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_platform_b_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_tracks_left_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_tracks_right_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_tracks_stop_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_gatling_gun_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_lantern_tree_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_lighthouse_modern_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_lighthouse_traditional_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_parrott_gun_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_port_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_sign_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_snowman_01_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_snowman_02_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_snowman_03_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_snowman_04_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_stronghold_pagoda_building_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_stronghold_temple_building_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_stronghold_temple2_building_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_03_line_short_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_03_line_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_03_lineend_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_04_line_short_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_04_line_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_04_lineend_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_04_turn_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_the_black_ship_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_torii_shrine_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_01_level_01_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_01_level_02_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_01_level_03_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_01_level_04_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_02_level_02_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_02_level_03_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_02_level_04_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_tower_wood_01_level_01_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_tower_wood_01_level_02_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_tower_wood_01_level_03_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_tower_wood_01_level_04_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_tree_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_wagon_withcargo_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_wagon_withoutcargo_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_rigid_bos_castle_tower_construction_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_rigid_bos_trainstation_construction_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_rigid_campaign_bos_defenses_2_archery_towers_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_rigid_campaign_bos_defenses_3_matchlock_towers_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_rigid_campaign_bos_defenses_4_gatling_gun_towers_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_rigid_campaign_bos_defenses_5_wall_guns_and_gatling_gun_towers_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_rigid_campaign_bos_region_specialtea_1_tea_plantation_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_rigid_campaign_bos_region_specialtea_2_tea_baler_facility_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_rigid_campaign_bos_region_specialtea_3_sayama_corporation_depot_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_ship_chiyodagata_2_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_ship_chiyodagata_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_ship_hms_warrior_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_ship_kaiten_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_ship_kaiyo_maru_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_ship_kanko_maru_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_ship_kanrin_maru_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_ship_kasuga_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_ship_kotetsu_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_ship_l'ocean_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_ship_uss_roanoke_warscape_rigid_lod" guid="unknown">
+ </table>
+ <table name="bob_building_barrel_wooden_large_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_barrel_wooden_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_breech_loading_ship_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_bridge_a_30metre_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_bridge_railway_02_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_bridge_repeater_destroyable_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_candy1_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_candy2_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_castle_01_tower_02_noemitters_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_cinematic_barrel_apple_large_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_cinematic_barrel_apple_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_american_scroll_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_audience_tent_noprops_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_audience_tent_props_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_drum_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_european_trunk_closed_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_european_trunk_open_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_factory_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_lavish_balcony_rigged_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_lavish_balcony_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_palace_shogun_int_no_table_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_pouch1_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_pouch2_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_pouch3_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_weight1_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_weight2_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_scales_weight3_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_cinematics_spencer_rifle_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_closed_large_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_closed_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_empty_large_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_empty_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_lid_ajar_large_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_lid_ajar_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_open_large_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_open_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_pile_01_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_pile_02_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_crate_tea_pile_03_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_front_end_train_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_bridge_a_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_bridge_b_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_bridgesupport_a_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_bridgesupport_b_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_platform_a_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_platform_b_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_tracks_left_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_tracks_right_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_frontend_tracks_stop_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_gatling_gun_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_lantern_tree_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_lighthouse_modern_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_lighthouse_traditional_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_parrott_gun_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_port_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_sign_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_snowman_01_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_snowman_02_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_snowman_03_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_snowman_04_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_stronghold_pagoda_building_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_stronghold_temple_building_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_stronghold_temple2_building_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_03_line_short_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_03_line_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_03_lineend_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_04_line_short_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_04_line_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_04_lineend_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_telegraph_pole_04_turn_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_the_black_ship_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_torii_shrine_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_01_level_01_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_01_level_02_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_01_level_03_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_01_level_04_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_02_level_02_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_02_level_03_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_tower_stone_02_level_04_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_tower_wood_01_level_01_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_tower_wood_01_level_02_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_tower_wood_01_level_03_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_tower_wood_01_level_04_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_tree_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_wagon_withcargo_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_building_wagon_withoutcargo_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_rigid_bos_castle_tower_construction_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_rigid_bos_trainstation_construction_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_rigid_campaign_bos_region_specialtea_1_tea_plantation_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_rigid_campaign_bos_region_specialtea_2_tea_baler_facility_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_rigid_campaign_bos_region_specialtea_3_sayama_corporation_depot_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_ship_chiyodagata_2_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_ship_chiyodagata_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_ship_hms_warrior_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_ship_kaiten_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_ship_kaiyo_maru_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_ship_kanko_maru_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_ship_kanrin_maru_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_ship_kasuga_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_ship_kotetsu_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_ship_l'ocean_warscape_rigid" guid="unknown">
+ </table>
+ <table name="bob_ship_uss_roanoke_warscape_rigid" guid="unknown">
+ </table>
+ <table name="warscape_trees" guid="unknown">
+ </table>
+</correspondencies>

@@ -48,11 +48,30 @@ namespace Filetypes {
 
     public class TableNameCorrespondencyManager {
         public const string DEFAULT_FILE_NAME = "correspondencies.xml";
+        public const string DEFAULT_PARTIAL_FILE_NAME = "partial_correspondencies.xml";
+        public const string DEFAULT_INCOMPATIBLE_FILE_NAME = "incompatible_tables.xml";
         Dictionary<string, List<NameMapping>> tableMapping = new Dictionary<string, List<NameMapping>>();
         public Dictionary<string, List<NameMapping>> TableMapping {
             get {
                 return tableMapping;
             }
+        }
+        Dictionary<string, List<NameMapping>> partialTableMapping = new Dictionary<string, List<NameMapping>>();
+        public Dictionary<string, List<NameMapping>> PartialTableMapping {
+            get {
+                return partialTableMapping;
+            }
+        }
+        Dictionary<string, List<NameMapping>> incompatibleTables = new Dictionary<string, List<NameMapping>>();
+        public Dictionary<string, List<NameMapping>> IncompatibleTables {
+            get {
+                return incompatibleTables;
+            }
+        }
+
+        Dictionary<string, string> tableGuidMap = new Dictionary<string, string>();
+        public Dictionary<string, string> TableGuidMap {
+            get { return tableGuidMap; }
         }
         
         public TableNameCorrespondencyManager() {}
@@ -73,13 +92,20 @@ namespace Filetypes {
                 
             }
         }
+
+        public void Save() {
+            SaveToFile(DEFAULT_FILE_NAME, tableMapping);
+            SaveToFile(DEFAULT_PARTIAL_FILE_NAME, partialTableMapping);
+            SaveToFile(DEFAULT_INCOMPATIBLE_FILE_NAME, incompatibleTables);
+        }
         
         // store to file
-        public void SaveToFile(string filename = DEFAULT_FILE_NAME) {
+        public void SaveToFile(string filename, Dictionary<string, List<NameMapping>> tableMapping) {
             using (var file = File.CreateText(filename)) {
                 file.WriteLine("<correspondencies>");
                 foreach (string tableName in tableMapping.Keys) {
-                    file.WriteLine(" <table name=\"{0}\">", tableName);
+                    string guid = tableGuidMap.ContainsKey(tableName) ? tableGuidMap[tableName] : "unknown";
+                    file.WriteLine(" <table name=\"{0}\" guid=\"{1}\">", tableName, guid);
                     foreach (NameMapping fieldNames in tableMapping[tableName]) {
                         file.WriteLine(string.Format("  <field pack=\"{0}\" xml=\"{1}\"/>", fieldNames.Item1, fieldNames.Item2));
                     }
