@@ -141,10 +141,21 @@ namespace PackFileTest {
             TableNameCorrespondencyManager manager = new TableNameCorrespondencyManager();
             FieldCorrespondencyFinder finder = new FieldCorrespondencyFinder(packFile, xmlDirectory);
             finder.FindAllCorrespondencies();
-            foreach (string tableName in finder.CorrespondingFields.Keys) {
-                manager.TableMapping.Add(tableName, finder.CorrespondingFields[tableName]);
+            foreach (string tableName in finder.FullyMapped.Keys) {
+                manager.TableMapping.Add(tableName, finder.FullyMapped[tableName]);
+                manager.TableGuidMap.Add(tableName, finder.TableToGuid[tableName]);
             }
-            manager.SaveToFile();
+            foreach (string tableName in finder.PartiallyMapped.Keys) {
+                manager.PartialTableMapping.Add(tableName, finder.PartiallyMapped[tableName]);
+                if (finder.TableToGuid.ContainsKey(tableName)) {
+                    manager.TableGuidMap.Add(tableName, finder.TableToGuid[tableName]);
+                }
+            }
+            foreach (string tableName in finder.IncompatibleTables.Keys) {
+                manager.TableMapping.Add(tableName, finder.IncompatibleTables[tableName]);
+                manager.TableGuidMap.Add(tableName, finder.TableToGuid[tableName]);
+            }
+            manager.Save();
         }
         
         void CheckReferences() {
