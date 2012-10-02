@@ -16,6 +16,8 @@ namespace Filetypes {
 		public delegate void HeaderLoaded(DBFileHeader header);
 		public delegate void LoadingPackedFile(PackedFile packed);
 
+        public bool AutoadjustGuid { get; set; }
+
 		#region Internal
 		// header markers
 		static UInt32 GUID_MARKER = BitConverter.ToUInt32 (new byte[] { 0xFD, 0xFE, 0xFC, 0xFF}, 0);
@@ -39,6 +41,7 @@ namespace Filetypes {
             if (!DBTypeMap.Instance.IsSupported(typeName)) {
                 throw new DBFileNotSupportedException(string.Format("No DB definition found for {0}", typeName));
             }
+            AutoadjustGuid = true;
         }
 
 		#region Read
@@ -80,7 +83,7 @@ namespace Filetypes {
                 throw new DBFileNotSupportedException (string.Format ("Expected {0} entries, got {1}", header.EntryCount, file.Entries.Count));
             }
             // auto-adjust header guid
-            if (!info.ApplicableGuids.Contains(header.GUID)) {
+            if (AutoadjustGuid && !info.ApplicableGuids.Contains(header.GUID)) {
 #if DEBUG
                 Console.WriteLine("adjusting guid from {0} to {1}", header.GUID, info.ApplicableGuids[0]);
 #endif
