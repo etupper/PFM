@@ -7,6 +7,9 @@ using NameMapping = System.Tuple<string, string>;
 
 
 namespace Filetypes {
+    /*
+     * Decodes a DBFile to the format used by CA's Assembly Kit.
+     */
     public class ModToolDBCodec : Codec<DBFile> {
         TableNameCorrespondencyManager nameManager;
         
@@ -33,10 +36,10 @@ namespace Filetypes {
                         try {
                             fieldName = nameManager.GetXmlFieldName(file.CurrentType.Name, field.Name);
                         } catch {
-                            Console.Error.WriteLine("No xml field name for {0}:{1}", file.CurrentType.Name, field.Name);
-                            fieldName = field.Name;
+                            throw new DBFileNotSupportedException(
+                                string.Format("No xml field name for {0}:{1}", file.CurrentType.Name, field.Name));
                         }
-                        string toWrite = field.Value;
+                        string toWrite = Encode(field);
                         writer.WriteLine("  <{0}>{1}</{0}>", fieldName, toWrite);
                     }
                     writer.WriteLine(" </{0}>", file.CurrentType.Name);
@@ -44,8 +47,20 @@ namespace Filetypes {
                 writer.WriteLine("</dataroot>");
             }
         }
+        
+        string Encode(FieldInstance field) {
+            string result = field.Value;
+            if (field.Info.TypeCode == TypeCode.Boolean) {
+                result = bool.Parse(field.Value) ? "1" : "0";
+            }
+            return result;
+        }
     }
-
+ 
+    /*
+     * Provides mapping between column names of schema.xml (from the community mod tools)
+     * to those used by CA.
+     */
     public class TableNameCorrespondencyManager {
         public const string DEFAULT_FILE_NAME = "correspondencies.xml";
         public const string DEFAULT_PARTIAL_FILE_NAME = "partial_correspondencies.xml";
@@ -68,35 +83,60 @@ namespace Filetypes {
                 return incompatibleTables;
             }
         }
+        
+        public void Clear() {
+            tableMapping.Clear();
+            partialTableMapping.Clear();
+            incompatibleTables.Clear();
+            tableGuidMap.Clear();
+        }
 
         Dictionary<string, string> tableGuidMap = new Dictionary<string, string>();
         public Dictionary<string, string> TableGuidMap {
             get { return tableGuidMap; }
         }
         
-        public TableNameCorrespondencyManager() {}
-        
-        // load name correspondencies from file
-        public TableNameCorrespondencyManager(string filename = DEFAULT_FILE_NAME) {
-            XmlDocument xmlFile = new XmlDocument();
-            xmlFile.Load(filename);
-            foreach(XmlNode tableNode in xmlFile.ChildNodes[0].ChildNodes) {
-                string tableName = tableNode.Attributes["name"].Value;
-                List<NameMapping> mappings = new List<NameMapping>();
-                tableMapping.Add(tableName, mappings);
-                foreach(XmlNode fieldNode in tableNode.ChildNodes) {
-                    string packName = tableNode.Attributes["pack"].Value;
-                    string xmlName = tableNode.Attributes["xml"].Value;
-                    mappings.Add(new Tuple<string, string>(packName, xmlName));
+        private static TableNameCorrespondencyManager instance;
+        public static TableNameCorrespondencyManager Instance {
+            get {
+                if (instance == null) {
+                    instance = new TableNameCorrespondencyManager();
                 }
-                
+                return instance;
             }
         }
-
+        
+        // load name correspondencies from file
+        private TableNameCorrespondencyManager() {
+            LoadFromFile(DEFAULT_FILE_NAME, tableMapping);
+            LoadFromFile(DEFAULT_PARTIAL_FILE_NAME, partialTableMapping);
+            LoadFromFile(DEFAULT_INCOMPATIBLE_FILE_NAME, incompatibleTables);
+        }
+  
+        // I'm sure this could be done via Serialization
         public void Save() {
             SaveToFile(DEFAULT_FILE_NAME, tableMapping);
             SaveToFile(DEFAULT_PARTIAL_FILE_NAME, partialTableMapping);
             SaveToFile(DEFAULT_INCOMPATIBLE_FILE_NAME, incompatibleTables);
+        }
+        
+        public void LoadFromFile(string filename, Dictionary<string, List<NameMapping>> table) {
+            try {
+                XmlDocument xmlFile = new XmlDocument();
+                xmlFile.Load(filename);
+                foreach(XmlNode tableNode in xmlFile.ChildNodes[0].ChildNodes) {
+                    string tableName = tableNode.Attributes["name"].Value;
+                    List<NameMapping> mappings = new List<NameMapping>();
+                    table.Add(tableName, mappings);
+                    foreach(XmlNode fieldNode in tableNode.ChildNodes) {
+                        string packName = fieldNode.Attributes["pack"].Value;
+                        string xmlName = fieldNode.Attributes["xml"].Value;
+                        mappings.Add(new Tuple<string, string>(packName, xmlName));
+                    }                
+                }
+            } catch (Exception ex) {
+                Console.Error.WriteLine("failed to load {0}: {1}", filename, ex.Message);
+            }
         }
         
         // store to file
@@ -114,18 +154,29 @@ namespace Filetypes {
                 file.WriteLine("</correspondencies>");
             }
         }
-  
+        
         // retrieve ca xml tag for given db schema table/field combination
         public string GetXmlFieldName(string table, string field) {
-            NameMapping result = null;
-            List<NameMapping> mapping = tableMapping[table];
-            foreach(NameMapping candidate in mapping) {
+            string result = GetXmlFieldName(table, field, tableMapping);
+            if (result == null) {
+                result = GetXmlFieldName(table, field, incompatibleTables);
+            }
+            if (result == null) {
+                result = GetXmlFieldName(table, field, partialTableMapping);
+            }
+            return null;
+        }
+
+        static string GetXmlFieldName(string table, string field, Dictionary<string, List<NameMapping>> mapping) {
+            if (!mapping.ContainsKey(table)) {
+                return null;
+            }
+            foreach(NameMapping candidate in mapping[table]) {
                 if (candidate.Item1.Equals(field)) {
-                    result = candidate;
-                    break;
+                        return candidate.Item2;
                 }
             }
-            return result.Item2;
+            return null;
         }
     }
 }

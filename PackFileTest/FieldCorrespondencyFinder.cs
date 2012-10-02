@@ -25,42 +25,26 @@ namespace PackFileTest {
     public class FieldCorrespondencyFinder {
         string xmlDirectory;
 
-        Dictionary<string, DBFile> patchFileValues = new Dictionary<string, DBFile>();
+        Dictionary<string, MappedTable> mappedTables = new Dictionary<string, MappedTable>();
         
-        Dictionary<string, List<NameMapping>> fullyMapped = new Dictionary<string, List<NameMapping>>();
-        public Dictionary<string, List<NameMapping>> FullyMapped {
-            get {
-                return fullyMapped;
-            }
-        }
-        Dictionary<string, List<NameMapping>> partiallyMapped = new Dictionary<string, List<NameMapping>>();
-        public Dictionary<string, List<NameMapping>> PartiallyMapped {
-            get {
-                return partiallyMapped;
-            }
-        }
-        Dictionary<string, List<NameMapping>> incompatibleTables = new Dictionary<string, List<NameMapping>>();
-        public Dictionary<string, List<NameMapping>> IncompatibleTables  {
-            get {
-                return incompatibleTables;
-            }
-        }
-
-        Dictionary<string, string> tableToGuid = new Dictionary<string, string>();
-        public Dictionary<string, string> TableToGuid {
-            get { return tableToGuid; }
-        }
-
         public FieldCorrespondencyFinder (string packFile, string xmlDir) {
+            xmlDirectory = xmlDir;
             DBTypeMap.Instance.InitializeTypeMap(Directory.GetCurrentDirectory());
             // initialize patchFileValues from pack file
             PackFile pack = new PackFileCodec().Open(packFile);
             foreach(PackedFile contained in pack.Files) {
                 if (contained.FullPath.StartsWith("db")) {
+                    // no need to resolve if it's done already...
+                    string tableName = DBFile.typename(contained.FullPath);
                     try {
                         PackedFileDbCodec codec = PackedFileDbCodec.GetCodec(contained);
                         DBFile dbFile = codec.Decode(contained.Data);
-                        patchFileValues[contained.Name] = dbFile;
+
+                        MappedTable table = new MappedTable(tableName);
+                        ValuesFromPack(table, dbFile);
+                        ValuesFromXml(table);
+
+                        mappedTables[tableName] = table;
                     } catch (Exception e) {
 #if DEBUG
                         Console.Error.WriteLine(e.Message);
@@ -68,89 +52,101 @@ namespace PackFileTest {
                     }
                 }
             }
-            xmlDirectory = xmlDir;
         }
         
         public void FindAllCorrespondencies() {
-            foreach(string tableName in patchFileValues.Keys) {
-                FindCorrespondencies(tableName);
+            TableNameCorrespondencyManager.Instance.Clear();
+
+            foreach(MappedTable table in mappedTables.Values) {
+                FindCorrespondencies(table);
+                
+                if (table.IsFullyMapped) {
+                    TableNameCorrespondencyManager.Instance.TableMapping.Add(table.TableName, table.MappingAsTuples);
+                } else if (table.IsCompatible) {
+                    TableNameCorrespondencyManager.Instance.IncompatibleTables.Add(table.TableName, table.MappingAsTuples);
+                } else {
+                    TableNameCorrespondencyManager.Instance.PartialTableMapping.Add(table.TableName, table.MappingAsTuples);
+                }
+                TableNameCorrespondencyManager.Instance.TableGuidMap[table.TableName] = table.Guid;
             }
         }
-
+        
         /*
          * Find the corresponding fields for all columns in the given table.
          */
-        void FindCorrespondencies(string tableName) {
-            List<TableColumn> dbValues = ValuesFromPack(tableName);
-            List<NameMapping> mapping = new List<NameMapping>();
-            Dictionary<string, List<NameMapping>> addToMemberMap = fullyMapped;
-            if (dbValues != null) {
-                List<TableColumn> valuesFromXml = ValuesFromXml(tableName);
-                if (dbValues.Count != valuesFromXml.Count) {
-                    addToMemberMap = incompatibleTables;
+        void FindCorrespondencies(MappedTable table) {
+            
+            foreach(string field in table.PackData.Fields) {
+                NameMapping mapping = FindCorrespondency(table, field);
+                if (mapping != null) {
+                    table.AddMapping(mapping.Item1, mapping.Item2);
                 }
-                foreach (TableColumn valuesFromPack in ValuesFromPack(tableName)) {
-
-                    // make sure we have enough source data to compare
-                    if (valuesFromPack == null || valuesFromPack.Values.Count == 0) {
-                        //if (dbValues.Count == 1 && valuesFromXml.Count == 1) {
-                        //    NameMapping mapping = new NameMapping(dbValues[0].
-                        //}
-                        Console.Error.WriteLine("No data available for {0}", tableName);
-                        continue;
-                    }
-                    
-                    // find the same values in the xml
-                    NameMapping corresponding = FindCorrespondency(valuesFromPack, valuesFromXml);
-                    if (corresponding != null) {
-                        Console.WriteLine("{0}:{1}-{2}", tableName, corresponding.Item1, corresponding.Item2);
-                        mapping.Add(corresponding);
-                    } else if (dbValues.Count == 1 && valuesFromXml.Count == 1) {
-                        mapping.Add(new NameMapping(dbValues[0].TableColumnNames[0], valuesFromXml[0].TableColumnNames[0]));
-                    } else {
-                        Console.Error.WriteLine("No correspondence found for {0}:{1}", tableName, string.Join(",", valuesFromPack.TableColumnNames));
-                        addToMemberMap = partiallyMapped;
-                    }
-                }
-                addToMemberMap[tableName] = mapping;
-            } else {
-                Console.Error.WriteLine("No {0} entry in pack", tableName);
             }
         }
         
         /*
          * In the given list, find the table with all values equal to the given one from the pack.
          */
-        NameMapping FindCorrespondency(TableColumn packTable, List<TableColumn> xml) {
+        NameMapping FindCorrespondency(MappedTable dataTable, string fieldName) {
             NameMapping result = null;
-            if (packTable.TableColumnNames.Count == 1) {
-                string packTableName = packTable.TableColumnNames[0];
-                if (xml.Count == 1) {
-                    result = new NameMapping(packTableName, xml[0].TableColumnNames[0]);
-                } else {
-                    foreach (TableColumn xmlTable in xml) {
-                        if (xmlTable.SameValues(packTable.Values)) {
-                            // found our match
-                            if (xmlTable.TableColumnNames.Count == 1) {
-                                // only one candidate; this is it
-                                result = new NameMapping(packTableName, xmlTable.TableColumnNames[0]);
-                            } else {
-                                string unifiedName = UnifyName(packTableName);
-                                foreach (string xmlColumnName in xmlTable.TableColumnNames) {
-                                    if (unifiedName.Equals(xmlColumnName)) {
-                                        result = new NameMapping(packTableName, xmlColumnName);
-                                        break;
-                                    }
-                                }
-                            }
-                            break;
-                        }
+            List<string> values = dataTable.PackData.Values(fieldName);
+            List<string> packTableNames = dataTable.PackData.FieldsContainingValues(values);
+            List<string> xmlTableNames = dataTable.PackData.FieldsContainingValues(values);
+
+            if (packTableNames.Count == 1 && xmlTableNames.Count == 1) {
+                result = new NameMapping(packTableNames[0], xmlTableNames[0]);
+            } else {
+                foreach(string xmlField in xmlTableNames) {
+                    if (xmlField.Equals(UnifyName(fieldName))) {
+                        result = new NameMapping(fieldName, xmlField);
+                        break;
                     }
                 }
             }
             return result;
         }
 
+        /*
+         * Query the user for the unresolved columns of the given table.
+         * Return false if user requested quit.
+         */
+        public bool ManuallyResolveTableMapping(string tableName) {
+                        
+            MappedTable table = mappedTables[tableName];
+            Console.WriteLine("\nTable {0}", table.TableName);
+            List<NameMapping> mappings = new List<NameMapping>();
+            List<string> candidates = new List<string>(table.UnmappedXmlFieldNames);
+            foreach(string query in table.UnmappedPackFieldNames) {
+                if (candidates.Count == 0) {
+                    continue;
+                }
+                Console.WriteLine("Enter corresponding field for \"{0}\":", query);
+                for (int i = 0; i < candidates.Count; i++) {
+                    Console.WriteLine("{0}: {1}", i, candidates[i]);
+                }
+                int response = -1;
+                while (response != int.MinValue && (response < 0 || response > candidates.Count-1)) {
+                    string val = Console.ReadLine();
+                    if ("q".Equals(val)) {
+                        return false;
+                    } else if ("n".Equals(val)) {
+                        response = int.MinValue;
+                        break;
+                    }
+                    int.TryParse(val, out response);
+                }
+                if (response == int.MinValue) {
+                    continue;
+                }
+                string mapped = candidates[response];
+                candidates.Remove(mapped);
+                mappings.Add(new NameMapping(query, mapped));
+            }
+
+                
+            return true;
+        }
+        
         string UnifyName(string packColumnName) {
             return packColumnName.Replace(' ', '_').ToLower();
         }
@@ -158,90 +154,139 @@ namespace PackFileTest {
         /*
          * Retrieve the columnname/valuelist collection from the db file of the given type.
          */
-        List<TableColumn> ValuesFromPack(string tableName) {
-            List<TableColumn> result = new List<TableColumn>();
-            DBFile dbFile = null;
-            if (patchFileValues.TryGetValue(tableName, out dbFile)) {
-                for (int columnIndex = 0; columnIndex < dbFile.CurrentType.Fields.Count; columnIndex++) {
-                    FieldInfo info = dbFile.CurrentType.Fields[columnIndex];
-                    List<string> values = new List<string>();
-                    for (int row = 0; row < dbFile.Entries.Count; row++) {
-                        values.Add(dbFile[row, columnIndex].Value);
-                    }
-                    TableColumn addTo = null;
-                    foreach (TableColumn column in result) {
-                        if (column.SameValues(values)) {
-                            addTo = column;
-                        }
-                    }
-                    if (addTo == null) {
-                        addTo = new TableColumn(values);
-                        result.Add(addTo);
-                    }
-                    addTo.TableColumnNames.Add(info.Name);
+        void ValuesFromPack(MappedTable table, DBFile dbFile) {
+            foreach(List<FieldInstance> row in dbFile.Entries) {
+                foreach(FieldInstance field in row) {
+                    table.PackData.AddFieldValue(field.Name, field.Value);
                 }
             }
-            return result;
         }
   
         /*
          * Retrieve the columnname/valuelist collection from the table with the given name.
          */
-        List<TableColumn> ValuesFromXml(string tableName) {
-            List<TableColumn> result = new List<TableColumn>();
+        void ValuesFromXml(MappedTable fill) {
             XmlDocument tableDocument = new XmlDocument();
-            string xmlFile = Path.Combine(xmlDirectory, string.Format("{0}.xml", tableName));
+            string xmlFile = Path.Combine(xmlDirectory, string.Format("{0}.xml", fill.TableName));
             if (File.Exists(xmlFile)) {
                 tableDocument.Load(xmlFile);
                 foreach(XmlNode node in tableDocument.ChildNodes[1]) {
-                    if (node.Name.Equals(tableName)) {
+                    if (node.Name.Equals(fill.TableName)) {
                         foreach(XmlNode valueNode in node.ChildNodes) {
-                            AddToTable(valueNode.Name, valueNode.InnerText, result);
+                            fill.XmlData.AddFieldValue(valueNode.Name, valueNode.InnerText);
                         }
-                    } else if ("edit_uuid".Equals(node.Name) && !tableToGuid.ContainsKey(tableName)) {
-                        tableToGuid[tableName] = node.InnerText;
+                    } else if ("edit_uuid".Equals(node.Name)) {
+                        fill.Guid = node.InnerText;
                     } else {
                         // skip header
                         continue;
                     }
                 }
             }
-            return result;
-        }
-  
-        /* 
-         * Helper method to add the given column name to the associated list if there is any,
-         * or create one if there isn't.
-         */
-        void AddToTable(string columnName, string value, List<TableColumn> tables) {
-            TableColumn addTo = null;
-            foreach (TableColumn table in tables) {
-                if (table.TableColumnNames.Contains(columnName)) {
-                    addTo = table;
-                    break;
-                }
-            }
-            if (addTo == null) {
-                addTo = new TableColumn(new List<string>());
-                addTo.TableColumnNames.Add(columnName);
-                tables.Add(addTo);
-            }
-            addTo.Values.Add(value);
         }
     }
 
-    public class TableColumn {
-        public TableColumn(List<string> values) {
-            tableColumnValues = values;
+    
+    class MappedTable {
+        private string tableName;
+        private Dictionary<string, string> mappedFields = new Dictionary<string, string>();
+        private DataTable packData = new DataTable();
+        private DataTable xmlData = new DataTable();
+        
+        public MappedTable(string name) {
+            tableName = name;
         }
-        List<string> tableColumnValues;
-        public List<string> Values {
-            get { return tableColumnValues; }
+        
+        public string TableName {
+            get { return tableName; }
+        }
+        public string Guid { get; set; }
+        public bool IsCompatible {
+            get { 
+                return packData.Fields.Count == xmlData.Fields.Count; 
+            }
+        }
+        public bool IsFullyMapped {
+            get {
+                return IsCompatible && mappedFields.Count == packData.Fields.Count;
+            }
+        }
+        
+        public List<NameMapping> MappingAsTuples {
+            get {
+                List<NameMapping> result = new List<NameMapping>(mappedFields.Count);
+                foreach (string field in mappedFields.Keys) {
+                    result.Add(new NameMapping(field, mappedFields[field]));
+                }
+                return result;
+            }
+        }
+  
+        #region Field Name Retrieval
+        public List<string> UnmappedPackFieldNames {
+            get {
+                List<string> result = new List<string>();
+                packData.Fields.ForEach(f => { if (!mappedFields.ContainsKey(f)) { result.Add(f); }});
+                return result;
+            }
+        }
+        public List<string> UnmappedXmlFieldNames {
+            get {
+                List<string> result = new List<string>();
+                xmlData.Fields.ForEach(f => { if (!mappedFields.ContainsKey(f)) { result.Add(f); }});
+                return result;
+            }
+        }
+        #endregion
+  
+        public DataTable PackData {
+            get {
+                return packData;
+            }
+        }
+        public DataTable XmlData {
+            get {
+                return xmlData;
+            }
+        }
+        
+        public void AddMapping(string packField, string xmlField) {
+            mappedFields[packField] = xmlField;
+        }
+    }
+    
+    class DataTable {
+        Dictionary<string, List<string>> values = new Dictionary<string, List<string>>();
+        
+        public List<string> Fields {
+            get {
+                return new List<string>(values.Keys);
+            }
+        }
+            
+        public List<string> Values(string field) {
+            return values[field];
         }
 
-        List<string> tableColumnNames = new List<string>();
-        public List<string> TableColumnNames {
-            get { return tableColumnNames; }
+        public List<string> FieldsContainingValues(List<string> toMatch) {
+            List<string> fields = new List<string>();
+            foreach(string field in values.Keys) {
+                if (SameValues(toMatch, values[field])) {
+                    fields.Add(field);
+                }
+            }
+            return fields;
+        }
+        
+        public void AddFieldValue(string fieldName, string value) {
+            List<string> list;
+            if (values.ContainsKey(fieldName)) {
+                list = values[fieldName];
+            } else {
+                list = new List<string>();
+                values[fieldName] = list;
+            }
+            list.Add(value);
         }
 
         /*
@@ -249,11 +294,11 @@ namespace PackFileTest {
          * Performs some conversions (rounds CA floats to 2 digits and transforms
          * binary's bools to ints (1 and 0 respectively).
          */
-        public bool SameValues(List<string> values1) {
-            bool result = values1.Count == tableColumnValues.Count;
+        public static bool SameValues(List<string> values1, List<string> values2) {
+            bool result = values1.Count == values2.Count;
             if (result) {
                 for (int i = 0; i < values1.Count; i++) {
-                    result = values1[i].Equals(tableColumnValues[i]);
+                    result = values1[i].Equals(values2[i]);
                     if (!result) {
                         // maybe floats? Those are rounded differently
                         try {
@@ -261,7 +306,7 @@ namespace PackFileTest {
                             double value2;
                             bool bValue1;
                             int iValue2;
-                            string v2 = tableColumnValues[i].Replace(".", ",");
+                            string v2 = values2[i].Replace(".", ",");
                             bool parsed = double.TryParse(values1[i], out value1);
                             parsed &= double.TryParse(v2, out value2);
                             if (parsed) {
@@ -269,7 +314,7 @@ namespace PackFileTest {
                                 value2 = Math.Round(value2, 2);
                                 result = value1 == value2;
                             } else if (bool.TryParse(values1[i], out bValue1) &&
-                                       int.TryParse(tableColumnValues[i], out iValue2)) {
+                                       int.TryParse(values2[i], out iValue2)) {
                                 int iValue1 = bValue1 ? 1 : 0;
                                 result = iValue1 == iValue2;
                             }
@@ -282,6 +327,5 @@ namespace PackFileTest {
             }
             return result;
         }
-
     }
 }
