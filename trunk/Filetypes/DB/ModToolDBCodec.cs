@@ -83,12 +83,27 @@ namespace Filetypes {
                 return incompatibleTables;
             }
         }
+
+        Dictionary<string, List<string>> unmappedPackedFields = new Dictionary<string, List<string>>();
+        public Dictionary<string, List<string>> UnmappedPackedFields {
+            get {
+                return unmappedPackedFields;
+            }
+        }
+        Dictionary<string, List<string>> unmappedXmlFields = new Dictionary<string, List<string>>();
+        public Dictionary<string, List<string>> UnmappedXmlFields {
+            get {
+                return unmappedXmlFields;
+            }
+        }
         
         public void Clear() {
             tableMapping.Clear();
             partialTableMapping.Clear();
             incompatibleTables.Clear();
             tableGuidMap.Clear();
+            unmappedPackedFields.Clear();
+            unmappedXmlFields.Clear();
         }
 
         Dictionary<string, string> tableGuidMap = new Dictionary<string, string>();
@@ -96,6 +111,7 @@ namespace Filetypes {
             get { return tableGuidMap; }
         }
         
+
         private static TableNameCorrespondencyManager instance;
         public static TableNameCorrespondencyManager Instance {
             get {
@@ -144,10 +160,19 @@ namespace Filetypes {
             using (var file = File.CreateText(filename)) {
                 file.WriteLine("<correspondencies>");
                 foreach (string tableName in tableMapping.Keys) {
+                    if (tableMapping[tableName].Count == 0) {
+                        continue;
+                    }
                     string guid = tableGuidMap.ContainsKey(tableName) ? tableGuidMap[tableName] : "unknown";
                     file.WriteLine(" <table name=\"{0}\" guid=\"{1}\">", tableName, guid);
                     foreach (NameMapping fieldNames in tableMapping[tableName]) {
                         file.WriteLine(string.Format("  <field pack=\"{0}\" xml=\"{1}\"/>", fieldNames.Item1, fieldNames.Item2));
+                    }
+                    if (unmappedPackedFields.ContainsKey(tableName) && unmappedPackedFields[tableName].Count != 0) {
+                        file.WriteLine(string.Format("  <unmappedPackedFields>{0}</unmappedPackedFields>", string.Join(",", unmappedPackedFields[tableName])));
+                    }
+                    if (unmappedXmlFields.ContainsKey(tableName) && unmappedXmlFields[tableName].Count != 0) {
+                        file.WriteLine(string.Format("  <unmappedXmlFields>{0}</unmappedXmlFields>", string.Join(",", unmappedXmlFields[tableName])));
                     }
                     file.WriteLine(" </table>");
                 }

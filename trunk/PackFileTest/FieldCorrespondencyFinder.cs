@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using System.Xml;
 using Common;
 using Filetypes;
+using PackFileTest.Mapping;
 
-using ValueList = System.Collections.Generic.List<string>;
-using Table = System.Tuple<string, System.Collections.Generic.List<string>>;
+//using ValueList = System.Collections.Generic.List<string>;
+//using Table = System.Tuple<string, System.Collections.Generic.List<string>>;
 using NameMapping = System.Tuple<string, string>;
 
 namespace PackFileTest {
@@ -16,11 +17,6 @@ namespace PackFileTest {
      * the pack file containing the exact same patch level as the xml files.
      * Also, might fail on columns with very few values or where there are several columns
      * in a table which have the exact same values.
-     * 
-     * The output consists of a line each of
-     * tablename:packFieldName-xmlFieldName
-     * where tablename is the db table, packFieldName is the name from PFM's schema file,
-     * and xmlFieldName is the name used by CA.
      */
     public class FieldCorrespondencyFinder {
         string xmlDirectory;
@@ -35,9 +31,10 @@ namespace PackFileTest {
             foreach(PackedFile contained in pack.Files) {
                 if (contained.FullPath.StartsWith("db")) {
                     // no need to resolve if it's done already...
-                    string tableName = DBFile.typename(contained.FullPath);
+                    string tableName = DBFile.typename(contained.FullPath).Replace("_tables", "");
                     try {
                         PackedFileDbCodec codec = PackedFileDbCodec.GetCodec(contained);
+                        codec.AutoadjustGuid = false;
                         DBFile dbFile = codec.Decode(contained.Data);
 
                         MappedTable table = new MappedTable(tableName);
@@ -59,14 +56,16 @@ namespace PackFileTest {
 
             foreach(MappedTable table in mappedTables.Values) {
                 FindCorrespondencies(table);
-                
+
                 if (table.IsFullyMapped) {
                     TableNameCorrespondencyManager.Instance.TableMapping.Add(table.TableName, table.MappingAsTuples);
-                } else if (table.IsCompatible) {
+                } else if (!table.IsCompatible) {
                     TableNameCorrespondencyManager.Instance.IncompatibleTables.Add(table.TableName, table.MappingAsTuples);
                 } else {
                     TableNameCorrespondencyManager.Instance.PartialTableMapping.Add(table.TableName, table.MappingAsTuples);
                 }
+                TableNameCorrespondencyManager.Instance.UnmappedPackedFields.Add(table.TableName, table.UnmappedPackFieldNames);
+                TableNameCorrespondencyManager.Instance.UnmappedXmlFields.Add(table.TableName, table.UnmappedXmlFieldNames);
                 TableNameCorrespondencyManager.Instance.TableGuidMap[table.TableName] = table.Guid;
             }
         }
@@ -82,6 +81,10 @@ namespace PackFileTest {
                     table.AddMapping(mapping.Item1, mapping.Item2);
                 }
             }
+
+            if (table.UnmappedPackFieldNames.Count == 1 && table.UnmappedXmlFieldNames.Count == 1) {
+                table.AddMapping(table.UnmappedPackFieldNames[0], table.UnmappedXmlFieldNames[0]);
+            }
         }
         
         /*
@@ -91,7 +94,7 @@ namespace PackFileTest {
             NameMapping result = null;
             List<string> values = dataTable.PackData.Values(fieldName);
             List<string> packTableNames = dataTable.PackData.FieldsContainingValues(values);
-            List<string> xmlTableNames = dataTable.PackData.FieldsContainingValues(values);
+            List<string> xmlTableNames = dataTable.XmlData.FieldsContainingValues(values);
 
             if (packTableNames.Count == 1 && xmlTableNames.Count == 1) {
                 result = new NameMapping(packTableNames[0], xmlTableNames[0]);
@@ -142,8 +145,6 @@ namespace PackFileTest {
                 candidates.Remove(mapped);
                 mappings.Add(new NameMapping(query, mapped));
             }
-
-                
             return true;
         }
         
@@ -168,12 +169,19 @@ namespace PackFileTest {
         void ValuesFromXml(MappedTable fill) {
             XmlDocument tableDocument = new XmlDocument();
             string xmlFile = Path.Combine(xmlDirectory, string.Format("{0}.xml", fill.TableName));
+            List<CaFieldInfo> infos = CaFieldInfo.ReadInfo(xmlDirectory, fill.TableName);
+
             if (File.Exists(xmlFile)) {
                 tableDocument.Load(xmlFile);
                 foreach(XmlNode node in tableDocument.ChildNodes[1]) {
                     if (node.Name.Equals(fill.TableName)) {
+                        Dictionary<string, string> keyValues = new Dictionary<string, string>();
+                        infos.ForEach(i => keyValues[i.Name] = "");
                         foreach(XmlNode valueNode in node.ChildNodes) {
-                            fill.XmlData.AddFieldValue(valueNode.Name, valueNode.InnerText);
+                            keyValues[valueNode.Name] = valueNode.InnerText;
+                        }
+                        foreach (string key in keyValues.Keys) {
+                            fill.XmlData.AddFieldValue(key, keyValues[key]);
                         }
                     } else if ("edit_uuid".Equals(node.Name)) {
                         fill.Guid = node.InnerText;
@@ -186,142 +194,46 @@ namespace PackFileTest {
         }
     }
 
-    
-    class MappedTable {
-        private string tableName;
-        private Dictionary<string, string> mappedFields = new Dictionary<string, string>();
-        private DataTable packData = new DataTable();
-        private DataTable xmlData = new DataTable();
-        
-        public MappedTable(string name) {
-            tableName = name;
-        }
-        
-        public string TableName {
-            get { return tableName; }
-        }
-        public string Guid { get; set; }
-        public bool IsCompatible {
-            get { 
-                return packData.Fields.Count == xmlData.Fields.Count; 
+    class CaFieldInfo {
+        public CaFieldInfo(string name, string type) {
+            if (name == null || type == null) {
+                throw new InvalidDataException();
             }
-        }
-        public bool IsFullyMapped {
-            get {
-                return IsCompatible && mappedFields.Count == packData.Fields.Count;
-            }
-        }
-        
-        public List<NameMapping> MappingAsTuples {
-            get {
-                List<NameMapping> result = new List<NameMapping>(mappedFields.Count);
-                foreach (string field in mappedFields.Keys) {
-                    result.Add(new NameMapping(field, mappedFields[field]));
-                }
-                return result;
-            }
-        }
-  
-        #region Field Name Retrieval
-        public List<string> UnmappedPackFieldNames {
-            get {
-                List<string> result = new List<string>();
-                packData.Fields.ForEach(f => { if (!mappedFields.ContainsKey(f)) { result.Add(f); }});
-                return result;
-            }
-        }
-        public List<string> UnmappedXmlFieldNames {
-            get {
-                List<string> result = new List<string>();
-                xmlData.Fields.ForEach(f => { if (!mappedFields.ContainsKey(f)) { result.Add(f); }});
-                return result;
-            }
-        }
-        #endregion
-  
-        public DataTable PackData {
-            get {
-                return packData;
-            }
-        }
-        public DataTable XmlData {
-            get {
-                return xmlData;
-            }
-        }
-        
-        public void AddMapping(string packField, string xmlField) {
-            mappedFields[packField] = xmlField;
-        }
-    }
-    
-    class DataTable {
-        Dictionary<string, List<string>> values = new Dictionary<string, List<string>>();
-        
-        public List<string> Fields {
-            get {
-                return new List<string>(values.Keys);
-            }
-        }
-            
-        public List<string> Values(string field) {
-            return values[field];
+            Name = name; 
+            fieldType = type;
         }
 
-        public List<string> FieldsContainingValues(List<string> toMatch) {
-            List<string> fields = new List<string>();
-            foreach(string field in values.Keys) {
-                if (SameValues(toMatch, values[field])) {
-                    fields.Add(field);
-                }
+        public string Name { get; private set; }
+
+        string fieldType;
+
+        public bool Ignored {
+            get {
+                return fieldType.Equals("memo");
             }
-            return fields;
-        }
-        
-        public void AddFieldValue(string fieldName, string value) {
-            List<string> list;
-            if (values.ContainsKey(fieldName)) {
-                list = values[fieldName];
-            } else {
-                list = new List<string>();
-                values[fieldName] = list;
-            }
-            list.Add(value);
         }
 
-        /*
-         * Helper method to compare values from the given list.
-         * Performs some conversions (rounds CA floats to 2 digits and transforms
-         * binary's bools to ints (1 and 0 respectively).
-         */
-        public static bool SameValues(List<string> values1, List<string> values2) {
-            bool result = values1.Count == values2.Count;
-            if (result) {
-                for (int i = 0; i < values1.Count; i++) {
-                    result = values1[i].Equals(values2[i]);
-                    if (!result) {
-                        // maybe floats? Those are rounded differently
-                        try {
-                            double value1;
-                            double value2;
-                            bool bValue1;
-                            int iValue2;
-                            string v2 = values2[i].Replace(".", ",");
-                            bool parsed = double.TryParse(values1[i], out value1);
-                            parsed &= double.TryParse(v2, out value2);
-                            if (parsed) {
-                                value1 = Math.Round(value1, 2);
-                                value2 = Math.Round(value2, 2);
-                                result = value1 == value2;
-                            } else if (bool.TryParse(values1[i], out bValue1) &&
-                                       int.TryParse(values2[i], out iValue2)) {
-                                int iValue1 = bValue1 ? 1 : 0;
-                                result = iValue1 == iValue2;
-                            }
-                        } catch { }
-                        if (!result) {
-                            break;
+        public static List<CaFieldInfo> ReadInfo(string xmlDirectory, string tableName) {
+            List<CaFieldInfo> result = new List<CaFieldInfo>();
+            string filename = Path.Combine(xmlDirectory, string.Format("TWaD_{0}.xml", tableName));
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(filename);
+            foreach (XmlNode node in xmlDoc.ChildNodes) {
+                if (node.Name.Equals("root")) {
+                    foreach (XmlNode fieldNode in node.ChildNodes) {
+                        if (!fieldNode.Name.Equals("field")) {
+                            continue;
                         }
+                        string name = null, type = null;
+                        foreach (XmlNode itemNode in fieldNode.ChildNodes) {
+                            if (itemNode.Name.Equals("name")) {
+                                name = itemNode.InnerText;
+                            } else if (itemNode.Name.Equals("field_type")) {
+                                type = itemNode.InnerText;
+                            }
+                        }
+                        CaFieldInfo info = new CaFieldInfo(name, type);
+                        result.Add(info);
                     }
                 }
             }
