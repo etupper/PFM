@@ -138,23 +138,22 @@ namespace PackFileTest {
         }
         
         void FindCorrespondingFields(string packFile, string xmlDirectory) {
-            TableNameCorrespondencyManager manager = new TableNameCorrespondencyManager();
+            TableNameCorrespondencyManager manager = TableNameCorrespondencyManager.Instance;
             FieldCorrespondencyFinder finder = new FieldCorrespondencyFinder(packFile, xmlDirectory);
             finder.FindAllCorrespondencies();
-            foreach (string tableName in finder.FullyMapped.Keys) {
-                manager.TableMapping.Add(tableName, finder.FullyMapped[tableName]);
-                manager.TableGuidMap.Add(tableName, finder.TableToGuid[tableName]);
-            }
-            foreach (string tableName in finder.PartiallyMapped.Keys) {
-                manager.PartialTableMapping.Add(tableName, finder.PartiallyMapped[tableName]);
-                if (finder.TableToGuid.ContainsKey(tableName)) {
-                    manager.TableGuidMap.Add(tableName, finder.TableToGuid[tableName]);
-                }
-            }
-            foreach (string tableName in finder.IncompatibleTables.Keys) {
-                manager.TableMapping.Add(tableName, finder.IncompatibleTables[tableName]);
-                manager.TableGuidMap.Add(tableName, finder.TableToGuid[tableName]);
-            }
+//            foreach (string tableName in finder.PartiallyMapped.Keys) {
+//                manager.PartialTableMapping[tableName] = finder.PartiallyMapped[tableName];
+//                manager.TableGuidMap[tableName] = finder.TableToGuid[tableName];
+//            }
+//            foreach (string tableName in finder.FullyMapped.Keys) {
+//                manager.TableMapping[tableName] = finder.FullyMapped[tableName];
+//                manager.TableGuidMap[tableName] = finder.TableToGuid[tableName];
+//            }
+//            foreach (string tableName in finder.IncompatibleTables.Keys) {
+//                manager.IncompatibleTables.Add(tableName, finder.IncompatibleTables[tableName]);
+//                manager.TableGuidMap[tableName] = finder.TableToGuid[tableName];
+//            }
+            Console.WriteLine("saving");
             manager.Save();
         }
         
