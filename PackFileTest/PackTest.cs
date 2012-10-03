@@ -180,24 +180,24 @@ namespace PackFileTest {
 
         void FindCorrespondingFields(string packFile, string modToolsDirectory) {
             string xmlDirectory = Path.Combine(modToolsDirectory, "db");
-            string empireDesignDirectory = Path.Combine(modToolsDirectory, "EmpireDesignData");
+            //string empireDesignDirectory = Path.Combine(modToolsDirectory, "EmpireDesignData");
 
-            foreach (string twadFile in Directory.GetFiles(xmlDirectory, "TWaD_*")) {
-                string xmlFileName = Path.GetFileName(twadFile).Replace("TWaD_", "");
-                if (xmlFileName.StartsWith("TExc")) {
-                    continue;
-                }
-                string xmlFilePath = Path.Combine(xmlDirectory, xmlFileName);
-                if (File.Exists(xmlFilePath)) {
-                    string tableName = Path.GetFileNameWithoutExtension(xmlFileName);
-                    new UniqueTableGenerator(xmlDirectory, tableName).GenerateTable();
-                    File.Copy(xmlFilePath, Path.Combine(empireDesignDirectory, xmlFileName), true);
-                }
-            }
+            //foreach (string twadFile in Directory.GetFiles(xmlDirectory, "TWaD_*")) {
+            //    string xmlFileName = Path.GetFileName(twadFile).Replace("TWaD_", "");
+            //    if (xmlFileName.StartsWith("TExc")) {
+            //        continue;
+            //    }
+            //    string xmlFilePath = Path.Combine(xmlDirectory, xmlFileName);
+            //    if (File.Exists(xmlFilePath)) {
+            //        string tableName = Path.GetFileNameWithoutExtension(xmlFileName);
+            //        new UniqueTableGenerator(xmlDirectory, tableName).GenerateTable();
+            //        File.Copy(xmlFilePath, Path.Combine(empireDesignDirectory, xmlFileName), true);
+            //    }
+            //}
 
             TableNameCorrespondencyManager manager = TableNameCorrespondencyManager.Instance;
             FieldCorrespondencyFinder finder = new FieldCorrespondencyFinder(packFile, xmlDirectory);
-            finder.RetainExistingMappings = true;
+            // finder.RetainExistingMappings = true;
             finder.FindAllCorrespondencies();
             Console.WriteLine("saving");
             manager.Save();

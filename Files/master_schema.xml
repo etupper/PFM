@@ -67,7 +67,7 @@
     <field name='on_display_script' type='optstring' />
     <field name='on_click_script' type='optstring' />
     <field name='suppressible' type='boolean' />
-    <field name='Uninhabitable' type='boolean' />
+    <field name='uninhibitable' type='boolean' />
     <field name='audio_clip' type='string' />
     <field fkey='advisors_tables.advisor_name' name='advisor_name' type='string' version_start='2' />
     <field name='for_loading_screen' type='boolean' version_start='2' />
@@ -217,9 +217,9 @@
     <field name='Unused' type='string' />
   </table>
   <table name='ancillary_to_attribute_effects_tables'>
-    <field fkey='ancillaries_tables.ID' name='Ancillary' type='string' pk='true' />
-    <field fkey='agent_attributes_tables.key' name='Attribute' type='string' pk='true' />
-    <field name='Effect Value' type='int' />
+    <field fkey='ancillary_info_tables.ancillary' name='ancillary' type='string' pk='true' />
+    <field fkey='agent_attributes_tables.key' name='attribute' type='string' pk='true' />
+    <field name='effect_value' type='int' />
   </table>
   <table name='ancillary_to_attribute_situation_effects_tables'>
     <field fkey='ancillaries_tables.ID' name='Ancillary' type='string' pk='true' />
@@ -232,8 +232,8 @@
     <field name='value' type='float' />
   </table>
   <table name='ancillary_to_excluded_ancillaries_tables'>
-    <field fkey='ancillaries_tables.ID' name='Ancillary' type='string' pk='true' />
-    <field fkey='ancillaries_tables.ID' name='Excluded Ancillary' type='string' pk='true' />
+    <field fkey='ancillary_info_tables.ancillary' name='ancillary' type='string' pk='true' />
+    <field fkey='ancillary_info_tables.ancillary' name='excluded_ancillary' type='string' pk='true' />
   </table>
   <table name='ancillary_to_included_agents_tables'>
     <field fkey='ancillary_info_tables.ancillary' name='ancillary' type='string' pk='true' />
@@ -317,9 +317,9 @@
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_10' type='optstring' />
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_11' type='optstring' />
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_12' type='optstring' />
-    <field name='unknown5' type='optstring' />
-    <field name='unknown6' type='optstring' />
-    <field name='unknown7' type='optstring' />
+    <field fkey='avatar_campaign_maps_tables.key' name='adjacent_15' type='optstring' />
+    <field fkey='avatar_campaign_maps_tables.key' name='adjacent_14' type='optstring' />
+    <field fkey='avatar_campaign_maps_tables.key' name='adjacent_13' type='optstring' />
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_2' type='optstring' />
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_3' type='optstring' />
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_4' type='optstring' />
@@ -344,9 +344,9 @@
     <field fkey='avatar_campaign_map_regions_tables.region' name='region' type='string' version_start='8' />
   </table>
   <table name='avatar_clan_specialisms_tables'>
-    <field name='ancillary' type='string' pk='true' />
+    <field fkey='ancillary_info_tables.ancillary' name='ancillary' type='string' pk='true' />
     <field name='key' type='string' />
-    <field name='product' type='string' version_start='1' />
+    <field fkey='avatar_product_lookups_tables.key' name='product' type='string' version_start='1' />
   </table>
   <table name='avatar_dojo_chains_tables'>
     <field name='key' type='string' pk='true' />
@@ -385,7 +385,7 @@
     <field name='chain' type='optstring' />
     <field name='level' type='int' />
     <field fkey='units_tables.key' name='unit' type='optstring' />
-    <field name='ancillary' type='optstring' />
+    <field fkey='ancillaries_tables.key' name='ancillary' type='optstring' />
   </table>
   <table name='avatar_product_lookups_tables'>
     <field name='key' type='string' />
@@ -512,9 +512,9 @@
     <field fkey='unit_class_tables.key' name='target_unit_class' type='string' />
   </table>
   <table name='battle_bridge_subculture_jcts_tables'>
-    <field name='Subculture ID' type='string' pk='true' />
-    <field fkey='battlefield_buildings_tables.key' name='Basic Bridge' type='string' />
-    <field fkey='battlefield_buildings_tables.key' name='Refined Bridge' type='string' />
+    <field fkey='cultures_subcultures_tables.subculture' name='subculture' type='string' pk='true' />
+    <field fkey='battlefield_buildings_tables.key' name='simple_bridge' type='string' />
+    <field fkey='battlefield_buildings_tables.key' name='refined_bridge' type='string' />
   </table>
   <table name='battle_cameras_tables'>
     <field name='key' type='string' pk='true' />
@@ -522,9 +522,9 @@
     <field name='max_height_small' type='float' />
     <field name='min_fort_max_height' type='float' />
     <field name='min_height' type='float' />
-    <field name='Move Speed Adjust' type='float' />
+    <field name='move_speed_max_multiplier' type='float' />
     <field name='move_speed_min_multiplier' type='float' />
-    <field name='Rotation Speed Adjust' type='float' />
+    <field name='turn_speed_multiplier' type='float' />
     <field name='move_fast_multiplier' type='float' />
   </table>
   <table name='battle_cities_tables'>
@@ -575,8 +575,8 @@
     <field name='charge_speed' type='float' />
     <field name='crawl_speed' type='float' />
     <field name='charge_distance_commence_run' type='float' />
-    <field name='Distance to Adopt Charge Stance' type='float' />
-    <field name='Distance to Pick Charge Target' type='float' />
+    <field name='charge_distance_adopt_charge_pose' type='float' />
+    <field name='charge_distance_pick_target' type='float' />
     <field name='radius' type='float' />
     <field fkey='battle_entities_shape_enum_tables.key' name='shape' type='string' />
     <field name='radii_ratio' type='float' />
@@ -620,14 +620,14 @@
     <field name='unlock_order' type='int' />
   </table>
   <table name='battle_sky_types_tables'>
-    <field name='Sky Type ID' type='string' pk='true' />
-    <field name='Season' type='string' />
-    <field fkey='battle_weather_types_tables.Weather ID' name='Weather' type='string' />
-    <field name='Time of day' type='string' />
-    <field name='Local Climate' type='optstring' />
-    <field name='Environment' type='string' />
-    <field name='Supports Ambient Fog' type='boolean' />
-    <field name='Supports Volumetric Fog' type='boolean' />
+    <field name='key' type='string' pk='true' />
+    <field fkey='seasons_tables.season' name='season' type='string' />
+    <field fkey='battle_weather_types_tables.key' name='weather_type' type='string' />
+    <field name='time_of_day' type='string' />
+    <field fkey='climates_tables.climate_type' name='climate' type='optstring' />
+    <field name='sky_file' type='string' />
+    <field name='supports_ambient_fog' type='boolean' />
+    <field name='supports_volumetric_fog' type='boolean' />
   </table>
   <table name='battle_terrain_farm_walls_tables'>
     <field name='Terrain ID' type='string' pk='true' />
@@ -702,7 +702,7 @@
     <field name='max_frigate' type='float' />
     <field name='max_line_of_battle' type='float' />
     <field name='ID' type='int' />
-    <field name='unknown8' type='float' version_start='1' />
+    <field name='s_Generation' type='float' version_start='1' />
   </table>
   <table name='battle_type_unit_to_faction_presets_tables'>
     <field name='id' type='string' />
@@ -715,9 +715,9 @@
     <field name='sort_order' type='int' version_start='1' />
   </table>
   <table name='battle_weather_types_tables'>
-    <field name='Weather ID' type='string' pk='true' />
+    <field name='key' type='string' pk='true' />
     <field name='level' type='int' />
-    <field name='Precipitation Type' type='int' />
+    <field name='precipitation_type' type='int' />
     <field name='num_particles' type='int' />
     <field name='particle_size' type='float' />
     <field name='particle_speed' type='float' />
@@ -748,7 +748,7 @@
     <field name='fortwall_penetration_chance' type='int' version_start='6' />
   </table>
   <table name='battlefield_deployable_siege_items_tables'>
-    <field name='Siege item' type='string' />
+    <field name='key' type='string' />
     <field name='siege_point_cost' type='int' />
     <field name='turns_to_build' type='int' />
     <field name='string' type='string' />
@@ -756,8 +756,8 @@
     <field name='info_pic' type='string' />
   </table>
   <table name='battlefield_snow_props_tables'>
-    <field name='Prop ID' type='string' pk='true' />
-    <field name='Enable For Snow' type='boolean' />
+    <field fkey='battlefield_buildings_tables.key' name='prop' type='string' pk='true' />
+    <field fkey='seasons_tables.season' name='enable_for_snow' type='boolean' />
   </table>
   <table name='battles_tables'>
     <field name='Map ID' type='string' pk='true' />
@@ -782,8 +782,8 @@
     <field fkey='avatar_product_lookups_tables.key' name='product' type='string' />
   </table>
   <table name='battles_to_battle_sky_types_junctions_tables'>
-    <field name='Unknown' type='string' />
-    <field name='Unknown2' type='string' />
+    <field fkey='battles_tables.key' name='battle_key' type='string' />
+    <field fkey='battle_sky_types_tables.key' name='battle_sky_type_key' type='string' />
   </table>
   <table name='bombardment_quality_to_artillery_support_modifiers_tables'>
     <field name='bombardment_quality' type='int' />
@@ -832,11 +832,11 @@
     <field name='value' type='float' />
   </table>
   <table name='building_faction_variants_tables'>
-    <field fkey='building_levels_tables.level_name' name='Building' type='string' pk='true' />
-    <field fkey='factions_tables.key' name='Faction' type='string' pk='true' />
-    <field name='Artpiece' type='optstring' />
-    <field name='Description' type='optstring' />
-    <field name='Icon' type='optstring' />
+    <field fkey='building_levels_tables.level_name' name='building' type='string' pk='true' />
+    <field fkey='factions_tables.key' name='faction' type='string' pk='true' />
+    <field fkey='warscape_rigid_tables.key' name='artpiece' type='optstring' />
+    <field fkey='building_description_texts_tables.key' name='description' type='optstring' />
+    <field name='icon' type='optstring' />
   </table>
   <table name='building_factionwide_effects_junctions_tables'>
     <field fkey='building_levels_tables.level_name' name='building' type='string' pk='true' />
@@ -952,10 +952,10 @@
   <table name='cai_base_building_context_values_tables'>
     <field fkey='building_levels_tables.level_name' name='building_key' type='string' pk='true' />
     <field name='economic_value' type='float' />
-    <field name='unknown3' type='float' />
+    <field name='education_value' type='float' />
     <field name='happiness_value' type='float' />
     <field name='military_value' type='float' />
-    <field name='unknown6' type='float' />
+    <field name='prestige_value' type='float' />
     <field name='existing_buildings_apply_discount_over_limit' type='float' />
     <field name='existing_buildings_discount_per_building' type='float' />
     <field name='existing_buildings_maximum_discount' type='float' />
@@ -976,7 +976,7 @@
     <field name='agents_funding_cap' type='int' />
     <field name='agents_funds_allocation_percentage' type='int' />
     <field name='agents_percentage_of_pool_to_save_on_fail' type='int' />
-    <field name='unknown4' type='int' />
+    <field name='agents_turns_of_inactivity_until_cap' type='int' />
     <field name='army_funding_cap' type='int' />
     <field name='army_funds_allocation_percentage' type='int' />
     <field name='army_percentage_of_pool_to_save_on_fail' type='int' />
@@ -993,7 +993,7 @@
     <field name='navy_funding_cap' type='int' />
     <field name='navy_funds_allocation_percentage' type='int' />
     <field name='navy_percentage_of_pool_to_save_on_fail' type='int' />
-    <field name='unknown21' type='int' />
+    <field name='navy_turns_of_inactivity_until_cap' type='int' />
   </table>
   <table name='cai_personalities_budget_context_types_tables'>
     <field name='key' type='string' pk='true' />
@@ -1025,7 +1025,7 @@
     <field name='key' type='string' pk='true' />
   </table>
   <table name='cai_personalities_construction_preference_policy_building_junctions_tables'>
-    <field name='unknown' type='int' />
+    <field name='bias_level' type='int' />
     <field fkey='building_levels_tables.level_name' name='building_key' type='string' />
     <field fkey='cai_personalities_construction_preference_policies_tables.key' name='policy_key' type='string' />
     <field name='absolute_adjustment' type='float' />
@@ -1174,11 +1174,11 @@
     <field fkey='warscape_equipment_themes_tables.theme' name='equipment' type='optstring' />
     <field name='level' type='int' />
     <field name='age' type='int' />
-    <field name='unknown5' type='optstring' />
+    <field name='portrait' type='optstring' />
     <field name='season' type='string' />
     <field fkey='agent_uniforms_tables.uniform_name' name='uniform' type='optstring' />
     <field name='card' type='optstring' />
-    <field name='unknown9' type='optstring' />
+    <field name='info' type='optstring' />
     <field name='health' type='float' version_start='2' />
   </table>
   <table name='campaign_clan_level_infos_tables'>
@@ -1217,8 +1217,8 @@
   </table>
   <table name='campaign_map_playable_areas_tables'>
     <field name='index' type='string' />
-    <field name='Sea Trade Area' type='boolean' />
-    <field name='Onscreen name' type='boolean' />
+    <field name='sea_trade' type='boolean' />
+    <field name='onscreen_name' type='boolean' />
     <field name='map_file' type='string' />
     <field name='overlay_file' type='optstring' />
     <field name='radar_file' type='optstring' />
@@ -1257,13 +1257,13 @@
     <field fkey='campaign_map_tooltip_texts_tables.key' name='advice_line' type='optstring' version_start='1' />
   </table>
   <table name='campaign_map_towns_and_ports_tables'>
-    <field name='Town ID' type='string' pk='true' />
-    <field fkey='slots_tables.slot' name='Slot Type' type='string' />
-    <field name='On Screen Name' type='string' />
+    <field name='town_id' type='string' pk='true' />
+    <field fkey='slots_tables.slot' name='slot_type' type='string' />
+    <field name='onscreen_name' type='string' />
   </table>
   <table name='campaign_unit_art_set_junctions_tables'>
-    <field name='unknown1' type='string' />
-    <field name='unknown2' type='string' />
+    <field fkey='campaign_character_art_sets_tables.art_set_id' name='art_set_id' type='string' />
+    <field fkey='units_tables.key' name='unit_key' type='string' />
   </table>
   <table name='campaign_variables_tables'>
     <field name='variable_key' type='string' pk='true' />
@@ -1475,8 +1475,8 @@
     <field name='Perlin Erosion Noise Y' type='float' />
   </table>
   <table name='climate_to_tilesets_tables'>
-    <field name='Unknown' type='string' pk='true' />
-    <field fkey='campaign_ground_types_tables.type' name='Unknown2' type='string' />
+    <field fkey='climates_tables.climate_type' name='climate' type='string' pk='true' />
+    <field fkey='terrain_tilesets_tables.tileset_name' name='tileset' type='string' />
   </table>
   <table name='climates_tables'>
     <field name='climate_type' type='string' pk='true' />
@@ -1646,9 +1646,9 @@
     <field fkey='population_classes_tables.population_class' name='population_class' type='string' pk='true' />
   </table>
   <table name='effect_bonus_value_projectile_junctions_tables'>
-    <field name='Effect' type='string' pk='true' />
-    <field name='Bonus Value' type='string' />
-    <field fkey='projectiles_tables.key' name='Projectile' type='string' />
+    <field fkey='effects_tables.effect' name='effect' type='string' pk='true' />
+    <field fkey='campaign_bonus_value_ids_projectile_tables.key' name='bonus_value_id' type='string' />
+    <field fkey='projectiles_tables.key' name='projectile' type='string' />
   </table>
   <table name='effect_bonus_value_religion_junction_tables'>
     <field fkey='effects_tables.effect' name='effect' type='string' pk='true' />
@@ -1707,8 +1707,8 @@
     <field name='priority' type='int' />
   </table>
   <table name='empires_regions_junct_tables'>
-    <field name='Region' type='string' pk='true' />
-    <field fkey='empires_tables.empire_name' name='Empire' type='string' />
+    <field fkey='regions_tables.key' name='region' type='string' pk='true' />
+    <field fkey='empires_tables.empire_name' name='empire' type='string' />
   </table>
   <table name='empires_tables'>
     <field name='empire_name' type='string' pk='true' />
@@ -1752,19 +1752,19 @@
     <field name='is_region_position' type='boolean' />
   </table>
   <table name='events_tables'>
-    <field name='Event ID' type='string' pk='true' />
-    <field name='Picture_Category' type='string' />
-    <field name='Dynamic' type='boolean' />
-    <field name='Historical_Date' type='int' />
-    <field name='Season' type='string' />
-    <field name='unknown1' type='optstring' version_start='1' />
+    <field name='key' type='string' pk='true' />
+    <field name='picture_category' type='string' />
+    <field name='dynamic' type='boolean' />
+    <field name='historical_date' type='int' />
+    <field fkey='seasons_tables.season' name='season' type='string' />
+    <field name='conditions' type='optstring' version_start='1' />
     <field name='Condition' type='string' version_end='0' />
-    <field name='Image' type='string' />
-    <field name='unknown2' type='int' version_start='1' />
+    <field name='picture' type='string' />
+    <field name='turn_in_year' type='int' version_start='1' />
   </table>
   <table name='events_view_group_junct_tables'>
-    <field fkey='events_tables.Event ID' name='Event' type='string' pk='true' />
-    <field fkey='groupings_tables.Unknown' name='Group' type='string' pk='true' />
+    <field fkey='events_tables.key' name='event' type='string' pk='true' />
+    <field fkey='groupings_tables.group_name' name='view_group' type='string' pk='true' />
   </table>
   <table name='experience_triggers_tables'>
     <field name='experience_points' type='int' />
@@ -1997,14 +1997,14 @@
     <field fkey='warscape_equipment_themes_tables.theme' name='equipment_theme' type='string' />
     <field fkey='factions_tables.key' name='faction' type='string' />
     <field name='uniform' type='string' />
-    <field name='unknown5' type='float' version_start='1' />
-    <field name='unknown6' type='float' version_start='1' />
+    <field name='x_offset' type='float' version_start='1' />
+    <field name='y_offset' type='float' version_start='1' />
   </table>
   <table name='general_command_star_level_effects_tables'>
     <field name='alive_morale_bonus' type='int' />
     <field name='command_star_level' type='int' />
-    <field name='unknown3' type='int' />
-    <field name='unknown4' type='int' />
+    <field name='melee_attack_bonus' type='int' />
+    <field name='melee_defence_bonus' type='int' />
     <field name='nearby_morale_bonus' type='int' />
   </table>
   <table name='government_types_tables'>
@@ -2028,15 +2028,15 @@
     <field fkey='regions_continents_tables.continent' name='continent' type='string' pk='true' />
   </table>
   <table name='groupings_factions_junct_tables'>
-    <field fkey='groupings_tables.Unknown' name='Group' type='string' pk='true' />
-    <field fkey='factions_tables.key' name='Faction' type='string' pk='true' />
+    <field fkey='groupings_tables.group_name' name='group' type='string' pk='true' />
+    <field fkey='factions_tables.key' name='faction' type='string' pk='true' />
   </table>
   <table name='groupings_military_tables'>
     <field name='military_group' type='string' pk='true' />
   </table>
   <table name='groupings_regions_junct_tables'>
-    <field fkey='groupings_tables.Unknown' name='Group' type='string' pk='true' />
-    <field fkey='regions_tables.Name' name='Region' type='string' pk='true' />
+    <field fkey='groupings_tables.group_name' name='group' type='string' pk='true' />
+    <field fkey='regions_tables.key' name='region' type='string' pk='true' />
   </table>
   <table name='groupings_tables'>
     <field name='group_name' type='string' pk='true' />
@@ -2058,8 +2058,8 @@
     <field fkey='gun_types_enum_tables.key' name='engine_type' type='string' />
   </table>
   <table name='historical_character_traits_tables'>
-    <field fkey='historical_characters_tables.key' name='Character' type='string' />
-    <field fkey='character_trait_levels_tables.key' name='Trait' type='string' />
+    <field fkey='historical_characters_tables.key' name='character' type='string' />
+    <field fkey='character_trait_levels_tables.key' name='trait' type='string' />
   </table>
   <table name='historical_characters_tables'>
     <field name='Character ID' type='string' pk='true' />
@@ -2655,9 +2655,9 @@
     <field fkey='mp_budgets_tables.key' name='budget_key' type='string' pk='true' />
     <field name='general_pct' type='float' />
     <field name='priority' type='int' />
-    <field name='unknown5' type='string' />
-    <field name='unknown6' type='string' />
-    <field name='unknown7' type='float' />
+    <field fkey='cdir_unit_quality_configs_tables.key' name='quality_key' type='string' />
+    <field fkey='mp_force_gen_templates_tables.key' name='template_key' type='string' />
+    <field name='units_pct' type='float' />
     <field name='upgrade_pct' type='float' />
   </table>
   <table name='mp_force_gen_upgrade_probabilities_tables'>
@@ -2681,9 +2681,9 @@
     <field name='value' type='float' />
   </table>
   <table name='names_forts_tables'>
-    <field fkey='names_groups_tables.ID' name='Name Group' type='string' pk='true' />
-    <field name='Fort Name' type='string' pk='true' />
-    <field name='ID' type='string' />
+    <field fkey='names_groups_tables.ID' name='name_group' type='string' pk='true' />
+    <field name='fort_name' type='string' pk='true' />
+    <field name='id' type='string' />
   </table>
   <table name='names_groups_tables'>
     <field name='ID' type='string' pk='true' />
@@ -2870,10 +2870,10 @@
     <field name='positive_pip_path' type='string' />
   </table>
   <table name='region_groups_tables'>
-    <field name='unknown1' type='int' />
-    <field name='unknown2' type='int' />
-    <field name='unknown7' type='int' />
-    <field name='unknown8' type='int' />
+    <field name='camera_heading' type='float' />
+    <field name='camera_position_x' type='float' />
+    <field name='camera_position_y' type='float' />
+    <field name='camera_zoom' type='float' />
     <field name='group_key' type='string' />
     <field name='round' type='int' />
   </table>
@@ -2915,7 +2915,7 @@
     <field name='strategic_value' type='int' version_start='1' />
   </table>
   <table name='sea_climate_details_tables'>
-    <field name='Local Sea Climate ID' type='string' pk='true' />
+    <field fkey='climates_tables.climate_type' name='key' type='string' pk='true' />
     <field name='Sea Deep Colour R' type='float' />
     <field name='Sea Deep Colour G' type='float' />
     <field name='Sea Deep Colour B' type='float' />
@@ -2956,10 +2956,10 @@
     <field name='order' type='string' />
   </table>
   <table name='ship_names_tables'>
-    <field name='Index' type='string' />
-    <field name='Name Group' type='string' />
-    <field name='Ship Name' type='string' />
-    <field name='Exclusive To Faction' type='optstring' />
+    <field name='key' type='string' />
+    <field fkey='names_groups_tables.ID' name='name_group' type='string' />
+    <field name='Ship_Name' type='string' />
+    <field fkey='factions_tables.key' name='exclusive_to_faction' type='optstring' />
   </table>
   <table name='slots_art_tables'>
     <field fkey='slots_tables.slot' name='slot' type='string' pk='true' />
@@ -3002,8 +3002,8 @@
     <field name='model_filepath' type='string' />
   </table>
   <table name='small_vegetation_climates_jct_tables'>
-    <field fkey='climates_tables.Unknown' name='Local Climate' type='string' pk='true' />
-    <field fkey='warscape_rigid_tables.key' name='Rigid Name' type='string' pk='true' />
+    <field fkey='climates_tables.climate_type' name='climate' type='string' pk='true' />
+    <field fkey='warscape_rigid_tables.key' name='rigid_name' type='string' pk='true' />
   </table>
   <table name='sound_events_tables'>
     <field name='name' type='optstring' />
@@ -3032,8 +3032,8 @@
     <field name='value' type='int' />
   </table>
   <table name='stats_clans_tables'>
-    <field name='unknown1' type='string' pk='true' />
-    <field name='unknown2' type='optstring' />
+    <field name='key' type='string' pk='true' />
+    <field fkey='random_localisation_strings_tables.key' name='label' type='optstring' />
     <field name='public' type='boolean' />
     <field name='ladder' type='boolean' />
     <field name='order' type='int' version_start='2' />
@@ -3096,8 +3096,8 @@
     <field name='value' type='float' />
   </table>
   <table name='technology_faction_junctions_tables'>
-    <field fkey='technologies_tables.Technology ID' name='Technology' type='string' pk='true' />
-    <field fkey='factions_tables.key' name='Faction' type='string' pk='true' />
+    <field fkey='technologies_tables.key' name='technology_key' type='string' pk='true' />
+    <field fkey='factions_tables.key' name='faction_key' type='string' pk='true' />
   </table>
   <table name='technology_node_links_tables'>
     <field fkey='technology_nodes_tables.key' name='child_key' type='string' />
@@ -3125,8 +3125,8 @@
     <field name='Unused' type='string' />
   </table>
   <table name='technology_required_technology_junctions_tables'>
-    <field fkey='technologies_tables.Technology ID' name='Technology' type='string' pk='true' />
-    <field fkey='technologies_tables.Technology ID' name='Required Technology' type='string' pk='true' />
+    <field fkey='technologies_tables.key' name='technology' type='string' pk='true' />
+    <field fkey='technologies_tables.key' name='required_technology' type='string' pk='true' />
   </table>
   <table name='technology_threads_tables'>
     <field name='Thread ID' type='string' pk='true' />
@@ -3165,9 +3165,9 @@
     <field name='Placeholder' type='string' />
   </table>
   <table name='trait_attribute_effects_tables'>
-    <field fkey='character_trait_levels_tables.key' name='Trait Level' type='string' pk='true' />
-    <field fkey='agent_attributes_tables.key' name='Attribute' type='string' pk='true' />
-    <field name='Effect Value' type='int' />
+    <field fkey='character_trait_levels_tables.key' name='trait_level' type='string' pk='true' />
+    <field fkey='agent_attributes_tables.key' name='attribute' type='string' pk='true' />
+    <field name='effect_value' type='int' />
   </table>
   <table name='trait_attribute_situation_effects_tables'>
     <field name='Placeholder' type='string' />
@@ -3186,8 +3186,8 @@
     <field name='value' type='float' />
   </table>
   <table name='trait_to_antitraits_tables'>
-    <field fkey='character_traits_tables.key' name='Trait' type='string' pk='true' />
-    <field fkey='character_traits_tables.key' name='Anti-Trait' type='string' pk='true' />
+    <field fkey='trait_info_tables.trait' name='trait' type='string' pk='true' />
+    <field fkey='trait_info_tables.trait' name='antitrait' type='string' pk='true' />
   </table>
   <table name='trait_to_excluded_cultures_tables'>
     <field fkey='character_traits_tables.key' name='Trait' type='string' pk='true' />
@@ -3233,8 +3233,8 @@
     <field name='key' type='string' pk='true' />
     <field name='onscreen_name' type='string' />
     <field name='max_value' type='int' />
-    <field name='unknown4' type='int' />
     <field name='campaign_only' type='boolean' />
+    <field name='sort_order' type='int' />
   </table>
   <table name='uniform_to_faction_colours_tables'>
     <field fkey='uniforms_tables.Uniform_Name' name='uniform_name' type='string' pk='true' />
@@ -3287,10 +3287,10 @@
     <field name='onscreen' type='string' />
   </table>
   <table name='unit_class_to_population_class_priorities_tables'>
-    <field fkey='unit_class_tables.key' name='Class' type='string' />
-    <field name='Upper Class Priority' type='int' />
-    <field name='Middle Class Priority' type='int' />
-    <field name='Lower Class Priority' type='int' />
+    <field fkey='unit_class_tables.key' name='unit_class' type='string' />
+    <field name='upper_class_priority' type='int' />
+    <field name='middle_class_priority' type='int' />
+    <field name='lower_class_priority' type='int' />
   </table>
   <table name='unit_class_to_unit_ability_junctions_tables'>
     <field fkey='unit_class_tables.key' name='unit_class' type='string' pk='true' />
@@ -3706,7 +3706,7 @@
     <field name='armed_citizenry' type='boolean' />
     <field name='MP_Unit Limit' type='int' version_start='2' />
     <field name='unit_type_icon' type='optstring' version_start='4' />
-    <field name='unknown26' type='boolean' version_start='4' />
+    <field name='use_onscreen_name' type='boolean' version_start='4' />
     <field fkey='unit_castes_tables.caste' name='unit_caste' type='string' version_start='9' />
     <field fkey='building_levels_tables.level_name' name='additional_building_level_requirement' type='optstring' version_start='9' />
     <field fkey='religions_tables.religion_key' name='religion_requirement' type='optstring' version_start='9' />
@@ -3726,14 +3726,14 @@
     <field name='allowed' type='boolean' />
   </table>
   <table name='units_to_gov_type_permissions_tables'>
-    <field fkey='units_tables.key' name='Unit' type='string' />
-    <field fkey='government_types_tables.government_type' name='Government Type' type='string' />
-    <field name='ID' type='string' />
-    <field name='Outcome' type='string' />
+    <field fkey='units_tables.key' name='key' type='string' />
+    <field fkey='government_types_tables.government_type' name='gov_type' type='string' />
+    <field name='unique_number' type='string' />
+    <field fkey='units_to_gov_type_outcomes_enum_tables.key' name='outcome' type='string' />
   </table>
   <table name='units_to_gov_types_conversion_jcts_tables'>
-    <field name='ID' type='string' />
-    <field fkey='units_tables.key' name='Unit' type='string' />
+    <field fkey='units_to_gov_type_permissions_tables.unique_number' name='key' type='string' />
+    <field fkey='units_tables.key' name='unit' type='string' />
   </table>
   <table name='units_to_groupings_military_permissions_tables'>
     <field fkey='units_tables.key' name='unit' type='string' pk='true' />
@@ -3970,7 +3970,7 @@
     <field name='on_display_script' type='optstring' />
     <field name='on_click_script' type='optstring' />
     <field name='suppressible' type='boolean' />
-    <field name='Uninhabitable' type='boolean' />
+    <field name='uninhibitable' type='boolean' />
     <field name='audio_clip' type='string' />
     <field fkey='advisors_tables.advisor_name' name='advisor_name' type='string' version_start='2' />
     <field name='for_loading_screen' type='boolean' version_start='2' />
@@ -4432,9 +4432,9 @@
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_10' type='optstring' />
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_11' type='optstring' />
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_12' type='optstring' />
-    <field name='unknown5' type='optstring' />
-    <field name='unknown6' type='optstring' />
-    <field name='unknown7' type='optstring' />
+    <field fkey='avatar_campaign_maps_tables.key' name='adjacent_15' type='optstring' />
+    <field fkey='avatar_campaign_maps_tables.key' name='adjacent_14' type='optstring' />
+    <field fkey='avatar_campaign_maps_tables.key' name='adjacent_13' type='optstring' />
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_2' type='optstring' />
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_3' type='optstring' />
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_4' type='optstring' />
@@ -4462,9 +4462,9 @@
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_10' type='optstring' />
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_11' type='optstring' />
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_12' type='optstring' />
-    <field name='unknown5' type='optstring' />
-    <field name='unknown6' type='optstring' />
-    <field name='unknown7' type='optstring' />
+    <field fkey='avatar_campaign_maps_tables.key' name='adjacent_15' type='optstring' />
+    <field fkey='avatar_campaign_maps_tables.key' name='adjacent_14' type='optstring' />
+    <field fkey='avatar_campaign_maps_tables.key' name='adjacent_13' type='optstring' />
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_2' type='optstring' />
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_3' type='optstring' />
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_4' type='optstring' />
@@ -4493,9 +4493,9 @@
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_10' type='optstring' />
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_11' type='optstring' />
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_12' type='optstring' />
-    <field name='unknown5' type='optstring' />
-    <field name='unknown6' type='optstring' />
-    <field name='unknown7' type='optstring' />
+    <field fkey='avatar_campaign_maps_tables.key' name='adjacent_15' type='optstring' />
+    <field fkey='avatar_campaign_maps_tables.key' name='adjacent_14' type='optstring' />
+    <field fkey='avatar_campaign_maps_tables.key' name='adjacent_13' type='optstring' />
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_2' type='optstring' />
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_3' type='optstring' />
     <field fkey='avatar_campaign_maps_tables.key' name='adjacent_4' type='optstring' />
@@ -4523,7 +4523,7 @@
          table_version='0'
          guid='a4a37c4a-bc5f-4e82-b6fb-c6aaf908accd,
                a4cf1d6e-95ef-4057-b2f0-1398f91a2529'>
-    <field name='ancillary' type='string' pk='true' />
+    <field fkey='ancillary_info_tables.ancillary' name='ancillary' type='string' pk='true' />
     <field name='key' type='string' />
   </table>
   <table table_name='avatar_dojo_chains_tables'
@@ -4614,7 +4614,7 @@
     <field name='chain' type='optstring' />
     <field name='level' type='int' />
     <field fkey='units_tables.key' name='unit' type='optstring' />
-    <field name='ancillary' type='optstring' />
+    <field fkey='ancillaries_tables.key' name='ancillary' type='optstring' />
   </table>
   <table table_name='avatar_product_lookups_tables'
          table_version='0'
@@ -4950,9 +4950,9 @@
     <field name='max_height_small' type='float' />
     <field name='min_fort_max_height' type='float' />
     <field name='min_height' type='float' />
-    <field name='Move Speed Adjust' type='float' />
+    <field name='move_speed_max_multiplier' type='float' />
     <field name='move_speed_min_multiplier' type='float' />
-    <field name='Rotation Speed Adjust' type='float' />
+    <field name='turn_speed_multiplier' type='float' />
     <field name='move_fast_multiplier' type='float' />
   </table>
   <table table_name='battle_climate_weather_descriptions_tables'
@@ -4987,8 +4987,8 @@
     <field name='charge_speed' type='float' />
     <field name='crawl_speed' type='float' />
     <field name='charge_distance_commence_run' type='float' />
-    <field name='Distance to Adopt Charge Stance' type='float' />
-    <field name='Distance to Pick Charge Target' type='float' />
+    <field name='charge_distance_adopt_charge_pose' type='float' />
+    <field name='charge_distance_pick_target' type='float' />
     <field name='radius' type='float' />
     <field fkey='battle_entities_shape_enum_tables.key' name='shape' type='string' />
     <field name='radii_ratio' type='float' />
@@ -5073,7 +5073,7 @@
     <field name='max_frigate' type='float' />
     <field name='max_line_of_battle' type='float' />
     <field name='id' type='int' />
-    <field name='unknown8' type='float' version_start='1' />
+    <field name='s_Generation' type='float' version_start='1' />
   </table>
   <table table_name='battle_type_unit_to_faction_presets_tables'
          table_version='0'
@@ -5093,9 +5093,9 @@
   <table table_name='battle_weather_types_tables'
          table_version='0'
          guid='e4f1091d-4c97-4f45-9265-a79f29743dc0'>
-    <field name='Weather ID' type='string' pk='true' />
+    <field name='key' type='string' pk='true' />
     <field name='level' type='int' />
-    <field name='Precipitation Type' type='int' />
+    <field name='precipitation_type' type='int' />
     <field name='num_particles' type='int' />
     <field name='particle_size' type='float' />
     <field name='particle_speed' type='float' />
@@ -5138,7 +5138,7 @@
     <field fkey='battlefield_building_audio_materials_tables.audio_material' name='audio_material' type='string' />
     <field name='hit_points' type='int' />
     <field fkey='gun_types_tables.gun_type' name='gun_type' type='optstring' />
-    <field name='Terrain' type='optstring' />
+    <field fkey='battlefield_building_transformations_tables.transformation' name='transformation' type='optstring' />
     <field name='capacity_in_men' type='int' version_start='1' />
     <field name='ignition_threshold' type='int' version_start='2' />
     <field fkey='unit_stats_land_tables.key' name='spawned_unit' type='optstring' version_start='6' />
@@ -5502,10 +5502,10 @@
                d41ceeab-4787-4fbc-a40e-c922a86f8b93'>
     <field fkey='building_levels_tables.level_name' name='building_key' type='string' pk='true' />
     <field name='economic_value' type='float' />
-    <field name='unknown3' type='float' />
+    <field name='education_value' type='float' />
     <field name='happiness_value' type='float' />
     <field name='military_value' type='float' />
-    <field name='unknown6' type='float' />
+    <field name='prestige_value' type='float' />
     <field name='existing_buildings_apply_discount_over_limit' type='float' />
     <field name='existing_buildings_discount_per_building' type='float' />
     <field name='existing_buildings_maximum_discount' type='float' />
@@ -5536,7 +5536,7 @@
     <field name='agents_funding_cap' type='int' />
     <field name='agents_funds_allocation_percentage' type='int' />
     <field name='agents_percentage_of_pool_to_save_on_fail' type='int' />
-    <field name='unknown4' type='int' />
+    <field name='agents_turns_of_inactivity_until_cap' type='int' />
     <field name='army_funding_cap' type='int' />
     <field name='army_funds_allocation_percentage' type='int' />
     <field name='army_percentage_of_pool_to_save_on_fail' type='int' />
@@ -5553,7 +5553,7 @@
     <field name='navy_funding_cap' type='int' />
     <field name='navy_funds_allocation_percentage' type='int' />
     <field name='navy_percentage_of_pool_to_save_on_fail' type='int' />
-    <field name='unknown21' type='int' />
+    <field name='navy_turns_of_inactivity_until_cap' type='int' />
     <field fkey='taxes_levels_tables.tax_level' name='minimum_settable_tax_level' type='string' />
     <field fkey='taxes_levels_tables.tax_level' name='maximum_settable_tax_level' type='string' />
   </table>
@@ -5564,7 +5564,7 @@
     <field name='agents_funding_cap' type='int' />
     <field name='agents_funds_allocation_percentage' type='int' />
     <field name='agents_percentage_of_pool_to_save_on_fail' type='int' />
-    <field name='unknown4' type='int' />
+    <field name='agents_turns_of_inactivity_until_cap' type='int' />
     <field name='army_funding_cap' type='int' />
     <field name='army_funds_allocation_percentage' type='int' />
     <field name='army_percentage_of_pool_to_save_on_fail' type='int' />
@@ -5581,7 +5581,7 @@
     <field name='navy_funding_cap' type='int' />
     <field name='navy_funds_allocation_percentage' type='int' />
     <field name='navy_percentage_of_pool_to_save_on_fail' type='int' />
-    <field name='unknown21' type='int' />
+    <field name='navy_turns_of_inactivity_until_cap' type='int' />
   </table>
   <table table_name='cai_personalities_budget_context_types_tables'
          table_version='0'
@@ -5632,7 +5632,7 @@
          guid='6b71d700-1fa8-4e25-9bad-83663418f73c,
                91e98849-bdaf-422a-8fff-7f3bae276d23,
                9fa9379b-86bb-4b51-94bf-664b970e0856'>
-    <field name='unknown' type='int' />
+    <field name='bias_level' type='int' />
     <field fkey='building_levels_tables.level_name' name='building_key' type='string' />
     <field fkey='cai_personalities_construction_preference_policies_tables.key' name='policy_key' type='string' />
     <field name='absolute_adjustment' type='float' />
@@ -5640,7 +5640,7 @@
   <table table_name='cai_personalities_construction_preference_policy_building_junctions_tables'
          table_version='2'
          guid='8248d78b-8979-41ea-969d-dcd96eaaa721'>
-    <field name='unknown' type='int' />
+    <field name='bias_level' type='int' />
     <field fkey='building_levels_tables.level_name' name='building_key' type='string' />
     <field fkey='cai_personalities_construction_preference_policies_tables.key' name='policy_key' type='string' />
     <field name='absolute_adjustment' type='float' />
@@ -5886,11 +5886,11 @@
     <field fkey='warscape_equipment_themes_tables.theme' name='equipment' type='optstring' />
     <field name='level' type='int' />
     <field name='age' type='int' />
-    <field name='unknown5' type='optstring' />
+    <field name='portrait' type='optstring' />
     <field name='season' type='string' />
     <field fkey='agent_uniforms_tables.uniform_name' name='uniform' type='optstring' />
     <field name='card' type='optstring' />
-    <field name='unknown9' type='optstring' />
+    <field name='info' type='optstring' />
   </table>
   <table table_name='campaign_character_arts_tables'
          table_version='2'
@@ -5899,11 +5899,11 @@
     <field fkey='warscape_equipment_themes_tables.theme' name='equipment' type='optstring' />
     <field name='level' type='int' />
     <field name='age' type='int' />
-    <field name='unknown5' type='optstring' />
+    <field name='portrait' type='optstring' />
     <field name='season' type='string' />
     <field fkey='agent_uniforms_tables.uniform_name' name='uniform' type='optstring' />
     <field name='card' type='optstring' />
-    <field name='unknown9' type='optstring' />
+    <field name='info' type='optstring' />
     <field name='health' type='float' version_start='2' />
   </table>
   <table table_name='campaign_clan_level_infos_tables'
@@ -5953,8 +5953,8 @@
                358c97e5-ba09-420b-9f69-7dfcd292de81,
                8ed92065-5f77-4411-b90c-295553a7cf81'>
     <field name='index' type='string' />
-    <field name='Sea Trade Area' type='boolean' />
-    <field name='Onscreen name' type='boolean' />
+    <field name='sea_trade' type='boolean' />
+    <field name='onscreen_name' type='boolean' />
     <field name='map_file' type='string' />
     <field name='overlay_file' type='optstring' />
     <field name='radar_file' type='optstring' />
@@ -6019,23 +6019,23 @@
          table_version='0'
          guid='6e2aac3b-1e40-4f38-95d4-e354182d595b,
                f4d8f3a2-b154-4071-8feb-64030c75103a'>
-    <field name='Town ID' type='string' pk='true' />
-    <field fkey='slots_tables.slot' name='Slot Type' type='string' />
-    <field name='On Screen Name' type='string' />
+    <field name='town_id' type='string' pk='true' />
+    <field fkey='slots_tables.slot' name='slot_type' type='string' />
+    <field name='onscreen_name' type='string' />
   </table>
   <table table_name='campaign_map_towns_and_ports_tables'
          table_version='0'
          guid='77734080-a5a6-4143-af92-6137cc1eabdc'>
-    <field name='Town ID' type='string' pk='true' />
-    <field fkey='slots_tables.slot' name='Slot Type' type='string' />
-    <field name='On Screen Name' type='string' />
-    <field name='template' type='string' />
+    <field name='town_id' type='string' pk='true' />
+    <field fkey='slots_tables.slot' name='slot_type' type='string' />
+    <field name='onscreen_name' type='string' />
+    <field fkey='campaign_map_slots_templates_tables.template_name' name='template' type='string' />
   </table>
   <table table_name='campaign_unit_art_set_junctions_tables'
          table_version='0'
          guid='f8277b7a-43fb-4ff7-b602-ef271bdd0691'>
-    <field name='unknown1' type='string' />
-    <field name='unknown2' type='string' />
+    <field fkey='campaign_character_art_sets_tables.art_set_id' name='art_set_id' type='string' />
+    <field fkey='units_tables.key' name='unit_key' type='string' />
   </table>
   <table table_name='campaign_variables_tables'
          table_version='0'
@@ -7132,8 +7132,8 @@
     <field fkey='warscape_equipment_themes_tables.theme' name='equipment_theme' type='string' />
     <field fkey='factions_tables.key' name='faction' type='string' />
     <field name='uniform' type='string' />
-    <field name='unknown5' type='float' version_start='1' />
-    <field name='unknown6' type='float' version_start='1' />
+    <field name='x_offset' type='float' version_start='1' />
+    <field name='y_offset' type='float' version_start='1' />
   </table>
   <table table_name='general_command_star_level_effects_tables'
          table_version='0'
@@ -7141,8 +7141,8 @@
                b31384d3-145a-4bd8-9adf-40d8cb4d171d'>
     <field name='alive_morale_bonus' type='int' />
     <field name='command_star_level' type='int' />
-    <field name='unknown3' type='int' />
-    <field name='unknown4' type='int' />
+    <field name='melee_attack_bonus' type='int' />
+    <field name='melee_defence_bonus' type='int' />
     <field name='nearby_morale_bonus' type='int' />
   </table>
   <table table_name='government_types_tables'
@@ -7314,7 +7314,7 @@
          guid='28c3072e-88f6-4ea4-9238-5f35b3273c93'>
     <field name='leader_minister_level' type='int' />
     <field fkey='government_types_tables.government_type' name='government_type' type='string' />
-    <field name='Effect' type='float' />
+    <field name='s_Generation' type='float' />
   </table>
   <table table_name='ministerial_position_default_names_tables'
          table_version='0'
@@ -7464,9 +7464,9 @@
     <field fkey='mp_budgets_tables.key' name='budget_key' type='string' pk='true' />
     <field name='general_pct' type='float' />
     <field name='priority' type='int' />
-    <field name='unknown5' type='string' />
-    <field name='unknown6' type='string' />
-    <field name='unknown7' type='float' />
+    <field fkey='cdir_unit_quality_configs_tables.key' name='quality_key' type='string' />
+    <field fkey='mp_force_gen_templates_tables.key' name='template_key' type='string' />
+    <field name='units_pct' type='float' />
     <field name='upgrade_pct' type='float' />
   </table>
   <table table_name='mp_force_gen_upgrade_probabilities_tables'
@@ -7811,19 +7811,20 @@
   <table table_name='region_groups_tables'
          table_version='0'
          guid='b7e81ebc-b1e6-43bb-96e5-1eda1fbe9e6a'>
-    <field name='unknown1' type='int' />
-    <field name='unknown2' type='int' />
-    <field name='unknown7' type='int' />
-    <field name='unknown8' type='int' />
+    <field name='camera_heading' type='float' />
+    <field name='camera_position_x' type='float' />
+    <field name='camera_position_y' type='float' />
+    <field name='camera_zoom' type='float' />
     <field name='group_key' type='string' />
+    <field name='round' type='int' />
   </table>
   <table table_name='region_groups_tables'
          table_version='1'
          guid='16510a20-9172-4577-adcd-633644a6b340'>
-    <field name='unknown1' type='int' />
-    <field name='unknown2' type='int' />
-    <field name='unknown7' type='int' />
-    <field name='unknown8' type='int' />
+    <field name='camera_heading' type='float' />
+    <field name='camera_position_x' type='float' />
+    <field name='camera_position_y' type='float' />
+    <field name='camera_zoom' type='float' />
     <field name='group_key' type='string' />
     <field name='round' type='int' />
   </table>
@@ -7988,8 +7989,8 @@
   <table table_name='stats_clans_tables'
          table_version='1'
          guid='2bddb7d9-1b46-45f9-9adc-4845701f5e17'>
-    <field name='unknown1' type='string' pk='true' />
-    <field name='unknown2' type='optstring' />
+    <field name='key' type='string' pk='true' />
+    <field fkey='random_localisation_strings_tables.key' name='label' type='optstring' />
     <field name='public' type='boolean' />
     <field name='ladder' type='boolean' />
   </table>
@@ -8236,8 +8237,8 @@
     <field name='key' type='string' pk='true' />
     <field name='onscreen_name' type='string' />
     <field name='max_value' type='int' />
-    <field name='unknown4' type='int' />
     <field name='campaign_only' type='boolean' />
+    <field name='sort_order' type='int' />
   </table>
   <table table_name='uniform_to_faction_colours_tables'
          table_version='2'
@@ -8678,12 +8679,12 @@
                ebc8a7af-93b2-4701-858a-a62058fed274,
                f704aa3f-ed13-48aa-a20c-c5913f2bc3cb'>
     <field name='unit_type' type='string' pk='true' />
-    <field name='unknown1' type='int' />
+    <field name='core_loading_skill' type='int' />
     <field name='core_marksmanship' type='int' />
     <field name='melee_attack' type='int' />
     <field name='melee_defence' type='int' />
     <field name='melee_weapon_type' type='string' />
-    <field name='unknown5' type='boolean' />
+    <field name='pistols' type='boolean' />
     <field name='ammo' type='int' />
     <field fkey='battle_entities_tables.key' name='battle_entity' type='string' />
     <field fkey='warscape_animated_tables.key' name='soldier_model' type='string' />
@@ -9038,8 +9039,7 @@
     <field name='create_cost' type='int' />
     <field name='upkeep_cost' type='int' />
     <field name='campaign_action_points' type='int' />
-    <field name='Is Enabled' type='boolean' />
-    <field fkey='unit_voice_categories_tables.key' name='voice' type='string' />
+    <field fkey='unit_voice_categories_tables.key' name='voice' type='optstring' />
     <field name='icon_name' type='string' />
     <field name='info_pic' type='string' />
     <field fkey='unit_description_texts_tables.key' name='unit_description_text' type='string' />
@@ -9053,7 +9053,7 @@
     <field name='armed_citizenry' type='boolean' />
     <field name='total_cap_mp' type='int' version_start='2' />
     <field name='unit_type_icon' type='optstring' version_start='4' />
-    <field name='unknown26' type='boolean' version_start='4' />
+    <field name='use_onscreen_name' type='boolean' version_start='4' />
     <field fkey='unit_castes_tables.caste' name='unit_caste' type='string' version_start='9' />
     <field fkey='building_levels_tables.level_name' name='additional_building_level_requirement' type='optstring' version_start='9' />
     <field fkey='religions_tables.religion_key' name='religion_requirement' type='optstring' version_start='9' />
@@ -9077,8 +9077,7 @@
     <field name='create_cost' type='int' />
     <field name='upkeep_cost' type='int' />
     <field name='campaign_action_points' type='int' />
-    <field name='Is Enabled' type='boolean' />
-    <field fkey='unit_voice_categories_tables.key' name='voice' type='string' />
+    <field fkey='unit_voice_categories_tables.key' name='voice' type='optstring' />
     <field name='icon_name' type='string' />
     <field name='info_pic' type='string' />
     <field fkey='unit_description_texts_tables.key' name='unit_description_text' type='string' />
@@ -9092,7 +9091,7 @@
     <field name='armed_citizenry' type='boolean' />
     <field name='total_cap_mp' type='int' version_start='2' />
     <field name='unit_type_icon' type='optstring' version_start='4' />
-    <field name='unknown26' type='boolean' version_start='4' />
+    <field name='use_onscreen_name' type='boolean' version_start='4' />
     <field fkey='unit_castes_tables.caste' name='unit_caste' type='string' version_start='9' />
     <field fkey='building_levels_tables.level_name' name='additional_building_level_requirement' type='optstring' version_start='9' />
     <field fkey='religions_tables.religion_key' name='religion_requirement' type='optstring' version_start='9' />
