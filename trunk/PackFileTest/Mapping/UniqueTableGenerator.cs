@@ -14,6 +14,8 @@ namespace PackFileTest.Mapping {
 
         Dictionary<string, IValueGenerator> generators = new Dictionary<string, IValueGenerator>();
 
+        ReferenceGenerator referenceGenerator = new ReferenceGenerator();
+
         public UniqueTableGenerator(string xmlDir, string table) {
             generateFor = CaFieldInfo.ReadInfo(xmlDir, table, out guid);
             xmlDirectory = xmlDir;
@@ -23,11 +25,11 @@ namespace PackFileTest.Mapping {
             generators.Add("integer", intGenerator);
             generators.Add("longinteger", intGenerator);
             generators.Add("autonumber", intGenerator);
+            generators.Add("decimal", intGenerator);
 
             IValueGenerator floatGenerator = new FloatGenerator();
             generators.Add("single", floatGenerator);
             generators.Add("double", floatGenerator);
-            generators.Add("decimal", floatGenerator);
 
             IValueGenerator textGenerator = new TextGenerator();
             generators.Add("text", textGenerator);
@@ -35,6 +37,8 @@ namespace PackFileTest.Mapping {
 
             IValueGenerator boolGenerator = new BoolGenerator();
             generators.Add("yesno", boolGenerator);
+
+
         }
 
         public void GenerateTable() {
@@ -47,12 +51,14 @@ namespace PackFileTest.Mapping {
                     file.WriteLine("<{0}>", tableName);
                     foreach (CaFieldInfo info in generateFor) {
                         string value;
+                        IValueGenerator generator = null;
                         if (info.Reference != null) {
-                            value = string.Format("{0}_0", info.Reference.Field);
+                            generator = referenceGenerator;
+                            referenceGenerator.NextReferenceTarget = info.Reference.Field;
                         } else {
-                            IValueGenerator generator = generators[info.FieldType];
-                            value = generator.NextValue(info.Name);
+                            generator = generators[info.FieldType];
                         }
+                        value = generator.NextValue(info.Name);
                         file.WriteLine("<{0}>{1}</{0}>", info.Name, value);
                     }
                     file.WriteLine("</{0}>", tableName);
@@ -76,9 +82,12 @@ namespace PackFileTest.Mapping {
     }
 
     class TextGenerator : IValueGenerator {
-        int index = 0;
+        Dictionary<string, int> usedValues = new Dictionary<string, int>();
         public string NextValue(string fieldName) {
-            return string.Format("{0}_{1}", fieldName, index++);
+            int index = 0;
+            usedValues.TryGetValue(fieldName, out index);
+            usedValues[fieldName] = ++index;
+            return string.Format("{0}_{1}", fieldName, index);
         }
     }
 
@@ -95,6 +104,18 @@ namespace PackFileTest.Mapping {
             string result = lastValue.ToString().Replace(',', '.');
             lastValue += 0.1f;
             return result;
+        }
+    }
+
+    class ReferenceGenerator : IValueGenerator {
+        List<string> referenceIndex = new List<string>();
+        public string NextReferenceTarget { get; set; }
+        public string NextValue(string fieldName) {
+            if (!referenceIndex.Contains(fieldName)) {
+                referenceIndex.Add(fieldName);
+            }
+            int index = referenceIndex.IndexOf(fieldName) + 1;
+            return string.Format("{0}_{1}", NextReferenceTarget, index);
         }
     }
 }

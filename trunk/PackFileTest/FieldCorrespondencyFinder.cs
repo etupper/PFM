@@ -63,12 +63,28 @@ namespace PackFileTest {
 
             foreach (MappedDataTable table in mappedTables.Values) {
                 FindCorrespondencies(table);
+
+                if (table.UnmappedPackFieldNames.Count == 1 && table.UnmappedXmlFieldNames.Count == 1) {
+                    table.AddMapping(table.UnmappedPackFieldNames[0], table.UnmappedXmlFieldNames[0]);
+                }
+
                 if (manualMappings.ContainsKey(table.TableName)) {
                     foreach (NameMapping mapping in manualMappings[table.TableName]) {
                         table.AddMapping(mapping.Item1, mapping.Item2);
                     }
                     if (table.UnmappedPackFieldNames.Count == 1 && table.UnmappedXmlFieldNames.Count == 1) {
                         table.AddMapping(table.UnmappedPackFieldNames[0], table.UnmappedXmlFieldNames[0]);
+                    }
+                }
+
+                List<string> unmappedPackFields = new List<string>(table.UnmappedPackFieldNames);
+                List<string> unmappedXmlFields = new List<string>(table.UnmappedXmlFieldNames);
+                foreach (string unmappedPack in unmappedPackFields) {
+                    foreach (string unmappedXml in unmappedXmlFields) {
+                        if (unmappedXml.Equals(unmappedPack)) {
+                            table.AddMapping(unmappedPack, unmappedXml);
+                            break;
+                        }
                     }
                 }
             }
@@ -91,21 +107,12 @@ namespace PackFileTest {
                     table.AddMapping(mapping.Item1, mapping.Item2);
                 }
             }
-
-            if (table.UnmappedPackFieldNames.Count == 1 && table.UnmappedXmlFieldNames.Count == 1) {
-                table.AddMapping(table.UnmappedPackFieldNames[0], table.UnmappedXmlFieldNames[0]);
-            }
         }
         
         /*
          * In the given list, find the table with all values equal to the given one from the pack.
          */
         NameMapping FindCorrespondency(MappedDataTable dataTable, string fieldName) {
-#if DEBUG
-            if (dataTable.TableName.Equals("advice_levels") && fieldName.Equals("Uninhabitable")) {
-                Console.WriteLine("here we are");
-            }
-#endif
             string existingMapping = TableNameCorrespondencyManager.Instance.GetXmlFieldName(dataTable.TableName, fieldName);
             if (existingMapping != null) {
                 return new NameMapping(fieldName, existingMapping);
@@ -135,6 +142,7 @@ namespace PackFileTest {
                     }
                 }
             }
+
 #if DEBUG
             if (result == null) {
                 Console.WriteLine("Did not find corresponding for field {0}, values {1}", fieldName, string.Join(",", values));
