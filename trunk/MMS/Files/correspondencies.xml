@@ -1,50 +1,111 @@
 <correspondencies>
- <table name="_kv_experience_bonuses" guid="73dfdaaf-ffb6-4f74-abd9-51265d994c2e">
+ <table name="_kv_experience_bonuses" guid="4131863c-d7b5-11df-8001-6cf049ef02b0">
   <field pack="key" xml="key"/>
   <field pack="value" xml="value"/>
-  <ignoredXmlFields>description</ignoredXmlFields>
+  <unmappedXmlFields>description</unmappedXmlFields>
  </table>
- <table name="_kv_fatigue" guid="443b47a4-1ecc-4006-ac75-d182d7baa3bd">
+ <table name="_kv_fatigue" guid="f9b11b28-873e-4775-94b5-60993cb9165b">
   <field pack="key" xml="key"/>
   <field pack="value" xml="value"/>
-  <ignoredXmlFields>description</ignoredXmlFields>
+  <unmappedXmlFields>description</unmappedXmlFields>
  </table>
- <table name="_kv_key_buildings" guid="eec00561-9f52-4dd4-bb22-735fdfcc6dce">
+ <table name="_kv_key_buildings" guid="42f4f00b-8f38-11df-8001-001fd02417f0">
   <field pack="key" xml="key"/>
   <field pack="value" xml="value"/>
-  <ignoredXmlFields>description</ignoredXmlFields>
+  <unmappedXmlFields>description</unmappedXmlFields>
  </table>
- <table name="_kv_rules" guid="3ba5be94-3130-448a-a198-d455aee51581">
+ <table name="_kv_morale" guid="bea6bc82-0649-443f-898c-1dd2529f5164">
   <field pack="key" xml="key"/>
   <field pack="value" xml="value"/>
-  <ignoredXmlFields>description</ignoredXmlFields>
+  <unmappedXmlFields>description</unmappedXmlFields>
  </table>
- <table name="abilities" guid="ad69ca94-658d-428c-bb43-736f59bceec2">
+ <table name="_kv_naval_morale" guid="ee55c02f-c3ac-49e6-8cc4-4667253a2105">
+  <field pack="key" xml="key"/>
+  <field pack="value" xml="value"/>
+  <unmappedXmlFields>description</unmappedXmlFields>
+ </table>
+ <table name="_kv_rules" guid="1f84cd66-108b-423f-a583-4c2c7bfb8ed5">
+  <field pack="key" xml="key"/>
+  <field pack="value" xml="value"/>
+  <unmappedXmlFields>description</unmappedXmlFields>
+ </table>
+ <table name="_kv_special_ability_effects" guid="978c8855-7ea7-11df-8001-001fd02417f0">
+  <field pack="key" xml="key"/>
+  <field pack="value" xml="value"/>
+  <unmappedXmlFields>description</unmappedXmlFields>
+ </table>
+ <table name="abilities" guid="2d5bef7c-4489-4cc1-9567-51ad60d2173e">
   <field pack="ability" xml="ability"/>
   <field pack="associated_attribute" xml="associated_attribute"/>
   <field pack="associated_cursor_mode" xml="associated_cursor_mode"/>
   <field pack="is_active" xml="is_active"/>
-  <ignoredXmlFields>effect_text</ignoredXmlFields>
+  <unmappedXmlFields>effect_text</unmappedXmlFields>
  </table>
- <table name="advice_threads" guid="a9ba5ab9-a73b-4834-add8-45a32e5e5ccd">
+ <table name="achievements" guid="f27db8ba-ba86-11df-8001-001fd02417f0">
+  <field pack="key" xml="key"/>
+  <field pack="aesthetic" xml="aesthetic"/>
+  <unmappedXmlFields>title,description</unmappedXmlFields>
+ </table>
+ <table name="advice_levels" guid="ab724fbf-feba-4682-9650-ce06d6b8cee5">
+  <field pack="key" xml="key"/>
+  <field pack="advice_thread" xml="advice_thread"/>
+  <field pack="advice_thread_level" xml="advice_thread_level"/>
+  <field pack="points_needed" xml="points_needed"/>
+  <field pack="game_area" xml="game_area"/>
+  <field pack="category" xml="category"/>
+  <field pack="sub_category" xml="sub_category"/>
+  <field pack="max_repeat_count" xml="max_repeat_count"/>
+  <field pack="repeat_interval" xml="repeat_interval"/>
+  <field pack="pause_battle" xml="pause_battle"/>
+  <field pack="priority_level" xml="priority_level"/>
+  <field pack="high_verbosity_only" xml="high_verbosity_only"/>
+  <field pack="locatable" xml="locatable"/>
+  <field pack="parameter" xml="parameter"/>
+  <field pack="on_display_script" xml="on_display_script"/>
+  <field pack="on_click_script" xml="on_click_script"/>
+  <field pack="suppressible" xml="suppressible"/>
+  <field pack="Uninhabitable" xml="uninhibitable"/>
+  <field pack="audio_clip" xml="audio_clip"/>
+  <field pack="advisor_name" xml="advisor_name"/>
+  <field pack="for_loading_screen" xml="for_loading_screen"/>
+  <unmappedXmlFields>advice_item_title,onscreen_text</unmappedXmlFields>
+ </table>
+ <table name="advice_threads" guid="55975bc4-4f37-44b7-ae3b-a6aa95553634">
   <field pack="thread" xml="thread"/>
  </table>
- <table name="advisors" guid="faf6a4f0-16d2-42a1-a21c-513e8b7ef74f">
+ <table name="advisors" guid="5d307a80-9566-4f81-afc1-a120e1e8717b">
   <field pack="advisor_name" xml="advisor_name"/>
   <field pack="advisor_icon_path" xml="advisor_icon_path"/>
  </table>
- <table name="agent_to_agent_abilities" guid="fd04c868-021c-4535-845a-caf5ffe0ae23">
+ <table name="agent_attributes" guid="4a2c5ee3-a0b4-4407-869d-9f86de7e9767">
+  <field pack="key" xml="key"/>
+  <field pack="icon_path" xml="icon_path"/>
+  <unmappedXmlFields>name,effect_text</unmappedXmlFields>
+ </table>
+ <table name="agent_culture_details" guid="17abe1e2-ddde-11df-8001-6cf049ef02b0">
+  <field pack="agent" xml="agent"/>
+  <field pack="culture" xml="culture"/>
+  <field pack="model" xml="model"/>
+  <field pack="generals_unit" xml="generals_unit"/>
+  <field pack="key" xml="key"/>
+  <field pack="season" xml="season"/>
+  <field pack="level" xml="level"/>
+  <field pack="equipment_theme" xml="equipment_theme"/>
+  <field pack="agent_recruited_movie" xml="agent_recruited_movie"/>
+  <unmappedXmlFields>onscreen_name,description_text</unmappedXmlFields>
+ </table>
+ <table name="agent_to_agent_abilities" guid="8bdd9d09-97f0-4adc-97b8-374dd207a5d2">
   <field pack="agent" xml="agent"/>
   <field pack="ability" xml="ability"/>
   <field pack="default_value" xml="default_value"/>
  </table>
- <table name="agent_to_agent_attributes" guid="218b41b7-d353-411a-820d-a85ef615e6e5">
+ <table name="agent_to_agent_attributes" guid="eb3dbb8e-3e6e-4058-b495-031e7a106a8e">
   <field pack="attribute" xml="attribute"/>
   <field pack="agent" xml="agent"/>
   <field pack="default_value" xml="default_value"/>
   <field pack="visible" xml="visible"/>
  </table>
- <table name="agent_uniform_colours" guid="5437b7b8-8918-4a64-b2d8-1f4448515b43">
+ <table name="agent_uniform_colours" guid="06674ee0-7946-11df-8001-001fd02417f0">
   <field pack="uniform_name" xml="uniform_name"/>
   <field pack="primary_colour_b" xml="primary_colour_b"/>
   <field pack="primary_colour_g" xml="primary_colour_g"/>
@@ -56,17 +117,41 @@
   <field pack="tertiary_colour_g" xml="tertiary_colour_g"/>
   <field pack="tertiary_colour_r" xml="tertiary_colour_r"/>
  </table>
- <table name="agent_uniforms" guid="8ff29231-e0c9-45ed-a9ba-e7fd9ad801fa">
+ <table name="agent_uniforms" guid="6e873069-daea-11e0-8001-6cf049ef02b0">
   <field pack="filename" xml="filename"/>
   <field pack="uniform_name" xml="uniform_name"/>
   <field pack="battle_filename" xml="battle_filename"/>
  </table>
- <table name="agent_voice_events_junctions" guid="ceaf20f3-5d18-4415-b034-60e538d484c0">
+ <table name="agent_voice_events_junctions" guid="915d806a-8b7a-11df-8001-001fd02417f0">
   <field pack="agent_key" xml="agent_key"/>
   <field pack="sound_event_key" xml="sound_event_key"/>
   <field pack="voice_event_key" xml="voice_event_key"/>
  </table>
- <table name="aide_de_camp_speeches" guid="a28ba4f2-b0a3-4f88-99a1-6a679329e0d3">
+ <table name="agents" guid="a0b6d3a8-ea6c-11e0-8001-6cf049ef02b0">
+  <field pack="key" xml="key"/>
+  <field pack="move_points" xml="move_points"/>
+  <field pack="line_of_sight" xml="line_of_sight"/>
+  <field pack="zone_of_control" xml="zone_of_control"/>
+  <field pack="playable" xml="playable"/>
+  <field pack="portrait_override" xml="portrait_override"/>
+  <field pack="is_spawnable" xml="is_spawnable"/>
+  <field pack="primary_attribute" xml="primary_attribute"/>
+  <field pack="religion" xml="religion"/>
+  <field pack="faction_total_cap" xml="faction_total_cap"/>
+  <field pack="faction_cap_lower_bound" xml="faction_cap_lower_bound"/>
+  <field pack="cost" xml="cost"/>
+  <field pack="audio_selected" xml="audio_selected"/>
+  <field pack="audio_move" xml="audio_move"/>
+  <field pack="audio_move_complete" xml="audio_move_complete"/>
+  <field pack="audio_move_complete_can_move_again" xml="audio_move_complete_can_move_again"/>
+  <field pack="audio_move_illegal" xml="audio_move_illegal"/>
+  <field pack="audio_embark" xml="audio_embark"/>
+  <field pack="audio_disembark" xml="audio_disembark"/>
+  <field pack="audio_death" xml="audio_death"/>
+  <field pack="VO_actor_numbers" xml="VO_actor_numbers"/>
+  <unmappedXmlFields>associated_unit,animation_set,in_encyclopedia</unmappedXmlFields>
+ </table>
+ <table name="aide_de_camp_speeches" guid="64219e82-2244-11e0-8001-6cf049ef02b0">
   <field pack="key" xml="key"/>
   <field pack="text" xml="text"/>
   <field pack="picture_in_picture" xml="picture_in_picture"/>
@@ -74,40 +159,79 @@
   <field pack="offset_range" xml="offset_range"/>
   <field pack="circumvent_cooldown" xml="circumvent_cooldown"/>
  </table>
- <table name="ancillary_included_subcultures" guid="b6047b4b-ed8e-4903-8c2b-8ea100139da3">
+ <table name="ancillaries" guid="3438710a-dae8-11e0-8001-6cf049ef02b0">
+  <field pack="key" xml="key"/>
+  <field pack="type" xml="type"/>
+  <field pack="applies_to" xml="applies_to"/>
+  <field pack="transferrable" xml="transferrable"/>
+  <field pack="unique_to_world" xml="unique_to_world"/>
+  <field pack="unique_to_faction" xml="unique_to_faction"/>
+  <field pack="precedence" xml="precedence"/>
+  <field pack="start_date" xml="start_date"/>
+  <field pack="end_date" xml="end_date"/>
+  <field pack="avatar_skill" xml="avatar_skill"/>
+  <field pack="avatar_special_ability" xml="avatar_special_ability"/>
+  <field pack="legendary_item" xml="legendary_item"/>
+  <field pack="mp_localised_source" xml="mp_localised_source"/>
+  <field pack="mp_exclusive" xml="mp_exclusive"/>
+  <field pack="mp_drop_probability" xml="mp_drop_probability"/>
+  <field pack="product" xml="product"/>
+  <unmappedXmlFields>onscreen_name,effect_text,colour_text,explanation_text,exclusion_text</unmappedXmlFields>
+ </table>
+ <table name="ancillary_included_subcultures" guid="148e4a07-15f8-432d-9628-53628ac00608">
   <field pack="ancillary" xml="ancillary"/>
   <field pack="subculture" xml="subculture"/>
  </table>
- <table name="ancillary_to_effects" guid="5ec487eb-ca4b-45f0-b345-bd4e73d112f7">
+ <table name="ancillary_info" guid="fd79d30e-745f-4c6b-8d1d-dfb88c4c8bb7">
+  <field pack="ancillary" xml="ancillary"/>
+  <unmappedXmlFields>historical_example,author,comment</unmappedXmlFields>
+ </table>
+ <table name="ancillary_to_attribute_effects" guid="36664a89-2c23-4433-8421-83a12dce900f">
+  <unmappedXmlFields>ancillary,attribute,effect_value</unmappedXmlFields>
+ </table>
+ <table name="ancillary_to_effects" guid="b76ce579-3883-4344-bf86-4b0b3292152b">
   <field pack="ancillary" xml="ancillary"/>
   <field pack="effect" xml="effect"/>
   <field pack="value" xml="value"/>
  </table>
- <table name="ancillary_to_included_agents" guid="372ddc29-dcb6-4de7-9abc-f7d0032df025">
+ <table name="ancillary_to_excluded_ancillaries" guid="cd19c5ae-651b-45c3-aea1-09f046f98298">
+  <unmappedXmlFields>ancillary,excluded_ancillary</unmappedXmlFields>
+ </table>
+ <table name="ancillary_to_included_agents" guid="0f2c941e-1aea-40fa-845d-46cacc0747ce">
   <field pack="ancillary" xml="ancillary"/>
   <field pack="agent" xml="agent"/>
  </table>
- <table name="ancillary_types" guid="58253966-82fe-4ce4-90a1-23ca64a5504f">
+ <table name="ancillary_types" guid="f734cf94-30d5-4fa0-a583-d2002c882c3e">
   <field pack="type" xml="type"/>
   <field pack="ui_icon" xml="ui_icon"/>
  </table>
- <table name="avatar_advanced_skills_requirements" guid="f221efdc-dd12-4ef2-a752-7199ea2cc7a1">
+ <table name="anim_reference_poses" guid="ba959743-b5d7-4dde-9ff2-93d40f899162">
+  <field pack="key" xml="key"/>
+  <field pack="path" xml="path"/>
+  <field pack="root_node" xml="root_node"/>
+ </table>
+ <table name="avatar_advanced_skills_requirements" guid="8ec58515-adef-11e0-8001-001fd0250702">
   <field pack="chain" xml="chain"/>
   <field pack="points_needed" xml="points_needed"/>
   <field pack="skill" xml="skill"/>
   <field pack="product" xml="product"/>
  </table>
- <table name="avatar_aesthetic_sets" guid="de9225ae-1506-4e2b-8eea-fa0482a7844f">
+ <table name="avatar_aesthetic_sets" guid="c40dcbc3-adef-11e0-8001-001fd0250702">
   <field pack="ancillary" xml="ancillary"/>
   <field pack="key" xml="key"/>
   <field pack="localised_name" xml="localised_name"/>
   <field pack="icon_path" xml="icon_path"/>
   <field pack="product" xml="product"/>
  </table>
- <table name="avatar_aesthetic_sources" guid="5a5f3f9b-3faf-4ff3-894d-5b1904e299f9">
+ <table name="avatar_aesthetic_sources" guid="23833390-46ff-11df-9879-0800200c9a66">
   <field pack="key" xml="key"/>
  </table>
- <table name="avatar_aesthetics" guid="67436e9a-26c9-4b6c-9ae9-446bf7050eeb">
+ <table name="avatar_aesthetics_localised_source_lookups" guid="f91580af-cae7-11df-8001-6cf049ef02b0">
+  <field pack="key" xml="key"/>
+  <field pack="second_description" xml="second_description"/>
+  <unmappedXmlFields>description</unmappedXmlFields>
+ </table>
+ <table name="avatar_aesthetics" guid="29fb805f-e5bc-11e0-8001-6cf049ef02b0">
   <field pack="avatar_skill" xml="avatar_skill"/>
   <field pack="avatar_skill_set" xml="avatar_skill_set"/>
   <field pack="key" xml="key"/>
@@ -125,15 +249,20 @@
   <field pack="warscape_equipment_item" xml="warscape_equipment_item"/>
   <field pack="product" xml="product"/>
  </table>
- <table name="avatar_ancillaries_localised_source_lookups" guid="973d8648-7fdb-40b0-8925-2f9568c7c384">
+ <table name="avatar_ancillaries_descriptions" guid="70ba1862-b9cc-11df-8001-001fd02417f0">
+  <field pack="key" xml="key"/>
+  <field pack="string_order" xml="string_order"/>
+  <unmappedXmlFields>description</unmappedXmlFields>
+ </table>
+ <table name="avatar_ancillaries_localised_source_lookups" guid="1c98a747-c7ea-11df-8001-001fd02417f0">
   <field pack="key" xml="key"/>
   <field pack="localised_source_text" xml="localised_source_text"/>
  </table>
- <table name="avatar_ancillaries_to_categories_juncs" guid="e183b0b9-9c8b-42fd-ba63-92a062f35663">
+ <table name="avatar_ancillaries_to_categories_juncs" guid="12818710-82c2-11e0-8001-6cf049ef02b0">
   <field pack="key" xml="key"/>
   <field pack="retainer_category" xml="retainer_category"/>
  </table>
- <table name="avatar_ancillaries_to_effects_junctions" guid="be6855e0-6717-469c-8afe-52e5a1168bb6">
+ <table name="avatar_ancillaries_to_effects_junctions" guid="f6431ccd-bf3c-11e0-8001-6cf049ef02b0">
   <field pack="effect" xml="effect"/>
   <field pack="key" xml="key"/>
   <field pack="value" xml="value"/>
@@ -142,81 +271,234 @@
   <field pack="unit_group_key" xml="unit_group_key"/>
   <field pack="string_order" xml="string_order"/>
  </table>
- <table name="avatar_army_makeup_traits" guid="26d0128c-8ec1-4b15-bbce-47194f32f03f">
+ <table name="avatar_army_makeup_traits" guid="ae700984-8ffc-11df-8001-001fd02417f0">
   <field pack="army_percentage" xml="army_percentage"/>
   <field pack="key" xml="key"/>
   <field pack="unit_category" xml="unit_category"/>
  </table>
- <table name="avatar_dojo_chains" guid="37ff9ac5-b7b6-4292-b7bb-9b97495515b2">
+ <table name="avatar_campaign_maps" guid="d86e0831-b865-11e0-8001-6cf049ef02b0">
+  <field pack="adjacent_1" xml="adjacent_1"/>
+  <field pack="adjacent_10" xml="adjacent_10"/>
+  <field pack="adjacent_11" xml="adjacent_11"/>
+  <field pack="adjacent_12" xml="adjacent_12"/>
+  <field pack="unknown5" xml="adjacent_15"/>
+  <field pack="unknown6" xml="adjacent_14"/>
+  <field pack="unknown7" xml="adjacent_13"/>
+  <field pack="adjacent_2" xml="adjacent_2"/>
+  <field pack="adjacent_3" xml="adjacent_3"/>
+  <field pack="adjacent_4" xml="adjacent_4"/>
+  <field pack="adjacent_5" xml="adjacent_5"/>
+  <field pack="adjacent_6" xml="adjacent_6"/>
+  <field pack="adjacent_7" xml="adjacent_7"/>
+  <field pack="adjacent_8" xml="adjacent_8"/>
+  <field pack="adjacent_9" xml="adjacent_9"/>
+  <field pack="dojo" xml="dojo"/>
+  <field pack="is_land" xml="is_land"/>
+  <field pack="is_starting_region" xml="is_starting_region"/>
+  <field pack="key" xml="key"/>
+  <field pack="unlock_aesthetic" xml="unlock_aesthetic"/>
+  <field pack="unlock_ancillary" xml="unlock_ancillary"/>
+  <field pack="red" xml="red"/>
+  <field pack="green" xml="green"/>
+  <field pack="blue" xml="blue"/>
+  <field pack="onscreen_name" xml="onscreen_name"/>
+  <field pack="start_sea_region" xml="start_sea_region"/>
+  <field pack="unique_index" xml="unique_index"/>
+  <field pack="product" xml="product"/>
+  <field pack="region" xml="region"/>
+ </table>
+ <table name="avatar_clan_specialisms" guid="d562ca07-dfad-11e0-8001-6cf049ef02b0">
+  <field pack="ancillary" xml="ancillary"/>
+  <field pack="key" xml="key"/>
+  <field pack="product" xml="product"/>
+ </table>
+ <table name="avatar_dojo_chains" guid="f2361f8b-adef-11e0-8001-001fd0250702">
   <field pack="key" xml="key"/>
   <field pack="onscreen_name" xml="onscreen_name"/>
   <field pack="recruitment_requirement_description" xml="recruitment_requirement_description"/>
   <field pack="product" xml="product"/>
  </table>
- <table name="avatar_drop_probabilities" guid="b3e102b7-c871-4165-a9b9-64cd91cece85">
+ <table name="avatar_dojos" guid="73be3a63-adf0-11e0-8001-001fd0250702">
+  <field pack="key" xml="key"/>
+  <field pack="chain" xml="chain"/>
+  <field pack="level" xml="level"/>
+  <field pack="unit" xml="unit"/>
+  <field pack="ancillary" xml="ancillary"/>
+  <field pack="product" xml="product"/>
+  <unmappedXmlFields>codependency_key</unmappedXmlFields>
+ </table>
+ <table name="avatar_drop_probabilities" guid="1d939420-46ff-11df-9879-0800200c9a66">
   <field pack="drop_chance" xml="drop_chance"/>
   <field pack="key" xml="key"/>
  </table>
- <table name="avatar_effects" guid="3c83ba0f-532b-4b53-b79c-bf4caed0d90a">
+ <table name="avatar_effects" guid="0cf42e4e-6fe4-11df-8003-001fd02417f0">
   <field pack="effect" xml="effect"/>
  </table>
- <table name="avatar_flags" guid="8ecec44a-2a34-4377-a996-9907fb077a38">
+ <table name="avatar_faction_flags" guid="056ba630-46ff-11df-9879-0800200c9a66">
+  <field pack="key" xml="key"/>
+  <field pack="image_file" xml="image_file"/>
+ </table>
+ <table name="avatar_flags" guid="16628d06-cd6a-11e0-8001-6cf049ef02b0">
   <field pack="unique_index" xml="unique_index"/>
   <field pack="key" xml="key"/>
   <field pack="source" xml="source"/>
   <field pack="order" xml="order"/>
   <field pack="product" xml="product"/>
  </table>
- <table name="avatar_skill_effects_juncs" guid="da87d68c-fd4e-41d9-a13f-c5bc22955097">
+ <table name="avatar_gempei_dojos" guid="4f94ceaf-9c18-11e0-8001-6cf049ef02b0">
+  <field pack="key" xml="key"/>
+  <field pack="chain" xml="chain"/>
+  <field pack="level" xml="level"/>
+  <field pack="unit" xml="unit"/>
+  <field pack="ancillary" xml="ancillary"/>
+  <unmappedXmlFields>codependency_key</unmappedXmlFields>
+ </table>
+ <table name="avatar_product_lookups" guid="9b10eb4c-f5e9-4edc-b89b-0de6860224ed">
+  <field pack="key" xml="key"/>
+  <unmappedXmlFields>localised_string</unmappedXmlFields>
+ </table>
+ <table name="avatar_skill_chain_lookups" guid="b1d77b10-e69b-11df-8001-6cf049ef02b0">
+  <field pack="skill_chain" xml="skill_chain"/>
+  <unmappedXmlFields>localised_string</unmappedXmlFields>
+ </table>
+ <table name="avatar_skill_effects_juncs" guid="3ba1d6f6-dfad-11e0-8001-6cf049ef02b0">
   <field pack="effect" xml="effect"/>
   <field pack="effect_value" xml="effect_value"/>
   <field pack="skill" xml="skill"/>
   <field pack="multiplier" xml="multiplier"/>
   <field pack="unit_group" xml="unit_group"/>
  </table>
- <table name="avatar_skill_prerequisites" guid="f89b6b5f-11df-41a3-8c87-ffd9f0f4f033">
+ <table name="avatar_skill_prerequisites" guid="e66c85d7-82a8-11df-8001-001fd02417f0">
   <field pack="points_needed" xml="points_needed"/>
   <field pack="prerequisite" xml="prerequisite"/>
   <field pack="skill" xml="skill"/>
  </table>
- <table name="avatar_skill_tree_traits" guid="742a8b94-9d56-440e-97d2-bddfe8dba8fb">
+ <table name="avatar_skill_tree_traits" guid="ae916aa8-8ffc-11df-8001-001fd02417f0">
   <field pack="key" xml="key"/>
   <field pack="skill_chain" xml="skill_chain"/>
   <field pack="skill_points_allocated" xml="skill_points_allocated"/>
  </table>
- <table name="avatar_skills_to_units_juncs" guid="86c00e88-f412-4883-abbf-8941ffb7a5ac">
+ <table name="avatar_skills_descriptions" guid="5f97f550-b699-11df-8d81-0800200c9a66">
+  <field pack="key" xml="key"/>
+  <unmappedXmlFields>description</unmappedXmlFields>
+ </table>
+ <table name="avatar_skills" guid="3d8659b0-dfaf-11e0-8001-6cf049ef02b0">
+  <field pack="key" xml="key"/>
+  <field pack="level" xml="level"/>
+  <field pack="skill_chain" xml="skill_chain"/>
+  <field pack="icon" xml="icon"/>
+  <field pack="supersedes_skill" xml="supersedes_skill"/>
+  <field pack="advanced_skill" xml="advanced_skill"/>
+  <field pack="clan_skill" xml="clan_skill"/>
+  <field pack="clan_tokens_required" xml="clan_tokens_required"/>
+  <field pack="skill_sub_chain" xml="skill_sub_chain"/>
+  <field pack="cost" xml="cost"/>
+  <field pack="skill_sub_chain_superceded" xml="skill_sub_chain_superceded"/>
+  <field pack="unique_index" xml="unique_index"/>
+  <field pack="product" xml="product"/>
+  <unmappedXmlFields>onscreen_name,description</unmappedXmlFields>
+ </table>
+ <table name="avatar_skills_to_units_juncs" guid="740d1193-7ae5-11df-8001-001fd02417f0">
   <field pack="skill" xml="skill"/>
   <field pack="unit" xml="unit"/>
  </table>
- <table name="avatar_startpos_units" guid="6cf94e0d-7a0a-4bb5-8888-b8606e41c384">
+ <table name="avatar_startpos_units" guid="9323862d-adf0-11e0-8001-001fd0250702">
   <field pack="key" xml="key"/>
   <field pack="product" xml="product"/>
  </table>
- <table name="avatar_unit_group_recruitment_limits" guid="90a26324-dc75-4a55-a0c2-60f217698410">
+ <table name="avatar_traits" guid="df2a2f4e-38f2-11e0-8001-6cf049ef02b0">
+  <field pack="key" xml="key"/>
+  <field pack="unique_index" xml="unique_index"/>
+  <unmappedXmlFields>onscreen_title,onscreen_text</unmappedXmlFields>
+ </table>
+ <table name="avatar_unit_group_ids" guid="8797f4d5-d77d-11df-8001-6cf049ef02b0">
+  <field pack="group_id" xml="group_id"/>
+  <unmappedXmlFields>description</unmappedXmlFields>
+ </table>
+ <table name="avatar_unit_group_recruitment_limits" guid="ec4434b7-5451-4254-a8bd-8008e5a385b9">
   <field pack="number_of_units" xml="number_of_units"/>
   <field pack="string" xml="string"/>
   <field pack="unit_group" xml="unit_group"/>
  </table>
- <table name="avatar_unit_groups" guid="aec7e8b1-04c9-44fe-a619-b61b05e58a87">
+ <table name="avatar_unit_groups" guid="8053b957-d77d-11df-8001-6cf049ef02b0">
   <field pack="group_id" xml="group_id"/>
   <field pack="unit_key" xml="unit_key"/>
  </table>
- <table name="avatar_unit_levels" guid="d2ea0b9b-ea0d-4bf9-9702-c468f6e7fb99">
+ <table name="avatar_unit_info_card_abilites_strings" guid="1e85411b-5547-4990-8d36-e4fadd07a22c">
+  <field pack="effect" xml="effect"/>
+  <field pack="icon" xml="icon"/>
+  <unmappedXmlFields>localised_string</unmappedXmlFields>
+ </table>
+ <table name="avatar_unit_levels" guid="9cc99a95-adf0-11e0-8001-001fd0250702">
   <field pack="key" xml="key"/>
   <field pack="skill_points" xml="skill_points"/>
   <field pack="xp" xml="xp"/>
   <field pack="product" xml="product"/>
  </table>
- <table name="avatar_unit_ui_categories" guid="81c387f0-e6b9-4428-a3d6-0ae5b7cc3f35">
+ <table name="avatar_unit_ui_categories" guid="858c6843-3ad4-4800-ba66-122fc888f36b">
   <field pack="unit_ui_category" xml="unit_ui_category"/>
  </table>
- <table name="battle_autoresolver_balances" guid="eb26dbed-0ead-4db5-af59-9e38e5a95a8d">
+ <table name="avatar_units" guid="9e1bc8cf-249c-11e1-8001-6cf049ef02b0">
+  <field pack="key" xml="key"/>
+  <field pack="xp_scaling_factor" xml="xp_scaling_factor"/>
+  <field pack="default_avatar_general_model_unit" xml="default_avatar_general_model_unit"/>
+  <field pack="unique_index" xml="unique_index"/>
+  <field pack="unit_ui_category" xml="unit_ui_category"/>
+  <field pack="unit_ui_category_order" xml="unit_ui_category_order"/>
+  <field pack="hero_unit" xml="hero_unit"/>
+  <field pack="product" xml="product"/>
+  <field pack="start_unit_as_veteran" xml="start_unit_as_veteran"/>
+  <field pack="clan_specialism" xml="clan_specialism"/>
+  <unmappedXmlFields>anti_spam_limit,anti_spam_cost_increase</unmappedXmlFields>
+ </table>
+ <table name="avatar_xp_rewards" guid="ad4cdf9b-adf0-11e0-8001-001fd0250702">
+  <field pack="key" xml="key"/>
+  <field pack="xp_value" xml="xp_value"/>
+  <field pack="product" xml="product"/>
+  <unmappedXmlFields>onscreen_description</unmappedXmlFields>
+ </table>
+ <table name="battle_autoresolver_balances" guid="9bfd1f41-7de7-11df-8001-001fd02417f0">
   <field pack="melee_potential_multiplier" xml="melee_potential_multiplier"/>
   <field pack="missile_potential_multiplier" xml="missile_potential_multiplier"/>
   <field pack="source_unit_class" xml="source_unit_class"/>
   <field pack="target_unit_class" xml="target_unit_class"/>
  </table>
- <table name="battle_climate_weather_descriptions" guid="4c06a848-9b2d-438d-92ee-1231ee73a460">
+ <table name="battle_bridge_subculture_jcts" guid="6723bb1d-7a98-4366-bd0a-1d54462805a7">
+  <unmappedXmlFields>subculture,simple_bridge,refined_bridge</unmappedXmlFields>
+ </table>
+ <table name="battle_cameras" guid="8a8e135e-956a-11df-8001-001fd02417f0">
+  <field pack="key" xml="key"/>
+  <field pack="max_height_large" xml="max_height_large"/>
+  <field pack="max_height_small" xml="max_height_small"/>
+  <field pack="min_fort_max_height" xml="min_fort_max_height"/>
+  <field pack="min_height" xml="min_height"/>
+  <field pack="Move Speed Adjust" xml="move_speed_max_multiplier"/>
+  <field pack="move_speed_min_multiplier" xml="move_speed_min_multiplier"/>
+  <field pack="Rotation Speed Adjust" xml="turn_speed_multiplier"/>
+  <field pack="move_fast_multiplier" xml="move_fast_multiplier"/>
+ </table>
+ <table name="battle_cities" guid="c781c266-0990-4a57-8c68-234a5241d450">
+  <field pack="city" xml="city"/>
+  <field pack="minimum_building_scale" xml="minimum_building_scale"/>
+  <field pack="maximum_building_scale" xml="maximum_building_scale"/>
+  <field pack="town_min_distance" xml="town_min_distance"/>
+  <field pack="city_min_distance" xml="city_min_distance"/>
+  <field pack="town_radius" xml="town_radius"/>
+  <field pack="city_radius" xml="city_radius"/>
+  <field pack="number_of_town_buildings" xml="number_of_town_buildings"/>
+  <field pack="number_of_city_buildings" xml="number_of_city_buildings"/>
+ </table>
+ <table name="battle_city_buildings" guid="4599ca6a-757a-48af-b837-9bde4d433160">
+  <field pack="building" xml="building"/>
+  <field pack="city" xml="city"/>
+  <field pack="amount_in_town" xml="amount_in_town"/>
+  <field pack="amount_in_city" xml="amount_in_city"/>
+ </table>
+ <table name="battle_city_subculture_jct" guid="68986adf-287c-40d1-a729-90fb7a4aeb90">
+  <field pack="subculture" xml="subculture"/>
+  <field pack="city" xml="city"/>
+ </table>
+ <table name="battle_climate_weather_descriptions" guid="67af5616-0054-4d53-8205-aca807d710c1">
   <field pack="key" xml="key"/>
   <field pack="climate_type" xml="climate_type"/>
   <field pack="season" xml="season"/>
@@ -229,7 +511,30 @@
   <field pack="haze_index" xml="haze_index"/>
   <field pack="fog_index" xml="fog_index"/>
  </table>
- <table name="battle_personalities" guid="b1f8da45-fd20-43bf-ae89-8393121c2749">
+ <table name="battle_entities" guid="c0b45018-8a66-4660-82b7-52e605c41ed4">
+  <field pack="key" xml="key"/>
+  <field pack="class_validation" xml="class_validation"/>
+  <field pack="type" xml="type"/>
+  <field pack="walk_speed" xml="walk_speed"/>
+  <field pack="run_speed" xml="run_speed"/>
+  <field pack="acceleration" xml="acceleration"/>
+  <field pack="deceleration" xml="deceleration"/>
+  <field pack="charge_speed" xml="charge_speed"/>
+  <field pack="crawl_speed" xml="crawl_speed"/>
+  <field pack="charge_distance_commence_run" xml="charge_distance_commence_run"/>
+  <field pack="Distance to Adopt Charge Stance" xml="charge_distance_adopt_charge_pose"/>
+  <field pack="Distance to Pick Charge Target" xml="charge_distance_pick_target"/>
+  <field pack="radius" xml="radius"/>
+  <field pack="shape" xml="shape"/>
+  <field pack="radii_ratio" xml="radii_ratio"/>
+  <field pack="mass" xml="mass"/>
+  <field pack="height" xml="height"/>
+  <field pack="fire_arc_close" xml="fire_arc_close"/>
+  <field pack="fire_arc_loose" xml="fire_arc_loose"/>
+  <field pack="turn_speed" xml="turn_speed"/>
+  <field pack="hit_points" xml="hit_points"/>
+ </table>
+ <table name="battle_personalities" guid="e7d19e32-0929-11e1-8001-6cf049ef02b0">
   <field pack="key" xml="key"/>
   <field pack="soldier_model" xml="soldier_model"/>
   <field pack="man_animations_table" xml="man_animations_table"/>
@@ -237,118 +542,266 @@
   <field pack="type" xml="type"/>
   <field pack="missile_type" xml="missile_type"/>
  </table>
- <table name="battle_script_advice_strings" guid="ae2c706a-4207-4d36-8793-44b0e23980c4">
+ <table name="battle_script_advice_strings" guid="58a741a0-bcd0-11df-851a-0800200c9a66">
   <field pack="advisor_name" xml="advisor_name"/>
   <field pack="key" xml="key"/>
-  <unmappedXmlFields>title</unmappedXmlFields>
-  <ignoredXmlFields>key,string</ignoredXmlFields>
+  <unmappedXmlFields>string,title</unmappedXmlFields>
  </table>
- <table name="battle_sequences" guid="f590b23b-4004-4178-8351-eee4886981e2">
+ <table name="battle_script_strings" guid="97bcf7da-5375-11df-8001-001fd02417f0">
+  <field pack="key" xml="key"/>
+  <field pack="string" xml="string"/>
+  <field pack="advisor_name" xml="advisor_name"/>
+  <field pack="title" xml="title"/>
+  <unmappedXmlFields>game_area</unmappedXmlFields>
+ </table>
+ <table name="battle_sequences" guid="e517fbc0-5826-11df-9879-0800200c9a66">
   <field pack="battle" xml="battle"/>
   <field pack="unlock_order" xml="unlock_order"/>
  </table>
- <table name="battle_type_unit_to_faction_presets" guid="56b23fcf-24ee-41cb-8433-aa92e610067f">
+ <table name="battle_sky_types" guid="dceb15d3-4f10-4fb6-89f8-fb3c745773a6">
+  <unmappedXmlFields>key,season,weather_type,time_of_day,climate,sky_file,supports_ambient_fog,supports_volumetric_fog</unmappedXmlFields>
+ </table>
+ <table name="battle_type_faction_presets" guid="d73e436b-e995-47ca-ad04-1e50bc8a731f">
+  <field pack="faction" xml="faction"/>
+  <field pack="weighting_type" xml="weighting_type"/>
+  <field pack="id" xml="id"/>
+  <field pack="unknown4" constant="0"/>
+ </table>
+ <table name="battle_type_setup_limits" guid="5b13289a-e1ac-462e-930c-c8dfcfaceba8">
+  <field pack="battle_type" xml="battle_type"/>
+  <field pack="weighting_type" xml="weighting_type"/>
+  <field pack="army_size" xml="army_size"/>
+  <field pack="era" xml="era"/>
+  <field pack="max_infantry" xml="max_infantry"/>
+  <field pack="max_cavalry" xml="max_cavalry"/>
+  <field pack="max_artillery" xml="max_artillery"/>
+  <field pack="max_small_ship" xml="max_small_ship"/>
+  <field pack="max_frigate" xml="max_frigate"/>
+  <field pack="max_line_of_battle" xml="max_line_of_battle"/>
+  <field pack="id" xml="id"/>
+  <field pack="unknown8" xml="s_Generation"/>
+ </table>
+ <table name="battle_type_unit_to_faction_presets" guid="9b3a068e-f6c0-4aa3-912a-d5ae4186d667">
   <field pack="id" xml="id"/>
   <field pack="preset_id" xml="preset_id"/>
   <field pack="unit" xml="unit"/>
   <field pack="experience" xml="experience"/>
  </table>
- <table name="battles_to_avatar_product_lookups_junctions" guid="9fdc696c-0bd0-44a8-ad48-048109b0a115">
+ <table name="battle_types" guid="d9c531ca-6fde-11df-8001-001fd02417f0">
+  <field pack="type" xml="type"/>
+  <field pack="sort_order" xml="sort_order"/>
+  <unmappedXmlFields>onscreen</unmappedXmlFields>
+ </table>
+ <table name="battle_weather_types" guid="552b2a84-186c-479c-88a1-91a1a0270c29">
+  <field pack="Weather ID" xml="key"/>
+  <field pack="level" xml="level"/>
+  <field pack="Precipitation Type" xml="precipitation_type"/>
+  <field pack="num_particles" xml="num_particles"/>
+  <field pack="particle_size" xml="particle_size"/>
+  <field pack="particle_speed" xml="particle_speed"/>
+  <field pack="list_order" xml="list_order"/>
+  <field pack="naval_appropriate" xml="naval_appropriate"/>
+  <unmappedXmlFields>onscreen</unmappedXmlFields>
+ </table>
+ <table name="battlefield_building_categories" guid="08407ad4-b9aa-11df-8001-001fd02417f0">
+  <field pack="category" xml="category"/>
+  <field pack="onscreen_name" xml="onscreen_name"/>
+  <field pack="default_destruction_effect" xml="default_destruction_effect"/>
+  <unmappedXmlFields>global_effects_description,local_effects_description</unmappedXmlFields>
+ </table>
+ <table name="battlefield_building_transformations" guid="12e5942c-3a51-4c9c-b098-a6e6c4da94bc">
+  <field pack="transformation" xml="transformation"/>
+  <unmappedXmlFields>description</unmappedXmlFields>
+ </table>
+ <table name="battlefield_buildings" guid="e74cfe96-9e12-4255-bd19-b0687afb0e82">
+  <field pack="key" xml="key"/>
+  <field pack="category" xml="category"/>
+  <field pack="model" xml="model"/>
+  <field pack="audio_material" xml="audio_material"/>
+  <field pack="hit_points" xml="hit_points"/>
+  <field pack="gun_type" xml="gun_type"/>
+  <field pack="Terrain" xml="transformation"/>
+  <field pack="capacity_in_men" xml="capacity_in_men"/>
+  <field pack="ignition_threshold" xml="ignition_threshold"/>
+  <field pack="spawned_unit" xml="spawned_unit"/>
+  <field pack="radar_icon" xml="radar_icon"/>
+  <field pack="visible_in_public_ted" xml="visible_in_public_ted"/>
+  <field pack="fortwall_penetration_chance" xml="fortwall_penetration_chance"/>
+  <unmappedXmlFields>onscreen_name,onscreen_name_override</unmappedXmlFields>
+ </table>
+ <table name="battlefield_deployable_siege_items" guid="d28abed8-3861-435c-95a4-ecdba807b851">
+  <field pack="Siege item" xml="key"/>
+  <field pack="siege_point_cost" xml="siege_point_cost"/>
+  <field pack="turns_to_build" xml="turns_to_build"/>
+  <field pack="string" xml="string"/>
+  <field pack="icon_name" xml="icon_name"/>
+  <field pack="info_pic" xml="info_pic"/>
+ </table>
+ <table name="battlefield_snow_props" guid="8ce3af0a-78a6-40ae-a48b-c850ac99dbb5">
+  <unmappedXmlFields>prop,enable_for_snow</unmappedXmlFields>
+ </table>
+ <table name="battles_to_avatar_product_lookups_junctions" guid="e4cbc1b1-9d0d-4653-bf59-3e2897c01ec5">
   <field pack="battle" xml="battle"/>
   <field pack="product" xml="product"/>
  </table>
- <table name="bombardment_quality_to_artillery_support_modifiers" guid="5b62e56a-fcfd-4003-8677-9361d620855d">
+ <table name="battles_to_battle_sky_types_junctions" guid="de1703c3-a72d-47ae-98ac-83bae5727de3">
+  <unmappedXmlFields>battle_key,battle_sky_type_key</unmappedXmlFields>
+ </table>
+ <table name="bombardment_quality_to_artillery_support_modifiers" guid="7a346e9a-dce9-4dc8-85eb-a042a4ed2bfe">
   <field pack="bombardment_quality" xml="bombardment_quality"/>
   <field pack="effect" xml="effect"/>
   <field pack="value" xml="value"/>
  </table>
- <table name="building_chain_to_slots" guid="6f1072dd-c8aa-4a2c-8126-ccae85182058">
+ <table name="bribe_actions" guid="d0a1f93b-0338-4c26-b36c-0a70fbe7b4d7">
+  <field pack="action" xml="action"/>
+  <field pack="onscreen" xml="onscreen"/>
+ </table>
+ <table name="building_chain_to_slots" guid="fee225dd-642b-4655-8a69-849061cb62e9">
   <field pack="chain" xml="chain"/>
   <field pack="slot" xml="slot"/>
  </table>
- <table name="building_chains" guid="cc92c6ba-dce4-4465-8144-43f99ed35f2d">
+ <table name="building_chains" guid="e4122580-35cc-11e0-8001-6cf049ef02b0">
   <field pack="key" xml="key"/>
   <field pack="tech_category_tab" xml="tech_category_tab"/>
   <field pack="tech_category_position" xml="tech_category_position"/>
   <field pack="chain_category" xml="chain_category"/>
   <field pack="in_encyclopedia" xml="in_encyclopedia"/>
-  <ignoredXmlFields>chain_tooltip</ignoredXmlFields>
+  <unmappedXmlFields>chain_tooltip</unmappedXmlFields>
  </table>
- <table name="building_description_texts" guid="02cef8ec-3533-4e66-b026-3137973a1ef3">
+ <table name="building_culture_gov_type_variants" guid="6d01ac53-a259-4e32-bb7d-ba597837fc9f">
+  <unmappedXmlFields>building,culture,government_type,name,artpiece,artpiece_animated,description,icon</unmappedXmlFields>
+ </table>
+ <table name="building_culture_variants" guid="5bfcf748-d0a0-11df-8001-6cf049ef02b0">
+  <field pack="building" xml="building"/>
+  <field pack="culture" xml="culture"/>
+  <field pack="battlefield_building" xml="battlefield_building"/>
+  <field pack="artpiece" xml="artpiece"/>
+  <field pack="artpiece_animated" xml="artpiece_animated"/>
+  <field pack="description" xml="description"/>
+  <field pack="icon" xml="icon"/>
+  <unmappedXmlFields>name</unmappedXmlFields>
+ </table>
+ <table name="building_description_texts" guid="4ed134c1-f8c7-4f4b-aba3-1a341d5122dc">
   <field pack="key" xml="key"/>
-  <ignoredXmlFields>short_description,long_description</ignoredXmlFields>
+  <unmappedXmlFields>short_description,long_description</unmappedXmlFields>
  </table>
- <table name="building_effects_junction" guid="f1d24d61-938f-4454-b579-9f98b0b1deb8">
+ <table name="building_effects_junction" guid="2dcf4a36-5884-453a-9796-af8d43e4db8a">
   <field pack="building" xml="building"/>
   <field pack="effect" xml="effect"/>
   <field pack="value" xml="value"/>
  </table>
- <table name="building_factionwide_effects_junctions" guid="254daef3-c40c-4230-8134-cf77e55b6f47">
+ <table name="building_faction_variants" guid="64528b33-fd23-4d6e-94eb-3f5e143cc514">
+  <unmappedXmlFields>building,faction,onscreen_name,artpiece,description,icon</unmappedXmlFields>
+ </table>
+ <table name="building_factionwide_effects_junctions" guid="20d9c372-fd47-4174-a9d4-a81a0cfd7f7e">
   <field pack="building" xml="building"/>
   <field pack="effect" xml="effect"/>
   <field pack="effect_value" xml="effect_value"/>
  </table>
- <table name="building_level_required_technology_junctions" guid="bbc11aab-7b31-4e8c-97d4-d1c53e59969d">
+ <table name="building_level_armed_citizenry_junctions" guid="97579ed5-bbec-11df-8001-001fd02417f0">
+  <field pack="building_level" xml="building_level"/>
+  <field pack="id" xml="id"/>
+  <field pack="priority" xml="priority"/>
+  <field pack="unit" xml="unit"/>
+  <field pack="unknown3" constant="0"/>
+ </table>
+ <table name="building_level_required_technology_junctions" guid="c5cc4307-886b-48dd-bcf9-6e8f68ed39f6">
   <field pack="building_level_key" xml="building_level_key"/>
   <field pack="technology_key" xml="technology_key"/>
  </table>
- <table name="building_to_unit_abilities_junctions" guid="d2ede02b-bf0f-4292-a86e-6544d52c82a7">
+ <table name="building_to_unit_abilities_junctions" guid="1c4d3f10-59fe-464f-abb4-ae97bf73b3ea">
   <field pack="ability" xml="ability"/>
   <field pack="building_name" xml="building_name"/>
  </table>
- <table name="building_upgrades_junction" guid="68c9227e-e624-40df-9eb9-dc9c186e90b1">
+ <table name="building_upgrades_junction" guid="1ce2624e-7d5c-40d1-916b-dff7fa24506d">
   <field pack="from" xml="from"/>
   <field pack="to" xml="to"/>
  </table>
- <table name="cai_agent_distribution_profiles" guid="6843e999-f788-4634-9932-2f9108c0171c">
+ <table name="cai_agent_distribution_profiles" guid="6f8f7220-89cf-11df-8003-001fd02417f0">
   <field pack="key" xml="key"/>
  </table>
- <table name="cai_agent_distribution_types" guid="cffd348e-031d-411e-9346-cdfcda5fd770">
+ <table name="cai_agent_distribution_types" guid="6f3bff00-89cf-11df-8003-001fd02417f0">
   <field pack="key" xml="key"/>
  </table>
- <table name="cai_agent_record_to_cai_agent_type_junctions" guid="ddf72977-bdc4-4346-9c96-b6dc371e896a">
+ <table name="cai_agent_record_to_cai_agent_type_junctions" guid="6f183b60-89cf-11df-8002-001fd02417f0">
   <field pack="agent_record_key" xml="agent_record_key"/>
   <field pack="agent_type_key" xml="agent_type_key"/>
  </table>
- <table name="cai_agent_recruitment_profiles" guid="a900ca8d-3233-4117-8373-dfb1eace824d">
+ <table name="cai_agent_recruitment_profiles" guid="733ad9e0-89cf-11df-8003-001fd02417f0">
   <field pack="key" xml="key"/>
  </table>
- <table name="cai_agent_recruitment_types" guid="fa52b534-792d-4d8e-9573-c44d65af4d92">
+ <table name="cai_agent_recruitment_types" guid="731978a0-89cf-11df-8003-001fd02417f0">
   <field pack="key" xml="key"/>
  </table>
- <table name="cai_agent_type_distribution_profile_junctions" guid="e25cf374-4c71-4c13-a074-ea2f01654039">
+ <table name="cai_agent_type_distribution_profile_junctions" guid="72ec2b80-89cf-11df-8003-001fd02417f0">
   <field pack="agent_type_key" xml="agent_type_key"/>
   <field pack="distribution_profile_key" xml="distribution_profile_key"/>
   <field pack="distribution_type_key" xml="distribution_type_key"/>
  </table>
- <table name="cai_agent_type_recruitment_profile_junctions" guid="1ab27d74-e664-418c-9fb7-8d350d152023">
+ <table name="cai_agent_type_recruitment_profile_junctions" guid="735e9d80-89cf-11df-8003-001fd02417f0">
   <field pack="agent_type_key" xml="agent_type_key"/>
   <field pack="recruitment_profile_key" xml="recruitment_profile_key"/>
   <field pack="recruitment_type_key" xml="recruitment_type_key"/>
  </table>
- <table name="cai_agent_types" guid="71317eda-f45f-4faf-8baf-f526c6b958c3">
+ <table name="cai_agent_types" guid="6eefb300-89cf-11df-8002-001fd02417f0">
   <field pack="key" xml="key"/>
  </table>
- <table name="cai_military_aggressiveness_policies" guid="1d55a715-a12b-43c4-9125-f0f83110ac69">
+ <table name="cai_base_building_context_values" guid="8c2e4063-0114-11e0-8001-6cf049ef02b0">
+  <field pack="building_key" xml="building_key"/>
+  <field pack="economic_value" xml="economic_value"/>
+  <field pack="unknown3" xml="education_value"/>
+  <field pack="happiness_value" xml="happiness_value"/>
+  <field pack="military_value" xml="military_value"/>
+  <field pack="unknown6" xml="prestige_value"/>
+  <field pack="existing_buildings_apply_discount_over_limit" xml="existing_buildings_apply_discount_over_limit"/>
+  <field pack="existing_buildings_discount_per_building" xml="existing_buildings_discount_per_building"/>
+  <field pack="existing_buildings_maximum_discount" xml="existing_buildings_maximum_discount"/>
+ </table>
+ <table name="cai_military_aggressiveness_policies" guid="bdaf15ce-c639-11df-8005-001fd02417f0">
   <field pack="key" xml="key"/>
  </table>
- <table name="cai_military_behaviour_policies" guid="9aef28b1-b3dd-46dd-931b-b77a986fa2dd">
+ <table name="cai_military_behaviour_policies" guid="bdd519ae-c639-11df-8005-001fd02417f0">
   <field pack="key" xml="key"/>
  </table>
- <table name="cai_personalities_budget_allocation_policy_junctions" guid="f08e7c3b-8e44-4298-a582-0b21a99def15">
+ <table name="cai_personalities_budget_allocation_policy_junctions" guid="bca75aec-c639-11df-8003-001fd02417f0">
   <field pack="budget_allocation_key" xml="budget_allocation_key"/>
   <field pack="budget_context_key" xml="budget_context_key"/>
   <field pack="budget_policy_key" xml="budget_policy_key"/>
   <field pack="priority" xml="priority"/>
  </table>
- <table name="cai_personalities_budget_context_types" guid="c78298b8-f31a-4b05-b6db-fb688fa255e3">
+ <table name="cai_personalities_budget_allocations" guid="4b0fb5bf-daef-11e0-8001-6cf049ef02b0">
+  <field pack="agents_funding_cap" xml="agents_funding_cap"/>
+  <field pack="agents_funds_allocation_percentage" xml="agents_funds_allocation_percentage"/>
+  <field pack="agents_percentage_of_pool_to_save_on_fail" xml="agents_percentage_of_pool_to_save_on_fail"/>
+  <field pack="unknown4" xml="agents_turns_of_inactivity_until_cap"/>
+  <field pack="army_funding_cap" xml="army_funding_cap"/>
+  <field pack="army_funds_allocation_percentage" xml="army_funds_allocation_percentage"/>
+  <field pack="army_percentage_of_pool_to_save_on_fail" xml="army_percentage_of_pool_to_save_on_fail"/>
+  <field pack="army_turns_of_inactivity_until_cap" xml="army_turns_of_inactivity_until_cap"/>
+  <field pack="construction_funding_cap" xml="construction_funding_cap"/>
+  <field pack="construction_funds_allocation_percentage" xml="construction_funds_allocation_percentage"/>
+  <field pack="construction_percentage_of_pool_to_save_on_fail" xml="construction_percentage_of_pool_to_save_on_fail"/>
+  <field pack="construction_turns_of_inactivity_until_cap" xml="construction_turns_of_inactivity_until_cap"/>
+  <field pack="diplomacy_funding_cap" xml="diplomacy_funding_cap"/>
+  <field pack="diplomacy_funds_allocation_percentage" xml="diplomacy_funds_allocation_percentage"/>
+  <field pack="diplomacy_percentage_of_pool_to_save_on_fail" xml="diplomacy_percentage_of_pool_to_save_on_fail"/>
+  <field pack="diplomacy_turns_of_inactivity_until_cap" xml="diplomacy_turns_of_inactivity_until_cap"/>
+  <field pack="key" xml="key"/>
+  <field pack="navy_funding_cap" xml="navy_funding_cap"/>
+  <field pack="navy_funds_allocation_percentage" xml="navy_funds_allocation_percentage"/>
+  <field pack="navy_percentage_of_pool_to_save_on_fail" xml="navy_percentage_of_pool_to_save_on_fail"/>
+  <field pack="unknown21" xml="navy_turns_of_inactivity_until_cap"/>
+  <field pack="minimum_settable_tax_level" xml="minimum_settable_tax_level"/>
+  <field pack="maximum_settable_tax_level" xml="maximum_settable_tax_level"/>
+ </table>
+ <table name="cai_personalities_budget_context_types" guid="bccd5ecc-c639-11df-8003-001fd02417f0">
   <field pack="key" xml="key"/>
  </table>
- <table name="cai_personalities_budget_policies" guid="94591bd8-1b80-4a30-bbea-455b3a6caeab">
+ <table name="cai_personalities_budget_policies" guid="bc83b74a-c639-11df-8002-001fd02417f0">
   <field pack="default_budget_allocation_key" xml="default_budget_allocation_key"/>
   <field pack="key" xml="key"/>
  </table>
- <table name="cai_personalities_building_synergies" guid="d554d702-985d-4650-a2e6-cc145102004a">
+ <table name="cai_personalities_building_synergies" guid="8ba87c47-ea59-4202-b4db-83ace62e43f6">
   <field pack="existing_building_chain_key" xml="existing_building_chain_key"/>
   <field pack="existing_building_level_inclusive_end" xml="existing_building_level_inclusive_end"/>
   <field pack="existing_building_level_inclusive_start" xml="existing_building_level_inclusive_start"/>
@@ -358,42 +811,49 @@
   <field pack="synergy_level_key" xml="synergy_level_key"/>
   <field pack="synergy_policy_key" xml="synergy_policy_key"/>
  </table>
- <table name="cai_personalities_building_synergy_levels" guid="2af80f06-952a-44cf-971c-25bf1bca49b9">
+ <table name="cai_personalities_building_synergy_levels" guid="12b26155-9d1d-4346-8699-d47746c9715f">
   <field pack="absolute_effect" xml="absolute_effect"/>
   <field pack="key" xml="key"/>
   <field pack="priority" xml="priority"/>
   <field pack="relative_effect" xml="relative_effect"/>
  </table>
- <table name="cai_personalities_building_synergy_policies" guid="ab49f36e-0bdc-43ee-9dd9-de6a221672b2">
+ <table name="cai_personalities_building_synergy_policies" guid="62f5c1e6-e56c-4b8e-bee1-9cc0a3405a72">
   <field pack="key" xml="key"/>
  </table>
- <table name="cai_personalities_construction_preference_policies" guid="d29880e4-c216-4f56-ad7d-21afec4f9a6f">
+ <table name="cai_personalities_construction_preference_policies" guid="bd17064e-c639-11df-8004-001fd02417f0">
   <field pack="key" xml="key"/>
  </table>
- <table name="cai_personalities_faction_junctions" guid="021d1cf5-1a15-40b0-970b-bf1d36c9059f">
+ <table name="cai_personalities_construction_preference_policy_building_junctions" guid="006ccda0-0a1f-11e1-be50-0800200c9a66">
+  <field pack="unknown" xml="bias_level"/>
+  <field pack="building_key" xml="building_key"/>
+  <field pack="policy_key" xml="policy_key"/>
+  <field pack="absolute_adjustment" xml="absolute_adjustment"/>
+  <field pack="building_discount_limit_adjustment" xml="building_discount_limit_adjustment"/>
+ </table>
+ <table name="cai_personalities_faction_junctions" guid="70a6c1b9-bdb6-4519-b9a1-d95ce5af3ef1">
   <field pack="campaign_key" xml="campaign_key"/>
   <field pack="default_personality" xml="default_personality"/>
   <field pack="faction_key" xml="faction_key"/>
   <field pack="personality_group" xml="personality_group"/>
   <field pack="randomisation_policy_key" xml="randomisation_policy_key"/>
  </table>
- <table name="cai_personalities_random_group_junctions" guid="476dcdda-33ae-4fba-b372-f0822c2cd1d3">
+ <table name="cai_personalities_random_group_junctions" guid="64a9f9ff-0c75-4ab3-a17f-6f988e3e6d11">
   <field pack="personality_key" xml="personality_key"/>
   <field pack="random_personality_group_key" xml="random_personality_group_key"/>
  </table>
- <table name="cai_personalities_random_groups" guid="043f949b-970f-4dad-85ae-127d0ef1d4ab">
+ <table name="cai_personalities_random_groups" guid="a566fd30-1fb0-45d5-bbc1-c190f307b0eb">
   <field pack="random_personality_group_key" xml="random_personality_group_key"/>
  </table>
- <table name="cai_personalities_randomisation_policies" guid="64920570-4ad2-4b92-945e-b15b11f9c228">
+ <table name="cai_personalities_randomisation_policies" guid="3f634424-9dc2-4a13-a4c3-ac4ba6025bb5">
   <field pack="randomisation_policy_key" xml="randomisation_policy_key"/>
  </table>
- <table name="cai_personalities_reliability_policies" guid="ac62d13d-48bb-4f20-bb65-cc2b437d9508">
+ <table name="cai_personalities_reliability_policies" guid="0db562e3-0445-11e0-8001-6cf049ef02b0">
   <field pack="key" xml="key"/>
  </table>
- <table name="cai_personalities_religious_conversion_policies" guid="399734d4-2c48-4ca2-bc23-da2222780566">
+ <table name="cai_personalities_religious_conversion_policies" guid="bd8b722c-c639-11df-8004-001fd02417f0">
   <field pack="key" xml="key"/>
  </table>
- <table name="cai_personalities" guid="fa72c8cf-6c41-4080-a350-6eb657f103b1">
+ <table name="cai_personalities" guid="5414f7ea-daef-11e0-8001-6cf049ef02b0">
   <field pack="agent_distribution_profile_key" xml="agent_distribution_profile_key"/>
   <field pack="agent_recruitment_profile_key" xml="agent_recruitment_profile_key"/>
   <field pack="budget_policy_key" xml="budget_policy_key"/>
@@ -408,58 +868,67 @@
   <field pack="allowed_for_random_selection" xml="allowed_for_random_selection"/>
   <field pack="building_synergy_policy" xml="building_synergy_policy"/>
  </table>
- <table name="campaign_ai_character_skill_tree_distribution_junctions" guid="b43b972d-99b8-41aa-826b-dd47233be42d">
+ <table name="campaign_ai_character_skill_tree_distribution_junctions" guid="dda2c203-9a48-11df-8001-001fd02417f0">
   <field pack="distribution_key" xml="distribution_key"/>
   <field pack="agent_manager_key" xml="agent_manager_key"/>
   <field pack="priority" xml="priority"/>
  </table>
- <table name="campaign_ai_character_skill_tree_junctions" guid="799ac7f1-14a6-4768-b9b8-02c537edf7bb">
+ <table name="campaign_ai_character_skill_tree_junctions" guid="dd75751c-9a48-11df-8001-001fd02417f0">
   <field pack="agent_manager_key" xml="agent_manager_key"/>
   <field pack="priority" xml="priority"/>
   <field pack="skill_key" xml="skill_key"/>
  </table>
- <table name="campaign_ai_character_skill_tree_manager_agent_junctions" guid="097e0e52-afbd-49a0-ab2d-538bc608fffb">
+ <table name="campaign_ai_character_skill_tree_manager_agent_junctions" guid="fd61790d-9a46-11df-8001-001fd02417f0">
   <field pack="agent_key" xml="agent_key"/>
   <field pack="agent_manager_key" xml="agent_manager_key"/>
   <field pack="manager_key" xml="manager_key"/>
  </table>
- <table name="campaign_ai_manager_behaviour_junctions" guid="6fdb0b60-535c-4194-81ea-304807f1dcec">
+ <table name="campaign_ai_manager_behaviour_junctions" guid="7c953f5f-184b-452a-80b3-484af9127bcb">
   <field pack="manager" xml="manager"/>
   <field pack="behaviour" xml="behaviour"/>
   <field pack="priority" xml="priority"/>
  </table>
- <table name="campaign_ai_personality_junctions" guid="66fc5155-80f7-4ac5-9333-fde3f70bcac7">
+ <table name="campaign_ai_managers" guid="4727f1ef-0e90-49a0-a738-1a1e9f82f725">
+  <field pack="manager" xml="manager"/>
+  <unmappedXmlFields>description</unmappedXmlFields>
+ </table>
+ <table name="campaign_ai_personalities" guid="aa8b5957-ff85-451f-9d96-2ad70045556a">
+  <field pack="personality" xml="personality"/>
+  <field pack="is_default" xml="is_default"/>
+  <unmappedXmlFields>description</unmappedXmlFields>
+ </table>
+ <table name="campaign_ai_personality_junctions" guid="a7edc867-3a8d-4218-a65f-9287cc05e3ef">
   <field pack="personality" xml="personality"/>
   <field pack="property" xml="property"/>
   <field pack="property_value" xml="property_value"/>
  </table>
- <table name="campaign_ai_technology_manager_path_junctions" guid="de232439-41ae-4de6-b1ae-437b8892e7d4">
+ <table name="campaign_ai_technology_manager_path_junctions" guid="9f64f7d3-79f1-11df-8005-001fd02417f0">
   <field pack="manager_key" xml="manager_key"/>
   <field pack="path_key" xml="path_key"/>
   <field pack="priority" xml="priority"/>
  </table>
- <table name="campaign_ai_technology_path_junctions" guid="33eec795-6da4-427a-a1d3-1033eca0600c">
+ <table name="campaign_ai_technology_path_junctions" guid="9f64f7d3-79f1-11df-8006-001fd02417f0">
   <field pack="path_key" xml="path_key"/>
   <field pack="priority" xml="priority"/>
   <field pack="technology_key" xml="technology_key"/>
  </table>
- <table name="campaign_character_anim_set_agent_junctions" guid="179faceb-cdfa-44cb-816c-5c5a411f4095">
+ <table name="campaign_character_anim_set_agent_junctions" guid="a1105e31-4149-4bbf-86e7-67e7837942dc">
   <field pack="key" xml="key"/>
   <field pack="anim_set" xml="anim_set"/>
   <field pack="agent_key" xml="agent_key"/>
   <field pack="culture_key" xml="culture_key"/>
  </table>
- <table name="campaign_character_anim_sets" guid="2a0a1ca3-a1cd-4a8e-94a9-f13c9743dd23">
+ <table name="campaign_character_anim_sets" guid="431c1ba6-f736-44d8-9d69-7bf177556571">
   <field pack="key" xml="key"/>
   <field pack="reference_pose" xml="reference_pose"/>
  </table>
- <table name="campaign_character_anim_walk_anim_junctions" guid="73e4e27b-2958-446b-997a-14ad7c5c88cf">
+ <table name="campaign_character_anim_walk_anim_junctions" guid="3c85eb05-f2c2-403e-b147-cd416f645d82">
   <field pack="key" xml="key"/>
   <field pack="character_anim_set" xml="character_anim_set"/>
   <field pack="walk_anim_set" xml="walk_anim_set"/>
   <field pack="anim_status" xml="anim_status"/>
  </table>
- <table name="campaign_character_anims_junctions" guid="cceac9a2-0e97-4527-9d64-f6930b217fcc">
+ <table name="campaign_character_anims_junctions" guid="4a198150-681d-11df-a08a-0800200c9a66">
   <field pack="key" xml="key"/>
   <field pack="anim_set_key" xml="anim_set_key"/>
   <field pack="anim_status" xml="anim_status"/>
@@ -469,7 +938,7 @@
   <field pack="transition_to_status" xml="transition_to_status"/>
   <field pack="idle_weighting" xml="idle_weighting"/>
  </table>
- <table name="campaign_character_art_sets" guid="bf88b4bf-a546-4610-9faf-9c35da51adf7">
+ <table name="campaign_character_art_sets" guid="602a3e82-b2d1-11e0-8001-6cf049ef02b0">
   <field pack="agent_type" xml="agent_type"/>
   <field pack="art_set_id" xml="art_set_id"/>
   <field pack="culture" xml="culture"/>
@@ -480,18 +949,52 @@
   <field pack="campaign" xml="campaign"/>
   <field pack="origin" xml="origin"/>
  </table>
- <table name="campaign_difficulty_handicap_effects" guid="27af8bb0-ba0d-426b-b1c6-33f1583cbd79">
+ <table name="campaign_character_arts" guid="0b1801f0-f9a0-11e0-8001-6cf049ef02b0">
+  <field pack="art_set_id" xml="art_set_id"/>
+  <field pack="equipment" xml="equipment"/>
+  <field pack="level" xml="level"/>
+  <field pack="age" xml="age"/>
+  <field pack="unknown5" xml="portrait"/>
+  <field pack="season" xml="season"/>
+  <field pack="uniform" xml="uniform"/>
+  <field pack="card" xml="card"/>
+  <field pack="unknown9" xml="info"/>
+  <field pack="health" xml="health"/>
+ </table>
+ <table name="campaign_difficulty_handicap_effects" guid="ebf1613e-20c9-11e1-8001-6cf049ef02b0">
   <field pack="campaign_difficulty_handicap" xml="campaign_difficulty_handicap"/>
   <field pack="human" xml="human"/>
   <field pack="effect" xml="effect"/>
   <field pack="effect_value" xml="effect_value"/>
   <field pack="optional_campaign_key" xml="optional_campaign_key"/>
  </table>
- <table name="campaign_map_settlement_sprawl_descriptions" guid="c23599dd-1d12-40c4-8bf6-176b5a8e434e">
+ <table name="campaign_ground_types" guid="3c380316-5370-11df-8001-001fd02417f0">
+  <field pack="type" xml="type"/>
+  <field pack="movement_modifier" xml="movement_modifier"/>
+  <field pack="can_ambush" xml="can_ambush"/>
+  <field pack="causes_heat_attrition" xml="causes_heat_attrition"/>
+  <field pack="causes_cold_attrition" xml="causes_cold_attrition"/>
+  <field pack="causes_sea_attrition" xml="causes_sea_attrition"/>
+  <unmappedXmlFields>onscreen_name</unmappedXmlFields>
+ </table>
+ <table name="campaign_map_playable_areas" guid="ae1121f6-4664-4429-86a6-17a62c30f2fe">
+  <field pack="index" xml="index"/>
+  <field pack="Sea Trade Area" xml="sea_trade"/>
+  <field pack="Onscreen name" xml="onscreen_name"/>
+  <field pack="map_file" xml="map_file"/>
+  <field pack="overlay_file" xml="overlay_file"/>
+  <field pack="radar_file" xml="radar_file"/>
+  <field pack="meaningful_id" xml="meaningful_id"/>
+  <field pack="preview_width" xml="preview_width"/>
+  <field pack="preview_height" xml="preview_height"/>
+  <field pack="preview_border" xml="preview_border"/>
+  <unmappedXmlFields>mapname,minx,maxx,miny,maxy</unmappedXmlFields>
+ </table>
+ <table name="campaign_map_settlement_sprawl_descriptions" guid="5fc6315a-55cd-4954-8dab-9d8664598c99">
   <field pack="settlement" xml="settlement"/>
   <field pack="sprawl_desc" xml="sprawl_desc"/>
  </table>
- <table name="campaign_map_settlements" guid="51b12eac-a92a-4cb7-9da4-bba4f42b8ab9">
+ <table name="campaign_map_settlements" guid="c501625f-5ec6-47e5-9c44-84611592b2f2">
   <field pack="settlement_id" xml="settlement_id"/>
   <field pack="region" xml="region"/>
   <field pack="default_onscreen_name" xml="default_onscreen_name"/>
@@ -499,18 +1002,29 @@
   <field pack="slot_count" xml="slot_count"/>
   <field pack="slot_type" xml="slot_type"/>
  </table>
- <table name="campaign_map_tooltips" guid="eb014d73-e009-4ffc-931c-ec952d125aad">
+ <table name="campaign_map_tooltips" guid="c6b2b765-8838-4057-9aec-c8732ea0dfd6">
   <field pack="select_context" xml="select_context"/>
   <field pack="over_context" xml="over_context"/>
   <field pack="tooltip_line" xml="tooltip_line"/>
   <field pack="advice_line" xml="advice_line"/>
  </table>
- <table name="campaign_variables" guid="24962825-9cb8-46a4-ac61-250acc600b1e">
+ <table name="campaign_map_towns_and_ports" guid="eba3b999-86db-42b5-8c63-89012486daa2">
+  <field pack="Town ID" xml="town_id"/>
+  <field pack="Slot Type" xml="slot_type"/>
+  <field pack="On Screen Name" xml="onscreen_name"/>
+  <field pack="template" xml="template"/>
+  <unmappedXmlFields>region</unmappedXmlFields>
+ </table>
+ <table name="campaign_unit_art_set_junctions" guid="fa9d0133-62bf-420a-987d-50b05061148a">
+  <field pack="unknown1" xml="art_set_id"/>
+  <field pack="unknown2" xml="unit_key"/>
+ </table>
+ <table name="campaign_variables" guid="f43fbea4-9f8c-472e-b6d2-421b88b1c402">
   <field pack="variable_key" xml="variable_key"/>
   <field pack="value" xml="value"/>
-  <ignoredXmlFields>description</ignoredXmlFields>
+  <unmappedXmlFields>description</unmappedXmlFields>
  </table>
- <table name="campaign_walk_anim_sets" guid="6605e383-6163-4c6e-a884-1cc838ce66a0">
+ <table name="campaign_walk_anim_sets" guid="e817a94f-cff7-11e0-8001-6cf049ef02b0">
   <field pack="key" xml="key"/>
   <field pack="reference_pose" xml="reference_pose"/>
   <field pack="pre_step_to" xml="pre_step_to"/>
@@ -528,55 +1042,108 @@
   <field pack="post_mid_walk_to_stand" xml="post_mid_walk_to_stand"/>
   <field pack="mid_walk_to_stand_distance" xml="mid_walk_to_stand_distance"/>
  </table>
- <table name="campaigns_campaign_variables_junctions" guid="2b096b1e-e3c2-49d1-b9bb-3b290a4f41d3">
+ <table name="campaigns_campaign_variables_junctions" guid="9efcd447-b920-11e0-8001-6cf049ef02b0">
   <field pack="variable_key" xml="variable_key"/>
   <field pack="campaign_name" xml="campaign_name"/>
   <field pack="value" xml="value"/>
   <field pack="optional_difficulty_level" xml="optional_difficulty_level"/>
   <field pack="optional_campaign_type" xml="optional_campaign_type"/>
  </table>
- <table name="cdir_campaign_junctions" guid="c4116602-cb60-47d4-a444-aa8d58e343ff">
+ <table name="cdir_campaign_junctions" guid="47ea3d04-2613-49f4-adda-e27598b836f1">
   <field pack="key" xml="key"/>
   <field pack="campaign" xml="campaign"/>
  </table>
- <table name="cdir_desire_priorities" guid="1604ae27-4089-4595-ad89-a7805ddf194a">
+ <table name="cdir_configs" guid="20da8acc-396f-4289-9755-a926972e5d0d">
+  <field pack="campaign_key" xml="campaign_key"/>
+  <field pack="faction_key" xml="faction_key"/>
+  <field pack="cdir_config_key" xml="cdir_config_key"/>
+  <field pack="value" xml="value"/>
+  <field pack="unknown2" constant="True"/>
+  <field pack="unknown5" constant="True"/>
+ </table>
+ <table name="cdir_desire_priorities" guid="74ba68a1-2adb-4ba5-8445-3b8b82145c48">
   <field pack="campaign_key" xml="campaign_key"/>
   <field pack="desire_key" xml="desire_key"/>
   <field pack="priority" xml="priority"/>
  </table>
- <table name="cdir_events_dilemma_incidents" guid="717b92fb-3099-4cb1-be6e-212caf7eece3">
+ <table name="cdir_events_dilemma_incidents" guid="0B4CD7B4-304C-11DF-A12F-19E055D89593">
   <field pack="choice_key" xml="choice_key"/>
   <field pack="dilemma_key" xml="dilemma_key"/>
   <field pack="incident_key" xml="incident_key"/>
  </table>
- <table name="cdir_events_mission_issuer_junctions" guid="3ad82e33-22e2-415c-b2fd-b472a4c7161e">
+ <table name="cdir_events_dilemma_option_junctions" guid="23579F4C-304C-11DF-BED0-FFE055D89593">
+  <field pack="dilemma_key" xml="dilemma_key"/>
+  <field pack="id" xml="id"/>
+  <field pack="option_key" xml="option_key"/>
+  <field pack="value" xml="value"/>
+  <field pack="unknown3" constant="0"/>
+ </table>
+ <table name="cdir_events_dilemma_payloads" guid="df521b77-8a71-11df-8001-001fd02417f0">
+  <field pack="choice_key" xml="choice_key"/>
+  <field pack="dilemma_key" xml="dilemma_key"/>
+  <field pack="id" xml="id"/>
+  <field pack="payload_key" xml="payload_key"/>
+  <field pack="value" xml="value"/>
+  <field pack="unknown4" constant="0"/>
+  <field pack="unknown6" constant="True"/>
+ </table>
+ <table name="cdir_events_incident_option_junctions" guid="72E14324-304C-11DF-9491-72E355D89593">
+  <field pack="id" xml="id"/>
+  <field pack="incident_key" xml="incident_key"/>
+  <field pack="option_key" xml="option_key"/>
+  <field pack="value" xml="value"/>
+  <field pack="unknown2" constant="0"/>
+ </table>
+ <table name="cdir_events_incident_payloads" guid="dfeab337-8a71-11df-8001-001fd02417f0">
+  <field pack="id" xml="id"/>
+  <field pack="incident_key" xml="incident_key"/>
+  <field pack="payload_key" xml="payload_key"/>
+  <field pack="value" xml="value"/>
+  <field pack="unknown2" constant="0"/>
+ </table>
+ <table name="cdir_events_mission_issuer_junctions" guid="d0549be6-577f-11df-8001-001fd02417f0">
   <field pack="issuer_key" xml="issuer_key"/>
   <field pack="mission_key" xml="mission_key"/>
  </table>
- <table name="cdir_events_payloads" guid="af477ad2-0f2b-482f-a685-ebc737dc32b6">
+ <table name="cdir_events_mission_option_junctions" guid="140D1C82-304D-11DF-9B8F-E4E855D89593">
+  <field pack="id" xml="id"/>
+  <field pack="mission_key" xml="mission_key"/>
+  <field pack="option_key" xml="option_key"/>
+  <field pack="value" xml="value"/>
+  <field pack="unknown2" constant="0"/>
+ </table>
+ <table name="cdir_events_mission_payloads" guid="ddbf6101-8a72-11df-8001-001fd02417f0">
+  <field pack="id" xml="id"/>
+  <field pack="mission_key" xml="mission_key"/>
+  <field pack="payload_key" xml="payload_key"/>
+  <field pack="status_key" xml="status_key"/>
+  <field pack="value" xml="value"/>
+  <field pack="unknown2" constant="0"/>
+ </table>
+ <table name="cdir_events_payloads" guid="801DB94A-304D-11DF-A59E-E9EC55D89593">
   <field pack="effect_bundle_key" xml="effect_bundle_key"/>
   <field pack="payload_key" xml="payload_key"/>
  </table>
- <table name="cdir_faction_junctions" guid="76e448e6-2bb3-4354-9d6a-0d0535c15215">
+ <table name="cdir_faction_junctions" guid="48833587-68e2-447d-86af-89090a540c4d">
   <field pack="key" xml="key"/>
   <field pack="faction" xml="faction"/>
  </table>
- <table name="cdir_unit_balance_group_qualities" guid="d7c13aca-d66f-492b-86eb-e88f435fcd9a">
+ <table name="cdir_unit_balance_group_qualities" guid="b8160b6a-a595-4650-bcd1-471ba6d78c42">
   <field pack="config_key" xml="config_key"/>
   <field pack="group_key" xml="group_key"/>
   <field pack="quality_group_key" xml="quality_group_key"/>
   <field pack="quality" xml="quality"/>
  </table>
- <table name="cdir_unit_balance_groups" guid="b491d39d-0df7-42be-a59a-fd5cfa084e41">
+ <table name="cdir_unit_balance_groups" guid="2be9c5d6-3f6c-45ac-a204-e9f1845961c7">
   <field pack="key" xml="key"/>
   <field pack="army" xml="army"/>
  </table>
- <table name="cdir_unit_balance_template_junctions" guid="b3be85b4-0888-4911-8c16-7c2911d2f2d0">
+ <table name="cdir_unit_balance_template_junctions" guid="837dae18-3993-48fb-a093-86eb7344cd77">
   <field pack="config_key" xml="config_key"/>
   <field pack="template_key" xml="template_key"/>
   <field pack="priority" xml="priority"/>
  </table>
- <table name="cdir_unit_balances" guid="00430f85-dd38-49cd-b466-d577db7cc2ea">
+ <table name="cdir_unit_balances" guid="e6b48397-8728-43ee-bf0c-2c23cc2f6ce1">
   <field pack="template_key" xml="template_key"/>
   <field pack="min_units" xml="min_units"/>
   <field pack="max_units" xml="max_units"/>
@@ -585,75 +1152,110 @@
   <field pack="variance" xml="variance"/>
   <field pack="min_required" xml="min_required"/>
  </table>
- <table name="cdir_unit_qualities" guid="fd5f6b4c-63b1-47f1-a040-354d42317d1a">
+ <table name="cdir_unit_qualities" guid="6f5dada6-e549-4293-93ec-d64030eae932">
   <field pack="config_key" xml="config_key"/>
   <field pack="group_key" xml="group_key"/>
   <field pack="unit_key" xml="unit_key"/>
   <field pack="quality" xml="quality"/>
  </table>
- <table name="character_experience_skill_tiers" guid="614f6a2c-0ec4-4962-8cfd-cded15743a67">
+ <table name="character_experience_skill_tiers" guid="f3c7cec2-cc9d-11e0-8001-6cf049ef02b0">
   <field pack="agent_key" xml="agent_key"/>
   <field pack="experience_threshold" xml="experience_threshold"/>
   <field pack="skill_points" xml="skill_points"/>
   <field pack="skill_tier_level" xml="skill_tier_level"/>
   <field pack="optional_campaign_key" xml="optional_campaign_key"/>
  </table>
- <table name="character_skill_level_to_effects_junctions" guid="cd74c9ac-efca-4a3a-862a-42f94fc7e14d">
+ <table name="character_skill_level_to_effects_junctions" guid="7bd99364-ea6d-11e0-8001-6cf049ef02b0">
   <field pack="character_skill_key" xml="character_skill_key"/>
   <field pack="effect_key" xml="effect_key"/>
   <field pack="level" xml="level"/>
   <field pack="value" xml="value"/>
   <field pack="is_factionwide" xml="is_factionwide"/>
  </table>
- <table name="character_skill_node_links" guid="dbe4c12c-61d9-4be4-b5e8-e9690ed8b671">
+ <table name="character_skill_node_links" guid="1c389b37-82c8-11df-8001-001fd02417f0">
   <field pack="child_key" xml="child_key"/>
   <field pack="initial_descent_tiers" xml="initial_descent_tiers"/>
   <field pack="parent_key" xml="parent_key"/>
   <field pack="parent_link_position" xml="parent_link_position"/>
   <field pack="child_link_position" xml="child_link_position"/>
  </table>
- <table name="character_skill_node_sets" guid="7bd2787e-f297-412c-9f70-f8823f576754">
+ <table name="character_skill_node_sets" guid="d9e8bcf8-cc87-11df-8001-6cf049ef02b0">
+  <field pack="enc_title" xml="enc_title"/>
   <field pack="agent_key" xml="agent_key"/>
   <field pack="campaign_key" xml="campaign_key"/>
   <field pack="faction_key" xml="faction_key"/>
   <field pack="key" xml="key"/>
-  <field pack="enc_title" xml="enc_title"/>
  </table>
- <table name="character_skill_nodes" guid="5e34afab-f4a2-4d32-9775-73df52c66371">
+ <table name="character_skill_nodes" guid="56bf63db-673d-11df-8001-001fd02417f0">
+  <field pack="campaign_key" xml="campaign_key"/>
   <field pack="character_skill_key" xml="character_skill_key"/>
   <field pack="character_skill_node_set_key" xml="character_skill_node_set_key"/>
   <field pack="faction_key" xml="faction_key"/>
   <field pack="indent" xml="indent"/>
   <field pack="key" xml="key"/>
   <field pack="tier" xml="tier"/>
-  <field pack="campaign_key" xml="campaign_key"/>
  </table>
- <table name="character_skills" guid="001fb237-b070-4a0a-8e04-b16fa934e2f3">
+ <table name="character_skills" guid="a321cee3-98bf-11df-8001-001fd02417f0">
   <field pack="image_path" xml="image_path"/>
   <field pack="key" xml="key"/>
   <field pack="localised_description" xml="localised_description"/>
   <field pack="localised_name" xml="localised_name"/>
   <field pack="pre_battle_speech_parameter" xml="pre_battle_speech_parameter"/>
  </table>
- <table name="climates" guid="d1d272e4-b4dd-4bd5-a343-db580b5a2cf4">
+ <table name="character_trait_levels" guid="4745a6c0-03d4-11e1-8001-6cf049ef02b0">
+  <field pack="key" xml="key"/>
+  <field pack="level" xml="level"/>
+  <field pack="trait" xml="trait"/>
+  <field pack="threshold_points" xml="threshold_points"/>
+  <unmappedXmlFields>onscreen_name,epithet_text,gain_text,effect_text,colour_text,explanation_text,removal_text</unmappedXmlFields>
+ </table>
+ <table name="climate_to_tilesets" guid="f13dab34-85b0-42d7-9e90-bd922ab9d5a0">
+  <unmappedXmlFields>climate,tileset</unmappedXmlFields>
+ </table>
+ <table name="climates" guid="86921885-3da8-4e05-a293-d8c29b18eabb">
   <field pack="climate_type" xml="climate_type"/>
   <field pack="colour_index" xml="colour_index"/>
   <field pack="conifer_line" xml="conifer_line"/>
   <field pack="tree_line" xml="tree_line"/>
   <field pack="is_land" xml="is_land"/>
  </table>
- <table name="commodities" guid="afec415f-ce73-4920-8874-c3123be3e7db">
+ <table name="commodities_demand_drivers" guid="a2a19040-6408-439b-9ec8-1fc88300fd63">
+  <field pack="demand_driver" xml="demand_driver"/>
+ </table>
+ <table name="commodities_demand_junction" guid="9851f851-26bd-4d7b-99fa-8e3bfe96aca8">
+  <field pack="commodity" xml="commodity"/>
+  <field pack="driver" xml="driver"/>
+  <field pack="constantK" xml="constantK"/>
+  <field pack="weight" xml="weight"/>
+ </table>
+ <table name="commodities" guid="8cda5507-44f2-4c13-8e05-e441ee4bc187">
   <field pack="key" xml="key"/>
   <field pack="baseline_price_per_unit" xml="baseline_price_per_unit"/>
   <field pack="price_elasticity_of_demand" xml="price_elasticity_of_demand"/>
  </table>
- <table name="cultures_subcultures" guid="80579491-68e4-458d-8743-88b03698ef07">
+ <table name="commodity_unit_names" guid="54bc65b4-bf1a-473e-b1b4-6e15e136e416">
+  <field pack="unit" xml="unit"/>
+  <unmappedXmlFields>plural,singular</unmappedXmlFields>
+ </table>
+ <table name="cultures_subcultures" guid="510482e7-1362-4178-a7a2-01287a667af4">
   <field pack="subculture" xml="subculture"/>
   <field pack="culture" xml="culture"/>
   <field pack="index" xml="index"/>
   <field pack="farm" xml="farm"/>
  </table>
- <table name="dilemmas" guid="639d7d55-8b70-42d6-9b8f-39606d6ce58e">
+ <table name="cursors" guid="609da3d4-3193-43c9-b273-5d8137415d50">
+  <field pack="key" xml="key"/>
+  <field pack="image" xml="image"/>
+  <field pack="frames" xml="frames"/>
+  <field pack="framerate" xml="framerate"/>
+  <field pack="hotspotX" xml="hotspotX"/>
+  <field pack="hotspotY" xml="hotspotY"/>
+  <field pack="width" xml="width"/>
+  <field pack="height" xml="height"/>
+  <field pack="loop" xml="loop"/>
+  <field pack="reverse" xml="reverse"/>
+ </table>
+ <table name="dilemmas" guid="04429d57-9bbc-11df-8001-001fd02417f0">
   <field pack="generate" xml="generate"/>
   <field pack="key" xml="key"/>
   <field pack="localised_description" xml="localised_description"/>
@@ -666,13 +1268,17 @@
   <field pack="localised_second_choice_title" xml="localised_second_choice_title"/>
   <field pack="prioritized" xml="prioritized"/>
  </table>
- <table name="diplomacy_attitudes" guid="7577782c-2de7-4654-a837-d325cca3b6f9">
+ <table name="diplomacy_attitudes" guid="2fde34b0-6e68-11df-be2b-0800200c9a66">
   <field pack="attitude" xml="attitude"/>
   <field pack="cap" xml="cap"/>
   <field pack="drift" xml="drift"/>
   <field pack="value" xml="value"/>
  </table>
- <table name="diplomacy_negotiation_religion_override_strings" guid="198a296c-1453-49cd-b507-840f011a8e3f">
+ <table name="diplomacy_factor_strings" guid="85672711-117f-4b10-bf7a-365178af0a39">
+  <field pack="key" xml="key"/>
+  <unmappedXmlFields>positive_factor_string,negative_factor_string</unmappedXmlFields>
+ </table>
+ <table name="diplomacy_negotiation_religion_override_strings" guid="9ea74195-3aa2-41c2-a43e-6ce10298ca6d">
   <field pack="culture" xml="culture"/>
   <field pack="government_type" xml="government_type"/>
   <field pack="key" xml="key"/>
@@ -680,135 +1286,186 @@
   <field pack="religion" xml="religion"/>
   <field pack="string" xml="string"/>
  </table>
- <table name="diplomacy_negotiation_string_options" guid="e91b3979-c02a-421b-83b9-646fdb251819">
+ <table name="diplomacy_negotiation_string_options" guid="c829f4c9-4359-42d8-ae38-06d752ed1cde">
   <field pack="culture" xml="culture"/>
   <field pack="government_type" xml="government_type"/>
   <field pack="key" xml="key"/>
  </table>
- <table name="diplomacy_negotiation_strings" guid="897840e7-263f-4e12-b35c-90039788a68d">
+ <table name="diplomacy_negotiation_strings" guid="5d6ae1c7-d4b2-11e0-8001-6cf049ef02b0">
   <field pack="key" xml="key"/>
   <field pack="culture" xml="culture"/>
   <field pack="government_type" xml="government_type"/>
   <field pack="option" xml="option"/>
   <field pack="string" xml="string"/>
  </table>
- <table name="diplomacy_strings" guid="c361384d-5d52-4967-be61-fde7f1b13892">
+ <table name="diplomacy_strings" guid="ff4a64b9-e87a-4f47-8e0f-e11dd145d066">
   <field pack="key" xml="key"/>
-  <ignoredXmlFields>string</ignoredXmlFields>
+  <unmappedXmlFields>string</unmappedXmlFields>
  </table>
- <table name="diplomatic_relations_government_type" guid="f5cd7e7f-9748-46ab-9968-7b40581e9b35">
+ <table name="diplomatic_relations_attitudes" guid="a4ae4acd-fd94-4e7f-8eee-53432eb43300">
+  <field pack="attitude" xml="attitude"/>
+  <field pack="value" xml="value"/>
+ </table>
+ <table name="diplomatic_relations_government_type" guid="900872f7-b409-4b14-b54b-c09bfd02dc48">
   <field pack="government_type_from" xml="government_type_from"/>
   <field pack="government_type_to" xml="government_type_to"/>
   <field pack="attitude_on_change" xml="attitude_on_change"/>
   <field pack="base_attitude" xml="base_attitude"/>
  </table>
- <table name="diplomatic_relations_religion" guid="ff6e2148-63c3-4135-81a6-920e5f60eb62">
+ <table name="diplomatic_relations_religion" guid="974a5027-e3b9-4959-8af7-4e0ca64b6aea">
   <field pack="religion_A" xml="religion_A"/>
   <field pack="religion_B" xml="religion_B"/>
   <field pack="relations_modifier" xml="relations_modifier"/>
   <field pack="religious_unhappiness_modifier" xml="religious_unhappiness_modifier"/>
  </table>
- <table name="effect_bonus_value_agent_junction" guid="cd0e9d09-480a-44a5-9a58-048051f23639">
+ <table name="effect_bonus_value_agent_junction" guid="65f2aa90-fab5-4826-8724-7db625e7d8c8">
   <field pack="effect" xml="effect"/>
   <field pack="bonus_value_id" xml="bonus_value_id"/>
   <field pack="agent" xml="agent"/>
  </table>
- <table name="effect_bonus_value_basic_junction" guid="c4d2307a-0b92-4b2e-bbde-bb86b44a78e7">
+ <table name="effect_bonus_value_basic_junction" guid="6c02fa83-e559-42d2-8cd8-1cb6d0cb3073">
   <field pack="effect" xml="effect"/>
   <field pack="bonus_value_id" xml="bonus_value_id"/>
  </table>
- <table name="effect_bonus_value_building_chain_junctions" guid="ab5e672a-e752-48ec-97e6-375f43c48968">
+ <table name="effect_bonus_value_building_chain_junctions" guid="dac95bf2-20e4-4518-9ee8-6daecf3e657b">
   <field pack="effect" xml="effect"/>
   <field pack="bonus_value_id" xml="bonus_value_id"/>
   <field pack="building_chain" xml="building_chain"/>
  </table>
- <table name="effect_bonus_value_commodity_junction" guid="48b3bdce-decc-4e11-8c17-85d2d9559f5f">
+ <table name="effect_bonus_value_commodity_junction" guid="3c1738e5-2b45-40a3-903a-d11d443c109a">
   <field pack="effect" xml="effect"/>
   <field pack="bonus_value_id" xml="bonus_value_id"/>
   <field pack="commodity" xml="commodity"/>
  </table>
- <table name="effect_bonus_value_population_class_and_religion_junction" guid="cd192b46-e8ab-42fd-b3cc-8b8c19e06d9a">
+ <table name="effect_bonus_value_population_class_and_religion_junction" guid="7cee79cd-c9c9-4ca4-a2cc-3665b9acfe6f">
   <field pack="effect" xml="effect"/>
   <field pack="bonus_value_id" xml="bonus_value_id"/>
   <field pack="population_class" xml="population_class"/>
   <field pack="religion" xml="religion"/>
  </table>
- <table name="effect_bonus_value_population_class_junction" guid="343139ed-5dbb-4af2-bcb7-8f40eafd6e78">
+ <table name="effect_bonus_value_population_class_junction" guid="1b294795-1b90-4716-8338-88ccbeb78e1c">
   <field pack="effect" xml="effect"/>
   <field pack="bonus_value_id" xml="bonus_value_id"/>
   <field pack="population_class" xml="population_class"/>
  </table>
- <table name="effect_bonus_value_religion_junction" guid="3ac31a1f-f2cc-4bb6-9f68-cace938bc0fb">
+ <table name="effect_bonus_value_projectile_junctions" guid="ae3a7567-3416-4896-984d-89bcc752c0ee">
+  <unmappedXmlFields>effect,bonus_value_id,projectile</unmappedXmlFields>
+ </table>
+ <table name="effect_bonus_value_religion_junction" guid="76c48e89-2f7f-46bc-bf9a-249d2744b09d">
   <field pack="effect" xml="effect"/>
   <field pack="bonus_value_id" xml="bonus_value_id"/>
   <field pack="religion" xml="religion"/>
  </table>
- <table name="effect_bonus_value_resource_junction" guid="2ed0f19f-091d-4546-8f07-b0bda920298c">
+ <table name="effect_bonus_value_resource_junction" guid="3bc81d05-bf18-435c-b085-e86f60ec15bb">
   <field pack="effect" xml="effect"/>
   <field pack="bonus_value_id" xml="bonus_value_id"/>
   <field pack="resource" xml="resource"/>
  </table>
- <table name="effect_bonus_value_shot_type_junctions" guid="001b06ee-7fdd-4fde-9f3e-55ba4e10d205">
+ <table name="effect_bonus_value_shot_type_junctions" guid="34678c35-fa06-4fc3-8102-fdf7b88230ae">
   <field pack="effect" xml="effect"/>
   <field pack="bonus_value_id" xml="bonus_value_id"/>
   <field pack="shot_type" xml="shot_type"/>
  </table>
- <table name="effect_bonus_value_unit_ability_junctions" guid="6d3c4a52-39f7-4f3a-ba78-9d1da76e606f">
+ <table name="effect_bonus_value_unit_ability_junctions" guid="6279c8ee-404f-450c-bf09-ae9acf7229f8">
   <field pack="effect" xml="effect"/>
   <field pack="bonus_value_id" xml="bonus_value_id"/>
   <field pack="unit_ability" xml="unit_ability"/>
  </table>
- <table name="effect_bonus_value_unit_caste_junctions" guid="070196ee-153a-494a-aa61-93dbc19ec008">
+ <table name="effect_bonus_value_unit_caste_junctions" guid="375b536a-5393-11df-8001-001fd02417f0">
   <field pack="bonus_value_id" xml="bonus_value_id"/>
   <field pack="caste" xml="caste"/>
   <field pack="effect" xml="effect"/>
  </table>
- <table name="effect_bonus_value_unit_category_junction" guid="db50d061-872a-4ed1-8ea0-ec1b564fde39">
+ <table name="effect_bonus_value_unit_category_junction" guid="8d007664-72db-43ea-a931-4a5360d18c71">
   <field pack="effect" xml="effect"/>
   <field pack="bonus_value_id" xml="bonus_value_id"/>
   <field pack="unit_category" xml="unit_category"/>
  </table>
- <table name="effect_bonus_value_unit_class_junction" guid="7915609c-3da9-4902-9c99-5a60cc7d0d95">
+ <table name="effect_bonus_value_unit_class_junction" guid="88c20653-0a1a-426c-bd29-33e3abcaf54f">
   <field pack="effect" xml="effect"/>
   <field pack="bonus_value_id" xml="bonus_value_id"/>
   <field pack="unit_class" xml="unit_class"/>
  </table>
- <table name="effect_bonus_value_unit_record_junctions" guid="d3955927-0691-4a25-9750-40ed248b5b83">
+ <table name="effect_bonus_value_unit_record_junctions" guid="e7705d26-ba67-11df-8001-001fd02417f0">
   <field pack="bonus_value_id" xml="bonus_value_id"/>
   <field pack="effect" xml="effect"/>
   <field pack="unit_record_key" xml="unit_record_key"/>
  </table>
- <table name="effect_bundles" guid="fe5c0153-e537-4d77-beec-983b637346cd">
+ <table name="effect_bundles" guid="178E9446-304B-11DF-831F-99D655D89593">
   <field pack="key" xml="key"/>
   <field pack="localised_description" xml="localised_description"/>
   <field pack="localised_title" xml="localised_title"/>
   <field pack="ui_icon" xml="ui_icon"/>
  </table>
- <table name="effect_bundles_to_effects_junctions" guid="a575a846-0227-4301-910c-abd3c0c662c9">
+ <table name="effect_bundles_to_effects_junctions" guid="f180d5d8-5c43-11df-8001-001fd02417f0">
   <field pack="effect_bundle_key" xml="effect_bundle_key"/>
   <field pack="effect_key" xml="effect_key"/>
   <field pack="value" xml="value"/>
  </table>
- <table name="effects" guid="77d40c8b-0328-41d6-9f37-bf547603ec0c">
+ <table name="effects" guid="61ce8850-a138-11df-981c-0800200c9a66">
   <field pack="effect" xml="effect"/>
   <field pack="icon" xml="icon"/>
   <field pack="priority" xml="priority"/>
-  <ignoredXmlFields>description</ignoredXmlFields>
+  <unmappedXmlFields>description</unmappedXmlFields>
  </table>
- <table name="encyclopedia_page_linkages" guid="86483a2d-6904-40fc-8049-1e1099753a7d">
+ <table name="empires_regions_junct" guid="f4d6dac7-10d1-4482-925b-531495e3571e">
+  <unmappedXmlFields>region,empire</unmappedXmlFields>
+ </table>
+ <table name="empires" guid="24773af8-0966-4c59-af4c-4e191b862200">
+  <field pack="empire_name" xml="empire_name"/>
+  <unmappedXmlFields>onscreen</unmappedXmlFields>
+ </table>
+ <table name="encyclopedia_blocks" guid="8b0878ee-cae1-11df-8001-6cf049ef02b0">
+  <field pack="block_key" xml="block_key"/>
+  <field pack="class" xml="class"/>
+  <field pack="image" xml="image"/>
+  <field pack="image_class" xml="image_class"/>
+  <field pack="order" xml="order"/>
+  <field pack="page_key" xml="page_key"/>
+  <unmappedXmlFields>heading,content</unmappedXmlFields>
+ </table>
+ <table name="encyclopedia_page_linkages" guid="cfda5e40-cad7-11df-8001-6cf049ef02b0">
   <field pack="next_key" xml="next_key"/>
   <field pack="page_key" xml="page_key"/>
   <field pack="parent_key" xml="parent_key"/>
  </table>
- <table name="encyclopedia_page_related_links" guid="76c71bac-1f65-4af6-96f8-cfd3312497b4">
+ <table name="encyclopedia_page_related_links" guid="2f6c569f-8f53-11df-8002-001fd02417f0">
   <field pack="page_key" xml="page_key"/>
   <field pack="target" xml="target"/>
  </table>
- <table name="entity_training_levels" guid="4727a923-12ab-42a1-b6a1-932c2b698494">
+ <table name="encyclopedia_pages" guid="2ee9346d-8f53-11df-8001-001fd02417f0">
+  <field pack="page_key" xml="page_key"/>
+  <field pack="template" xml="template"/>
+  <unmappedXmlFields>title</unmappedXmlFields>
+ </table>
+ <table name="encyclopedia_template_strings" guid="2faf18e7-8f53-11df-8003-001fd02417f0">
+  <field pack="string_key" xml="string_key"/>
+  <unmappedXmlFields>text</unmappedXmlFields>
+ </table>
+ <table name="entity_training_levels" guid="dc3229b2-0693-4fab-85af-80edd25037ef">
   <field pack="training_level" xml="training_level"/>
   <field pack="max_offset_distance" xml="max_offset_distance"/>
  </table>
- <table name="faction_banners" guid="e6ff167f-e3bb-433a-a585-2d0d64965ef9">
+ <table name="event_log_descriptions" guid="243de06b-f9a0-11e0-8001-6cf049ef02b0">
+  <field pack="event_key" xml="event_key"/>
+  <field pack="optional_campaign_key" xml="optional_campaign_key"/>
+  <field pack="has_position" xml="has_position"/>
+  <field pack="icon" xml="icon"/>
+  <field pack="is_region_position" xml="is_region_position"/>
+  <unmappedXmlFields>event_title,event_content,notes</unmappedXmlFields>
+ </table>
+ <table name="events" guid="23f8d6f7-c610-403d-810e-d9b7766f084e">
+  <unmappedXmlFields>key,picture_category,dynamic,onscreen_name,event_text,historical_date,season,conditions,picture,turn_in_year</unmappedXmlFields>
+ </table>
+ <table name="events_view_group_junct" guid="4eec0939-540c-47a7-8f35-c8ce9a1f8785">
+  <unmappedXmlFields>event,view_group</unmappedXmlFields>
+ </table>
+ <table name="experience_triggers" guid="740aa6c4-8b69-11df-8001-001fd02417f0">
+  <field pack="experience_points" xml="experience_points"/>
+  <field pack="trigger_key" xml="trigger_key"/>
+  <unmappedXmlFields>event,condition,localised_description</unmappedXmlFields>
+ </table>
+ <table name="faction_banners" guid="31f62058-5374-11df-8001-001fd02417f0">
   <field pack="key" xml="key"/>
   <field pack="primary_blue" xml="primary_blue"/>
   <field pack="primary_green" xml="primary_green"/>
@@ -821,15 +1478,15 @@
   <field pack="tertiary_green" xml="tertiary_green"/>
   <field pack="tertiary_red" xml="tertiary_red"/>
  </table>
- <table name="faction_rebellion_units_junctions" guid="fc790858-a59b-4c37-962c-33a1340a1eec">
+ <table name="faction_rebellion_units_junctions" guid="bc8357e1-a3f8-4ce3-b7d8-289181a6487c">
   <field pack="faction_key" xml="faction_key"/>
   <field pack="unit_key" xml="unit_key"/>
  </table>
- <table name="faction_resource_consumptions" guid="c4d0c5f2-ec14-41d5-bd0b-dae16aa1d87d">
+ <table name="faction_resource_consumptions" guid="6ed0b420-89cf-11df-8001-001fd02417f0">
   <field pack="number_of_regions" xml="number_of_regions"/>
   <field pack="resource_consumption" xml="resource_consumption"/>
  </table>
- <table name="faction_uniform_colours" guid="4611b3b8-a934-4aa9-9bd9-f6afec03a661">
+ <table name="faction_uniform_colours" guid="0a255217-0659-4c47-a0a2-eaee7d5b3be0">
   <field pack="faction_name" xml="faction_name"/>
   <field pack="primary_colour_r" xml="primary_colour_r"/>
   <field pack="primary_colour_g" xml="primary_colour_g"/>
@@ -841,15 +1498,22 @@
   <field pack="tertiary_colour_g" xml="tertiary_colour_g"/>
   <field pack="tertiary_colour_b" xml="tertiary_colour_b"/>
  </table>
- <table name="faction_variables" guid="5b588fcd-3c45-46aa-93a5-2c066c0354b1">
+ <table name="faction_variables" guid="f464e0b6-47f7-4ffe-81eb-92813949c25b">
   <field pack="description" xml="description"/>
   <field pack="faction_variable_key" xml="faction_variable_key"/>
   <field pack="value" xml="value"/>
  </table>
- <table name="family_relationship_types" guid="8c613f0d-8d6b-498c-8ad8-350ba515a102">
+ <table name="family_relationship_types" guid="19176ee8-5859-11df-8001-001fd02417f0">
   <field pack="relationship_type" xml="relationship_type"/>
  </table>
- <table name="fatigue_effects" guid="4f90944b-3d1d-4131-95da-cc35dd8138eb">
+ <table name="famous_battle_pools" guid="6a35bc4e-420a-4568-9d8f-627c726b8872">
+  <field pack="pool_id" xml="pool_id"/>
+  <field pack="pool_posX" xml="pool_posX"/>
+  <field pack="pool_posY" xml="pool_posY"/>
+  <field pack="pool_radius" xml="pool_radius"/>
+  <field pack="battle_name" xml="battle_name"/>
+ </table>
+ <table name="fatigue_effects" guid="1c75e486-dda8-485d-bc59-8d4f7fd46ef0">
   <field pack="fatigue_level" xml="fatigue_level"/>
   <field pack="unit_category" xml="unit_category"/>
   <field pack="run_speed" xml="run_speed"/>
@@ -857,7 +1521,7 @@
   <field pack="firing_accuracy" xml="firing_accuracy"/>
   <field pack="melee_penalty" xml="melee_penalty"/>
  </table>
- <table name="first_person_engines" guid="ebf06ae2-ffea-4f5b-b468-83eb38f9df8f">
+ <table name="first_person_engines" guid="7aa30189-744a-4caa-ba53-9e08624bffb9">
   <field pack="auto_target" xml="auto_target"/>
   <field pack="camera_offset_x" xml="camera_offset_x"/>
   <field pack="camera_offset_y" xml="camera_offset_y"/>
@@ -871,21 +1535,47 @@
   <field pack="track_projectile_distance" xml="track_projectile_distance"/>
   <field pack="turn_delay" xml="turn_delay"/>
  </table>
- <table name="government_types_to_effects" guid="8e26b607-bb65-4ba0-9ca7-7858d7d7adfd">
+ <table name="government_types" guid="78f7746f-4624-4368-9b7b-c70c319a8b6d">
+  <field pack="government_type" xml="government_type"/>
+  <field pack="elected_ministers" xml="elected_ministers"/>
+  <field pack="hereditary_ministers" xml="hereditary_ministers"/>
+  <field pack="rank" xml="rank"/>
+  <field pack="active_upper_class" xml="active_upper_class"/>
+  <field pack="active_lower_class" xml="active_lower_class"/>
+  <unmappedXmlFields>onscreen</unmappedXmlFields>
+ </table>
+ <table name="government_types_to_effects" guid="8112cf66-b0d6-45bb-aaf2-965a4b9a79a3">
   <field pack="gov_type" xml="gov_type"/>
   <field pack="effect" xml="effect"/>
   <field pack="value" xml="value"/>
  </table>
- <table name="groupings_military" guid="0b87420c-62c6-449f-8958-e39f92514bb8">
+ <table name="governorships" guid="1ccc0ac1-d437-4a00-97b4-679d2fdc2721">
+  <field pack="governorship" xml="governorship"/>
+  <unmappedXmlFields>onscreen</unmappedXmlFields>
+ </table>
+ <table name="groupings_continents_junct" guid="8c85a29c-d574-4c6a-85b3-c9403c3e3ae1">
+  <field pack="group" xml="group"/>
+  <field pack="continent" xml="continent"/>
+ </table>
+ <table name="groupings_factions_junct" guid="e14d6029-f26d-4053-ad2d-76242e8f0531">
+  <unmappedXmlFields>group,faction</unmappedXmlFields>
+ </table>
+ <table name="groupings_military" guid="1e997fec-b779-4771-81a9-836e8bc64b17">
   <field pack="military_group" xml="military_group"/>
  </table>
- <table name="gun_type_to_projectiles" guid="cdded8f7-669c-4e02-aee8-ab3d4c91d126">
+ <table name="groupings_regions_junct" guid="0b695c72-7488-4151-9b86-2c418c4c0b67">
+  <unmappedXmlFields>group,region</unmappedXmlFields>
+ </table>
+ <table name="groupings" guid="7761b087-902d-4e3b-a414-f4c5a8d6bfb6">
+  <field pack="group_name" xml="group_name"/>
+ </table>
+ <table name="gun_type_to_projectiles" guid="4fad626e-0fa9-11e1-8001-6cf049ef02b0">
   <field pack="gun_type" xml="gun_type"/>
   <field pack="shot_type" xml="shot_type"/>
   <field pack="muzzle_flash" xml="muzzle_flash"/>
   <field pack="concentrated_fire_maximum_frequency" xml="concentrated_fire_maximum_frequency"/>
  </table>
- <table name="gun_types" guid="e2ff46d8-a193-4973-8df8-9352e14ebcae">
+ <table name="gun_types" guid="f55eccea-6d1d-4759-baa5-c378a8dfcffe">
   <field pack="gun_type" xml="gun_type"/>
   <field pack="battle_entity" xml="battle_entity"/>
   <field pack="model" xml="model"/>
@@ -895,25 +1585,66 @@
   <field pack="destruction_animation" xml="destruction_animation"/>
   <field pack="engine_type" xml="engine_type"/>
  </table>
- <table name="honour_effects" guid="f1662480-b7f0-4fb8-8fa6-155f2e5f23e9">
+ <table name="historical_character_traits" guid="18886e1c-9efc-4055-bf7d-353d873bc2a5">
+  <unmappedXmlFields>character,trait</unmappedXmlFields>
+ </table>
+ <table name="honour_effects" guid="e0b63cef-3b0a-4b94-aa3b-eb203493722e">
   <field pack="applies_to_ai" xml="applies_to_ai"/>
   <field pack="factor" xml="factor"/>
   <field pack="key" xml="key"/>
   <field pack="value" xml="value"/>
  </table>
- <table name="loading_screens" guid="da026c72-65e8-47e0-a722-5db313f602c6">
+ <table name="honour_factors" guid="b29532d7-28ea-4551-a3e6-62bc022da300">
+  <field pack="key" xml="key"/>
+  <field pack="maximum_value" xml="maximum_value"/>
+  <field pack="minimum_value" xml="minimum_value"/>
+  <unmappedXmlFields>localised_negative_name,localised_positive_name</unmappedXmlFields>
+ </table>
+ <table name="incidents" guid="7b90fbd2-d768-11df-8001-6cf049ef02b0">
+  <field pack="generate" xml="generate"/>
+  <field pack="key" xml="key"/>
+  <field pack="ui_icon" xml="ui_icon"/>
+  <field pack="ui_image" xml="ui_image"/>
+  <field pack="prioritised" xml="prioritised"/>
+  <unmappedXmlFields>localised_title,localised_description</unmappedXmlFields>
+ </table>
+ <table name="loading_screens" guid="28b7fded-1f9e-4357-9d47-0a5ee2a935ea">
   <field pack="key" xml="key"/>
   <field pack="category" xml="category"/>
   <field pack="image_file" xml="image_file"/>
   <field pack="sound_event" xml="sound_event"/>
  </table>
- <table name="loyalty_effects" guid="f2f73de5-e57c-46b5-8712-d918da5f8b31">
+ <table name="loyalty_effects" guid="51c4cc15-fcab-49c7-a53a-87b8ae6911dd">
   <field pack="applies_to_ai" xml="applies_to_ai"/>
   <field pack="factor" xml="factor"/>
   <field pack="key" xml="key"/>
   <field pack="value" xml="value"/>
  </table>
- <table name="ministerial_positions_by_gov_types" guid="c346058d-9e2d-4b8d-96dd-733a1331f5d2">
+ <table name="loyalty_factors" guid="49878127-b783-4b61-aa9d-3d4c70b0cb25">
+  <field pack="key" xml="key"/>
+  <field pack="maximum_value" xml="maximum_value"/>
+  <field pack="minimum_value" xml="minimum_value"/>
+  <unmappedXmlFields>localised_negative_name,localised_positive_name</unmappedXmlFields>
+ </table>
+ <table name="message_event_strings" guid="c246f177-e4fd-11e0-8001-6cf049ef02b0">
+  <field pack="event" xml="event"/>
+  <field pack="optional_campaign_key" xml="optional_campaign_key"/>
+  <field pack="culture" xml="culture"/>
+  <field pack="text" xml="text"/>
+  <field pack="image" xml="image"/>
+  <field pack="layout" xml="layout"/>
+  <field pack="requires_response" xml="requires_response"/>
+  <field pack="instant_open" xml="instant_open"/>
+  <field pack="icon" xml="icon"/>
+  <field pack="sound_event" xml="sound_event"/>
+  <unmappedXmlFields>title</unmappedXmlFields>
+ </table>
+ <table name="ministerial_position_default_names" guid="b6d32b3d-98eb-46fc-819b-13ebae755407">
+  <field pack="ministerial_position" xml="ministerial_position"/>
+  <field pack="gov_type" xml="gov_type"/>
+  <unmappedXmlFields>default_name</unmappedXmlFields>
+ </table>
+ <table name="ministerial_positions_by_gov_types" guid="034f1080-89e2-11df-8001-001fd02417f0">
   <field pack="faction" xml="faction"/>
   <field pack="minister_key" xml="minister_key"/>
   <field pack="government_type" xml="government_type"/>
@@ -922,66 +1653,94 @@
   <field pack="loyalty_gained" xml="loyalty_gained"/>
   <field pack="loyalty_on_loss" xml="loyalty_on_loss"/>
  </table>
- <table name="ministerial_positions" guid="b44f3e40-2535-47e9-a3a1-ec6ee7f54f3b">
+ <table name="ministerial_positions" guid="713ccc65-3a2a-4f57-9d77-3d3f03a2e58c">
   <field pack="minister_key" xml="minister_key"/>
   <field pack="rank" xml="rank"/>
  </table>
- <table name="ministerial_positions_to_character_effects" guid="ca80aa3d-0f5e-49a8-a2a3-135507da8fa0">
+ <table name="ministerial_positions_to_character_effects" guid="6eaf52e0-89cf-11df-8001-001fd02417f0">
   <field pack="effect" xml="effect"/>
   <field pack="minister_level" xml="minister_level"/>
   <field pack="position" xml="position"/>
   <field pack="ui_id" xml="ui_id"/>
   <field pack="value" xml="value"/>
  </table>
- <table name="ministerial_positions_to_effects" guid="1e7bc4d2-6645-4496-bf29-297ef5cd00da">
+ <table name="ministerial_positions_to_effects" guid="eff259ad-eb57-41c8-acb2-af933afe1a0f">
   <field pack="position" xml="position"/>
   <field pack="minister_level" xml="minister_level"/>
   <field pack="effect" xml="effect"/>
   <field pack="value" xml="value"/>
   <field pack="ui_id" xml="ui_id"/>
  </table>
- <table name="mission_issuers" guid="e9f678a2-577d-11df-8001-001fd02417f0">
+ <table name="ministerial_positions_to_governorships" guid="28e4d468-18b0-4cb5-a4d7-c6a188dd6f96">
+  <field pack="ministerial_position" xml="ministerial_position"/>
+  <field pack="governorship" xml="governorship"/>
+ </table>
+ <table name="mission_issuers" guid="8c5a6808-577d-11df-8001-001fd02417f0">
   <field pack="issuer_key" xml="issuer_key"/>
  </table>
- <table name="missions" guid="a09f5555-2cbc-44b7-887e-31f4d0ba248a">
+ <table name="missions" guid="18423bc2-ea6f-11e0-8001-6cf049ef02b0">
   <field pack="generate" xml="generate"/>
   <field pack="key" xml="key"/>
+  <field pack="localised_description" xml="localised_description"/>
   <field pack="localised_title" xml="localised_title"/>
   <field pack="mission_type" xml="mission_type"/>
   <field pack="ui_icon" xml="ui_icon"/>
   <field pack="ui_image" xml="ui_image"/>
   <field pack="prioritised" xml="prioritised"/>
-  <field pack="localised_description" xml="localised_description"/>
  </table>
- <table name="mounts" guid="665e23cb-554e-4e9b-8832-04f5b68f61d4">
+ <table name="mount_variants" guid="dbfd0061-c631-11df-8001-001fd02417f0">
+  <field pack="mount_key" xml="mount_key"/>
+  <field pack="display_key" xml="display_key"/>
+  <field pack="weight" xml="weight"/>
+  <unmappedXmlFields>key</unmappedXmlFields>
+ </table>
+ <table name="mounts" guid="f117865a-0578-4018-b4da-59003433a738">
   <field pack="key" xml="key"/>
  </table>
- <table name="mp_budgets" guid="979f9c76-f281-4b53-a391-c7ca8cdd30ec">
+ <table name="movie_event_strings" guid="ac1c7780-c7e1-11df-bd3b-0800200c9a66">
+  <field pack="event" xml="event"/>
+  <field pack="culture" xml="culture"/>
+  <field pack="movie" xml="movie"/>
+  <field pack="id" xml="id"/>
+  <unmappedXmlFields>title</unmappedXmlFields>
+ </table>
+ <table name="mp_budgets" guid="b3163bb5-a616-11df-8001-001fd02417f0">
   <field pack="budget" xml="budget"/>
   <field pack="budget_size_key" xml="budget_size_key"/>
   <field pack="key" xml="key"/>
   <field pack="land" xml="land"/>
   <field pack="siege_defender" xml="siege_defender"/>
  </table>
- <table name="mp_force_gen_army_sizes_by_budgets" guid="2b23760d-870e-4d09-bc15-a7273465a601">
+ <table name="mp_force_gen_army_sizes_by_budgets" guid="46ac736c-c72b-11df-8001-001fd02417f0">
   <field pack="budget_size" xml="budget_size"/>
   <field pack="maximum_unit_count" xml="maximum_unit_count"/>
   <field pack="minimum_unit_count" xml="minimum_unit_count"/>
  </table>
- <table name="mp_general_command_ratings" guid="3c317566-17a6-49a6-b1c4-52332cf3eb20">
+ <table name="mp_general_command_ratings" guid="078c0d26-d223-4be9-a02a-ed4f8ec30164">
   <field pack="unit_key" xml="unit_key"/>
   <field pack="command_stars" xml="command_stars"/>
  </table>
- <table name="multiplayer_faction_descriptions" guid="432c8a55-8fc5-437a-b794-cd9f9d34df66">
+ <table name="multiplayer_faction_descriptions" guid="2cadc6cc-a53c-11df-8001-001fd02417f0">
   <field pack="faction" xml="faction"/>
   <field pack="land_description" xml="land_description"/>
   <field pack="naval_description" xml="naval_description"/>
  </table>
- <table name="names_groups" guid="6e20e884-c222-40a4-8166-7316886592ac">
+ <table name="multiplayer_mininum_length_funds" guid="2c8638a8-4cd4-4376-8d24-1c9c45aaa6c9">
+  <field pack="key" xml="key"/>
+  <field pack="value" xml="value"/>
+  <unmappedXmlFields>description</unmappedXmlFields>
+ </table>
+ <table name="names_forts" guid="5951b693-4b66-459d-ade9-08159d7dcfae">
+  <unmappedXmlFields>name_group,fort_name,id</unmappedXmlFields>
+ </table>
+ <table name="names_groups" guid="067d91cf-f835-40c1-bd0c-dcd62371ec19">
   <field pack="ID" xml="ID"/>
   <field pack="Description" xml="Description"/>
  </table>
- <table name="names" guid="7d0cdbfd-a2c0-4027-9913-2e00d2f8dacc">
+ <table name="names_royalty" guid="7a9f1f37-f388-4cf9-bd84-8ada818dbbd9">
+  <unmappedXmlFields>faction,name,numeral_start,gender,frequency,id</unmappedXmlFields>
+ </table>
+ <table name="names" guid="92c37cdc-1912-48f3-a4ea-4088d1ee24e6">
   <field pack="names_group" xml="names_group"/>
   <field pack="name" xml="name"/>
   <field pack="type" xml="type"/>
@@ -990,10 +1749,29 @@
   <field pack="nobility" xml="nobility"/>
   <field pack="id" xml="id"/>
  </table>
- <table name="particle_effects" guid="e2d764af-4dc5-456a-902e-ee5f7d230a06">
+ <table name="particle_effects" guid="93bcd7e9-0b3a-4d1b-b1c4-1de981e21b0c">
   <field pack="key" xml="key"/>
  </table>
- <table name="projectile_impacts" guid="c0c300c5-272f-4b2b-ac46-6e519300671f">
+ <table name="pdlc" guid="a7bfc699-1c84-4b86-87e8-c5534163056a">
+  <field pack="ID" xml="ID"/>
+  <field pack="SteamID" xml="SteamID"/>
+  <field pack="description" xml="description"/>
+  <field pack="release_order" xml="release_order"/>
+ </table>
+ <table name="population_classes" guid="cefade20-e17a-4ee7-b0ac-84f38f5531fc">
+  <field pack="population_class" xml="population_class"/>
+  <field pack="riots" xml="riots"/>
+  <field pack="demands" xml="demands"/>
+  <field pack="spawn_rebel_general" xml="spawn_rebel_general"/>
+  <unmappedXmlFields>onscreen_name</unmappedXmlFields>
+ </table>
+ <table name="pre_battle_speeches" guid="543cdf0d-98be-11df-8001-001fd02417f0">
+  <field pack="key" xml="key"/>
+  <field pack="type" xml="type"/>
+  <field pack="parameter" xml="parameter"/>
+  <unmappedXmlFields>text</unmappedXmlFields>
+ </table>
+ <table name="projectile_impacts" guid="7752395c-2660-49c4-9870-d08f0a8c8b49">
   <field pack="key" xml="key"/>
   <field pack="ship" xml="ship"/>
   <field pack="water" xml="water"/>
@@ -1012,7 +1790,7 @@
   <field pack="glass" xml="glass"/>
   <field pack="size" xml="size"/>
  </table>
- <table name="projectile_shot_type_enum" guid="74c27fc8-fbe8-4790-8d91-be8c2b4923bf">
+ <table name="projectile_shot_type_enum" guid="31a70237-ed70-4d3f-a42b-eec637f4f33a">
   <field pack="key" xml="key"/>
   <field pack="requires_effect_enabling" xml="requires_effect_enabling"/>
   <field pack="is_grenade" xml="is_grenade"/>
@@ -1020,7 +1798,7 @@
   <field pack="is_smallarms" xml="is_smallarms"/>
   <field pack="is_artillery" xml="is_artillery"/>
  </table>
- <table name="projectile_trails" guid="bc9e78ea-33f6-4ed6-8b82-699207040db0">
+ <table name="projectile_trails" guid="1e389a10-68a6-11df-a08a-0800200c9a66">
   <field pack="key" xml="key"/>
   <field pack="type" xml="type"/>
   <field pack="width" xml="width"/>
@@ -1034,44 +1812,169 @@
   <field pack="distortion_cross_fade_start_distance" xml="distortion_cross_fade_start_distance"/>
   <field pack="distortion_cross_fade_range" xml="distortion_cross_fade_range"/>
  </table>
- <table name="projectiles_missile_type_enum" guid="680cb106-0fd7-44ae-8b06-c33826309603">
+ <table name="projectiles_explosions" guid="290070de-8720-4444-8860-a001516e9aa9">
+  <field pack="key" xml="key"/>
+  <field pack="detonator_type" xml="detonator_type"/>
+  <field pack="detonation_type" xml="detonation_type"/>
+  <field pack="detonation_radius" xml="detonation_radius"/>
+  <field pack="detonation_duration" xml="detonation_duration"/>
+  <field pack="detonation_speed" xml="detonation_speed"/>
+  <field pack="detonation_damage" xml="detonation_damage"/>
+  <field pack="particle_type" xml="particle_type"/>
+  <field pack="particle_number" xml="particle_number"/>
+  <field pack="explosion_particle_effect" xml="explosion_particle_effect"/>
+  <field pack="distance_from_target" xml="distance_from_target"/>
+  <field pack="error_margin" xml="error_margin"/>
+  <field pack="explosion_particle_effect_on_ground" xml="explosion_particle_effect_on_ground"/>
+  <unmappedXmlFields>non_lethal_detonation</unmappedXmlFields>
+ </table>
+ <table name="projectiles_missile_type_enum" guid="997e5e30-ce8f-40cb-972f-83338e8f2d55">
   <field pack="key" xml="key"/>
  </table>
- <table name="public_order_factors" guid="9753d3dd-4b16-420b-a137-33a05ddf052a">
+ <table name="projectiles" guid="7bfcaeca-162d-4378-8e7f-faffa0b4fc0d">
+  <field pack="key" xml="key"/>
+  <field pack="category" xml="category"/>
+  <field pack="shot_type" xml="shot_type"/>
+  <field pack="missile_type" xml="missile_type"/>
+  <field pack="missile_model" xml="missile_model"/>
+  <field pack="explosion_type" xml="explosion_type"/>
+  <field pack="trail" xml="trail"/>
+  <field pack="spin_type" xml="spin_type"/>
+  <field pack="projectile_number" xml="projectile_number"/>
+  <field pack="in_flight_transition" xml="in_flight_transition"/>
+  <field pack="trajectory_sight" xml="trajectory_sight"/>
+  <field pack="effective_range" xml="effective_range"/>
+  <field pack="minimum_range" xml="minimum_range"/>
+  <field pack="max_elevation" xml="max_elevation"/>
+  <field pack="muzzle_velocity" xml="muzzle_velocity"/>
+  <field pack="marksmanship_bonus" xml="marksmanship_bonus"/>
+  <field pack="spread" xml="spread"/>
+  <field pack="damage" xml="damage"/>
+  <field pack="penetration" xml="penetration"/>
+  <field pack="incendiary" xml="incendiary"/>
+  <field pack="blast_effect" xml="blast_effect"/>
+  <field pack="collision_radius" xml="collision_radius"/>
+  <field pack="base_reload_time" xml="base_reload_time"/>
+  <field pack="base_misfire_chance" xml="base_misfire_chance"/>
+  <field pack="weather_effect" xml="weather_effect"/>
+  <field pack="sail_damage_modifier" xml="sail_damage_modifier"/>
+  <field pack="below_waterline_damage_modifer" xml="below_waterline_damage_modifer"/>
+  <field pack="launch_audio" xml="launch_audio"/>
+  <field pack="hit_audio" xml="hit_audio"/>
+  <field pack="launch_particle_effect" xml="launch_particle_effect"/>
+  <field pack="projectile_trail_particle_effect" xml="projectile_trail_particle_effect"/>
+  <field pack="impact" xml="impact"/>
+  <field pack="gun_type" xml="gun_type"/>
+  <field pack="unknown" xml="preflight_rules"/>
+  <field pack="calibration_distance" xml="calibration_distance"/>
+  <field pack="calibration_area" xml="calibration_area"/>
+  <field pack="can_penetrate_fortwall" xml="can_penetrate_fortwall"/>
+  <field pack="gravity" xml="gravity"/>
+  <field pack="can_bounce" xml="can_bounce"/>
+  <unmappedPackedFields>Can Bounce</unmappedPackedFields>
+  <unmappedXmlFields>high_air_resistance,bounce_angle,first_person_launch_particle_effect</unmappedXmlFields>
+ </table>
+ <table name="public_order_factors" guid="6cab0fd4-eb7a-11e0-8001-6cf049ef02b0">
   <field pack="factor" xml="factor"/>
   <field pack="positive_pip_path" xml="positive_pip_path"/>
   <field pack="negative_pip_path" xml="negative_pip_path"/>
   <field pack="optional_campaign_key" xml="optional_campaign_key"/>
-  <ignoredXmlFields>positive_tooltip,negative_tooltip</ignoredXmlFields>
+  <unmappedXmlFields>positive_tooltip,negative_tooltip</unmappedXmlFields>
  </table>
- <table name="random_localisation_strings" guid="a4f6ccec-328f-4623-991a-f46b330fbb7e">
+ <table name="quotes_people" guid="5aba8112-fdba-4855-980d-6e29d65f93ec">
+  <field pack="quote_person_key" xml="quote_person_key"/>
+  <field pack="quote_person_onscreen" xml="quote_person_onscreen"/>
+ </table>
+ <table name="quotes" guid="bbf4a684-2e8b-4cfd-abfa-54920d0a459c">
+  <field pack="quote_onscreen" xml="quote_onscreen"/>
+  <field pack="quote_person" xml="quote_person"/>
   <field pack="key" xml="key"/>
-  <ignoredXmlFields>string</ignoredXmlFields>
  </table>
- <table name="region_economics_factors" guid="78f47beb-4ecc-4124-91c5-fd77ee4eba2e">
+ <table name="region_economics_factors" guid="be6a5011-afa1-49ab-8dec-baf67af6b3df">
   <field pack="factor" xml="factor"/>
   <field pack="positive_pip_path" xml="positive_pip_path"/>
-  <ignoredXmlFields>positive_tooltip</ignoredXmlFields>
+  <unmappedXmlFields>positive_tooltip</unmappedXmlFields>
  </table>
- <table name="region_unit_resources" guid="5ec9a7ea-6436-46a5-851b-163ccd8c84fb">
+ <table name="region_unit_resources" guid="4e3d50f8-16ff-4908-9764-7b420d0d3053">
   <field pack="key" xml="key"/>
   <field pack="string" xml="string"/>
  </table>
- <table name="regions_to_region_groups_junctions" guid="bfe697ca-be57-4982-ac35-f927f836bbec">
+ <table name="regions_continents" guid="c73d1cd1-224a-4be2-a44f-d6087f41cf7d">
+  <field pack="continent" xml="continent"/>
+ </table>
+ <table name="regions" guid="d27c4f1e-2e24-11e0-8001-6cf049ef02b0">
+  <field pack="key" xml="key"/>
+  <field pack="continent" xml="continent"/>
+  <field pack="r" xml="r"/>
+  <field pack="g" xml="g"/>
+  <field pack="b" xml="b"/>
+  <field pack="battle_name" xml="battle_name"/>
+  <unmappedXmlFields>onscreen,palette_entry,in_encyclopedia</unmappedXmlFields>
+ </table>
+ <table name="regions_to_region_groups_junctions" guid="698b53d2-3ff0-487c-a03f-5a762ad28c83">
   <field pack="region" xml="region"/>
   <field pack="region_group" xml="region_group"/>
  </table>
- <table name="religion_conversion_mods" guid="b5a58f54-02eb-4372-aad4-6e5f6ad7b6d6">
+ <table name="religion_conversion_mods" guid="a7d491df-3d74-4ff1-99a2-05e98d3fa36e">
   <field pack="rel_from" xml="rel_from"/>
   <field pack="rel_to" xml="rel_to"/>
   <field pack="modifier" xml="modifier"/>
  </table>
- <table name="seasons" guid="816faaa9-458a-41df-a660-48687c74d624">
+ <table name="religions" guid="891d926d-744b-469b-b499-72fa8c086d6d">
+  <field pack="religion_key" xml="religion_key"/>
+  <field pack="convertibility" xml="convertibility"/>
+  <field pack="ui_icon_path" xml="ui_icon_path"/>
+  <unmappedXmlFields>onscreen</unmappedXmlFields>
+ </table>
+ <table name="resources" guid="d9ad77ea-a196-11e0-8001-6cf049ef02b0">
+  <field pack="key" xml="key"/>
+  <field pack="unit" xml="unit"/>
+  <field pack="slot_bed" xml="slot_bed"/>
+  <field pack="trade_value" xml="trade_value"/>
+  <field pack="icon_filepath" xml="icon_filepath"/>
+  <field pack="strategic_value" xml="strategic_value"/>
+  <unmappedXmlFields>onscreen_text,description</unmappedXmlFields>
+ </table>
+ <table name="sea_climate_details" guid="f3a8c3bb-6b23-435e-8812-67006210f5e9">
+  <unmappedXmlFields>key,sea_deep_colour,sea_shallow_colour,sun_colour,sky_colour</unmappedXmlFields>
+ </table>
+ <table name="sea_surfaces" guid="75fb0c4c-042a-4e88-85af-94ee3e1d20f9">
+  <field pack="key" xml="key"/>
+  <field pack="sea_wind_speed" xml="sea_wind_speed"/>
+  <field pack="sea_phillips_constant" xml="sea_phillips_constant"/>
+  <field pack="sea_choppiness" xml="sea_choppiness"/>
+  <field pack="swell_wind_speed" xml="swell_wind_speed"/>
+  <field pack="swell_phillips_constant" xml="swell_phillips_constant"/>
+  <field pack="foam_enabled" xml="foam_enabled"/>
+  <field pack="foam_decay_rate" xml="foam_decay_rate"/>
+  <field pack="foam_fade_in_time" xml="foam_fade_in_time"/>
+  <field pack="foam_cut_off_value" xml="foam_cut_off_value"/>
+  <field pack="froth_value" xml="froth_value"/>
+  <field pack="froth_distortion_speed" xml="froth_distortion_speed"/>
+  <field pack="froth_distortion_amount" xml="froth_distortion_amount"/>
+  <field pack="spray_cut_off_value" xml="spray_cut_off_value"/>
+  <field pack="spray_speed" xml="spray_speed"/>
+  <field pack="spray_duration" xml="spray_duration"/>
+  <field pack="sea_shininess" xml="sea_shininess"/>
+  <field pack="sea_decay" xml="sea_decay"/>
+  <field pack="reflection_flattening_factor" xml="reflection_flattening_factor"/>
+ </table>
+ <table name="seasons" guid="6bea04e6-2e36-44c7-ad84-29874045b046">
   <field pack="season" xml="season"/>
   <field pack="onscreen" xml="onscreen"/>
   <field pack="order" xml="order"/>
  </table>
- <table name="slots" guid="bf347942-8264-415d-aedf-363a9d39ce29">
+ <table name="ship_names" guid="c9af7e58-3ab4-484e-9dd2-e0b68a300904">
+  <unmappedXmlFields>key,name_group,Ship_Name,exclusive_to_faction</unmappedXmlFields>
+ </table>
+ <table name="slots_gdp_values" guid="badf4c93-4b6f-465e-8908-27dda1c6dfff">
+  <field pack="slot" xml="slot"/>
+  <field pack="level" xml="level"/>
+  <field pack="gdp_value" xml="gdp_value"/>
+  <field pack="building_gdp_modifier" xml="building_gdp_modifier"/>
+  <unmappedXmlFields>onscreen_name</unmappedXmlFields>
+ </table>
+ <table name="slots" guid="b69ce560-6f1b-11df-be2b-0800200c9a66">
   <field pack="slot" xml="slot"/>
   <field pack="is_farm" xml="is_farm"/>
   <field pack="is_town" xml="is_town"/>
@@ -1079,88 +1982,172 @@
   <field pack="is_resource" xml="is_resource"/>
   <field pack="supports_building_level_conversion" xml="supports_building_level_conversion"/>
  </table>
- <table name="sound_events" guid="b2114587-dfc2-4dc8-8f5a-aab137f9fbd2">
+ <table name="slots_templates_models" guid="fcca5f5d-a3af-4347-8325-72d95de6d172">
+  <field pack="template_name" xml="template_name"/>
+  <field pack="model_filename" xml="model_filename"/>
+  <field pack="model_filepath" xml="model_filepath"/>
+ </table>
+ <table name="small_vegetation_climates_jct" guid="3e632d30-eaa7-418d-b03f-1bb4bd8fb3a9">
+  <unmappedXmlFields>climate,rigid_name</unmappedXmlFields>
+ </table>
+ <table name="sound_events" guid="fdfd8193-daa2-11df-8001-6cf049ef02b0">
   <field pack="name" xml="name"/>
  </table>
- <table name="stances" guid="8c085913-5b68-4ef1-9e05-132441603ff8">
+ <table name="stances" guid="90ebea63-d656-47e8-b94a-38eda0fd35c8">
   <field pack="key" xml="key"/>
   <field pack="onscreen" xml="onscreen"/>
  </table>
- <table name="start_pos_family_relationships" guid="3a12801e-8102-4080-bf32-96434387a505">
+ <table name="start_pos_family_relationships" guid="7a874d40-6ef3-11df-be2b-0800200c9a66">
   <field pack="character" xml="character"/>
   <field pack="related_to" xml="related_to"/>
   <field pack="relationship" xml="relationship"/>
  </table>
- <table name="stats" guid="ae177c31-babb-4f76-9ce2-a20dbf5653f6">
+ <table name="state_gift_values" guid="b0378311-8b09-43a6-809e-516ddb9c7400">
+  <field pack="key" xml="key"/>
+  <field pack="value" xml="value"/>
+ </table>
+ <table name="stats" guid="ce66dc47-ad61-11e0-8001-6cf049ef02b0">
   <field pack="key" xml="key"/>
   <field pack="label" xml="label"/>
   <field pack="public" xml="public"/>
   <field pack="ladder" xml="ladder"/>
   <field pack="order" xml="order"/>
  </table>
- <table name="subtitles" guid="f133a3c8-56d7-46fb-92ed-3bcb0ac91cc7">
+ <table name="subtitles" guid="5ff3dbba-b10f-4e74-be38-0f18a83e9954">
   <field pack="subtitle_key" xml="subtitle_key"/>
   <field pack="subtitle_text" xml="subtitle_text"/>
  </table>
- <table name="taxes_levels" guid="72163d89-4a8b-490d-b9e2-0f44e2804027">
+ <table name="taxes_classes" guid="ab78fe06-53b6-47e6-b2e8-12f84898a420">
+  <field pack="tax" xml="tax"/>
+ </table>
+ <table name="taxes_keys" guid="89c3b541-700c-497e-a705-c01ce96baddf">
+  <field pack="tax_class" xml="tax_class"/>
+  <field pack="tax_level" xml="tax_level"/>
+  <field pack="tax_lookup" xml="tax_lookup"/>
+ </table>
+ <table name="taxes_levels" guid="cf1526d9-04c3-4d1e-9491-ffc80d7288ab">
   <field pack="tax_level" xml="tax_level"/>
   <field pack="percentage" xml="percentage"/>
  </table>
- <table name="technology_effects_junction" guid="42c1d4c7-92fc-4d27-91d9-9e7b365fa2bb">
+ <table name="technologies" guid="4306ef45-2873-11e0-8001-6cf049ef02b0">
+  <field pack="key" xml="key"/>
+  <field pack="building_level" xml="building_level"/>
+  <field pack="position_index" xml="position_index"/>
+  <field pack="research_points_required" xml="research_points_required"/>
+  <field pack="icon_name" xml="icon_name"/>
+  <field pack="military_prestige" xml="military_prestige"/>
+  <field pack="naval_prestige" xml="naval_prestige"/>
+  <field pack="economic_prestige" xml="economic_prestige"/>
+  <field pack="enlightenment_prestige" xml="enlightenment_prestige"/>
+  <field pack="mp_available_early" xml="mp_available_early"/>
+  <field pack="mp_available_late" xml="mp_available_late"/>
+  <field pack="info_pic" xml="info_pic"/>
+  <field pack="ai_bias" xml="ai_bias"/>
+  <field pack="unique_index" xml="unique_index"/>
+  <unmappedXmlFields>onscreen_name,short_description,long_description,in_encyclopedia</unmappedXmlFields>
+ </table>
+ <table name="technology_categories" guid="9e859512-9e78-11e0-8001-6cf049ef02b0">
+  <field pack="key" xml="key"/>
+  <field pack="position" xml="position"/>
+  <field pack="tooltip" xml="tooltip"/>
+  <unmappedXmlFields>localised_name</unmappedXmlFields>
+ </table>
+ <table name="technology_effects_junction" guid="55624ead-7814-4bb5-88f7-49c3be3cd91d">
   <field pack="technology" xml="technology"/>
   <field pack="effect" xml="effect"/>
   <field pack="value" xml="value"/>
  </table>
- <table name="technology_node_links" guid="d49f17b0-ffa7-4358-aac8-2c63570feedf">
+ <table name="technology_faction_junctions" guid="b6ef2227-7812-4d30-9de6-78fd689c37ad">
+  <unmappedXmlFields>technology_key,faction_key</unmappedXmlFields>
+ </table>
+ <table name="technology_node_links" guid="1cb23457-82c8-11df-8001-001fd02417f0">
   <field pack="child_key" xml="child_key"/>
   <field pack="initial_descent_tiers" xml="initial_descent_tiers"/>
   <field pack="parent_key" xml="parent_key"/>
   <field pack="parent_link_position" xml="parent_link_position"/>
   <field pack="child_link_position" xml="child_link_position"/>
  </table>
- <table name="technology_node_sets" guid="a22c1f40-964f-4810-8d34-ca5d30078255">
+ <table name="technology_node_sets" guid="4c688e52-7929-11df-8008-001fd02417f0">
   <field pack="campaign_key" xml="campaign_key"/>
   <field pack="faction_key" xml="faction_key"/>
   <field pack="key" xml="key"/>
   <field pack="technology_category" xml="technology_category"/>
  </table>
- <table name="town_wealth_growth_factors" guid="9641b70b-281b-4ea7-a9e0-ae17ba7884c7">
+ <table name="technology_required_building_levels_junctions" guid="687c8554-f3d5-4b3e-bd0a-582d6096f17b">
+  <unmappedXmlFields>technology,required_building_level</unmappedXmlFields>
+ </table>
+ <table name="technology_required_technology_junctions" guid="41cf6326-fc15-40e5-a00c-7b91ecd8f0f7">
+  <unmappedXmlFields>technology,required_technology</unmappedXmlFields>
+ </table>
+ <table name="terrain_tilesets" guid="43041c9f-4b5d-4d3b-a968-66ac98df00a9">
+  <field pack="tileset_name" xml="tileset_name"/>
+ </table>
+ <table name="town_wealth_growth_factors" guid="e664e33e-b788-46ae-a228-e7c95404a358">
   <field pack="factor" xml="factor"/>
   <field pack="positive_pip_path" xml="positive_pip_path"/>
   <field pack="negative_pip_path" xml="negative_pip_path"/>
-  <ignoredXmlFields>positive_tooltip,negative_tooltip</ignoredXmlFields>
+  <unmappedXmlFields>positive_tooltip,negative_tooltip</unmappedXmlFields>
  </table>
- <table name="trait_categories" guid="78a0e346-81c6-4ea9-bad5-d4e6f22c6974">
+ <table name="trade_details" guid="8f6699da-9866-4245-8b3c-742d38605154">
+  <field pack="key" xml="key"/>
+  <field pack="icon_filepath" xml="icon_filepath"/>
+  <unmappedXmlFields>onscreen_text</unmappedXmlFields>
+ </table>
+ <table name="trade_node_groups" guid="c25e0412-0d1b-45b4-9825-b75f99b096bd">
+  <field pack="key" xml="key"/>
+  <unmappedXmlFields>display_name</unmappedXmlFields>
+ </table>
+ <table name="trade_nodes" guid="a097b56c-d21b-4295-a7e9-3cb6b4f3b3b1">
+  <field pack="ID" xml="ID"/>
+  <field pack="commodity" xml="commodity"/>
+  <field pack="base_quantity" xml="base_quantity"/>
+  <field pack="percentage_increase_per_agent" xml="percentage_increase_per_agent"/>
+  <field pack="maximum_percentage_increase" xml="maximum_percentage_increase"/>
+  <field pack="group" xml="group"/>
+  <unmappedXmlFields>display_name</unmappedXmlFields>
+ </table>
+ <table name="trait_attribute_effects" guid="7b194735-e093-4db0-b95d-c9d0b39cc448">
+  <unmappedXmlFields>trait_level,attribute,effect_value</unmappedXmlFields>
+ </table>
+ <table name="trait_categories" guid="b797eef7-c2bc-4b06-b94a-8b1342845938">
   <field pack="category" xml="category"/>
   <field pack="icon_path" xml="icon_path"/>
  </table>
- <table name="trait_info" guid="9e1aed49-a110-426f-99f0-a776f653aac6">
+ <table name="trait_info" guid="b4805ac4-cc9d-11df-8001-6cf049ef02b0">
   <field pack="trait" xml="trait"/>
   <field pack="applicable_to" xml="applicable_to"/>
  </table>
- <table name="trait_level_effects" guid="8b5854e3-7ffd-4df4-b137-d4916465e66e">
+ <table name="trait_level_effects" guid="1b1b74c4-2284-425e-9bc7-3a5228196be5">
   <field pack="trait_level" xml="trait_level"/>
   <field pack="effect" xml="effect"/>
   <field pack="value" xml="value"/>
  </table>
- <table name="trait_to_included_agents" guid="448db52a-be2c-413e-88fa-670afa857055">
+ <table name="trait_to_antitraits" guid="e423a419-6c77-477f-881c-391c2f93c1fe">
+  <unmappedXmlFields>trait,antitrait</unmappedXmlFields>
+ </table>
+ <table name="trait_to_included_agents" guid="60021bdd-efb9-4d2d-ab77-f19200d469dd">
   <field pack="trait" xml="trait"/>
   <field pack="agent" xml="agent"/>
  </table>
- <table name="trigger_effects" guid="ea17eddc-e01a-4a30-a651-0cb1b90e6bff">
+ <table name="trigger_effects" guid="b9f37b7e-1423-44a9-8439-bdf6624e3793">
   <field pack="id" xml="id"/>
   <field pack="trigger" xml="trigger"/>
   <field pack="trait" xml="trait"/>
   <field pack="value" xml="value"/>
   <field pack="chance" xml="chance"/>
  </table>
- <table name="ui_unit_stat_to_classes" guid="3429be4c-2989-4c35-8315-678e78ffea41">
+ <table name="trigger_events" guid="97cadc44-da18-4942-9aca-65786032fbb3">
+  <field pack="event" xml="event"/>
+  <unmappedXmlFields>from_ui</unmappedXmlFields>
+ </table>
+ <table name="ui_unit_stat_to_classes" guid="17623ac0-89cd-11df-8001-001fd02417f0">
   <field pack="stat_key" xml="stat_key"/>
   <field pack="unit_class" xml="unit_class"/>
   <field pack="list_order" xml="list_order"/>
  </table>
- <table name="uniform_to_faction_colours" guid="6df7d3ab-1ef5-4fe2-9f75-ff90d25b2d6e">
+ <table name="uniform_to_faction_colours" guid="61c08d2f-788b-11df-8001-001fd02417f0">
   <field pack="uniform_name" xml="uniform_name"/>
+  <field pack="faction_name" xml="faction_name"/>
   <field pack="primary_colour_r" xml="primary_colour_r"/>
   <field pack="primary_colour_g" xml="primary_colour_g"/>
   <field pack="primary_colour_b" xml="primary_colour_b"/>
@@ -1171,9 +2158,19 @@
   <field pack="tertiary_colour_g" xml="tertiary_colour_g"/>
   <field pack="tertiary_colour_b" xml="tertiary_colour_b"/>
   <field pack="type" xml="type"/>
-  <field pack="faction_name" xml="faction_name"/>
  </table>
- <table name="unit_abilities" guid="0dd50271-15ae-4f7a-b283-ed78ea471c73">
+ <table name="uniforms" guid="9f5d21f2-19a0-11e0-8001-6cf049ef02b0">
+  <field pack="Uniform_Name" xml="Uniform_Name"/>
+  <field pack="Faction" xml="Faction"/>
+  <field pack="Filename" xml="Filename"/>
+  <field pack="Unit" xml="Unit"/>
+  <field pack="officer_filename" xml="officer_filename"/>
+  <field pack="standard_bearer_filename" xml="standard_bearer_filename"/>
+  <field pack="musician_filename" xml="musician_filename"/>
+  <field pack="imposter_sharing" xml="imposter_sharing"/>
+  <unmappedXmlFields>IconScreenshotCameraPreset,InfoScreenshotCameraPreset,ManAnimation,MountAnimation</unmappedXmlFields>
+ </table>
+ <table name="unit_abilities" guid="25853b2b-e0d8-11df-8001-6cf049ef02b0">
   <field pack="key" xml="key"/>
   <field pack="stationary_for_turn" xml="stationary_for_turn"/>
   <field pack="supersedes_ability" xml="supersedes_ability"/>
@@ -1182,57 +2179,60 @@
   <field pack="info_card_tooltip_text" xml="info_card_tooltip_text"/>
   <field pack="button_tooltip_text" xml="button_tooltip_text"/>
  </table>
- <table name="unit_castes" guid="89ff2575-c6a0-4317-8cf8-0228f3514b94">
+ <table name="unit_castes" guid="716b663e-e1cf-11df-8001-6cf049ef02b0">
   <field pack="caste" xml="caste"/>
   <field pack="localised_name" xml="localised_name"/>
  </table>
- <table name="unit_category" guid="cdd0b690-39af-4fd1-945d-e9d38d51699b">
+ <table name="unit_category" guid="ee3be351-a17a-11e0-8001-6cf049ef02b0">
   <field pack="key" xml="key"/>
   <field pack="localised_name" xml="localised_name"/>
   <field pack="r_colour" xml="r_colour"/>
   <field pack="g_colour" xml="g_colour"/>
   <field pack="b_colour" xml="b_colour"/>
  </table>
- <table name="unit_class" guid="df5412e1-95f1-4a18-8f8f-fce4e230bfa3">
+ <table name="unit_class" guid="432720d6-1aa4-480b-91a6-6306ccc01994">
   <field pack="key" xml="key"/>
   <field pack="onscreen" xml="onscreen"/>
-  <ignoredXmlFields>tooltip</ignoredXmlFields>
+  <unmappedXmlFields>tooltip</unmappedXmlFields>
  </table>
- <table name="unit_class_to_unit_ability_junctions" guid="249e8237-3f4e-42c1-af70-5742d59a7e3c">
+ <table name="unit_class_to_population_class_priorities" guid="ceec6e9c-aa0b-4f7d-a85c-daccbc3fcea6">
+  <unmappedXmlFields>unit_class,upper_class_priority,middle_class_priority,lower_class_priority</unmappedXmlFields>
+ </table>
+ <table name="unit_class_to_unit_ability_junctions" guid="a579b277-88e3-47fb-8177-494a23c12d5f">
   <field pack="unit_class" xml="unit_class"/>
   <field pack="unit_ability" xml="unit_ability"/>
  </table>
- <table name="unit_experience_threshold_modifiers" guid="b01dd462-1433-4e46-8ba5-721d9336d508">
+ <table name="unit_experience_threshold_modifiers" guid="1b2120d0-54a7-11e0-8001-6cf049ef02b0">
   <field pack="key" xml="key"/>
   <field pack="modifier" xml="modifier"/>
  </table>
- <table name="unit_experience_thresholds" guid="f0f71464-6cbd-48dc-81c1-aabcf02c5b66">
+ <table name="unit_experience_thresholds" guid="28d93d7b-b0dc-4050-905c-520f69793e08">
   <field pack="key" xml="key"/>
   <field pack="value" xml="value"/>
  </table>
- <table name="unit_info_card_abilities_strings" guid="444f60b8-84f4-4e68-9319-61020a5b9a99">
+ <table name="unit_info_card_abilities_strings" guid="daa514b4-4fdc-11e0-8001-6cf049ef02b0">
   <field pack="key" xml="key"/>
   <field pack="bullet_text" xml="bullet_text"/>
   <field pack="tooltip_text" xml="tooltip_text"/>
  </table>
- <table name="unit_movement_modifiers" guid="1ae8d6f1-c292-4dfb-a963-26dd1c42665b">
+ <table name="unit_movement_modifiers" guid="31596ef7-d2de-4cf1-87db-76ef138105d8">
   <field pack="key" xml="key"/>
   <field pack="artillery" xml="artillery"/>
   <field pack="artillery_horse" xml="artillery_horse"/>
   <field pack="cavalry" xml="cavalry"/>
   <field pack="infantry" xml="infantry"/>
  </table>
- <table name="unit_regiment_names" guid="8a90bc66-4b49-4314-b4fa-a696834ac46a">
+ <table name="unit_regiment_names" guid="c99f3a8a-8226-11e0-8001-6cf049ef02b0">
   <field pack="name_group" xml="name_group"/>
   <field pack="unit_caste" xml="unit_caste"/>
   <field pack="unit_name" xml="unit_name"/>
   <field pack="name_order" xml="name_order"/>
  </table>
- <table name="unit_required_technology_junctions" guid="3a6aad54-1296-42a5-bfae-b2f03f1d19ba">
+ <table name="unit_required_technology_junctions" guid="134fe1fe-293f-416c-9844-70d7c8f67e7d">
   <field pack="unit_key" xml="unit_key"/>
   <field pack="technology_key" xml="technology_key"/>
  </table>
- <table name="unit_special_abilities" guid="93d92080-7c6f-495b-8e1c-0038f5375467">
+ <table name="unit_special_abilities" guid="775c8216-8cf4-11e0-8001-6cf049ef02b0">
   <field pack="key" xml="key"/>
   <field pack="active_time" xml="active_time"/>
   <field pack="recharge_time" xml="recharge_time"/>
@@ -1247,7 +2247,18 @@
   <field pack="activated_projectile" xml="activated_projectile"/>
   <field pack="can_autotrigger" xml="can_autotrigger"/>
  </table>
- <table name="unit_stats_naval_crew_to_ship_categories" guid="cf708198-006e-4639-9cfe-771aaf4c8f18">
+ <table name="unit_stats_land_experience_bonuses" guid="2867f569-08b2-4c0b-abdd-61202563fae5">
+  <field pack="xp_level" xml="xp_level"/>
+  <field pack="melee_attack" xml="melee_attack"/>
+  <field pack="melee_defence" xml="melee_defence"/>
+  <field pack="core_reloading_skill" xml="core_reloading_skill"/>
+  <field pack="morale" xml="morale"/>
+  <field pack="core_marksmanship" xml="core_marksmanship"/>
+  <field pack="fatigue" xml="fatigue"/>
+  <field pack="mp_fixed_cost" xml="mp_fixed_cost"/>
+  <field pack="mp_experience_cost_multiplier" xml="mp_experience_cost_multiplier"/>
+ </table>
+ <table name="unit_stats_naval_crew_to_ship_categories" guid="0e332c22-9007-11df-8001-001fd02417f0">
   <field pack="key" xml="key"/>
   <field pack="marine_type" xml="marine_type"/>
   <field pack="seaman_type" xml="seaman_type"/>
@@ -1257,67 +2268,83 @@
   <field pack="officer_2" xml="officer_2"/>
   <field pack="officer_3" xml="officer_3"/>
  </table>
- <table name="unit_to_unit_abilities_junctions" guid="280100ac-522f-432a-9473-5fe5c1a0089b">
+ <table name="unit_stats_naval_experience_bonuses" guid="ae5c57a3-2231-11e0-8001-6cf049ef02b0">
+  <field pack="xp_level" xml="xp_level"/>
+  <field pack="melee_attack" xml="melee_attack"/>
+  <field pack="melee_defence" xml="melee_defence"/>
+  <field pack="core_gunner_loading_skill" xml="core_gunner_loading_skill"/>
+  <field pack="core_gunner_marksmanship" xml="core_gunner_marksmanship"/>
+  <field pack="morale" xml="morale"/>
+  <field pack="mp_fixed_cost" xml="mp_fixed_cost"/>
+  <field pack="mp_experience_cost_multiplier" xml="mp_experience_cost_multiplier"/>
+ </table>
+ <table name="unit_to_unit_abilities_junctions" guid="9193fae6-afbc-4d5b-9c15-b573188a56b3">
   <field pack="unit_name" xml="unit_name"/>
   <field pack="ability" xml="ability"/>
  </table>
- <table name="unit_voice_categories" guid="3c89bf27-d97c-49b8-a331-be5fff0dd87d">
+ <table name="unit_voice_categories" guid="494fd6de-c4d0-11df-8001-001fd02417f0">
   <field pack="key" xml="key"/>
  </table>
- <table name="unit_voice_events_junctions" guid="4b476d45-e99b-41a7-a699-4bdbb44ffef1">
+ <table name="unit_voice_events_junctions" guid="0f10e769-c58a-11df-8001-001fd02417f0">
   <field pack="unit_voice_category_key" xml="unit_voice_category_key"/>
   <field pack="voice_type_key" xml="voice_type_key"/>
   <field pack="voice_event_key" xml="voice_event_key"/>
   <field pack="sound_event_key" xml="sound_event_key"/>
  </table>
- <table name="units_to_exclusive_faction_permissions" guid="07596a7e-3295-408c-9dcb-37ead0a011d0">
+ <table name="units_to_exclusive_faction_permissions" guid="7455386c-bc0f-4cce-addf-ae19b3100383">
   <field pack="key" xml="key"/>
   <field pack="faction" xml="faction"/>
   <field pack="allowed" xml="allowed"/>
  </table>
- <table name="units_to_groupings_military_permissions" guid="54cde4dd-7e9a-41cb-926c-2909712f72c8">
+ <table name="units_to_gov_type_permissions" guid="10580deb-79b4-4eb0-a43f-1c421ee6b945">
+  <unmappedXmlFields>unique_number,key,gov_type,outcome</unmappedXmlFields>
+ </table>
+ <table name="units_to_gov_types_conversion_jcts" guid="0e2ab6d8-9772-45a1-b758-c48b7e15c0b8">
+  <unmappedXmlFields>key,unit</unmappedXmlFields>
+ </table>
+ <table name="units_to_groupings_military_permissions" guid="ef3f8578-88f0-4544-9ebe-b745f7d7b41f">
   <field pack="unit" xml="unit"/>
   <field pack="military_group" xml="military_group"/>
  </table>
- <table name="unrest_cause_to_demands" guid="cbd9ffe1-1820-46e0-9e8d-0752b7425ada">
+ <table name="unrest_cause_to_demands" guid="ef067e2f-b827-11e0-8001-6cf049ef02b0">
   <field pack="cause" xml="cause"/>
   <field pack="level_of_unrest" xml="level_of_unrest"/>
   <field pack="demand" xml="demand"/>
   <field pack="message" xml="message"/>
  </table>
- <table name="videos_subtitles_junctions" guid="704287c9-2b6f-4d5d-8cda-78819146c28b">
+ <table name="videos_subtitles_junctions" guid="0dc43b56-aedd-4c21-86d6-4dfcced898d8">
   <field pack="video_name" xml="video_name"/>
   <field pack="start" xml="start"/>
   <field pack="end" xml="end"/>
   <field pack="subtitle_key" xml="subtitle_key"/>
  </table>
- <table name="videos" guid="f4f6e041-0fd8-4237-97b7-675fc26cbcd3">
+ <table name="videos" guid="3c3cd46f-cbfa-4cbe-b5a2-1a47eccb30c3">
   <field pack="video_name" xml="video_name"/>
   <field pack="video_type" xml="video_type"/>
   <field pack="audio_tracks" xml="audio_tracks"/>
  </table>
- <table name="voice_events" guid="f8e930a0-0727-48db-b40d-a6ac0450bab8">
+ <table name="voice_events" guid="912b6eb4-8b7a-11df-8001-001fd02417f0">
   <field pack="name" xml="name"/>
  </table>
- <table name="voice_types" guid="c7690a6d-c58a-11df-8001-001fd02417f0">
+ <table name="voice_types" guid="c7397695-c58a-11df-8001-001fd02417f0">
   <field pack="key" xml="key"/>
  </table>
- <table name="warscape_animated_lod" guid="6d09607a-831a-43a6-8034-3d14d595ae1a">
+ <table name="warscape_animated_lod" guid="9777b6c2-5f90-4037-ae67-8c19d1950fa9">
   <field pack="key" xml="key"/>
   <field pack="filename" xml="filename"/>
   <field pack="range" xml="range"/>
   <field pack="animated" xml="animated"/>
  </table>
- <table name="warscape_animated" guid="5ebb52ed-04d0-44b5-91d3-04ca91efb9e5">
+ <table name="warscape_animated" guid="ed370efe-94ec-48b6-9fc9-bea69fb2a280">
   <field pack="key" xml="key"/>
   <field pack="texture_filename_base" xml="texture_filename_base"/>
   <field pack="category" xml="category"/>
  </table>
- <table name="warscape_equipment_items" guid="29c01efb-89dd-4afd-a726-7fa53a876d68">
+ <table name="warscape_equipment_items" guid="fe4115af-e538-11e0-8001-6cf049ef02b0">
   <field pack="equipment_item" xml="equipment_item"/>
   <field pack="equipment_key" xml="equipment_key"/>
  </table>
- <table name="warscape_equipment_themes" guid="1930512d-03a5-415b-9623-d9ac085bc582">
+ <table name="warscape_equipment_themes" guid="1e91a757-e5bc-11e0-8001-6cf049ef02b0">
   <field pack="theme" xml="theme"/>
   <field pack="primary_weapon" xml="primary_weapon"/>
   <field pack="secondary_weapon" xml="secondary_weapon"/>
@@ -1326,15 +2353,34 @@
   <field pack="personal" xml="personal"/>
   <field pack="banners" xml="banners"/>
  </table>
- <table name="warscape_rigid_lod" guid="8a9d8839-7f61-4796-be11-25136078d866">
+ <table name="warscape_rigid_lod_range" guid="87498381-ce50-4c63-9330-f29ccbaf9b2a">
+  <field pack="LOD_id" xml="LOD_id"/>
+  <field pack="range" xml="range"/>
+ </table>
+ <table name="warscape_rigid_lod" guid="aff44298-9bca-4792-9997-24ea35fb887b">
   <field pack="key" xml="key"/>
   <field pack="filename" xml="filename"/>
   <field pack="range" xml="range"/>
   <field pack="rigid" xml="rigid"/>
  </table>
- <table name="warscape_rigid" guid="5a557edd-6bae-4e29-8060-4b132d2c15a6">
+ <table name="warscape_rigid" guid="258f4816-7c40-4208-b57d-9f7c975c7349">
   <field pack="key" xml="key"/>
   <field pack="texture_directory" xml="texture_directory"/>
   <field pack="category" xml="category"/>
+ </table>
+ <table name="warscape_underlay_textures" guid="bf461e2d-9835-4d7f-914f-cd2ebe5a30b6">
+  <field pack="underlay_key" xml="underlay_key"/>
+  <field pack="filename" xml="filename"/>
+  <field pack="filepath" xml="filepath"/>
+  <field pack="levels" xml="levels"/>
+  <unmappedXmlFields>orientation-angle,width,height</unmappedXmlFields>
+ </table>
+ <table name="wind_levels" guid="21505334-ef44-11e0-8001-6cf049ef02b0">
+  <field pack="key" xml="key"/>
+  <field pack="sea_surface" xml="sea_surface"/>
+  <field pack="magnitudeX" xml="magnitudeX"/>
+  <field pack="magnitudeY" xml="magnitudeY"/>
+  <field pack="sort_order" xml="sort_order"/>
+  <unmappedXmlFields>onscreen</unmappedXmlFields>
  </table>
 </correspondencies>

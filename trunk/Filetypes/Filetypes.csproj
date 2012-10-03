@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -67,6 +67,7 @@
     <Compile Include="DB\DBTypeMap.cs" />
     <Compile Include="DB\FieldInfo.cs" />
     <Compile Include="DB\FieldInstance.cs" />
+    <Compile Include="DB\MappedTable.cs" />
     <Compile Include="DB\SchemaXml.cs" />
     <Compile Include="DB\TypeInfo.cs" />
     <Compile Include="DB\XsdParser.cs" />
@@ -100,8 +101,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup>
-    <Folder Include="Groupformations\" />
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

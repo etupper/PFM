@@ -21,7 +21,7 @@ namespace PackFileTest {
     public class FieldCorrespondencyFinder {
         string xmlDirectory;
 
-        Dictionary<string, MappedTable> mappedTables = new Dictionary<string, MappedTable>();
+        Dictionary<string, MappedDataTable> mappedTables = new Dictionary<string, MappedDataTable>();
         
         public FieldCorrespondencyFinder (string packFile, string xmlDir) {
             xmlDirectory = xmlDir;
@@ -37,7 +37,7 @@ namespace PackFileTest {
                         codec.AutoadjustGuid = false;
                         DBFile dbFile = codec.Decode(contained.Data);
 
-                        MappedTable table = new MappedTable(tableName);
+                        MappedDataTable table = new MappedDataTable(tableName);
                         ValuesFromPack(table, dbFile);
                         ValuesFromXml(table);
 
@@ -50,31 +50,40 @@ namespace PackFileTest {
                 }
             }
         }
+
+        public bool RetainExistingMappings { get; set; }
         
         public void FindAllCorrespondencies() {
+            if (!RetainExistingMappings) {
+                TableNameCorrespondencyManager.Instance.Clear();
+            }
+
+            // add manually adjusted mappings
+            Dictionary<string, List<NameMapping>> manualMappings = TableNameCorrespondencyManager.LoadFromFile("manual_correspondencies.xml");
+
+            foreach (MappedDataTable table in mappedTables.Values) {
+                FindCorrespondencies(table);
+                if (manualMappings.ContainsKey(table.TableName)) {
+                    foreach (NameMapping mapping in manualMappings[table.TableName]) {
+                        table.AddMapping(mapping.Item1, mapping.Item2);
+                    }
+                    if (table.UnmappedPackFieldNames.Count == 1 && table.UnmappedXmlFieldNames.Count == 1) {
+                        table.AddMapping(table.UnmappedPackFieldNames[0], table.UnmappedXmlFieldNames[0]);
+                    }
+                }
+            }
+
             TableNameCorrespondencyManager.Instance.Clear();
 
-            foreach(MappedTable table in mappedTables.Values) {
-                FindCorrespondencies(table);
-
-                if (table.IsFullyMapped) {
-                    TableNameCorrespondencyManager.Instance.TableMapping.Add(table.TableName, table.MappingAsTuples);
-                } else if (!table.IsCompatible) {
-                    TableNameCorrespondencyManager.Instance.IncompatibleTables.Add(table.TableName, table.MappingAsTuples);
-                } else {
-                    TableNameCorrespondencyManager.Instance.PartialTableMapping.Add(table.TableName, table.MappingAsTuples);
-                }
-                TableNameCorrespondencyManager.Instance.UnmappedPackedFields.Add(table.TableName, table.UnmappedPackFieldNames);
-                TableNameCorrespondencyManager.Instance.UnmappedXmlFields.Add(table.TableName, table.UnmappedXmlFieldNames);
-                table.IgnoredXmlFieldNames.ForEach(f => TableNameCorrespondencyManager.Instance.AddIgnoredField(table.TableName, f));
-                TableNameCorrespondencyManager.Instance.TableGuidMap[table.TableName] = table.Guid;
+            foreach (MappedDataTable table in mappedTables.Values) {
+                TableNameCorrespondencyManager.Instance.MappedTables[table.TableName] = table;
             }
         }
         
         /*
          * Find the corresponding fields for all columns in the given table.
          */
-        void FindCorrespondencies(MappedTable table) {
+        void FindCorrespondencies(MappedDataTable table) {
             
             foreach(string field in table.PackData.Fields) {
                 NameMapping mapping = FindCorrespondency(table, field);
@@ -91,15 +100,34 @@ namespace PackFileTest {
         /*
          * In the given list, find the table with all values equal to the given one from the pack.
          */
-        NameMapping FindCorrespondency(MappedTable dataTable, string fieldName) {
+        NameMapping FindCorrespondency(MappedDataTable dataTable, string fieldName) {
+#if DEBUG
+            if (dataTable.TableName.Equals("advice_levels") && fieldName.Equals("Uninhabitable")) {
+                Console.WriteLine("here we are");
+            }
+#endif
+            string existingMapping = TableNameCorrespondencyManager.Instance.GetXmlFieldName(dataTable.TableName, fieldName);
+            if (existingMapping != null) {
+                return new NameMapping(fieldName, existingMapping);
+            }
+
             NameMapping result = null;
             List<string> values = dataTable.PackData.Values(fieldName);
+
             List<string> packTableNames = dataTable.PackData.FieldsContainingValues(values);
             List<string> xmlTableNames = dataTable.XmlData.FieldsContainingValues(values);
 
+            List<NameMapping> existing = TableNameCorrespondencyManager.Instance.GetMappedFieldsForTable(dataTable.TableName);
+            foreach (NameMapping mapping in existing) {
+                packTableNames.Remove(mapping.Item1);
+                xmlTableNames.Remove(mapping.Item2);
+            }
+
             if (packTableNames.Count == 1 && xmlTableNames.Count == 1) {
+                // only one left for each
                 result = new NameMapping(packTableNames[0], xmlTableNames[0]);
             } else {
+                // find matching names
                 foreach(string xmlField in xmlTableNames) {
                     if (xmlField.Equals(UnifyName(fieldName))) {
                         result = new NameMapping(fieldName, xmlField);
@@ -107,6 +135,21 @@ namespace PackFileTest {
                     }
                 }
             }
+#if DEBUG
+            if (result == null) {
+                Console.WriteLine("Did not find corresponding for field {0}, values {1}", fieldName, string.Join(",", values));
+            }
+#endif
+            // set constant values if we have packed fields with no xml fields left
+            //if (dataTable.UnmappedXmlFieldNames.Count == 0) {
+            //    foreach (string packedField in dataTable.UnmappedPackFieldNames) {
+            //        string constantValue = dataTable.GetConstantValue(packedField);
+            //        if (constantValue != null) {
+            //            // TableNameCorrespondencyManager.Instance
+            //        }
+            //    }
+            //}
+
             return result;
         }
 
@@ -117,7 +160,7 @@ namespace PackFileTest {
         /*
          * Retrieve the columnname/valuelist collection from the db file of the given type.
          */
-        void ValuesFromPack(MappedTable table, DBFile dbFile) {
+        void ValuesFromPack(MappedDataTable table, DBFile dbFile) {
             foreach(List<FieldInstance> row in dbFile.Entries) {
                 foreach(FieldInstance field in row) {
                     table.PackData.AddFieldValue(field.Name, field.Value);
@@ -128,15 +171,16 @@ namespace PackFileTest {
         /*
          * Retrieve the columnname/valuelist collection from the table with the given name.
          */
-        void ValuesFromXml(MappedTable fill) {
+        void ValuesFromXml(MappedDataTable fill) {
             XmlDocument tableDocument = new XmlDocument();
             string xmlFile = Path.Combine(xmlDirectory, string.Format("{0}.xml", fill.TableName));
-            List<CaFieldInfo> infos = CaFieldInfo.ReadInfo(xmlDirectory, fill.TableName);
-            infos.ForEach(i => {
-                if (i.Ignored && !fill.IgnoredXmlFieldNames.Contains(i.Name)) {
-                    fill.IgnoredXmlFields.Add(i.Name);
-                }
-            });
+            string guid;
+            List<CaFieldInfo> infos = CaFieldInfo.ReadInfo(xmlDirectory, fill.TableName, out guid);
+            //infos.ForEach(i => {
+            //    if (i.Ignored && !fill.IgnoredXmlFieldNames.Contains(i.Name)) {
+            //        fill.IgnoredXmlFields.Add(i.Name);
+            //    }
+            //});
 
             if (File.Exists(xmlFile)) {
                 tableDocument.Load(xmlFile);
@@ -168,7 +212,7 @@ namespace PackFileTest {
          */
         public bool ManuallyResolveTableMapping(string tableName) {
 
-            MappedTable table = mappedTables[tableName];
+            MappedDataTable table = mappedTables[tableName];
             Console.WriteLine("\nTable {0}", table.TableName);
             List<NameMapping> mappings = new List<NameMapping>();
             List<string> candidates = new List<string>(table.UnmappedXmlFieldNames);
@@ -199,77 +243,6 @@ namespace PackFileTest {
                 mappings.Add(new NameMapping(query, mapped));
             }
             return true;
-        }
-    }
-
-    class CaFieldInfo {
-        public CaFieldInfo(string name, string type) {
-            if (name == null || type == null) {
-                throw new InvalidDataException();
-            }
-            Name = name; 
-            fieldType = type;
-        }
-
-        public string Name { get; private set; }
-
-        string fieldType;
-
-        public bool Ignored {
-            get {
-                return fieldType.Equals("memo");
-            }
-        }
-
-        FieldReference reference;
-        public FieldReference Reference { get; set; }
-
-        public static List<CaFieldInfo> ReadInfo(string xmlDirectory, string tableName) {
-            List<CaFieldInfo> result = new List<CaFieldInfo>();
-            try {
-                string filename = Path.Combine(xmlDirectory, string.Format("TWaD_{0}.xml", tableName));
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.Load(filename);
-                foreach (XmlNode node in xmlDoc.ChildNodes) {
-                    if (node.Name.Equals("root")) {
-                        foreach (XmlNode fieldNode in node.ChildNodes) {
-                            if (!fieldNode.Name.Equals("field")) {
-                                continue;
-                            }
-                            string name = null, type = null;
-                            string refTable = null, refField = null;
-                            foreach (XmlNode itemNode in fieldNode.ChildNodes) {
-                                if (itemNode.Name.Equals("name")) {
-                                    name = itemNode.InnerText;
-                                } else if (itemNode.Name.Equals("field_type")) {
-                                    type = itemNode.InnerText;
-                                } else if (itemNode.Name.Equals("column_source_table")) {
-                                    refTable = itemNode.InnerText;
-                                } else if (itemNode.Name.Equals("column_source_column")) {
-                                    refField = itemNode.InnerText;
-                                }
-                            }
-                            CaFieldInfo info = new CaFieldInfo(name, type);
-                            if (refTable != null && refField != null) {
-                                info.Reference = new FieldReference(refTable, refField);
-                            }
-                            result.Add(info);
-                        }
-                    }
-                }
-            } catch { }
-            return result;
-        }
-
-        public static CaFieldInfo FindInList(List<CaFieldInfo> list, string name) {
-            CaFieldInfo result = null;
-            foreach (CaFieldInfo info in list) {
-                if (info.Name.Equals(name)) {
-                    result = info;
-                    break;
-                }
-            }
-            return result;
         }
     }
 }

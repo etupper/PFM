@@ -430,7 +430,7 @@ namespace DecodeTool {
         }
         /* Remove selected types, or the last one if none is selected. */
         private void DeleteType(object sender, EventArgs e) {
-            if (valueList.Items.Count == 0) {
+            if (typeList.Items.Count == 0) {
                 return;
             }
             List<FieldInfo> types = new List<FieldInfo> ();

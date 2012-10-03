@@ -7,92 +7,50 @@ using Filetypes;
 using NameMapping = System.Tuple<string, string>;
 
 namespace PackFileTest.Mapping {
-    class MappedTable {
-        private string tableName;
-        private Dictionary<string, string> mappedFields = new Dictionary<string, string>();
+    using NameMapping = System.Tuple<string, string>;
+
+    class MappedDataTable : MappedTable {
+        public MappedDataTable(string name) : base(name) { }
+
         private DataTable packData = new DataTable();
         private DataTable xmlData = new DataTable();
-        private Dictionary<string, FieldReference> references = new Dictionary<string, FieldReference>();
 
-        private List<string> ignoredXmlFields = new List<string>();
-
-        public List<string> IgnoredXmlFields {
-            get { return ignoredXmlFields; }
+        public override List<string> PackDataFields {
+            get { return packData.Fields; }
+        }
+        public override List<string> XmlDataFields {
+            get { return xmlData.Fields; }
         }
 
-        public MappedTable(string name) {
-            tableName = name;
-        }
-
-        public string TableName {
-            get { return tableName; }
-        }
-        public string Guid { get; set; }
-        public bool IsCompatible {
+        public override Dictionary<string, string> ConstantValues {
             get {
-                return packData.Fields.Count == RelevantXmlFieldCount;
-            }
-        }
-        public bool IsFullyMapped {
-            get {
-                return IsCompatible && mappedFields.Count == packData.Fields.Count;
-            }
-        }
-        public int RelevantXmlFieldCount {
-            get {
-                int result = xmlData.Fields.Count;
-                xmlData.Fields.ForEach(f => { if (ignoredXmlFields.Contains(f)) { result--; } });
-                return result;
-            }
-        }
-
-        public Dictionary<string, FieldReference> References {
-            get { return references; }
-        }
-        public FieldReference GetReference(string field) {
-            FieldReference result = null;
-            if (references.ContainsKey(field)) {
-                result = references[field];
-            }
-            return result;
-        }
-
-        public List<NameMapping> MappingAsTuples {
-            get {
-                List<NameMapping> result = new List<NameMapping>(mappedFields.Count);
-                foreach (string field in mappedFields.Keys) {
-                    result.Add(new NameMapping(field, mappedFields[field]));
+                Dictionary<string, string> result = new Dictionary<string, string>();
+                if (UnmappedXmlFieldNames.Count != 0) {
+                    // only looks for constant values if we don't have unmapped xml;
+                    // values might be coming from one of those
+                    return result;
                 }
-                return result;
-            }
-        }
-
-        #region Field Name Retrieval
-        public List<string> UnmappedPackFieldNames {
-            get {
-                List<string> result = new List<string>();
-                packData.Fields.ForEach(f => { if (!mappedFields.ContainsKey(f)) { result.Add(f); } });
-                return result;
-            }
-        }
-        public List<string> UnmappedXmlFieldNames {
-            get {
-                List<string> result = new List<string>();
-                foreach (string f in xmlData.Fields) {
-                    if (!mappedFields.ContainsValue(f) && !ignoredXmlFields.Contains(f)) {
-                        result.Add(f);
+                List<string> unmapped = new List<string>(PackDataFields);
+                unmapped.RemoveAll(delegate(string s) { return mappedFields.Keys.Contains(s); });
+                foreach (string packFieldName in unmapped) {
+                    List<string> values = packData.Values(packFieldName);
+                    if (values.Count != 0) {
+                        string lastValue = values[0];
+                        bool allValuesEqual = true;
+                        foreach (string value in values) {
+                            allValuesEqual &= value.Equals(lastValue);
+                            if (!allValuesEqual) {
+                                break;
+                            }
+                        }
+                        if (allValuesEqual) {
+                            result.Add(packFieldName, lastValue);
+                        }
                     }
                 }
-                // xmlData.Fields.ForEach(f => { if (!mappedFields.ContainsValue(f) && !ignoredXmlFields.Contains(f)) { result.Add(f); } });
                 return result;
             }
         }
-        public List<string> IgnoredXmlFieldNames {
-            get {
-                return ignoredXmlFields;
-            }
-        }
-        #endregion
 
         public DataTable PackData {
             get {
@@ -103,10 +61,6 @@ namespace PackFileTest.Mapping {
             get {
                 return xmlData;
             }
-        }
-
-        public void AddMapping(string packField, string xmlField) {
-            mappedFields[packField] = xmlField;
         }
     }
 

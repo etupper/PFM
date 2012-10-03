@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Common;
 using Filetypes;
+using PackFileTest.Mapping;
 
 namespace PackFileTest {
     class PackTest {
@@ -148,8 +149,9 @@ namespace PackFileTest {
                 string lookupString = table.Replace("_tables", "");
                 Console.WriteLine("table {0}", table);
                 List<TypeInfo> infos = DBTypeMap.Instance.GetAllInfos(table);
+                string guid;
                 foreach (TypeInfo typeInfo in infos) {
-                    List<CaFieldInfo> caInfos = CaFieldInfo.ReadInfo(xmlDirectory, lookupString);
+                    List<CaFieldInfo> caInfos = CaFieldInfo.ReadInfo(xmlDirectory, lookupString, out guid);
 
                     foreach (FieldInfo info in typeInfo.Fields) {
                         string newName = TableNameCorrespondencyManager.Instance.GetXmlFieldName(lookupString, info.Name);
@@ -171,39 +173,32 @@ namespace PackFileTest {
                                 info.FieldReference = reference;
                             }
                         }
-                        //FieldReference reference = info.FieldReference;
-                        //if (reference != null) {
-                        //    references.Add(reference);
-                        //}
                     }
                 }
             }
-            // correct references
-            //foreach (FieldReference reference in references) {
-            //    Tuple<string, string> referencedFieldTuple = new Tuple<string, string>(reference.Table, reference.Field);
-            //    if (renamedFields.ContainsKey(referencedFieldTuple)) {
-            //        string newFieldName = renamedFields[referencedFieldTuple];
-            //        reference.Field = newFieldName;
-            //    }
-            //}
         }
 
-        void FindCorrespondingFields(string packFile, string xmlDirectory) {
+        void FindCorrespondingFields(string packFile, string modToolsDirectory) {
+            string xmlDirectory = Path.Combine(modToolsDirectory, "db");
+            string empireDesignDirectory = Path.Combine(modToolsDirectory, "EmpireDesignData");
+
+            foreach (string twadFile in Directory.GetFiles(xmlDirectory, "TWaD_*")) {
+                string xmlFileName = Path.GetFileName(twadFile).Replace("TWaD_", "");
+                if (xmlFileName.StartsWith("TExc")) {
+                    continue;
+                }
+                string xmlFilePath = Path.Combine(xmlDirectory, xmlFileName);
+                if (File.Exists(xmlFilePath)) {
+                    string tableName = Path.GetFileNameWithoutExtension(xmlFileName);
+                    new UniqueTableGenerator(xmlDirectory, tableName).GenerateTable();
+                    File.Copy(xmlFilePath, Path.Combine(empireDesignDirectory, xmlFileName), true);
+                }
+            }
+
             TableNameCorrespondencyManager manager = TableNameCorrespondencyManager.Instance;
             FieldCorrespondencyFinder finder = new FieldCorrespondencyFinder(packFile, xmlDirectory);
+            finder.RetainExistingMappings = true;
             finder.FindAllCorrespondencies();
-//            foreach (string tableName in finder.PartiallyMapped.Keys) {
-//                manager.PartialTableMapping[tableName] = finder.PartiallyMapped[tableName];
-//                manager.TableGuidMap[tableName] = finder.TableToGuid[tableName];
-//            }
-//            foreach (string tableName in finder.FullyMapped.Keys) {
-//                manager.TableMapping[tableName] = finder.FullyMapped[tableName];
-//                manager.TableGuidMap[tableName] = finder.TableToGuid[tableName];
-//            }
-//            foreach (string tableName in finder.IncompatibleTables.Keys) {
-//                manager.IncompatibleTables.Add(tableName, finder.IncompatibleTables[tableName]);
-//                manager.TableGuidMap[tableName] = finder.TableToGuid[tableName];
-//            }
             Console.WriteLine("saving");
             manager.Save();
         }

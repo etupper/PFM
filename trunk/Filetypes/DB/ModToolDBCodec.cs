@@ -64,70 +64,33 @@ namespace Filetypes {
     public class TableNameCorrespondencyManager {
         public const string DEFAULT_FILE_NAME = "correspondencies.xml";
         public const string DEFAULT_PARTIAL_FILE_NAME = "partial_correspondencies.xml";
-        public const string DEFAULT_INCOMPATIBLE_FILE_NAME = "incompatible_tables.xml";
-        Dictionary<string, List<NameMapping>> tableMapping = new Dictionary<string, List<NameMapping>>();
-        public Dictionary<string, List<NameMapping>> TableMapping {
-            get {
-                return tableMapping;
-            }
-        }
-        Dictionary<string, List<NameMapping>> partialTableMapping = new Dictionary<string, List<NameMapping>>();
-        public Dictionary<string, List<NameMapping>> PartialTableMapping {
-            get {
-                return partialTableMapping;
-            }
-        }
-        Dictionary<string, List<NameMapping>> incompatibleTables = new Dictionary<string, List<NameMapping>>();
-        public Dictionary<string, List<NameMapping>> IncompatibleTables {
-            get {
-                return incompatibleTables;
-            }
-        }
 
-        Dictionary<string, List<string>> unmappedPackedFields = new Dictionary<string, List<string>>();
-        public Dictionary<string, List<string>> UnmappedPackedFields {
-            get {
-                return unmappedPackedFields;
-            }
-        }
-        Dictionary<string, List<string>> unmappedXmlFields = new Dictionary<string, List<string>>();
-        public Dictionary<string, List<string>> UnmappedXmlFields {
-            get {
-                return unmappedXmlFields;
-            }
-        }
+        static string UNMAPPED_PACK_FIELDS = "unmappedPackedFields";
+        static string UNMAPPED_XML_FIELDS = "unmappedXmlFields";
 
-        Dictionary<string, List<string>> ignoredXmlFields = new Dictionary<string, List<string>>();
-        public void AddIgnoredField(string table, string ignoredField) {
-            List<string> addTo = new List<string>();
-            if (ignoredXmlFields.ContainsKey(table)) {
-                addTo = ignoredXmlFields[table];
-            } else {
-                ignoredXmlFields.Add(table, addTo);
+        Dictionary<string, MappedTable> mappedTables = new Dictionary<string, MappedTable>();
+
+        public List<NameMapping> GetMappedFieldsForTable(string table) {
+            List<NameMapping> fields = new List<NameMapping>();
+            if (mappedTables.ContainsKey(table)) {
+                fields.AddRange(mappedTables[table].MappingAsTuples);
             }
-            if (!addTo.Contains(ignoredField)) {
-                addTo.Add(ignoredField);
-            }
-            if (unmappedXmlFields.ContainsKey(table)) {
-                unmappedXmlFields[table].Remove(ignoredField);
-            }
+            return fields;
         }
-        public bool IsFieldIgnored(string table, string field) {
-            bool result = false;
-            if (ignoredXmlFields.ContainsKey(table)) {
-                result = ignoredXmlFields[table].Contains(field);
+        public Dictionary<string, MappedTable> MappedTables {
+            get { return mappedTables; }
+        }
+        List<NameMapping> GetMappedFields(Dictionary<string, List<NameMapping>> map, string table) {
+            List<NameMapping> result = new List<NameMapping>();
+            if (map.ContainsKey(table)) {
+                result.AddRange(map[table]);
             }
             return result;
         }
-        
+
         public void Clear() {
-            tableMapping.Clear();
-            partialTableMapping.Clear();
-            incompatibleTables.Clear();
+            mappedTables.Clear();
             tableGuidMap.Clear();
-            unmappedPackedFields.Clear();
-            unmappedXmlFields.Clear();
-            ignoredXmlFields.Clear();
         }
 
         Dictionary<string, string> tableGuidMap = new Dictionary<string, string>();
@@ -148,36 +111,61 @@ namespace Filetypes {
         
         // load name correspondencies from file
         private TableNameCorrespondencyManager() {
-            LoadFromFile(DEFAULT_FILE_NAME, tableMapping);
-            LoadFromFile(DEFAULT_PARTIAL_FILE_NAME, partialTableMapping);
-            LoadFromFile(DEFAULT_INCOMPATIBLE_FILE_NAME, incompatibleTables);
+            LoadFromFile(DEFAULT_FILE_NAME, mappedTables);
+            LoadFromFile(DEFAULT_PARTIAL_FILE_NAME, mappedTables);
         }
   
         // I'm sure this could be done via Serialization
         public void Save() {
-            SaveToFile(DEFAULT_FILE_NAME, tableMapping);
-            SaveToFile(DEFAULT_PARTIAL_FILE_NAME, partialTableMapping);
-            SaveToFile(DEFAULT_INCOMPATIBLE_FILE_NAME, incompatibleTables);
+            StreamWriter fullyMappedWriter = File.CreateText(DEFAULT_FILE_NAME);
+            StreamWriter partiallyMappedWriter = File.CreateText(DEFAULT_PARTIAL_FILE_NAME);
+            fullyMappedWriter.WriteLine("<correspondencies>");
+            partiallyMappedWriter.WriteLine("<correspondencies>");
+
+            foreach (MappedTable table in mappedTables.Values) {
+                StreamWriter writeTo;
+                if (table.IsFullyMapped) {
+                    writeTo = fullyMappedWriter;
+                } else {
+                    writeTo = partiallyMappedWriter;
+                }
+                SaveToFile(writeTo, table);
+            }
+
+            fullyMappedWriter.WriteLine("</correspondencies>");
+            partiallyMappedWriter.WriteLine("</correspondencies>");
+            fullyMappedWriter.Dispose();
+            partiallyMappedWriter.Dispose();
         }
         
-        public void LoadFromFile(string filename, Dictionary<string, List<NameMapping>> table) {
+        public static void LoadFromFile(string filename, Dictionary<string, MappedTable> tables) {
             try {
                 XmlDocument xmlFile = new XmlDocument();
                 xmlFile.Load(filename);
                 char[] separator = new char[] { ',' };
                 foreach(XmlNode tableNode in xmlFile.ChildNodes[0].ChildNodes) {
                     string tableName = tableNode.Attributes["name"].Value;
-                    List<NameMapping> mappings = new List<NameMapping>();
-                    table.Add(tableName, mappings);
+                    MappedInfoTable table = new MappedInfoTable(tableName);
+                    table.Guid = tableNode.Attributes["guid"].Value;
+                    tables.Add(tableName, table);
                     foreach(XmlNode fieldNode in tableNode.ChildNodes) {
                         if (fieldNode.Name.Equals("field")) {
                             string packName = fieldNode.Attributes["pack"].Value;
-                            string xmlName = fieldNode.Attributes["xml"].Value;
-                            mappings.Add(new Tuple<string, string>(packName, xmlName));
-                        } else if (fieldNode.Name.Equals("ignoredXmlFields")) {
-                            string[] fields = fieldNode.InnerText.Split(separator);
-                            foreach (string field in fields) {
-                                AddIgnoredField(tableName, field);
+                            if (fieldNode.Attributes["xml"] != null) {
+                                string xmlName = fieldNode.Attributes["xml"].Value;
+                                table.AddMapping(packName, xmlName);
+                            } else if (fieldNode.Attributes["constant"] != null) {
+                                table.AddConstantValue(packName, fieldNode.Attributes["constant"].Value);
+                            }
+                        } else if (fieldNode.Name.Equals(UNMAPPED_PACK_FIELDS)) {
+                            string[] list = fieldNode.InnerText.Split(separator);
+                            foreach (string field in list) {
+                                table.PackDataFields.Add(field);
+                            }
+                        } else if (fieldNode.Name.Equals(UNMAPPED_XML_FIELDS)) {
+                            string[] list = fieldNode.InnerText.Split(separator);
+                            foreach (string field in list) {
+                                table.XmlDataFields.Add(field);
                             }
                         }
                     }
@@ -186,43 +174,57 @@ namespace Filetypes {
                 Console.Error.WriteLine("failed to load {0}: {1}", filename, ex.Message);
             }
         }
+
+        public static Dictionary<string, List<NameMapping>> LoadFromFile(string filename) {
+            Dictionary<string, List<NameMapping>> tableToMapping = new Dictionary<string,List<NameMapping>>();
+            try {
+                XmlDocument xmlFile = new XmlDocument();
+                xmlFile.Load(filename);
+                char[] separator = new char[] { ',' };
+                foreach (XmlNode tableNode in xmlFile.ChildNodes[0].ChildNodes) {
+                    List<NameMapping> mappings = new List<NameMapping>();
+                    string tableName = tableNode.Attributes["name"].Value;
+                    foreach (XmlNode fieldNode in tableNode.ChildNodes) {
+                        if (fieldNode.Name.Equals("field")) {
+                            string packName = fieldNode.Attributes["pack"].Value;
+                            string xmlName = fieldNode.Attributes["xml"].Value;
+                            mappings.Add(new NameMapping(packName, xmlName));
+                        }
+                    }
+                    tableToMapping.Add(tableName, mappings);
+                }
+            } catch (Exception ex) {
+                Console.Error.WriteLine("failed to load {0}: {1}", filename, ex.Message);
+            }
+            return tableToMapping;
+        }
         
         // store to file
-        public void SaveToFile(string filename, Dictionary<string, List<NameMapping>> tableMapping) {
-            using (var file = File.CreateText(filename)) {
-                file.WriteLine("<correspondencies>");
-                foreach (string tableName in tableMapping.Keys) {
-                    if (tableMapping[tableName].Count == 0) {
-                        continue;
-                    }
-                    string guid = tableGuidMap.ContainsKey(tableName) ? tableGuidMap[tableName] : "unknown";
-                    file.WriteLine(" <table name=\"{0}\" guid=\"{1}\">", tableName, guid);
-                    foreach (NameMapping fieldNames in tableMapping[tableName]) {
-                        file.WriteLine(string.Format("  <field pack=\"{0}\" xml=\"{1}\"/>", fieldNames.Item1, fieldNames.Item2));
-                    }
-                    WriteList(file, tableName, "unmappedPackedFields", unmappedPackedFields);
-                    WriteList(file, tableName, "unmappedXmlFields", unmappedXmlFields);
-                    WriteList(file, tableName, "ignoredXmlFields", ignoredXmlFields);
-                    file.WriteLine(" </table>");
-                }
-                file.WriteLine("</correspondencies>");
+        public void SaveToFile(StreamWriter file, MappedTable table) {
+            string guid = table.Guid;
+            file.WriteLine(" <table name=\"{0}\" guid=\"{1}\">", table.TableName, guid);
+            foreach (NameMapping fieldNames in table.MappingAsTuples) {
+                file.WriteLine(string.Format("  <field pack=\"{0}\" xml=\"{1}\"/>", fieldNames.Item1, fieldNames.Item2));
             }
+            foreach (string constantField in table.ConstantValues.Keys) {
+                file.WriteLine(string.Format("  <field pack=\"{0}\" constant=\"{1}\"/>", constantField, table.ConstantValues[constantField]));
+            }
+            WriteList(file, UNMAPPED_PACK_FIELDS, table.UnmappedPackFieldNames);
+            WriteList(file, UNMAPPED_XML_FIELDS, table.UnmappedXmlFieldNames);
+            file.WriteLine(" </table>");
         }
 
-        static void WriteList(StreamWriter writer, string tableName, string tag, Dictionary<string, List<string>> map) {
-            if (map.ContainsKey(tableName) && map[tableName].Count != 0) {
-                writer.WriteLine(string.Format("  <{1}>{0}</{1}>", string.Join(",", map[tableName]), tag));
+        static void WriteList(StreamWriter writer, string tag, List<string> list) {
+            if (list.Count != 0) {
+                writer.WriteLine(string.Format("  <{1}>{0}</{1}>", string.Join(",", list), tag));
             }
         }
         
         // retrieve ca xml tag for given db schema table/field combination
         public string GetXmlFieldName(string table, string field) {
-            string result = GetXmlFieldName(table, field, tableMapping);
-            if (result == null) {
-                result = GetXmlFieldName(table, field, incompatibleTables);
-            }
-            if (result == null) {
-                result = GetXmlFieldName(table, field, partialTableMapping);
+            string result = null;
+            if (mappedTables.ContainsKey(table)) {
+                result = mappedTables[table].GetMappedXml(field);
             }
             return result;
         }

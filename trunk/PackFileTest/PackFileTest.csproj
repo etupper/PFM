@@ -78,7 +78,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Mapping\MappedTable.cs" />
+    <Compile Include="Mapping\CaFieldInfo.cs" />
+    <Compile Include="Mapping\MappedDataTable.cs" />
+    <Compile Include="Mapping\UniqueTableGenerator.cs" />
     <Compile Include="PackTest.cs" />
     <Compile Include="DBFileTest.cs" />
     <Compile Include="ReferenceChecker.cs" />

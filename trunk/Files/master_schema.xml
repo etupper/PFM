@@ -67,7 +67,7 @@
     <field name='on_display_script' type='optstring' />
     <field name='on_click_script' type='optstring' />
     <field name='suppressible' type='boolean' />
-    <field name='Uninhabitable' type='optstring' />
+    <field name='Uninhabitable' type='boolean' />
     <field name='audio_clip' type='string' />
     <field fkey='advisors_tables.advisor_name' name='advisor_name' type='string' version_start='2' />
     <field name='for_loading_screen' type='boolean' version_start='2' />
@@ -199,7 +199,7 @@
     <field name='start_date' type='int' />
     <field name='end_date' type='int' />
     <field fkey='avatar_skills_tables.key' name='avatar_skill' type='optstring' version_start='5' />
-    <field name='unknown11' type='boolean' version_start='5' />
+    <field name='avatar_special_ability' type='optstring' version_start='5' />
     <field name='legendary_item' type='boolean' version_start='5' />
     <field fkey='avatar_ancillaries_localised_source_lookups_tables.key' name='mp_localised_source' type='string' version_start='5' />
     <field name='mp_exclusive' type='boolean' version_start='5' />
@@ -344,8 +344,9 @@
     <field fkey='avatar_campaign_map_regions_tables.region' name='region' type='string' version_start='8' />
   </table>
   <table name='avatar_clan_specialisms_tables'>
-    <field name='unknown1' type='string' pk='true' />
-    <field name='unknown2' type='string' />
+    <field name='ancillary' type='string' pk='true' />
+    <field name='key' type='string' />
+    <field name='product' type='string' version_start='1' />
   </table>
   <table name='avatar_dojo_chains_tables'>
     <field name='key' type='string' pk='true' />
@@ -354,9 +355,8 @@
     <field fkey='avatar_product_lookups_tables.key' name='product' type='string' version_start='2' />
   </table>
   <table name='avatar_dojos_tables'>
-    <field name='unknown1' type='string' />
-    <field name='unknown2' type='boolean' />
-    <field name='unknown3' type='string' />
+    <field name='key' type='string' />
+    <field name='chain' type='optstring' />
     <field name='level' type='int' />
     <field fkey='units_tables.key' name='unit' type='optstring' />
     <field fkey='ancillaries_tables.key' name='ancillary' type='optstring' />
@@ -370,9 +370,8 @@
     <field name='effect' type='string' pk='true' />
   </table>
   <table name='avatar_faction_flags_tables'>
-    <field name='unknown1' type='boolean' />
-    <field name='unknown2' type='string' />
-    <field name='unknown3' type='string' />
+    <field name='key' type='optstring' />
+    <field name='image_file' type='string' />
   </table>
   <table name='avatar_flags_tables'>
     <field name='unique_index' type='int' />
@@ -382,12 +381,11 @@
     <field fkey='avatar_product_lookups_tables.key' name='product' type='string' version_start='3' />
   </table>
   <table name='avatar_gempei_dojos_tables'>
-    <field name='Type' type='string' />
-    <field name='unknown' type='boolean' />
-    <field name='Type2' type='string' />
+    <field name='key' type='string' />
+    <field name='chain' type='optstring' />
     <field name='level' type='int' />
     <field fkey='units_tables.key' name='unit' type='optstring' />
-    <field name='unknown2' type='optstring' />
+    <field name='ancillary' type='optstring' />
   </table>
   <table name='avatar_product_lookups_tables'>
     <field name='key' type='string' />
@@ -736,18 +734,18 @@
   </table>
   <table name='battlefield_buildings_tables'>
     <field name='key' type='string' pk='true' />
-    <field name='Category' type='string' />
-    <field name='Model' type='string' />
-    <field name='Audio Material' type='string' />
-    <field name='Hit Points' type='int' />
-    <field name='Gun Type' type='optstring' />
-    <field name='Transformation' type='optstring' />
+    <field fkey='battlefield_building_categories_tables.category' name='category' type='string' />
+    <field fkey='models_building_tables.key' name='model' type='string' />
+    <field fkey='battlefield_building_audio_materials_tables.audio_material' name='audio_material' type='string' />
+    <field name='hit_points' type='int' />
+    <field fkey='gun_types_tables.gun_type' name='gun_type' type='optstring' />
+    <field name='terrain' type='optstring' />
     <field name='capacity_in_men' type='int' version_start='1' />
     <field name='ignition_threshold' type='int' version_start='2' />
     <field fkey='unit_stats_land_tables.key' name='spawned_unit' type='optstring' version_start='6' />
     <field name='radar_icon' type='optstring' version_start='6' />
-    <field name='unknown12' type='int' version_start='6' />
-    <field name='unknown13' type='boolean' version_start='6' />
+    <field name='visible_in_public_ted' type='boolean' version_start='6' />
+    <field name='fortwall_penetration_chance' type='int' version_start='6' />
   </table>
   <table name='battlefield_deployable_siege_items_tables'>
     <field name='Siege item' type='string' />
@@ -1027,8 +1025,7 @@
     <field name='key' type='string' pk='true' />
   </table>
   <table name='cai_personalities_construction_preference_policy_building_junctions_tables'>
-    <field name='unknown' type='string' />
-    <field name='unknown2' type='string' />
+    <field name='unknown' type='int' />
     <field fkey='building_levels_tables.level_name' name='building_key' type='string' />
     <field fkey='cai_personalities_construction_preference_policies_tables.key' name='policy_key' type='string' />
     <field name='absolute_adjustment' type='float' />
@@ -1131,7 +1128,7 @@
   <table name='campaign_anims_tables'>
     <field name='Animation ID' type='string' pk='true' />
     <field name='Animation Filepath' type='string' />
-    <field name='Loop' type='boolean' />
+    <field name='loop' type='boolean' />
     <field name='Remove_Bearing' type='boolean' />
     <field name='Animation Type' type='string' />
   </table>
@@ -1522,12 +1519,12 @@
     <field name='image' type='string' />
     <field name='frames' type='int' />
     <field name='framerate' type='int' />
-    <field name='Hotspot X' type='float' />
-    <field name='Hotspot Y' type='float' />
-    <field name='Width' type='boolean' />
-    <field name='Height' type='boolean' />
-    <field name='Loop' type='int' />
-    <field name='Reverse' type='int' />
+    <field name='hotspotX' type='float' />
+    <field name='hotspotY' type='float' />
+    <field name='width' type='boolean' />
+    <field name='height' type='boolean' />
+    <field name='loop' type='int' />
+    <field name='reverse' type='int' />
   </table>
   <table name='dilemmas_tables'>
     <field name='generate' type='boolean' />
@@ -1770,7 +1767,7 @@
     <field fkey='groupings_tables.Unknown' name='Group' type='string' pk='true' />
   </table>
   <table name='experience_triggers_tables'>
-    <field name='unknown1' type='float' />
+    <field name='experience_points' type='int' />
     <field name='trigger_key' type='string' />
   </table>
   <table name='faction_banners_tables'>
@@ -2164,7 +2161,7 @@
   <table name='ministerial_effectiveness_modifiers_tables'>
     <field name='leader_minister_level' type='int' />
     <field fkey='government_types_tables.government_type' name='government_type' type='string' />
-    <field name='Effect' type='float' />
+    <field name='effectiveness_bonus' type='float' />
   </table>
   <table name='ministerial_position_default_names_tables'>
     <field fkey='ministerial_positions_tables.minister_key' name='ministerial_position' type='string' pk='true' />
@@ -2830,7 +2827,7 @@
     <field fkey='projectile_penetration_enum_tables.key' name='penetration' type='optstring' />
     <field fkey='projectile_incendiary_enum_tables.key' name='incendiary' type='optstring' />
     <field fkey='projectile_blast_effect_enum_tables.key' name='blast_effect' type='optstring' />
-    <field name='Can Bounce' type='short' />
+    <field name='can_bounce' type='short' />
     <field name='collision_radius' type='float' />
     <field name='Base Reload Time' type='int' />
     <field name='base_misfire_chance' type='int' />
@@ -2935,10 +2932,10 @@
   <table name='sea_surfaces_tables'>
     <field name='key' type='string' pk='true' />
     <field name='sea_wind_speed' type='float' />
-    <field name='Phillips Constants' type='float' />
+    <field name='sea_phillips_constant' type='float' />
     <field name='sea_choppiness' type='float' />
     <field name='swell_wind_speed' type='float' />
-    <field name='Swell Phillips Constants' type='float' />
+    <field name='swell_phillips_constant' type='float' />
     <field name='foam_enabled' type='boolean' />
     <field name='foam_decay_rate' type='float' />
     <field name='foam_fade_in_time' type='float' />
@@ -3082,8 +3079,8 @@
     <field name='naval_prestige' type='int' />
     <field name='economic_prestige' type='int' />
     <field name='enlightenment_prestige' type='int' />
-    <field name='MP Early Availability' type='boolean' />
-    <field name='MP Late Availability' type='boolean' />
+    <field name='mp_available_early' type='boolean' />
+    <field name='mp_available_late' type='boolean' />
     <field name='info_pic' type='string' />
     <field name='ai_bias' type='int' version_start='1' />
     <field name='unique_index' type='int' version_start='2' />
@@ -3348,9 +3345,9 @@
     <field name='xp_level' type='string' pk='true' />
     <field name='melee_attack' type='int' />
     <field name='melee_defence' type='int' />
-    <field name='Reloading Bonus' type='int' />
+    <field name='core_reloading_skill' type='int' />
     <field name='morale' type='int' />
-    <field name='Markmanship Bonus' type='int' />
+    <field name='core_marksmanship' type='int' />
     <field name='fatigue' type='int' />
     <field name='mp_fixed_cost' type='int' />
     <field name='mp_experience_cost_multiplier' type='float' />
@@ -3381,12 +3378,12 @@
     <field name='Ammo Train Model' type='optstring' />
     <field name='Limber Model' type='optstring' />
     <field fkey='warscape_animated_tables.key' name='artillery_model' type='optstring' />
-    <field name='Capable Siege Gun' type='boolean' />
+    <field name='siege_gun' type='boolean' />
     <field name='Gun' type='optstring' />
     <field fkey='unit_stats_primary_missile_weapon_enum_tables.key' name='primary_missile_weapon' type='optstring' />
     <field name='Core Marksmanship' type='int' />
     <field name='core_loading_skill' type='int' />
-    <field name='Primary Missle Attack' type='string' />
+    <field name='primary_missile_attack' type='string' />
     <field fkey='unit_stats_firing_mechanism_enum_tables.key' name='firing_mechanism' type='string' />
     <field name='Default_Missile_Type' type='optstring' />
     <field name='ammo' type='int' />
@@ -3399,7 +3396,7 @@
     <field name='Melee Defense' type='int' />
     <field name='shield_bonus' type='int' />
     <field fkey='unit_stats_skeleton_melee_enum_tables.key' name='skeleton_melee' type='string' />
-    <field name='Pistol' type='string' />
+    <field name='pistols' type='string' />
     <field fkey='unit_drill_set_enum_tables.unit_drill_set' name='unit_drill_set' type='string' />
     <field name='Training Level' type='string' />
     <field name='morale' type='int' />
@@ -3414,37 +3411,37 @@
     <field name='dismounted_loose_formation_spacing_vertical' type='float' version_start='13' />
     <field name='base_density' type='float' version_start='13' />
     <field name='melee_bonus_vs_cavalry' type='int' />
-    <field name='Can Throw Grenades' type='boolean' />
+    <field name='grenades' type='boolean' />
     <field name='skirmish' type='boolean' />
     <field name='guard_mode' type='boolean' />
     <field name='can_dismount' type='boolean' />
     <field name='can_place_stakes' type='boolean' />
     <field name='cannot_run' type='boolean' />
-    <field name='Can Rally Comrades' type='boolean' />
+    <field name='can_rally' type='boolean' />
     <field name='hide_medium_woodland' type='boolean' />
     <field name='hide_scrub' type='boolean' />
     <field name='hide_long_grass' type='boolean' />
     <field name='hide_buildings' type='boolean' />
     <field name='can_stalk' type='boolean' />
     <field name='Sniper' type='boolean' />
-    <field name='Can Fire from Horseback' type='boolean' />
+    <field name='does_fire_mounted_by_default' type='boolean' />
     <field name='tree_spot_distance' type='float' />
     <field name='scrub_spot_distance' type='float' />
     <field name='long_grass_spot_distance' type='float' />
-    <field name='Paths Seldom Trod' type='boolean' />
-    <field name='Garrison Police Bonus' type='boolean' />
+    <field name='campmap_stealth' type='boolean' />
+    <field name='campmap_policing_bonus' type='boolean' />
     <field name='disciplined' type='boolean' />
     <field name='impetuous' type='boolean' />
     <field name='scares_horses' type='boolean' />
-    <field name='Scares Enemies' type='boolean' />
+    <field name='fear_effect' type='boolean' />
     <field name='Inspires Allies' type='boolean' />
     <field name='Good Stamina' type='boolean' />
     <field name='Use Grappling Hooks' type='boolean' />
     <field name='inspire' type='boolean' />
     <field name='fatigue_resistant' type='boolean' />
     <field name='siege_ladders' type='boolean' />
-    <field name='Can Use Pike Wall' type='boolean' />
-    <field name='Can Use Pike Square' type='boolean' />
+    <field name='pike_wall' type='boolean' />
+    <field name='pike_square' type='boolean' />
     <field name='Can Shoot While Moving' type='boolean' version_start='4' />
     <field name='Can Shoot While Moving91' type='boolean' version_start='1' />
     <field name='Flutist' type='optstring' version_start='4' version_end='5' />
@@ -3485,7 +3482,7 @@
     <field name='melee_attack' type='int' />
     <field name='melee_defence' type='int' />
     <field name='melee_weapon_type' type='string' />
-    <field name='Pistol' type='boolean' />
+    <field name='pistols' type='boolean' />
     <field name='Ammo' type='int' />
     <field name='Infantry Entity' type='string' />
     <field name='Soldier Model' type='string' />
@@ -3518,9 +3515,9 @@
     <field fkey='unit_stats_naval_crew_tables.unit_type' name='officer_3' type='optstring' />
   </table>
   <table name='unit_stats_naval_experience_bonuses_tables'>
-    <field name='Experience Level' type='string' />
-    <field name='Melee Attack Bonus' type='int' version_start='1' />
-    <field name='melee defense bonus' type='int' />
+    <field name='xp_level' type='string' />
+    <field name='melee_attack' type='int' version_start='1' />
+    <field name='melee_defence' type='int' />
     <field name='core gunner loading skill' type='int' />
     <field name='core gunner marksmanship' type='int' />
     <field name='morale' type='int' />
@@ -3646,7 +3643,7 @@
     <field name='magazine_critical' type='float' />
     <field name='scares_enemies' type='boolean' />
     <field name='inspire' type='boolean' />
-    <field name='Can Trade' type='boolean' />
+    <field name='can_trade' type='boolean' />
     <field name='Manoeuverability' type='string' version_end='6' />
     <field name='Hull Strength Shown' type='int' />
     <field name='unknown97' type='string' version_start='2' />
@@ -3688,8 +3685,8 @@
     <field name='on_screen_name' type='string' />
     <field fkey='unit_category_tables.key' name='category' type='string' />
     <field fkey='unit_class_tables.key' name='class' type='string' />
-    <field name='MP Cost Early' type='int' />
-    <field name='MP Cost Late' type='int' version_start='2' />
+    <field name='multiplayer_cost' type='int' />
+    <field name='multiplayer_late_cost' type='int' version_start='2' />
     <field name='create_time' type='int' />
     <field name='create_cost' type='int' />
     <field name='upkeep_cost' type='int' />
@@ -3973,7 +3970,7 @@
     <field name='on_display_script' type='optstring' />
     <field name='on_click_script' type='optstring' />
     <field name='suppressible' type='boolean' />
-    <field name='Uninhabitable' type='optstring' />
+    <field name='Uninhabitable' type='boolean' />
     <field name='audio_clip' type='string' />
     <field fkey='advisors_tables.advisor_name' name='advisor_name' type='string' version_start='2' />
     <field name='for_loading_screen' type='boolean' version_start='2' />
@@ -4162,7 +4159,7 @@
     <field name='start_date' type='int' />
     <field name='end_date' type='int' />
     <field fkey='avatar_skills_tables.key' name='avatar_skill' type='optstring' version_start='5' />
-    <field name='unknown11' type='boolean' version_start='5' />
+    <field name='avatar_special_ability' type='optstring' version_start='5' />
     <field name='legendary_item' type='boolean' version_start='5' />
     <field fkey='avatar_ancillaries_localised_source_lookups_tables.key' name='mp_localised_source' type='string' version_start='5' />
     <field name='mp_exclusive' type='boolean' version_start='5' />
@@ -4181,7 +4178,7 @@
     <field name='start_date' type='int' />
     <field name='end_date' type='int' />
     <field fkey='avatar_skills_tables.key' name='avatar_skill' type='optstring' version_start='5' />
-    <field name='unknown11' type='boolean' version_start='5' />
+    <field name='avatar_special_ability' type='optstring' version_start='5' />
     <field name='legendary_item' type='boolean' version_start='5' />
     <field fkey='avatar_ancillaries_localised_source_lookups_tables.key' name='mp_localised_source' type='string' version_start='5' />
     <field name='mp_exclusive' type='boolean' version_start='5' />
@@ -4526,8 +4523,8 @@
          table_version='0'
          guid='a4a37c4a-bc5f-4e82-b6fb-c6aaf908accd,
                a4cf1d6e-95ef-4057-b2f0-1398f91a2529'>
-    <field name='unknown1' type='string' pk='true' />
-    <field name='unknown2' type='string' />
+    <field name='ancillary' type='string' pk='true' />
+    <field name='key' type='string' />
   </table>
   <table table_name='avatar_dojo_chains_tables'
          table_version='1'
@@ -4548,9 +4545,8 @@
          table_version='1'
          guid='24b342c6-bcb1-4cb5-a84f-ab1f0a42d830,
                8aae6962-bc40-4afa-991f-858655f63d79'>
-    <field name='unknown1' type='string' />
-    <field name='unknown2' type='boolean' />
-    <field name='unknown3' type='string' />
+    <field name='key' type='string' />
+    <field name='chain' type='optstring' />
     <field name='level' type='int' />
     <field fkey='units_tables.key' name='unit' type='optstring' />
     <field fkey='ancillaries_tables.key' name='ancillary' type='optstring' />
@@ -4558,9 +4554,8 @@
   <table table_name='avatar_dojos_tables'
          table_version='2'
          guid='62367217-a939-40b4-b153-fcbb6567f644'>
-    <field name='unknown1' type='string' />
-    <field name='unknown2' type='boolean' />
-    <field name='unknown3' type='string' />
+    <field name='key' type='string' />
+    <field name='chain' type='optstring' />
     <field name='level' type='int' />
     <field fkey='units_tables.key' name='unit' type='optstring' />
     <field fkey='ancillaries_tables.key' name='ancillary' type='optstring' />
@@ -4587,9 +4582,8 @@
   <table table_name='avatar_faction_flags_tables'
          table_version='0'
          guid='535bda5d-c790-459b-8cd1-a73cadbc3650'>
-    <field name='unknown1' type='boolean' />
-    <field name='unknown2' type='string' />
-    <field name='unknown3' type='string' />
+    <field name='key' type='optstring' />
+    <field name='image_file' type='string' />
   </table>
   <table table_name='avatar_flags_tables'
          table_version='0'
@@ -4616,12 +4610,11 @@
   <table table_name='avatar_gempei_dojos_tables'
          table_version='0'
          guid='acdf4a14-a990-4289-aa17-495b2acaa106'>
-    <field name='Type' type='string' />
-    <field name='unknown' type='boolean' />
-    <field name='Type2' type='string' />
+    <field name='key' type='string' />
+    <field name='chain' type='optstring' />
     <field name='level' type='int' />
     <field fkey='units_tables.key' name='unit' type='optstring' />
-    <field name='unknown2' type='optstring' />
+    <field name='ancillary' type='optstring' />
   </table>
   <table table_name='avatar_product_lookups_tables'
          table_version='0'
@@ -5131,7 +5124,7 @@
     <field fkey='battlefield_building_audio_materials_tables.audio_material' name='audio_material' type='string' />
     <field name='hit_points' type='int' />
     <field fkey='gun_types_tables.gun_type' name='gun_type' type='optstring' />
-    <field name='Terrain' type='optstring' />
+    <field name='terrain' type='optstring' />
     <field name='capacity_in_men' type='int' version_start='1' />
     <field name='ignition_threshold' type='int' version_start='2' />
   </table>
@@ -5150,8 +5143,8 @@
     <field name='ignition_threshold' type='int' version_start='2' />
     <field fkey='unit_stats_land_tables.key' name='spawned_unit' type='optstring' version_start='6' />
     <field name='radar_icon' type='optstring' version_start='6' />
-    <field name='unknown12' type='int' version_start='6' />
-    <field name='unknown13' type='boolean' version_start='6' />
+    <field name='visible_in_public_ted' type='boolean' version_start='6' />
+    <field name='fortwall_penetration_chance' type='int' version_start='6' />
   </table>
   <table table_name='battles_tables'
          table_version='2'
@@ -5639,8 +5632,7 @@
          guid='6b71d700-1fa8-4e25-9bad-83663418f73c,
                91e98849-bdaf-422a-8fff-7f3bae276d23,
                9fa9379b-86bb-4b51-94bf-664b970e0856'>
-    <field name='unknown' type='string' />
-    <field name='unknown2' type='string' />
+    <field name='unknown' type='int' />
     <field fkey='building_levels_tables.level_name' name='building_key' type='string' />
     <field fkey='cai_personalities_construction_preference_policies_tables.key' name='policy_key' type='string' />
     <field name='absolute_adjustment' type='float' />
@@ -5648,8 +5640,7 @@
   <table table_name='cai_personalities_construction_preference_policy_building_junctions_tables'
          table_version='2'
          guid='8248d78b-8979-41ea-969d-dcd96eaaa721'>
-    <field name='unknown' type='string' />
-    <field name='unknown2' type='string' />
+    <field name='unknown' type='int' />
     <field fkey='building_levels_tables.level_name' name='building_key' type='string' />
     <field fkey='cai_personalities_construction_preference_policies_tables.key' name='policy_key' type='string' />
     <field name='absolute_adjustment' type='float' />
@@ -6027,11 +6018,18 @@
   <table table_name='campaign_map_towns_and_ports_tables'
          table_version='0'
          guid='6e2aac3b-1e40-4f38-95d4-e354182d595b,
-               77734080-a5a6-4143-af92-6137cc1eabdc,
                f4d8f3a2-b154-4071-8feb-64030c75103a'>
     <field name='Town ID' type='string' pk='true' />
     <field fkey='slots_tables.slot' name='Slot Type' type='string' />
     <field name='On Screen Name' type='string' />
+  </table>
+  <table table_name='campaign_map_towns_and_ports_tables'
+         table_version='0'
+         guid='77734080-a5a6-4143-af92-6137cc1eabdc'>
+    <field name='Town ID' type='string' pk='true' />
+    <field fkey='slots_tables.slot' name='Slot Type' type='string' />
+    <field name='On Screen Name' type='string' />
+    <field name='template' type='string' />
   </table>
   <table table_name='campaign_unit_art_set_junctions_tables'
          table_version='0'
@@ -6495,12 +6493,12 @@
     <field name='image' type='string' />
     <field name='frames' type='int' />
     <field name='framerate' type='int' />
-    <field name='Hotspot X' type='float' />
-    <field name='Hotspot Y' type='float' />
-    <field name='Width' type='boolean' />
-    <field name='Height' type='boolean' />
-    <field name='Loop' type='int' />
-    <field name='Reverse' type='int' />
+    <field name='hotspotX' type='float' />
+    <field name='hotspotY' type='float' />
+    <field name='width' type='boolean' />
+    <field name='height' type='boolean' />
+    <field name='loop' type='int' />
+    <field name='reverse' type='int' />
   </table>
   <table table_name='dilemmas_tables'
          table_version='1'
@@ -6897,7 +6895,7 @@
                774fcb87-0dc1-4b72-971b-669c81ac5df3,
                ba2084c8-5a21-44dd-9744-38f5887e10a4,
                f8165c5d-c3a3-421e-9e59-e9bc9ba7c674'>
-    <field name='unknown1' type='float' />
+    <field name='experience_points' type='int' />
     <field name='trigger_key' type='string' />
   </table>
   <table table_name='faction_banners_tables'
@@ -8066,8 +8064,8 @@
     <field name='naval_prestige' type='int' />
     <field name='economic_prestige' type='int' />
     <field name='enlightenment_prestige' type='int' />
-    <field name='Early Availability' type='boolean' />
-    <field name='Late Availability' type='boolean' />
+    <field name='mp_available_early' type='boolean' />
+    <field name='mp_available_late' type='boolean' />
     <field name='info_pic' type='string' />
     <field name='ai_bias' type='int' version_start='1' />
     <field name='unique_index' type='int' version_start='2' />
@@ -8424,9 +8422,9 @@
     <field name='xp_level' type='string' pk='true' />
     <field name='melee_attack' type='int' />
     <field name='melee_defence' type='int' />
-    <field name='Reloading Bonus' type='int' />
+    <field name='core_reloading_skill' type='int' />
     <field name='morale' type='int' />
-    <field name='Markmanship Bonus' type='int' />
+    <field name='core_marksmanship' type='int' />
     <field name='fatigue' type='int' />
     <field name='mp_fixed_cost' type='int' />
     <field name='mp_experience_cost_multiplier' type='float' />
@@ -8459,12 +8457,12 @@
     <field fkey='battle_entities_tables.key' name='ammo_caisson_entity' type='optstring' />
     <field fkey='warscape_animated_tables.key' name='ammo_caisson_model' type='optstring' />
     <field fkey='warscape_animated_tables.key' name='artillery_model' type='optstring' />
-    <field name='Capable Siege Gun' type='boolean' />
+    <field name='siege_gun' type='boolean' />
     <field fkey='gun_types_tables.gun_type' name='gun_type' type='optstring' />
     <field fkey='unit_stats_primary_missile_weapon_enum_tables.key' name='primary_missile_weapon' type='optstring' />
     <field name='core_marksmanship' type='int' />
     <field name='core_loading_skill' type='int' />
-    <field name='Primary Missle Attack' type='string' />
+    <field name='primary_missile_attack' type='string' />
     <field fkey='unit_stats_firing_mechanism_enum_tables.key' name='firing_mechanism' type='string' />
     <field fkey='projectiles_tables.key' name='default_missile_type' type='optstring' />
     <field name='ammo' type='int' />
@@ -8477,7 +8475,7 @@
     <field name='melee_defence' type='int' />
     <field name='shield_bonus' type='int' />
     <field fkey='unit_stats_skeleton_melee_enum_tables.key' name='skeleton_melee' type='string' />
-    <field name='Pistol' type='string' />
+    <field name='pistols' type='string' />
     <field fkey='unit_drill_set_enum_tables.unit_drill_set' name='unit_drill_set' type='string' />
     <field fkey='unit_training_level_enum_tables.key' name='unit_training_level' type='string' />
     <field name='morale' type='int' />
@@ -8492,37 +8490,37 @@
     <field name='dismounted_loose_formation_spacing_vertical' type='float' version_start='13' />
     <field name='base_density' type='float' version_start='13' />
     <field name='melee_bonus_vs_cavalry' type='int' />
-    <field name='Can Throw Grenades' type='boolean' />
+    <field name='grenades' type='boolean' />
     <field name='skirmish' type='boolean' />
     <field name='guard_mode' type='boolean' />
     <field name='can_dismount' type='boolean' />
     <field name='can_place_stakes' type='boolean' />
     <field name='cannot_run' type='boolean' />
-    <field name='Can Rally Comrades' type='boolean' />
+    <field name='can_rally' type='boolean' />
     <field name='hide_medium_woodland' type='boolean' />
     <field name='hide_scrub' type='boolean' />
     <field name='hide_long_grass' type='boolean' />
     <field name='hide_buildings' type='boolean' />
     <field name='can_stalk' type='boolean' />
     <field name='can_snipe' type='boolean' />
-    <field name='Can Fire from Horseback' type='boolean' />
+    <field name='does_fire_mounted_by_default' type='boolean' />
     <field name='tree_spot_distance' type='float' />
     <field name='scrub_spot_distance' type='float' />
     <field name='long_grass_spot_distance' type='float' />
-    <field name='Paths Seldom Trod' type='boolean' />
-    <field name='Garrison Police Bonus' type='boolean' />
+    <field name='campmap_stealth' type='boolean' />
+    <field name='campmap_policing_bonus' type='boolean' />
     <field name='disciplined' type='boolean' />
     <field name='impetuous' type='boolean' />
     <field name='scares_horses' type='boolean' />
-    <field name='Scares Enemies' type='boolean' />
+    <field name='fear_effect' type='boolean' />
     <field name='Inspires Allies' type='boolean' />
     <field name='Good Stamina' type='boolean' />
     <field name='Use Grappling Hooks' type='boolean' />
     <field name='inspire' type='boolean' />
     <field name='fatigue_resistant' type='boolean' />
     <field name='siege_ladders' type='boolean' />
-    <field name='Can Use Pike Wall' type='boolean' />
-    <field name='Can Use Pike Square' type='boolean' />
+    <field name='pike_wall' type='boolean' />
+    <field name='pike_square' type='boolean' />
     <field name='can_do_formed_attack' type='boolean' version_start='4' />
     <field name='Can Shoot While Moving' type='boolean' version_start='1' />
     <field name='Unused 95' type='boolean' version_start='5' />
@@ -8579,12 +8577,12 @@
     <field fkey='battle_entities_tables.key' name='ammo_caisson_entity' type='optstring' />
     <field fkey='warscape_animated_tables.key' name='ammo_caisson_model' type='optstring' />
     <field fkey='warscape_animated_tables.key' name='artillery_model' type='optstring' />
-    <field name='Capable Siege Gun' type='boolean' />
+    <field name='siege_gun' type='boolean' />
     <field fkey='gun_types_tables.gun_type' name='gun_type' type='optstring' />
     <field fkey='unit_stats_primary_missile_weapon_enum_tables.key' name='primary_missile_weapon' type='optstring' />
     <field name='core_marksmanship' type='int' />
     <field name='core_loading_skill' type='int' />
-    <field name='Primary Missle Attack' type='string' />
+    <field name='primary_missile_attack' type='string' />
     <field fkey='unit_stats_firing_mechanism_enum_tables.key' name='firing_mechanism' type='string' />
     <field fkey='projectiles_tables.key' name='default_missile_type' type='optstring' />
     <field name='ammo' type='int' />
@@ -8597,7 +8595,7 @@
     <field name='melee_defence' type='int' />
     <field name='shield_bonus' type='int' />
     <field fkey='unit_stats_skeleton_melee_enum_tables.key' name='skeleton_melee' type='string' />
-    <field name='Pistol' type='string' />
+    <field name='pistols' type='string' />
     <field fkey='unit_drill_set_enum_tables.unit_drill_set' name='unit_drill_set' type='string' />
     <field fkey='unit_training_level_enum_tables.key' name='unit_training_level' type='string' />
     <field name='morale' type='int' />
@@ -8612,37 +8610,37 @@
     <field name='dismounted_loose_formation_spacing_vertical' type='float' version_start='13' />
     <field name='base_density' type='float' version_start='13' />
     <field name='melee_bonus_vs_cavalry' type='int' />
-    <field name='Can Throw Grenades' type='boolean' />
+    <field name='grenades' type='boolean' />
     <field name='skirmish' type='boolean' />
     <field name='guard_mode' type='boolean' />
     <field name='can_dismount' type='boolean' />
     <field name='can_place_stakes' type='boolean' />
     <field name='cannot_run' type='boolean' />
-    <field name='Can Rally Comrades' type='boolean' />
+    <field name='can_rally' type='boolean' />
     <field name='hide_medium_woodland' type='boolean' />
     <field name='hide_scrub' type='boolean' />
     <field name='hide_long_grass' type='boolean' />
     <field name='hide_buildings' type='boolean' />
     <field name='can_stalk' type='boolean' />
     <field name='can_snipe' type='boolean' />
-    <field name='Can Fire from Horseback' type='boolean' />
+    <field name='does_fire_mounted_by_default' type='boolean' />
     <field name='tree_spot_distance' type='float' />
     <field name='scrub_spot_distance' type='float' />
     <field name='long_grass_spot_distance' type='float' />
-    <field name='Paths Seldom Trod' type='boolean' />
-    <field name='Garrison Police Bonus' type='boolean' />
+    <field name='campmap_stealth' type='boolean' />
+    <field name='campmap_policing_bonus' type='boolean' />
     <field name='disciplined' type='boolean' />
     <field name='impetuous' type='boolean' />
     <field name='scares_horses' type='boolean' />
-    <field name='Scares Enemies' type='boolean' />
+    <field name='fear_effect' type='boolean' />
     <field name='Inspires Allies' type='boolean' />
     <field name='Good Stamina' type='boolean' />
     <field name='Use Grappling Hooks' type='boolean' />
     <field name='inspire' type='boolean' />
     <field name='fatigue_resistant' type='boolean' />
     <field name='siege_ladders' type='boolean' />
-    <field name='Can Use Pike Wall' type='boolean' />
-    <field name='Can Use Pike Square' type='boolean' />
+    <field name='pike_wall' type='boolean' />
+    <field name='pike_square' type='boolean' />
     <field name='can_do_formed_attack' type='boolean' version_start='4' />
     <field name='Can Shoot While Moving' type='boolean' version_start='1' />
     <field name='Unused 95' type='boolean' version_start='5' />
@@ -8714,9 +8712,9 @@
   <table table_name='unit_stats_naval_experience_bonuses_tables'
          table_version='1'
          guid='08c20819-f92c-4c37-9117-968282df7787'>
-    <field name='Experience Level' type='string' />
-    <field name='Melee Attack Bonus' type='int' version_start='1' />
-    <field name='Melee Defense Bonus' type='int' />
+    <field name='xp_level' type='string' />
+    <field name='melee_attack' type='int' version_start='1' />
+    <field name='melee_defence' type='int' />
     <field name='core_gunner_loading_skill' type='int' />
     <field name='core_gunner_marksmanship' type='int' />
     <field name='morale' type='int' />
@@ -8841,7 +8839,7 @@
     <field name='magazine_critical' type='float' />
     <field name='scares_enemies' type='boolean' />
     <field name='inspire' type='boolean' />
-    <field name='Can Trade' type='boolean' />
+    <field name='can_trade' type='boolean' />
     <field name='Manoeuverability' type='string' version_end='6' />
     <field name='Hull Strength Shown' type='int' />
     <field name='unknown97' type='string' version_start='2' />
@@ -8966,7 +8964,7 @@
     <field name='magazine_critical' type='float' />
     <field name='scares_enemies' type='boolean' />
     <field name='inspire' type='boolean' />
-    <field name='Can Trade' type='boolean' />
+    <field name='can_trade' type='boolean' />
     <field name='Hull Strength Shown' type='int' />
     <field name='unknown97' type='string' version_start='2' />
     <field name='unknown118' type='string' version_start='6' />
@@ -9034,8 +9032,8 @@
     <field name='on_screen_name' type='string' />
     <field fkey='unit_category_tables.key' name='category' type='string' />
     <field fkey='unit_class_tables.key' name='class' type='string' />
-    <field name='MP Cost Early' type='int' />
-    <field name='MP Cost Late' type='int' version_start='2' />
+    <field name='multiplayer_cost' type='int' />
+    <field name='multiplayer_late_cost' type='int' version_start='2' />
     <field name='create_time' type='int' />
     <field name='create_cost' type='int' />
     <field name='upkeep_cost' type='int' />
@@ -9073,8 +9071,8 @@
     <field name='on_screen_name' type='string' />
     <field fkey='unit_category_tables.key' name='category' type='string' />
     <field fkey='unit_class_tables.key' name='class' type='string' />
-    <field name='MP Cost Early' type='int' />
-    <field name='MP Cost Late' type='int' version_start='2' />
+    <field name='multiplayer_cost' type='int' />
+    <field name='multiplayer_late_cost' type='int' version_start='2' />
     <field name='create_time' type='int' />
     <field name='create_cost' type='int' />
     <field name='upkeep_cost' type='int' />
