@@ -1,257 +1,243 @@
 <correspondencies>
  <table name="avatar_campaign_maps" guid="8a8cb936-abcd-49e6-bd31-a239758a99b4">
-  <field pack="unknown" xml="adjacent_1"/>
-  <field pack="unknown2" xml="adjacent_10"/>
-  <field pack="unknown3" xml="adjacent_11"/>
-  <field pack="unknown4" xml="adjacent_12"/>
-  <field pack="unknown8" xml="adjacent_2"/>
-  <field pack="unknown9" xml="adjacent_3"/>
-  <field pack="unknown10" xml="adjacent_4"/>
-  <field pack="unknown11" xml="adjacent_5"/>
-  <field pack="unknown12" xml="adjacent_6"/>
-  <field pack="unknown13" xml="adjacent_7"/>
-  <field pack="unknown14" xml="adjacent_8"/>
-  <field pack="unknown15" xml="adjacent_9"/>
-  <field pack="unknown16" xml="dojo"/>
-  <field pack="unknown17" xml="is_land"/>
-  <field pack="unknown18" xml="is_starting_region"/>
-  <field pack="unknown19" xml="key"/>
-  <field pack="unknown20" xml="unlock_aesthetic"/>
-  <field pack="unknown21" xml="unlock_ancillary"/>
-  <field pack="unknown22" xml="red"/>
-  <field pack="unknown23" xml="green"/>
-  <field pack="unknown24" xml="blue"/>
-  <field pack="unknown25" xml="onscreen_name"/>
-  <field pack="unknown26" xml="start_sea_region"/>
-  <field pack="unknown27" xml="unique_index"/>
-  <field pack="unknown28" xml="product"/>
-  <field pack="unknown29" xml="region"/>
+  <field pack="adjacent_1" xml="adjacent_1"/>
+  <field pack="adjacent_10" xml="adjacent_10"/>
+  <field pack="adjacent_11" xml="adjacent_11"/>
+  <field pack="adjacent_12" xml="adjacent_12"/>
+  <field pack="adjacent_2" xml="adjacent_2"/>
+  <field pack="adjacent_3" xml="adjacent_3"/>
+  <field pack="adjacent_4" xml="adjacent_4"/>
+  <field pack="adjacent_5" xml="adjacent_5"/>
+  <field pack="adjacent_6" xml="adjacent_6"/>
+  <field pack="adjacent_7" xml="adjacent_7"/>
+  <field pack="adjacent_8" xml="adjacent_8"/>
+  <field pack="adjacent_9" xml="adjacent_9"/>
+  <field pack="dojo" xml="dojo"/>
+  <field pack="is_land" xml="is_land"/>
+  <field pack="is_starting_region" xml="is_starting_region"/>
+  <field pack="key" xml="key"/>
+  <field pack="unlock_aesthetic" xml="unlock_aesthetic"/>
+  <field pack="unlock_ancillary" xml="unlock_ancillary"/>
+  <field pack="red" xml="red"/>
+  <field pack="green" xml="green"/>
+  <field pack="blue" xml="blue"/>
+  <field pack="onscreen_name" xml="onscreen_name"/>
+  <field pack="start_sea_region" xml="start_sea_region"/>
+  <field pack="unique_index" xml="unique_index"/>
+  <field pack="product" xml="product"/>
+  <field pack="region" xml="region"/>
   <unmappedPackedFields>unknown5,unknown6,unknown7</unmappedPackedFields>
   <unmappedXmlFields>adjacent_13,adjacent_14,adjacent_15</unmappedXmlFields>
  </table>
  <table name="avatar_dojos" guid="62367217-a939-40b4-b153-fcbb6567f644">
-  <field pack="unknown4" xml="level"/>
-  <field pack="unknown5" xml="unit"/>
-  <field pack="unknown6" xml="ancillary"/>
-  <field pack="Product IDRef" xml="product"/>
+  <field pack="level" xml="level"/>
+  <field pack="unit" xml="unit"/>
+  <field pack="ancillary" xml="ancillary"/>
+  <field pack="product" xml="product"/>
   <unmappedPackedFields>unknown1,unknown2,unknown3</unmappedPackedFields>
   <unmappedXmlFields>key,chain,codependency_key</unmappedXmlFields>
  </table>
  <table name="avatar_gempei_dojos" guid="acdf4a14-a990-4289-aa17-495b2acaa106">
-  <field pack="unknown4" xml="level"/>
-  <field pack="Unit ref" xml="unit"/>
+  <field pack="level" xml="level"/>
+  <field pack="unit" xml="unit"/>
   <unmappedPackedFields>Type,unknown,Type2,unknown2</unmappedPackedFields>
   <unmappedXmlFields>key,chain,ancillary,codependency_key</unmappedXmlFields>
  </table>
- <table name="avatar_ranks" guid="e7a6a9a4-3d02-11e1-8001-6cf049ef02b0">
-  <field pack="unknown1" xml="ancillary_slots"/>
-  <field pack="unknown2" xml="key"/>
-  <field pack="unknown4" xml="onscreen_name"/>
-  <field pack="unknown7" xml="veteran_slots"/>
-  <field pack="unknown8" xml="xp"/>
-  <field pack="unknown9" xml="avatar_unit_cost"/>
-  <field pack="unknown10" xml="times_reset"/>
-  <field pack="Product ID" xml="product"/>
-  <unmappedPackedFields>unknown3,unknown5,unknown6</unmappedPackedFields>
-  <unmappedXmlFields>rank_sequence,skill_points,avatar_naval_unit_cost</unmappedXmlFields>
- </table>
  <table name="battle_cameras" guid="f74f00b3-ae5d-41a3-a066-96f179088ed1">
-  <field pack="Battle Type" xml="key"/>
-  <field pack="Max Zoom Out" xml="max_height_large"/>
-  <field pack="unknown" xml="max_height_small"/>
-  <field pack="unknown4" xml="min_fort_max_height"/>
-  <field pack="Min Zoom Out" xml="min_height"/>
-  <field pack="Move at Height 0 Factor" xml="move_speed_min_multiplier"/>
-  <field pack="unknown9" xml="move_fast_multiplier"/>
+  <field pack="key" xml="key"/>
+  <field pack="max_height_large" xml="max_height_large"/>
+  <field pack="max_height_small" xml="max_height_small"/>
+  <field pack="min_fort_max_height" xml="min_fort_max_height"/>
+  <field pack="min_height" xml="min_height"/>
+  <field pack="move_speed_min_multiplier" xml="move_speed_min_multiplier"/>
+  <field pack="move_fast_multiplier" xml="move_fast_multiplier"/>
   <unmappedPackedFields>Move Speed Adjust,Rotation Speed Adjust</unmappedPackedFields>
   <unmappedXmlFields>move_speed_max_multiplier,turn_speed_multiplier</unmappedXmlFields>
  </table>
  <table name="battle_entities" guid="2e35f755-81c0-48d0-90a0-d07c395af0e3">
-  <field pack="Battle Entity ID" xml="key"/>
-  <field pack="Category" xml="class_validation"/>
-  <field pack="Type" xml="type"/>
-  <field pack="Walk Speed" xml="walk_speed"/>
-  <field pack="Run Speed" xml="run_speed"/>
-  <field pack="Acceleration" xml="acceleration"/>
-  <field pack="Deceleration" xml="deceleration"/>
-  <field pack="Charge Speed" xml="charge_speed"/>
-  <field pack="Crawl Speed" xml="crawl_speed"/>
-  <field pack="Distance to Begin Charge" xml="charge_distance_commence_run"/>
-  <field pack="Radius" xml="radius"/>
-  <field pack="Shape" xml="shape"/>
-  <field pack="Radii_Ratio" xml="radii_ratio"/>
-  <field pack="Entity Mass" xml="mass"/>
-  <field pack="Entity Height" xml="height"/>
-  <field pack="Firing Arc closed" xml="fire_arc_close"/>
-  <field pack="Firing Arc loose" xml="fire_arc_loose"/>
-  <field pack="Turn Speed" xml="turn_speed"/>
-  <field pack="Hit Points" xml="hit_points"/>
+  <field pack="key" xml="key"/>
+  <field pack="class_validation" xml="class_validation"/>
+  <field pack="type" xml="type"/>
+  <field pack="walk_speed" xml="walk_speed"/>
+  <field pack="run_speed" xml="run_speed"/>
+  <field pack="acceleration" xml="acceleration"/>
+  <field pack="deceleration" xml="deceleration"/>
+  <field pack="charge_speed" xml="charge_speed"/>
+  <field pack="crawl_speed" xml="crawl_speed"/>
+  <field pack="charge_distance_commence_run" xml="charge_distance_commence_run"/>
+  <field pack="radius" xml="radius"/>
+  <field pack="shape" xml="shape"/>
+  <field pack="radii_ratio" xml="radii_ratio"/>
+  <field pack="mass" xml="mass"/>
+  <field pack="height" xml="height"/>
+  <field pack="fire_arc_close" xml="fire_arc_close"/>
+  <field pack="fire_arc_loose" xml="fire_arc_loose"/>
+  <field pack="turn_speed" xml="turn_speed"/>
+  <field pack="hit_points" xml="hit_points"/>
   <unmappedPackedFields>Distance to Adopt Charge Stance,Distance to Pick Charge Target</unmappedPackedFields>
   <unmappedXmlFields>charge_distance_adopt_charge_pose,charge_distance_pick_target</unmappedXmlFields>
  </table>
- <table name="building_levels" guid="cf1b4e5d-cd05-451c-a116-89dc424169dd">
-  <field pack="Building ID" xml="level_name"/>
-  <field pack="Category" xml="chain"/>
-  <field pack="Level" xml="level"/>
-  <field pack="Condition" xml="condition"/>
-  <field pack="Turns to Build" xml="create_time"/>
-  <field pack="Cost" xml="create_cost"/>
-  <field pack="unknown8" xml="demolition_cost"/>
-  <field pack="unknown17" xml="commodity"/>
-  <field pack="Military prestige" xml="military_prestige"/>
-  <field pack="Naval Prestige" xml="naval_prestige"/>
-  <field pack="Economic Prestige" xml="economic_prestige"/>
-  <field pack="Enlightenment Prestige" xml="enlightenment_prestige"/>
-  <field pack="unknown26" xml="destruction_terminator"/>
-  <field pack="unknown27" xml="faction_unique"/>
-  <field pack="unknown28" xml="religion_requirement"/>
-  <field pack="unknown29" xml="first_in_world_bundle"/>
-  <field pack="unknown30" xml="resource_requirement"/>
-  <field pack="unknown31" xml="working_model"/>
-  <field pack="unknown32" xml="unique_index"/>
-  <field pack="unknown33" xml="damage_model"/>
-  <unmappedPackedFields>unknown,unknown9,unknown10,unknown11,unknown12,unknown13,unknown14,unknown15,unknown16,unknown18,unknown19,unknown20,Unique</unmappedPackedFields>
-  <unmappedXmlFields>only_in_capital,upkeep_cost,zoc,lower_happiness,upper_happiness,repression,gdp,town_wealth_growth,pop_change,maxpop_change,commodity_vol,building_category,gov_type_key</unmappedXmlFields>
- </table>
  <table name="cai_base_building_context_values" guid="d41ceeab-4787-4fbc-a40e-c922a86f8b93">
-  <field pack="Building IDRef" xml="building_key"/>
-  <field pack="unknown" xml="economic_value"/>
-  <field pack="unknown4" xml="happiness_value"/>
-  <field pack="unknown5" xml="military_value"/>
-  <field pack="unknown7" xml="existing_buildings_apply_discount_over_limit"/>
-  <field pack="unknown8" xml="existing_buildings_discount_per_building"/>
-  <field pack="unknown9" xml="existing_buildings_maximum_discount"/>
+  <field pack="building_key" xml="building_key"/>
+  <field pack="economic_value" xml="economic_value"/>
+  <field pack="happiness_value" xml="happiness_value"/>
+  <field pack="military_value" xml="military_value"/>
+  <field pack="existing_buildings_apply_discount_over_limit" xml="existing_buildings_apply_discount_over_limit"/>
+  <field pack="existing_buildings_discount_per_building" xml="existing_buildings_discount_per_building"/>
+  <field pack="existing_buildings_maximum_discount" xml="existing_buildings_maximum_discount"/>
   <unmappedPackedFields>unknown3,unknown6</unmappedPackedFields>
   <unmappedXmlFields>prestige_value,education_value</unmappedXmlFields>
  </table>
  <table name="cai_personalities_budget_allocations" guid="5cfe15b3-2d95-4316-99eb-43e6efb96aa5">
-  <field pack="unknown" xml="agents_funding_cap"/>
-  <field pack="unknown2" xml="agents_funds_allocation_percentage"/>
-  <field pack="unknown3" xml="agents_percentage_of_pool_to_save_on_fail"/>
-  <field pack="unknown5" xml="army_funding_cap"/>
-  <field pack="unknown6" xml="army_funds_allocation_percentage"/>
-  <field pack="unknown7" xml="army_percentage_of_pool_to_save_on_fail"/>
-  <field pack="unknown8" xml="army_turns_of_inactivity_until_cap"/>
-  <field pack="unknown9" xml="construction_funding_cap"/>
-  <field pack="unknown10" xml="construction_funds_allocation_percentage"/>
-  <field pack="unknown11" xml="construction_percentage_of_pool_to_save_on_fail"/>
-  <field pack="unknown12" xml="construction_turns_of_inactivity_until_cap"/>
-  <field pack="unknown13" xml="diplomacy_funding_cap"/>
-  <field pack="unknown14" xml="diplomacy_funds_allocation_percentage"/>
-  <field pack="unknown15" xml="diplomacy_percentage_of_pool_to_save_on_fail"/>
-  <field pack="unknown16" xml="diplomacy_turns_of_inactivity_until_cap"/>
-  <field pack="unknown17" xml="key"/>
-  <field pack="unknown18" xml="navy_funding_cap"/>
-  <field pack="unknown19" xml="navy_funds_allocation_percentage"/>
-  <field pack="unknown20" xml="navy_percentage_of_pool_to_save_on_fail"/>
-  <field pack="unknown22" xml="minimum_settable_tax_level"/>
-  <field pack="unknown23" xml="maximum_settable_tax_level"/>
+  <field pack="agents_funding_cap" xml="agents_funding_cap"/>
+  <field pack="agents_funds_allocation_percentage" xml="agents_funds_allocation_percentage"/>
+  <field pack="agents_percentage_of_pool_to_save_on_fail" xml="agents_percentage_of_pool_to_save_on_fail"/>
+  <field pack="army_funding_cap" xml="army_funding_cap"/>
+  <field pack="army_funds_allocation_percentage" xml="army_funds_allocation_percentage"/>
+  <field pack="army_percentage_of_pool_to_save_on_fail" xml="army_percentage_of_pool_to_save_on_fail"/>
+  <field pack="army_turns_of_inactivity_until_cap" xml="army_turns_of_inactivity_until_cap"/>
+  <field pack="construction_funding_cap" xml="construction_funding_cap"/>
+  <field pack="construction_funds_allocation_percentage" xml="construction_funds_allocation_percentage"/>
+  <field pack="construction_percentage_of_pool_to_save_on_fail" xml="construction_percentage_of_pool_to_save_on_fail"/>
+  <field pack="construction_turns_of_inactivity_until_cap" xml="construction_turns_of_inactivity_until_cap"/>
+  <field pack="diplomacy_funding_cap" xml="diplomacy_funding_cap"/>
+  <field pack="diplomacy_funds_allocation_percentage" xml="diplomacy_funds_allocation_percentage"/>
+  <field pack="diplomacy_percentage_of_pool_to_save_on_fail" xml="diplomacy_percentage_of_pool_to_save_on_fail"/>
+  <field pack="diplomacy_turns_of_inactivity_until_cap" xml="diplomacy_turns_of_inactivity_until_cap"/>
+  <field pack="key" xml="key"/>
+  <field pack="navy_funding_cap" xml="navy_funding_cap"/>
+  <field pack="navy_funds_allocation_percentage" xml="navy_funds_allocation_percentage"/>
+  <field pack="navy_percentage_of_pool_to_save_on_fail" xml="navy_percentage_of_pool_to_save_on_fail"/>
+  <field pack="minimum_settable_tax_level" xml="minimum_settable_tax_level"/>
+  <field pack="maximum_settable_tax_level" xml="maximum_settable_tax_level"/>
   <unmappedPackedFields>unknown4,unknown21</unmappedPackedFields>
   <unmappedXmlFields>navy_turns_of_inactivity_until_cap,agents_turns_of_inactivity_until_cap</unmappedXmlFields>
  </table>
  <table name="campaign_character_arts" guid="bdebb92a-412e-4efc-9c32-72f41177c39c">
-  <field pack="unknown1" xml="art_set_id"/>
-  <field pack="unknown2" xml="equipment"/>
-  <field pack="unknown3" xml="level"/>
-  <field pack="unknown4" xml="age"/>
-  <field pack="unknown6" xml="season"/>
-  <field pack="unknown7" xml="uniform"/>
-  <field pack="unknown8" xml="card"/>
-  <field pack="unknown10" xml="health"/>
+  <field pack="art_set_id" xml="art_set_id"/>
+  <field pack="equipment" xml="equipment"/>
+  <field pack="level" xml="level"/>
+  <field pack="age" xml="age"/>
+  <field pack="season" xml="season"/>
+  <field pack="uniform" xml="uniform"/>
+  <field pack="card" xml="card"/>
+  <field pack="health" xml="health"/>
   <unmappedPackedFields>unknown5,unknown9</unmappedPackedFields>
   <unmappedXmlFields>portrait,info</unmappedXmlFields>
  </table>
  <table name="cursors" guid="e735cdc6-c5d9-404e-8703-f1c4e3787117">
-  <field pack="Cursor ID" xml="key"/>
-  <field pack="Image Path" xml="image"/>
-  <field pack="Frames" xml="frames"/>
-  <field pack="Frame Rate" xml="framerate"/>
+  <field pack="key" xml="key"/>
+  <field pack="image" xml="image"/>
+  <field pack="frames" xml="frames"/>
+  <field pack="framerate" xml="framerate"/>
   <unmappedPackedFields>Hotspot X,Hotspot Y,Width,Height,Loop,Reverse</unmappedPackedFields>
   <unmappedXmlFields>hotspotX,hotspotY,loop,reverse,width,height</unmappedXmlFields>
  </table>
  <table name="faction_variables_optional_overrides" guid="03ace6ea-f931-4e44-9790-1232a6113379">
-  <field pack="unknown" xml="campaign_key"/>
-  <field pack="unknown4" xml="faction_key"/>
-  <field pack="unknown5" xml="faction_variable_key"/>
-  <field pack="unknown6" xml="value"/>
+  <field pack="campaign_key" xml="campaign_key"/>
+  <field pack="faction_key" xml="faction_key"/>
+  <field pack="faction_variable_key" xml="faction_variable_key"/>
+  <field pack="value" xml="value"/>
   <unmappedPackedFields>unknown2,unknown3</unmappedPackedFields>
   <unmappedXmlFields>difficulty_level,campaign_type</unmappedXmlFields>
  </table>
  <table name="frontend_faction_leaders" guid="f7fa8630-102d-4656-a55b-5dc7b61a5c7b">
-  <field pack="unknown1" xml="animation"/>
-  <field pack="unknown2" xml="equipment_theme"/>
-  <field pack="unknown3" xml="faction"/>
-  <field pack="unknown4" xml="uniform"/>
+  <field pack="animation" xml="animation"/>
+  <field pack="equipment_theme" xml="equipment_theme"/>
+  <field pack="faction" xml="faction"/>
+  <field pack="uniform" xml="uniform"/>
   <unmappedPackedFields>unknown5,unknown6</unmappedPackedFields>
   <unmappedXmlFields>x_offset,y_offset</unmappedXmlFields>
  </table>
  <table name="general_command_star_level_effects" guid="a3f329e4-0ca4-4bbc-9d00-ae084952b7c9">
-  <field pack="unknown1" xml="alive_morale_bonus"/>
-  <field pack="unknown2" xml="command_star_level"/>
-  <field pack="unknown5" xml="nearby_morale_bonus"/>
+  <field pack="alive_morale_bonus" xml="alive_morale_bonus"/>
+  <field pack="command_star_level" xml="command_star_level"/>
+  <field pack="nearby_morale_bonus" xml="nearby_morale_bonus"/>
   <unmappedPackedFields>unknown3,unknown4</unmappedPackedFields>
   <unmappedXmlFields>melee_attack_bonus,melee_defence_bonus</unmappedXmlFields>
  </table>
+ <table name="historical_characters" guid="19dfa33b-50a8-4e20-a4e4-cf654971c5ac">
+  <field pack="key" xml="key"/>
+  <field pack="nobility" xml="nobility"/>
+  <field pack="gender" xml="gender"/>
+  <field pack="agent_type" xml="agent_type"/>
+  <field pack="faction" xml="faction"/>
+  <field pack="spawning_window_start" xml="spawning_window_start"/>
+  <field pack="spawning_window_end" xml="spawning_window_end"/>
+  <field pack="spawn_conditions" xml="spawn_conditions"/>
+  <field pack="name_key" xml="name_key"/>
+  <field pack="surname_key" xml="surname_key"/>
+  <unmappedPackedFields>unknown11</unmappedPackedFields>
+  <unmappedXmlFields>on_screen_name,art_set_id</unmappedXmlFields>
+  <ignoredXmlFields>spawn_conditions</ignoredXmlFields>
+ </table>
  <table name="mp_force_gen_template_junctions" guid="51aadcd8-2ad5-42d5-824a-239fd244d30c">
-  <field pack="unknown1" xml="balance_key"/>
-  <field pack="unknown2" xml="budget_key"/>
-  <field pack="unknown3" xml="general_pct"/>
-  <field pack="unknown4" xml="priority"/>
-  <field pack="unknown8" xml="upgrade_pct"/>
+  <field pack="balance_key" xml="balance_key"/>
+  <field pack="budget_key" xml="budget_key"/>
+  <field pack="general_pct" xml="general_pct"/>
+  <field pack="priority" xml="priority"/>
+  <field pack="upgrade_pct" xml="upgrade_pct"/>
   <unmappedPackedFields>unknown5,unknown6,unknown7</unmappedPackedFields>
   <unmappedXmlFields>template_key,quality_key,units_pct</unmappedXmlFields>
  </table>
  <table name="naval_uniforms" guid="5efcf52e-3dd0-4495-828d-59a2d4754a26">
-  <field pack="unknown1" xml="Faction"/>
-  <field pack="unit variant set" xml="Filename"/>
-  <field pack="unknown5" xml="ManAnimation"/>
-  <field pack="Uniform ID" xml="Uniform_Name"/>
-  <field pack="Unit ID" xml="Unit"/>
-  <field pack="unknown9" xml="imposter_sharing"/>
+  <field pack="Faction" xml="Faction"/>
+  <field pack="Filename" xml="Filename"/>
+  <field pack="ManAnimation" xml="ManAnimation"/>
+  <field pack="Uniform_Name" xml="Uniform_Name"/>
+  <field pack="Unit" xml="Unit"/>
+  <field pack="imposter_sharing" xml="imposter_sharing"/>
   <unmappedPackedFields>unknown3,unknown4,unknown6</unmappedPackedFields>
   <unmappedXmlFields>IconScreenshotCameraPreset,InfoScreenshotCameraPreset,MountAnimation</unmappedXmlFields>
  </table>
+ <table name="stats_clans" guid="7766c68e-0c7d-4f7e-a339-156cead995ba">
+  <field pack="public" xml="public"/>
+  <field pack="ladder" xml="ladder"/>
+  <field pack="order" xml="order"/>
+  <unmappedPackedFields>unknown1,unknown2</unmappedPackedFields>
+  <unmappedXmlFields>key,label</unmappedXmlFields>
+ </table>
  <table name="taxes_effects_jct" guid="7e45ef69-fc0e-41e8-8e00-85f794cfa438">
-  <field pack="Tax Effect IDRef" xml="tax_name"/>
-  <field pack="Effect IDRef" xml="effect"/>
-  <field pack="Campaign Ref" xml="optional_campaign_key"/>
-  <field pack="Magnitude" xml="value"/>
+  <field pack="tax_name" xml="tax_name"/>
+  <field pack="effect" xml="effect"/>
+  <field pack="optional_campaign_key" xml="optional_campaign_key"/>
+  <field pack="value" xml="value"/>
   <unmappedPackedFields>unknown,unknown5</unmappedPackedFields>
   <unmappedXmlFields>optional_difficulty_level,ai_only</unmappedXmlFields>
  </table>
  <table name="technology_nodes" guid="cc51ca72-73bc-40f6-9332-2a97f1ae3acc">
-  <field pack="unknown3" xml="indent"/>
-  <field pack="Technology Node ID" xml="key"/>
-  <field pack="unknown5" xml="technology_key"/>
-  <field pack="Technology Category IDRef" xml="technology_node_set"/>
+  <field pack="indent" xml="indent"/>
+  <field pack="key" xml="key"/>
+  <field pack="technology_key" xml="technology_key"/>
+  <field pack="technology_node_set" xml="technology_node_set"/>
   <unmappedPackedFields>unknown1,unknown2,unknown7</unmappedPackedFields>
   <unmappedXmlFields>faction_key,campaign_key,tier</unmappedXmlFields>
  </table>
  <table name="unit_stats_naval_crew" guid="66e9a0ad-76a3-4c8b-8397-59ca8bf4d68c">
-  <field pack="Crew ID" xml="unit_type"/>
-  <field pack="Accuracy" xml="core_marksmanship"/>
-  <field pack="Melee Skill" xml="melee_attack"/>
-  <field pack="Melee defence" xml="melee_defence"/>
-  <field pack="Melee Weapon" xml="melee_weapon_type"/>
-  <field pack="unknown6" xml="ammo"/>
-  <field pack="unknown7" xml="battle_entity"/>
-  <field pack="Model" xml="soldier_model"/>
-  <field pack="Animation" xml="man_animations_table"/>
-  <field pack="Warscape Equipment Theme" xml="equipment_theme"/>
-  <field pack="unknown10" xml="armour_audio"/>
-  <field pack="unknown11" xml="armour"/>
-  <field pack="unknown12" xml="spacing"/>
-  <field pack="unknown13" xml="discipline"/>
-  <field pack="unknown17" xml="missile_type"/>
+  <field pack="unit_type" xml="unit_type"/>
+  <field pack="core_marksmanship" xml="core_marksmanship"/>
+  <field pack="melee_attack" xml="melee_attack"/>
+  <field pack="melee_defence" xml="melee_defence"/>
+  <field pack="melee_weapon_type" xml="melee_weapon_type"/>
+  <field pack="ammo" xml="ammo"/>
+  <field pack="battle_entity" xml="battle_entity"/>
+  <field pack="soldier_model" xml="soldier_model"/>
+  <field pack="man_animations_table" xml="man_animations_table"/>
+  <field pack="equipment_theme" xml="equipment_theme"/>
+  <field pack="armour_audio" xml="armour_audio"/>
+  <field pack="armour" xml="armour"/>
+  <field pack="spacing" xml="spacing"/>
+  <field pack="discipline" xml="discipline"/>
+  <field pack="missile_type" xml="missile_type"/>
   <unmappedPackedFields>unknown1,unknown5</unmappedPackedFields>
   <unmappedXmlFields>core_loading_skill,pistols</unmappedXmlFields>
  </table>
  <table name="unit_stats_naval_experience_bonuses" guid="08c20819-f92c-4c37-9117-968282df7787">
-  <field pack="Core Gunner Loading Skill" xml="core_gunner_loading_skill"/>
-  <field pack="Core Gunner Marksmanship" xml="core_gunner_marksmanship"/>
-  <field pack="Morale" xml="morale"/>
-  <field pack="MP Fixed Cost" xml="mp_fixed_cost"/>
-  <field pack="MP Experience Cost Multiplier" xml="mp_experience_cost_multiplier"/>
+  <field pack="core_gunner_loading_skill" xml="core_gunner_loading_skill"/>
+  <field pack="core_gunner_marksmanship" xml="core_gunner_marksmanship"/>
+  <field pack="morale" xml="morale"/>
+  <field pack="mp_fixed_cost" xml="mp_fixed_cost"/>
+  <field pack="mp_experience_cost_multiplier" xml="mp_experience_cost_multiplier"/>
   <unmappedPackedFields>Experience Level,Melee Attack Bonus,Melee Defense Bonus</unmappedPackedFields>
   <unmappedXmlFields>xp_level,melee_defence,melee_attack</unmappedXmlFields>
  </table>
