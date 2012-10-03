@@ -66,7 +66,7 @@ del "Release Build.dll"
 del "*vshost"*
 del "Pack File Manager.zip"
 
-copy "$(SolutionDir)\Files\master_schema.xml" "$(TargetDir)"
+copy "$(SolutionDir)\Files\master_schema.xml" "$(SolutionDir)\PackFileTest\bin"
 start /wait PackFileTest.exe -pr -x
 copy "$(SolutionDir)\Files\schema_models.xml" "$(TargetDir)"
 

@@ -69,11 +69,19 @@ namespace Filetypes {
             throw new DBFileNotSupportedException(string.Format("No applicable type definition found"));
 		}
         public DBFile ReadFile(BinaryReader reader, DBFileHeader header, TypeInfo info) {
+#if DEBUG
+            if (info.Name.Equals("campaign_map_towns_and_ports_tables")) {
+                Console.WriteLine("we're here");
+            }
+#endif
             reader.BaseStream.Position = header.Length;
             DBFile file = new DBFile (header, info);
-            for (int i = 0; i < header.EntryCount; i++) {
+            int i = 0;
+            while (reader.BaseStream.Position < reader.BaseStream.Length) {
+//            for (int i = 0; i < header.EntryCount; i++) {
                 try {
                     file.Entries.Add (readFields (reader, info));
+                    i++;
                 } catch (Exception x) {
                     string message = string.Format ("{2} at entry {0}, db version {1}", i, file.Header.Version, x.Message);
                     throw new DBFileNotSupportedException (message, x);
