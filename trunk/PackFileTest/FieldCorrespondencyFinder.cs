@@ -66,6 +66,7 @@ namespace PackFileTest {
                 }
                 TableNameCorrespondencyManager.Instance.UnmappedPackedFields.Add(table.TableName, table.UnmappedPackFieldNames);
                 TableNameCorrespondencyManager.Instance.UnmappedXmlFields.Add(table.TableName, table.UnmappedXmlFieldNames);
+                table.IgnoredXmlFieldNames.ForEach(f => TableNameCorrespondencyManager.Instance.AddIgnoredField(table.TableName, f));
                 TableNameCorrespondencyManager.Instance.TableGuidMap[table.TableName] = table.Guid;
             }
         }
@@ -109,45 +110,6 @@ namespace PackFileTest {
             return result;
         }
 
-        /*
-         * Query the user for the unresolved columns of the given table.
-         * Return false if user requested quit.
-         */
-        public bool ManuallyResolveTableMapping(string tableName) {
-                        
-            MappedTable table = mappedTables[tableName];
-            Console.WriteLine("\nTable {0}", table.TableName);
-            List<NameMapping> mappings = new List<NameMapping>();
-            List<string> candidates = new List<string>(table.UnmappedXmlFieldNames);
-            foreach(string query in table.UnmappedPackFieldNames) {
-                if (candidates.Count == 0) {
-                    continue;
-                }
-                Console.WriteLine("Enter corresponding field for \"{0}\":", query);
-                for (int i = 0; i < candidates.Count; i++) {
-                    Console.WriteLine("{0}: {1}", i, candidates[i]);
-                }
-                int response = -1;
-                while (response != int.MinValue && (response < 0 || response > candidates.Count-1)) {
-                    string val = Console.ReadLine();
-                    if ("q".Equals(val)) {
-                        return false;
-                    } else if ("n".Equals(val)) {
-                        response = int.MinValue;
-                        break;
-                    }
-                    int.TryParse(val, out response);
-                }
-                if (response == int.MinValue) {
-                    continue;
-                }
-                string mapped = candidates[response];
-                candidates.Remove(mapped);
-                mappings.Add(new NameMapping(query, mapped));
-            }
-            return true;
-        }
-        
         string UnifyName(string packColumnName) {
             return packColumnName.Replace(' ', '_').ToLower();
         }
@@ -170,13 +132,20 @@ namespace PackFileTest {
             XmlDocument tableDocument = new XmlDocument();
             string xmlFile = Path.Combine(xmlDirectory, string.Format("{0}.xml", fill.TableName));
             List<CaFieldInfo> infos = CaFieldInfo.ReadInfo(xmlDirectory, fill.TableName);
+            infos.ForEach(i => {
+                if (i.Ignored && !fill.IgnoredXmlFieldNames.Contains(i.Name)) {
+                    fill.IgnoredXmlFields.Add(i.Name);
+                }
+            });
 
             if (File.Exists(xmlFile)) {
                 tableDocument.Load(xmlFile);
                 foreach(XmlNode node in tableDocument.ChildNodes[1]) {
                     if (node.Name.Equals(fill.TableName)) {
                         Dictionary<string, string> keyValues = new Dictionary<string, string>();
-                        infos.ForEach(i => keyValues[i.Name] = "");
+                        infos.ForEach(i => { 
+                            keyValues[i.Name] = "";
+                        });
                         foreach(XmlNode valueNode in node.ChildNodes) {
                             keyValues[valueNode.Name] = valueNode.InnerText;
                         }
@@ -191,6 +160,45 @@ namespace PackFileTest {
                     }
                 }
             }
+        }
+
+        /*
+         * Query the user for the unresolved columns of the given table.
+         * Return false if user requested quit.
+         */
+        public bool ManuallyResolveTableMapping(string tableName) {
+
+            MappedTable table = mappedTables[tableName];
+            Console.WriteLine("\nTable {0}", table.TableName);
+            List<NameMapping> mappings = new List<NameMapping>();
+            List<string> candidates = new List<string>(table.UnmappedXmlFieldNames);
+            foreach (string query in table.UnmappedPackFieldNames) {
+                if (candidates.Count == 0) {
+                    continue;
+                }
+                Console.WriteLine("Enter corresponding field for \"{0}\":", query);
+                for (int i = 0; i < candidates.Count; i++) {
+                    Console.WriteLine("{0}: {1}", i, candidates[i]);
+                }
+                int response = -1;
+                while (response != int.MinValue && (response < 0 || response > candidates.Count - 1)) {
+                    string val = Console.ReadLine();
+                    if ("q".Equals(val)) {
+                        return false;
+                    } else if ("n".Equals(val)) {
+                        response = int.MinValue;
+                        break;
+                    }
+                    int.TryParse(val, out response);
+                }
+                if (response == int.MinValue) {
+                    continue;
+                }
+                string mapped = candidates[response];
+                candidates.Remove(mapped);
+                mappings.Add(new NameMapping(query, mapped));
+            }
+            return true;
         }
     }
 
@@ -213,28 +221,52 @@ namespace PackFileTest {
             }
         }
 
+        FieldReference reference;
+        public FieldReference Reference { get; set; }
+
         public static List<CaFieldInfo> ReadInfo(string xmlDirectory, string tableName) {
             List<CaFieldInfo> result = new List<CaFieldInfo>();
-            string filename = Path.Combine(xmlDirectory, string.Format("TWaD_{0}.xml", tableName));
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.Load(filename);
-            foreach (XmlNode node in xmlDoc.ChildNodes) {
-                if (node.Name.Equals("root")) {
-                    foreach (XmlNode fieldNode in node.ChildNodes) {
-                        if (!fieldNode.Name.Equals("field")) {
-                            continue;
-                        }
-                        string name = null, type = null;
-                        foreach (XmlNode itemNode in fieldNode.ChildNodes) {
-                            if (itemNode.Name.Equals("name")) {
-                                name = itemNode.InnerText;
-                            } else if (itemNode.Name.Equals("field_type")) {
-                                type = itemNode.InnerText;
+            try {
+                string filename = Path.Combine(xmlDirectory, string.Format("TWaD_{0}.xml", tableName));
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.Load(filename);
+                foreach (XmlNode node in xmlDoc.ChildNodes) {
+                    if (node.Name.Equals("root")) {
+                        foreach (XmlNode fieldNode in node.ChildNodes) {
+                            if (!fieldNode.Name.Equals("field")) {
+                                continue;
                             }
+                            string name = null, type = null;
+                            string refTable = null, refField = null;
+                            foreach (XmlNode itemNode in fieldNode.ChildNodes) {
+                                if (itemNode.Name.Equals("name")) {
+                                    name = itemNode.InnerText;
+                                } else if (itemNode.Name.Equals("field_type")) {
+                                    type = itemNode.InnerText;
+                                } else if (itemNode.Name.Equals("column_source_table")) {
+                                    refTable = itemNode.InnerText;
+                                } else if (itemNode.Name.Equals("column_source_column")) {
+                                    refField = itemNode.InnerText;
+                                }
+                            }
+                            CaFieldInfo info = new CaFieldInfo(name, type);
+                            if (refTable != null && refField != null) {
+                                info.Reference = new FieldReference(refTable, refField);
+                            }
+                            result.Add(info);
                         }
-                        CaFieldInfo info = new CaFieldInfo(name, type);
-                        result.Add(info);
                     }
+                }
+            } catch { }
+            return result;
+        }
+
+        public static CaFieldInfo FindInList(List<CaFieldInfo> list, string name) {
+            CaFieldInfo result = null;
+            foreach (CaFieldInfo info in list) {
+                if (info.Name.Equals(name)) {
+                    result = info;
+                    break;
                 }
             }
             return result;

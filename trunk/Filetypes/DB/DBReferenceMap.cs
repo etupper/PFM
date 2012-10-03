@@ -42,10 +42,6 @@ namespace Filetypes {
                 return valueCache[key];
             }
         }
-        
-        public static String FormatReference(string typename, string fieldname) {
-            return string.Format("{0}.{1}", typename, fieldname);
-        }
 
         SortedSet<string> collectValues(string tableName, string fieldName, IEnumerable<PackedFile> packedFiles) {
             SortedSet<string> result = null;

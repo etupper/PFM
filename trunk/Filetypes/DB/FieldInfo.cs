@@ -41,6 +41,37 @@ namespace Filetypes
         public static FieldInfo ByteType() { return new VarBytesType(1) { Name = "unknown" }; }
         public static FieldInfo ListType() { return new ListType() { Name = "unknown" }; }
     }
+
+    public class FieldReference {
+        static char[] SEPARATOR = { '.' };
+
+        public FieldReference(string table, string field) {
+            Table = table;
+            Field = field;
+        }
+        public FieldReference(string encoded) {
+            string[] parts = encoded.Split(SEPARATOR);
+            Table = parts[0];
+            Field = parts[1];
+        }
+        public FieldReference() {
+        }
+
+        public string Table { get; set; }
+        public string Field { get; set; }
+
+        public override string ToString() {
+            string result = "";
+            if (!string.IsNullOrEmpty(Table) && !string.IsNullOrEmpty(Field)) {
+                result = FormatReference(Table, Field);
+            }
+            return result;
+        }
+
+        public static string FormatReference(string table, string field) {
+            return string.Format("{0}.{1}", table, field);
+        }
+    }
 	
 	[System.Diagnostics.DebuggerDisplay("{Name} - {TypeName}; {Optional}")]
     public abstract class FieldInfo {
@@ -63,15 +94,38 @@ namespace Filetypes
             }
         }
 
-        string referenceString = "";
-        public string ForeignReference {
+        FieldReference reference;
+        public FieldReference FieldReference {
             get {
-                return referenceString;
+                return reference;
             }
             set {
-                referenceString = value;
+                reference = value;
             }
         }
+        public string ForeignReference {
+            get {
+                return reference != null ? reference.ToString() : "";
+            }
+            set {
+                reference = new FieldReference(value);
+            }
+        }
+
+        public string ReferencedTable {
+            get {
+                return reference != null ? reference.Table : "";
+            }
+        }
+        public string ReferencedField {
+            get {
+                return reference != null ? reference.Field : "";
+            }
+            set {
+                reference.Field = value;
+            }
+        }
+
 
 		public virtual string TypeName { get; set; }
 		public TypeCode TypeCode { get; set; }

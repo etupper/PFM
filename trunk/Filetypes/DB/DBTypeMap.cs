@@ -55,6 +55,22 @@ namespace Filetypes {
             List<TypeInfo> infos = GetVersionedInfos(key, version);
             return infos.Count > 0 ? infos[0] : null;
         }
+        public List<TypeInfo> GetAllInfos(string table) {
+            List<TypeInfo> result = new List<TypeInfo>();
+            if (typeMap.ContainsKey(table)) {
+                TypeInfo info = new TypeInfo(typeMap[table]);
+                info.Name = table;
+                result.Add(info);
+            }
+            foreach (GuidTypeInfo typeInfo in guidMap.Keys) {
+                if (typeInfo.TypeName.Equals(table)) {
+                    TypeInfo info = new TypeInfo(guidMap[typeInfo]);
+                    info.Name = table;
+                    result.Add(info);
+                }
+            }
+            return result;
+        }
         public List<TypeInfo> GetVersionedInfos(string key, int version) {
             List<TypeInfo> typeInfos = new List<TypeInfo>();
             foreach(GuidTypeInfo keyInfo in GuidMap.Keys) {
