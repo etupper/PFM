@@ -38,7 +38,9 @@ namespace PackFileTest {
             // -cr: check references
             "-cr",
             // -mx: find corresponding fields in mod tools xml files
-            "-mx"
+            "-mx",
+            // -cs: replace current schema names with the ones from CA
+            "-cs"
         };
 #pragma warning restore 414
 
@@ -124,6 +126,8 @@ namespace PackFileTest {
                 } else if (dir.StartsWith("-mx")) {
                     string[] split = dir.Substring(3).Split(Path.PathSeparator);
                     FindCorrespondingFields(split[0], split[1]);
+                } else if (dir.StartsWith("-cs")) {
+                    ReplaceSchemaNames(dir.Substring(3));
                 } else {
                     PackedFileTest.TestAllPacks(testFactories, dir, verbose);
                 }
@@ -136,7 +140,54 @@ namespace PackFileTest {
                 Console.ReadKey();
             }
         }
-        
+
+        void ReplaceSchemaNames(string xmlDirectory) {
+            Dictionary<Tuple<string, string>, string> renamedFields = new Dictionary<Tuple<string, string>, string>();
+            List<FieldReference> references = new List<FieldReference>();
+            foreach (string table in DBTypeMap.Instance.DBFileTypes) {
+                string lookupString = table.Replace("_tables", "");
+                Console.WriteLine("table {0}", table);
+                List<TypeInfo> infos = DBTypeMap.Instance.GetAllInfos(table);
+                foreach (TypeInfo typeInfo in infos) {
+                    List<CaFieldInfo> caInfos = CaFieldInfo.ReadInfo(xmlDirectory, lookupString);
+
+                    foreach (FieldInfo info in typeInfo.Fields) {
+                        string newName = TableNameCorrespondencyManager.Instance.GetXmlFieldName(lookupString, info.Name);
+                        if (newName != null) {
+                            // remember rename to be able to correct references to this later
+                            Tuple<string, string> tableFieldTuple = new Tuple<string, string>(table, info.Name);
+                            if (!renamedFields.ContainsKey(tableFieldTuple)) {
+                                renamedFields.Add(tableFieldTuple, newName);
+                            }
+                            info.Name = newName;
+                            Console.WriteLine("{0}->{1}", info.Name, newName);
+
+                            CaFieldInfo caInfo = CaFieldInfo.FindInList(caInfos, newName);
+                            if (caInfo != null) {
+                                FieldReference reference = caInfo.Reference;
+                                if (reference != null) {
+                                    reference.Table = string.Format("{0}_tables", reference.Table);
+                                }
+                                info.FieldReference = reference;
+                            }
+                        }
+                        //FieldReference reference = info.FieldReference;
+                        //if (reference != null) {
+                        //    references.Add(reference);
+                        //}
+                    }
+                }
+            }
+            // correct references
+            //foreach (FieldReference reference in references) {
+            //    Tuple<string, string> referencedFieldTuple = new Tuple<string, string>(reference.Table, reference.Field);
+            //    if (renamedFields.ContainsKey(referencedFieldTuple)) {
+            //        string newFieldName = renamedFields[referencedFieldTuple];
+            //        reference.Field = newFieldName;
+            //    }
+            //}
+        }
+
         void FindCorrespondingFields(string packFile, string xmlDirectory) {
             TableNameCorrespondencyManager manager = TableNameCorrespondencyManager.Instance;
             FieldCorrespondencyFinder finder = new FieldCorrespondencyFinder(packFile, xmlDirectory);

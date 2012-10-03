@@ -96,6 +96,29 @@ namespace Filetypes {
                 return unmappedXmlFields;
             }
         }
+
+        Dictionary<string, List<string>> ignoredXmlFields = new Dictionary<string, List<string>>();
+        public void AddIgnoredField(string table, string ignoredField) {
+            List<string> addTo = new List<string>();
+            if (ignoredXmlFields.ContainsKey(table)) {
+                addTo = ignoredXmlFields[table];
+            } else {
+                ignoredXmlFields.Add(table, addTo);
+            }
+            if (!addTo.Contains(ignoredField)) {
+                addTo.Add(ignoredField);
+            }
+            if (unmappedXmlFields.ContainsKey(table)) {
+                unmappedXmlFields[table].Remove(ignoredField);
+            }
+        }
+        public bool IsFieldIgnored(string table, string field) {
+            bool result = false;
+            if (ignoredXmlFields.ContainsKey(table)) {
+                result = ignoredXmlFields[table].Contains(field);
+            }
+            return result;
+        }
         
         public void Clear() {
             tableMapping.Clear();
@@ -104,6 +127,7 @@ namespace Filetypes {
             tableGuidMap.Clear();
             unmappedPackedFields.Clear();
             unmappedXmlFields.Clear();
+            ignoredXmlFields.Clear();
         }
 
         Dictionary<string, string> tableGuidMap = new Dictionary<string, string>();
@@ -140,15 +164,23 @@ namespace Filetypes {
             try {
                 XmlDocument xmlFile = new XmlDocument();
                 xmlFile.Load(filename);
+                char[] separator = new char[] { ',' };
                 foreach(XmlNode tableNode in xmlFile.ChildNodes[0].ChildNodes) {
                     string tableName = tableNode.Attributes["name"].Value;
                     List<NameMapping> mappings = new List<NameMapping>();
                     table.Add(tableName, mappings);
                     foreach(XmlNode fieldNode in tableNode.ChildNodes) {
-                        string packName = fieldNode.Attributes["pack"].Value;
-                        string xmlName = fieldNode.Attributes["xml"].Value;
-                        mappings.Add(new Tuple<string, string>(packName, xmlName));
-                    }                
+                        if (fieldNode.Name.Equals("field")) {
+                            string packName = fieldNode.Attributes["pack"].Value;
+                            string xmlName = fieldNode.Attributes["xml"].Value;
+                            mappings.Add(new Tuple<string, string>(packName, xmlName));
+                        } else if (fieldNode.Name.Equals("ignoredXmlFields")) {
+                            string[] fields = fieldNode.InnerText.Split(separator);
+                            foreach (string field in fields) {
+                                AddIgnoredField(tableName, field);
+                            }
+                        }
+                    }
                 }
             } catch (Exception ex) {
                 Console.Error.WriteLine("failed to load {0}: {1}", filename, ex.Message);
@@ -168,15 +200,18 @@ namespace Filetypes {
                     foreach (NameMapping fieldNames in tableMapping[tableName]) {
                         file.WriteLine(string.Format("  <field pack=\"{0}\" xml=\"{1}\"/>", fieldNames.Item1, fieldNames.Item2));
                     }
-                    if (unmappedPackedFields.ContainsKey(tableName) && unmappedPackedFields[tableName].Count != 0) {
-                        file.WriteLine(string.Format("  <unmappedPackedFields>{0}</unmappedPackedFields>", string.Join(",", unmappedPackedFields[tableName])));
-                    }
-                    if (unmappedXmlFields.ContainsKey(tableName) && unmappedXmlFields[tableName].Count != 0) {
-                        file.WriteLine(string.Format("  <unmappedXmlFields>{0}</unmappedXmlFields>", string.Join(",", unmappedXmlFields[tableName])));
-                    }
+                    WriteList(file, tableName, "unmappedPackedFields", unmappedPackedFields);
+                    WriteList(file, tableName, "unmappedXmlFields", unmappedXmlFields);
+                    WriteList(file, tableName, "ignoredXmlFields", ignoredXmlFields);
                     file.WriteLine(" </table>");
                 }
                 file.WriteLine("</correspondencies>");
+            }
+        }
+
+        static void WriteList(StreamWriter writer, string tableName, string tag, Dictionary<string, List<string>> map) {
+            if (map.ContainsKey(tableName) && map[tableName].Count != 0) {
+                writer.WriteLine(string.Format("  <{1}>{0}</{1}>", string.Join(",", map[tableName]), tag));
             }
         }
         
@@ -189,7 +224,7 @@ namespace Filetypes {
             if (result == null) {
                 result = GetXmlFieldName(table, field, partialTableMapping);
             }
-            return null;
+            return result;
         }
 
         static string GetXmlFieldName(string table, string field, Dictionary<string, List<NameMapping>> mapping) {

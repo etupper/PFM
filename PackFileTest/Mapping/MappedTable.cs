@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Filetypes;
 
 using NameMapping = System.Tuple<string, string>;
 
@@ -11,6 +12,13 @@ namespace PackFileTest.Mapping {
         private Dictionary<string, string> mappedFields = new Dictionary<string, string>();
         private DataTable packData = new DataTable();
         private DataTable xmlData = new DataTable();
+        private Dictionary<string, FieldReference> references = new Dictionary<string, FieldReference>();
+
+        private List<string> ignoredXmlFields = new List<string>();
+
+        public List<string> IgnoredXmlFields {
+            get { return ignoredXmlFields; }
+        }
 
         public MappedTable(string name) {
             tableName = name;
@@ -22,13 +30,31 @@ namespace PackFileTest.Mapping {
         public string Guid { get; set; }
         public bool IsCompatible {
             get {
-                return packData.Fields.Count == xmlData.Fields.Count;
+                return packData.Fields.Count == RelevantXmlFieldCount;
             }
         }
         public bool IsFullyMapped {
             get {
                 return IsCompatible && mappedFields.Count == packData.Fields.Count;
             }
+        }
+        public int RelevantXmlFieldCount {
+            get {
+                int result = xmlData.Fields.Count;
+                xmlData.Fields.ForEach(f => { if (ignoredXmlFields.Contains(f)) { result--; } });
+                return result;
+            }
+        }
+
+        public Dictionary<string, FieldReference> References {
+            get { return references; }
+        }
+        public FieldReference GetReference(string field) {
+            FieldReference result = null;
+            if (references.ContainsKey(field)) {
+                result = references[field];
+            }
+            return result;
         }
 
         public List<NameMapping> MappingAsTuples {
@@ -52,8 +78,18 @@ namespace PackFileTest.Mapping {
         public List<string> UnmappedXmlFieldNames {
             get {
                 List<string> result = new List<string>();
-                xmlData.Fields.ForEach(f => { if (!mappedFields.ContainsValue(f)) { result.Add(f); } });
+                foreach (string f in xmlData.Fields) {
+                    if (!mappedFields.ContainsValue(f) && !ignoredXmlFields.Contains(f)) {
+                        result.Add(f);
+                    }
+                }
+                // xmlData.Fields.ForEach(f => { if (!mappedFields.ContainsValue(f) && !ignoredXmlFields.Contains(f)) { result.Add(f); } });
                 return result;
+            }
+        }
+        public List<string> IgnoredXmlFieldNames {
+            get {
+                return ignoredXmlFields;
             }
         }
         #endregion

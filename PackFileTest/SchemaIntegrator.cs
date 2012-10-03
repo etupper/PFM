@@ -114,14 +114,13 @@ namespace PackFileTest {
         }
         
         void CorrectReferences(string type, FieldInfo toInfo, string newName) {
-            string referenceString = DBReferenceMap.FormatReference(type, toInfo.Name);
+            string referenceString = FieldReference.FormatReference(type, toInfo.Name);
             
             if (references.ContainsKey(referenceString)) {
-                string newReference = DBReferenceMap.FormatReference(type, newName);
                 foreach(FieldInfo info in references[referenceString]) {
-                    info.ForeignReference = newReference;
+                    info.ReferencedField = newName;
                     Console.WriteLine("Correcting reference {0}: to {1}", 
-                                      referenceString, newReference);
+                                      referenceString, info.ForeignReference);
                 }
             }
         }
