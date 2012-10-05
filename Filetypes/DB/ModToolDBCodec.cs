@@ -24,7 +24,7 @@ namespace Filetypes {
 
         // write given file to given stream in ca xml format
         public void Encode(Stream dbFile, DBFile file) {
-            string typeName = file.CurrentType.Name;
+            string typeName = file.CurrentType.Name.Replace("_tables", "");
             using (var writer = new StreamWriter(dbFile)) {
                 // write header
                 writer.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");

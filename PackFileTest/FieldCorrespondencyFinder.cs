@@ -191,7 +191,7 @@ namespace PackFileTest {
                             keyValues[i.Name] = "";
                         });
                         foreach(XmlNode valueNode in node.ChildNodes) {
-                            fill.XmlData.AddFieldValue(valueNode.Name, valueNode.InnerXml);
+                            //fill.XmlData.AddFieldValue(valueNode.Name, valueNode.InnerXml);
                             keyValues[valueNode.Name] = valueNode.InnerText;
                         }
                         foreach (string key in keyValues.Keys) {
