@@ -37,8 +37,8 @@ namespace PackFileTest.Mapping {
         public Dictionary<string, string> XmlDataTypes {
             get { return xmlDataTypes; }
         }
-
-        public override Dictionary<string, string> ConstantValues {
+        
+        public override Dictionary<string, string> ConstantXmlValues {
             get {
                 Dictionary<string, string> result = new Dictionary<string, string>();
                 if (mappedFields.Count == PackDataFields.Count) {
@@ -48,11 +48,23 @@ namespace PackFileTest.Mapping {
                         if (mappedFields.ContainsValue(xmlField)) {
                             continue;
                         }
-                        string fieldType = xmlDataTypes[xmlField];
-                        string value = GenerateDefaultValue(fieldType);
+                        string value = "";
+                        if (xmlDataTypes.ContainsKey(xmlField)) {
+                            string fieldType = xmlDataTypes[xmlField];
+                            value = GenerateDefaultValue(fieldType);
+                        }
                         result.Add(xmlField, value);
                     }
-                } else if (UnmappedXmlFieldNames.Count == 0) {
+                }
+                return result;
+            }
+        }
+
+        public override Dictionary<string, string> ConstantPackValues {
+            get {
+                Dictionary<string, string> result = new Dictionary<string, string>();
+
+                if (UnmappedXmlFieldNames.Count == 0) {
                     // there are more fields in the pack than in the xml...
                     // that data had to come from somewhere.
                     // if all columns in those fields have the same value,
@@ -81,6 +93,10 @@ namespace PackFileTest.Mapping {
                 }
                 return result;
             }
+        }
+        
+        bool IsMappedPackField(string fieldName) {
+            return mappedFields.ContainsKey(fieldName);
         }
 
         static string GenerateDefaultValue(string fieldType) {
