@@ -184,11 +184,9 @@ namespace PackFileTest {
             string xmlFile = Path.Combine(xmlDirectory, string.Format("{0}.xml", fill.TableName));
             string guid;
             List<CaFieldInfo> infos = CaFieldInfo.ReadInfo(xmlDirectory, fill.TableName, out guid);
-            //infos.ForEach(i => {
-            //    if (i.Ignored && !fill.IgnoredXmlFieldNames.Contains(i.Name)) {
-            //        fill.IgnoredXmlFields.Add(i.Name);
-            //    }
-            //});
+            infos.ForEach(i => {
+                fill.XmlDataTypes[i.Name] = i.FieldType;
+            });
 
             if (File.Exists(xmlFile)) {
                 tableDocument.Load(xmlFile);
@@ -199,6 +197,7 @@ namespace PackFileTest {
                             keyValues[i.Name] = "";
                         });
                         foreach(XmlNode valueNode in node.ChildNodes) {
+                            fill.XmlData.AddFieldValue(valueNode.Name, valueNode.InnerXml);
                             keyValues[valueNode.Name] = valueNode.InnerText;
                         }
                         foreach (string key in keyValues.Keys) {

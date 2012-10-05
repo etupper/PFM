@@ -150,12 +150,21 @@ namespace Filetypes {
                     tables.Add(tableName, table);
                     foreach(XmlNode fieldNode in tableNode.ChildNodes) {
                         if (fieldNode.Name.Equals("field")) {
-                            string packName = fieldNode.Attributes["pack"].Value;
-                            if (fieldNode.Attributes["xml"] != null) {
-                                string xmlName = fieldNode.Attributes["xml"].Value;
+                            string packName = FromAttribute(fieldNode, "pack");
+                            string xmlName = FromAttribute(fieldNode, "xml");
+                            string constantValue = FromAttribute(fieldNode, "constant");
+                            if (packName != null && xmlName != null) {
+                                // mapping
                                 table.AddMapping(packName, xmlName);
-                            } else if (fieldNode.Attributes["constant"] != null) {
-                                table.AddConstantValue(packName, fieldNode.Attributes["constant"].Value);
+                            } else if (constantValue != null) {
+                                // constant value... for pack or xml field?
+                                if (packName != null) {
+                                    table.AddConstantPackValue(packName, constantValue);
+                                } else if (xmlName != null) {
+                                    table.AddConstantXmlValue(xmlName, constantValue);
+                                } else throw new InvalidDataException();
+                            } else {
+                                throw new InvalidDataException();
                             }
                         } else if (fieldNode.Name.Equals(UNMAPPED_PACK_FIELDS)) {
                             string[] list = fieldNode.InnerText.Split(separator);
@@ -173,6 +182,9 @@ namespace Filetypes {
             } catch (Exception ex) {
                 Console.Error.WriteLine("failed to load {0}: {1}", filename, ex.Message);
             }
+        }
+        static string FromAttribute(XmlNode node, string attribute) {
+            return (node.Attributes[attribute] != null) ? node.Attributes[attribute].Value : null;
         }
 
         public static Dictionary<string, List<NameMapping>> LoadFromFile(string filename) {
@@ -206,8 +218,13 @@ namespace Filetypes {
             foreach (NameMapping fieldNames in table.MappingAsTuples) {
                 file.WriteLine(string.Format("  <field pack=\"{0}\" xml=\"{1}\"/>", fieldNames.Item1, fieldNames.Item2));
             }
-            foreach (string constantField in table.ConstantValues.Keys) {
-                file.WriteLine(string.Format("  <field pack=\"{0}\" constant=\"{1}\"/>", constantField, table.ConstantValues[constantField]));
+            foreach (string constantField in table.ConstantPackValues.Keys) {
+                file.WriteLine(string.Format("  <field pack=\"{0}\" constant=\"{1}\"/>", 
+                                             constantField, table.ConstantPackValues[constantField]));
+            }
+            foreach(string constantXml in table.ConstantXmlValues.Keys) {
+                file.WriteLine(string.Format("  <field xml=\"{0}\" constant=\"{1}\"/>", 
+                                             constantXml, table.ConstantXmlValues[constantXml]));
             }
             WriteList(file, UNMAPPED_PACK_FIELDS, table.UnmappedPackFieldNames);
             WriteList(file, UNMAPPED_XML_FIELDS, table.UnmappedXmlFieldNames);
