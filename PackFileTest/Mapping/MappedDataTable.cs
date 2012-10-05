@@ -7,51 +7,13 @@ using Filetypes;
 using NameMapping = System.Tuple<string, string>;
 
 namespace PackFileTest.Mapping {
-    using NameMapping = System.Tuple<string, string>;
-
     class MappedDataTable : MappedTable {
         public MappedDataTable(string name) : base(name) { }
 
+        #region Data Tables
+        // tables containing fields with actual data
         private DataTable packData = new DataTable();
         private DataTable xmlData = new DataTable();
-
-        public override List<string> PackDataFields {
-            get { return packData.Fields; }
-        }
-        public override List<string> XmlDataFields {
-            get { return xmlData.Fields; }
-        }
-
-        public override Dictionary<string, string> ConstantValues {
-            get {
-                Dictionary<string, string> result = new Dictionary<string, string>();
-                if (UnmappedXmlFieldNames.Count != 0) {
-                    // only looks for constant values if we don't have unmapped xml;
-                    // values might be coming from one of those
-                    return result;
-                }
-                List<string> unmapped = new List<string>(PackDataFields);
-                unmapped.RemoveAll(delegate(string s) { return mappedFields.Keys.Contains(s); });
-                foreach (string packFieldName in unmapped) {
-                    List<string> values = packData.Values(packFieldName);
-                    if (values.Count != 0) {
-                        string lastValue = values[0];
-                        bool allValuesEqual = true;
-                        foreach (string value in values) {
-                            allValuesEqual &= value.Equals(lastValue);
-                            if (!allValuesEqual) {
-                                break;
-                            }
-                        }
-                        if (allValuesEqual) {
-                            result.Add(packFieldName, lastValue);
-                        }
-                    }
-                }
-                return result;
-            }
-        }
-
         public DataTable PackData {
             get {
                 return packData;
@@ -61,6 +23,81 @@ namespace PackFileTest.Mapping {
             get {
                 return xmlData;
             }
+        }
+        #endregion
+
+        public override List<string> PackDataFields {
+            get { return packData.Fields; }
+        }
+        public override List<string> XmlDataFields {
+            get { return xmlData.Fields; }
+        }
+        
+        Dictionary<string, string> xmlDataTypes = new Dictionary<string, string>();
+        public Dictionary<string, string> XmlDataTypes {
+            get { return xmlDataTypes; }
+        }
+
+        public override Dictionary<string, string> ConstantValues {
+            get {
+                Dictionary<string, string> result = new Dictionary<string, string>();
+                if (mappedFields.Count == PackDataFields.Count) {
+                    // all pack fields are mapped... we'll provide values
+                    // for the unmapped xml ones
+                    foreach(string xmlField in XmlDataFields) {
+                        if (mappedFields.ContainsValue(xmlField)) {
+                            continue;
+                        }
+                        string fieldType = xmlDataTypes[xmlField];
+                        string value = GenerateDefaultValue(fieldType);
+                        result.Add(xmlField, value);
+                    }
+                } else if (UnmappedXmlFieldNames.Count == 0) {
+                    // there are more fields in the pack than in the xml...
+                    // that data had to come from somewhere.
+                    // if all columns in those fields have the same value,
+                    // assume it is constant and just inserted by the export.
+                    List<string> unmapped = new List<string>(PackDataFields);
+
+                    // we cannot use UnmappedPackFieldNames here, because it 
+                    // calls ConstantValues...
+                    unmapped.RemoveAll(IsMappedPackField);
+                    foreach (string packFieldName in unmapped) {                                                              
+                        List<string> values = packData.Values(packFieldName);                                                 
+                        if (values.Count != 0) {                                                                              
+                            string lastValue = values[0];                                                                     
+                            bool allValuesEqual = true;                                                                       
+                            foreach (string value in values) {                                                                
+                                allValuesEqual &= value.Equals(lastValue);                                                    
+                                if (!allValuesEqual) {                                                                        
+                                    break;                                                                                    
+                                }
+                            }
+                            if (allValuesEqual) {
+                                result.Add(packFieldName, lastValue);
+                            }
+                        }
+                    }
+                }
+                return result;
+            }
+        }
+
+        static string GenerateDefaultValue(string fieldType) {
+            switch (fieldType) {
+            case "integer":
+            case "longinteger":
+            case "autonumber":
+            case "decimal":
+            case "single":
+            case "double":
+            case "yesno":
+                return "0";
+            case "text":
+            case "memo":
+                return "";
+            }
+            throw new InvalidOperationException(string.Format("unknown type {0}", fieldType));
         }
     }
 
