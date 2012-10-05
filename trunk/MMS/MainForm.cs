@@ -37,12 +37,11 @@ namespace MMS {
                 // to play around with no settings to imitate original start
                 //Settings.Default.ModToolPath = "";
                 //Settings.Default.ActiveMod = "";
-#else
-                this.setActiveToolStripMenuItem.Visible = false;
 #endif
                 Settings.Default.Save();
             };
 
+            Text = string.Format("MMS {0} - MultiMod Support", Application.ProductVersion);
         }
 
         List<Process> startedProcesses = new List<Process>();

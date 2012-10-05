@@ -34,6 +34,7 @@
             this.uninstallToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extrasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.installationDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.restoreOriginalDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.installDirectoryLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -41,7 +42,6 @@
             this.launchTweak = new System.Windows.Forms.Button();
             this.launchBobButton = new System.Windows.Forms.Button();
             this.modList = new System.Windows.Forms.ListBox();
-            this.restoreOriginalDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -51,7 +51,7 @@
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new System.Drawing.Size(135, 6);
+            toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
             // 
             // menuStrip
             // 
@@ -81,43 +81,42 @@
             // addModToolStripMenuItem
             // 
             this.addModToolStripMenuItem.Name = "addModToolStripMenuItem";
-            this.addModToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.addModToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.addModToolStripMenuItem.Text = "Add";
             this.addModToolStripMenuItem.Click += new System.EventHandler(this.AddMod);
             // 
             // deleteModToolStripMenuItem
             // 
             this.deleteModToolStripMenuItem.Name = "deleteModToolStripMenuItem";
-            this.deleteModToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.deleteModToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.deleteModToolStripMenuItem.Text = "Delete";
             this.deleteModToolStripMenuItem.Click += new System.EventHandler(this.DeleteMod);
             // 
             // importModToolStripMenuItem
             // 
             this.importModToolStripMenuItem.Name = "importModToolStripMenuItem";
-            this.importModToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.importModToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.importModToolStripMenuItem.Text = "Import pack";
-            this.importModToolStripMenuItem.Visible = false;
             this.importModToolStripMenuItem.Click += new System.EventHandler(this.ImportExistingPack);
             // 
             // setActiveToolStripMenuItem
             // 
             this.setActiveToolStripMenuItem.Name = "setActiveToolStripMenuItem";
-            this.setActiveToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.setActiveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.setActiveToolStripMenuItem.Text = "Set Active";
             this.setActiveToolStripMenuItem.Click += new System.EventHandler(this.SetMod);
             // 
             // installToolStripMenuItem
             // 
             this.installToolStripMenuItem.Name = "installToolStripMenuItem";
-            this.installToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.installToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.installToolStripMenuItem.Text = "Install";
             this.installToolStripMenuItem.Click += new System.EventHandler(this.InstallMod);
             // 
             // uninstallToolStripMenuItem
             // 
             this.uninstallToolStripMenuItem.Name = "uninstallToolStripMenuItem";
-            this.uninstallToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.uninstallToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.uninstallToolStripMenuItem.Text = "Uninstall";
             this.uninstallToolStripMenuItem.Click += new System.EventHandler(this.UninstallMod);
             // 
@@ -136,6 +135,13 @@
             this.installationDirectoryToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.installationDirectoryToolStripMenuItem.Text = "Installation Directory";
             this.installationDirectoryToolStripMenuItem.Click += new System.EventHandler(this.SetInstallDirectory);
+            // 
+            // restoreOriginalDataToolStripMenuItem
+            // 
+            this.restoreOriginalDataToolStripMenuItem.Name = "restoreOriginalDataToolStripMenuItem";
+            this.restoreOriginalDataToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.restoreOriginalDataToolStripMenuItem.Text = "Restore Original Data";
+            this.restoreOriginalDataToolStripMenuItem.Click += new System.EventHandler(this.RestoreData);
             // 
             // statusStrip
             // 
@@ -204,13 +210,6 @@
             this.modList.Name = "modList";
             this.modList.Size = new System.Drawing.Size(616, 219);
             this.modList.TabIndex = 4;
-            // 
-            // restoreOriginalDataToolStripMenuItem
-            // 
-            this.restoreOriginalDataToolStripMenuItem.Name = "restoreOriginalDataToolStripMenuItem";
-            this.restoreOriginalDataToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
-            this.restoreOriginalDataToolStripMenuItem.Text = "Restore Original Data";
-            this.restoreOriginalDataToolStripMenuItem.Click += new System.EventHandler(this.RestoreData);
             // 
             // MainForm
             // 

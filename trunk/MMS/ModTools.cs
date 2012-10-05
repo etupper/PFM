@@ -58,6 +58,11 @@ namespace MMS {
             }
         }
 
+        public string RawDataPath {
+            get {
+                return Path.Combine(InstallDirectory, "raw_data");
+            }
+        }
         public string WorkingDataPath {
             get {
                 return Path.Combine(InstallDirectory, "working_data");

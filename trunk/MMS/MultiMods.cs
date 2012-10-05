@@ -122,6 +122,7 @@ namespace MMS {
                     // prevent the mod from backing up its data upon deactivation
                     // if it is the current mod
                     currentMod = null;
+                    ModTools.RestoreOriginalData();
                 }
                 ModListChanged();
                 if (deleteData) {

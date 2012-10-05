@@ -61,16 +61,16 @@ namespace PackFileManager {
         }
         void Renamed(PackEntry file, string val) {
             PackedFile file2 = file as PackedFile;
-            if (!val.Contains("version")) {
-                if (file2.Data.Length != 0) {
-                    try {
-                        DBFileHeader header = PackedFileDbCodec.readHeader(file2);
-                        Text = string.Format("{0} - version {1}", val, header.Version);
-                    } catch (Exception e) {
-                        Console.WriteLine(e);
-                    }
-                }
-            }
+            //if (!val.Contains("version")) {
+            //    if (file2.Data.Length != 0) {
+            //        try {
+            //            DBFileHeader header = PackedFileDbCodec.readHeader(file2);
+            //            Text = string.Format("{0} - version {1}", val, header.Version);
+            //        } catch (Exception e) {
+            //            Console.WriteLine(e);
+            //        }
+            //    }
+            //}
         }
 
         /*
@@ -95,7 +95,7 @@ namespace PackFileManager {
                     }
                     try {
                         DBFileHeader header = PackedFileDbCodec.readHeader(packedFile);
-                        text = string.Format("{0} - version {1}", text, header.Version);
+                        // text = string.Format("{0} - version {1}", text, header.Version);
                         if (header.EntryCount == 0) {
                             // empty db file
                             if (NodeFont != null) {

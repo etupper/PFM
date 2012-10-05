@@ -211,7 +211,7 @@ namespace Filetypes {
 
             WriteMappedFields(file, PACK_ATTRIBUTE, XML_ATTRIBUTE, table.Mappings);
             WriteMappedFields(file, PACK_ATTRIBUTE, CONSTANT_ATTRIBUTE, table.ConstantPackValues);
-            WriteMappedFields(file, PACK_ATTRIBUTE, CONSTANT_ATTRIBUTE, table.ConstantXmlValues);
+            WriteMappedFields(file, XML_ATTRIBUTE, CONSTANT_ATTRIBUTE, table.ConstantXmlValues);
 
             WriteList(file, UNMAPPED_PACK_FIELDS, table.UnmappedPackFieldNames);
             WriteList(file, UNMAPPED_XML_FIELDS, table.UnmappedXmlFieldNames);
@@ -220,7 +220,7 @@ namespace Filetypes {
         
         static void WriteMappedFields(StreamWriter writer, string fromTag, string toTag, Dictionary<string, string> map) {
             foreach(string key in map.Keys) {
-                writer.WriteLine(string.Format("  <field {0}=\"{2}\" {1}=\"\" />", fromTag, toTag, key, map[key]));
+                writer.WriteLine(string.Format("  <field {0}=\"{2}\" {1}=\"{3}\" />", fromTag, toTag, key, map[key]));
             }
         }
 

@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
+using Common;
+using Filetypes;
 
 namespace MMS {
     public class PackImporter {
@@ -10,44 +13,40 @@ namespace MMS {
 
         static readonly Regex PACK_FILE_RE = new Regex(".pack");
         public void ImportExistingPack(string packFileName) {
-            string modName = PACK_FILE_RE.Replace(packFileName, "");
+            string modName = PACK_FILE_RE.Replace(Path.GetFileName(packFileName), "");
             Mod newMod = new Mod(modName);
-
-            // ToolDataBuilder can't handle paths with spaces in it...
-            // avoid this problem by working on temporary data
-            string tempDir = Path.Combine(ModTools.Instance.BinariesPath, "temp");
-            Directory.CreateDirectory(tempDir);
-            string tempPack = Path.Combine(ModTools.Instance.BinariesPath, "temp.pack");
-            File.Copy(packFileName, tempPack);
-
-            // I should actually unpack with the PackFileCodec here
-            string[] args = new string[] { "unpack", "temp.pack", "temp" };
-            string toolbuilder = "ToolDataBuilder.Release.exe";
-#if __MonoCS__
-            toolbuilder = "ToolDataBuilder.bash";
-#endif
-            
-            Process p = Process.Start(Path.Combine(ModTools.Instance.InstallDirectory, toolbuilder), 
-                                      string.Join(" ", args));
-            if (p != null) {
-                // wait with setting until all data are there
-                p.WaitForExit();
-            }
-
-            // copy extracted temporary data to actual target directory
-            DirectorySynchronizer copyToModDir = new DirectorySynchronizer {
-                SourceAccessor = new FileSystemDataAccessor(tempDir),
-                TargetAccessor = newMod.Accessor,
-                CopyFile = DirectorySynchronizer.AlwaysCopy
-            };
-            copyToModDir.Synchronize();
-
-            Directory.Delete(tempDir, true);
-            File.Delete(tempPack);
-
             MultiMods.Instance.AddMod(modName);
-        }
 
+            PackFile pack = new PackFileCodec().Open(packFileName);
+            foreach (PackedFile packed in pack) {
+                // extract to working_data as binary
+
+                List<string> extractPaths = new List<string>();
+                byte[] data = null;
+                if (DBTypeMap.Instance.IsSupported(DBFile.typename(packed.FullPath))) {
+                    PackedFileDbCodec codec = PackedFileDbCodec.GetCodec(packed);
+                    Codec<DBFile> writerCodec = new ModToolDBCodec(FieldMappingManager.Instance);
+                    DBFile dbFile = codec.Decode(packed.Data);
+                    using (var stream = new MemoryStream()) {
+                        writerCodec.Encode(stream, dbFile);
+                        data = stream.ToArray();
+                    }
+                    string extractFilename = string.Format("{0}.xml", packed.Name);
+                    extractPaths.Add(Path.Combine(ModTools.Instance.InstallDirectory, "raw_data", "db", extractFilename));
+                    extractPaths.Add(Path.Combine(ModTools.Instance.RawDataPath, "EmpireDesignData", "db", extractFilename));
+                } else {
+                    extractPaths.Add(Path.Combine(ModTools.Instance.WorkingDataPath, packed.FullPath));
+                    data = packed.Data;
+                }
+                foreach (string path in extractPaths) {
+                    string extractDir = Path.GetDirectoryName(path);
+                    if (!Directory.Exists(extractDir)) {
+                        Directory.CreateDirectory(extractDir);
+                    }
+                    File.WriteAllBytes(path, data);
+                }
+            }
+        }
     }
 }
 
