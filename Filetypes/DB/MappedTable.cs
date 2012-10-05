@@ -59,17 +59,8 @@ namespace Filetypes {
         public virtual void AddMapping(string packField, string xmlField) {
             mappedFields[packField] = xmlField;
         }
-        public string GetMappedXml(string packedFieldName) {
-            return mappedFields.ContainsKey(packedFieldName) ? mappedFields[packedFieldName] : null;
-        }
-        public List<NameMapping> MappingAsTuples {
-            get {
-                List<NameMapping> result = new List<NameMapping>(mappedFields.Count);
-                foreach (string field in mappedFields.Keys) {
-                    result.Add(new NameMapping(field, mappedFields[field]));
-                }
-                return result;
-            }
+        public Dictionary<string, string> Mappings {
+            get { return mappedFields; }
         }
         #endregion
 
@@ -109,18 +100,12 @@ namespace Filetypes {
         public override List<string> PackDataFields {
             get {
                 return packDataFields;
-                //List<string> result = new List<string>(PackDataFields);
-                //result.AddRange(mappedFields.Keys);
-                //return result; 
             }
         }
         private List<string> xmlDataFields = new List<string>();
         public override List<string> XmlDataFields {
             get {
                 return xmlDataFields;
-                //List<string> result = new List<string>(XmlDataFields);
-                //result.AddRange(mappedFields.Values);
-                //return result;
             }
         }
 

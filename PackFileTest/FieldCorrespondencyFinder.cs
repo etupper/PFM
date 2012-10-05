@@ -55,11 +55,11 @@ namespace PackFileTest {
         
         public void FindAllCorrespondencies() {
             if (!RetainExistingMappings) {
-                TableNameCorrespondencyManager.Instance.Clear();
+                FieldMappingManager.Instance.Clear();
             }
 
             // add manually adjusted mappings
-            Dictionary<string, List<NameMapping>> manualMappings = TableNameCorrespondencyManager.LoadFromFile("manual_correspondencies.xml");
+            Dictionary<string, List<NameMapping>> manualMappings = FieldMappingManager.LoadFromFile("manual_correspondencies.xml");
 
             foreach (MappedDataTable table in mappedTables.Values) {
                 FindCorrespondencies(table);
@@ -89,10 +89,10 @@ namespace PackFileTest {
                 }
             }
 
-            TableNameCorrespondencyManager.Instance.Clear();
+            FieldMappingManager.Instance.Clear();
 
             foreach (MappedDataTable table in mappedTables.Values) {
-                TableNameCorrespondencyManager.Instance.MappedTables[table.TableName] = table;
+                FieldMappingManager.Instance.MappedTables[table.TableName] = table;
             }
         }
         
@@ -113,7 +113,7 @@ namespace PackFileTest {
          * In the given list, find the table with all values equal to the given one from the pack.
          */
         NameMapping FindCorrespondency(MappedDataTable dataTable, string fieldName) {
-            string existingMapping = TableNameCorrespondencyManager.Instance.GetXmlFieldName(dataTable.TableName, fieldName);
+            string existingMapping = FieldMappingManager.Instance.GetXmlFieldName(dataTable.TableName, fieldName);
             if (existingMapping != null) {
                 return new NameMapping(fieldName, existingMapping);
             }
@@ -124,10 +124,13 @@ namespace PackFileTest {
             List<string> packTableNames = dataTable.PackData.FieldsContainingValues(values);
             List<string> xmlTableNames = dataTable.XmlData.FieldsContainingValues(values);
 
-            List<NameMapping> existing = TableNameCorrespondencyManager.Instance.GetMappedFieldsForTable(dataTable.TableName);
-            foreach (NameMapping mapping in existing) {
-                packTableNames.Remove(mapping.Item1);
-                xmlTableNames.Remove(mapping.Item2);
+            // check if we have an existing mapping
+            if (FieldMappingManager.Instance.MappedTables.ContainsKey(dataTable.TableName)) {
+                MappedTable removeMap = FieldMappingManager.Instance.MappedTables[dataTable.TableName];
+                foreach(string packField in removeMap.Mappings.Keys) {
+                    packTableNames.Remove(packField);
+                    xmlTableNames.Remove(removeMap.Mappings[packField]);
+                }
             }
 
             if (packTableNames.Count == 1 && xmlTableNames.Count == 1) {
@@ -148,15 +151,6 @@ namespace PackFileTest {
                 Console.WriteLine("Did not find corresponding for field {0}, values {1}", fieldName, string.Join(",", values));
             }
 #endif
-            // set constant values if we have packed fields with no xml fields left
-            //if (dataTable.UnmappedXmlFieldNames.Count == 0) {
-            //    foreach (string packedField in dataTable.UnmappedPackFieldNames) {
-            //        string constantValue = dataTable.GetConstantValue(packedField);
-            //        if (constantValue != null) {
-            //            // TableNameCorrespondencyManager.Instance
-            //        }
-            //    }
-            //}
 
             return result;
         }
