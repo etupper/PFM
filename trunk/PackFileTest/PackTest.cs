@@ -50,8 +50,6 @@ namespace PackFileTest {
         bool verbose = false;
         bool waitForKey = true;
 
-
-        // private List<PackedFileTest> tests = new List<PackedFileTest>();
         private List<PackedFileTest.TestFactory> testFactories = new List<PackedFileTest.TestFactory>();
 
 		private static string OPTIONS_FILENAME = "testoptions.txt";
@@ -144,7 +142,6 @@ namespace PackFileTest {
 
         void ReplaceSchemaNames(string xmlDirectory) {
             Dictionary<Tuple<string, string>, string> renamedFields = new Dictionary<Tuple<string, string>, string>();
-            List<FieldReference> references = new List<FieldReference>();
             foreach (string table in DBTypeMap.Instance.DBFileTypes) {
                 string lookupString = table.Replace("_tables", "");
                 Console.WriteLine("table {0}", table);
@@ -154,7 +151,7 @@ namespace PackFileTest {
                     List<CaFieldInfo> caInfos = CaFieldInfo.ReadInfo(xmlDirectory, lookupString, out guid);
 
                     foreach (FieldInfo info in typeInfo.Fields) {
-                        string newName = TableNameCorrespondencyManager.Instance.GetXmlFieldName(lookupString, info.Name);
+                        string newName = FieldMappingManager.Instance.GetXmlFieldName(lookupString, info.Name);
                         if (newName != null) {
                             // remember rename to be able to correct references to this later
                             Tuple<string, string> tableFieldTuple = new Tuple<string, string>(table, info.Name);
@@ -195,7 +192,7 @@ namespace PackFileTest {
             //    }
             //}
 
-            TableNameCorrespondencyManager manager = TableNameCorrespondencyManager.Instance;
+            FieldMappingManager manager = FieldMappingManager.Instance;
             FieldCorrespondencyFinder finder = new FieldCorrespondencyFinder(packFile, xmlDirectory);
             // finder.RetainExistingMappings = true;
             finder.FindAllCorrespondencies();

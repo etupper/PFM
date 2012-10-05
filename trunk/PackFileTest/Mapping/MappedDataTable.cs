@@ -95,7 +95,7 @@ namespace PackFileTest.Mapping {
             }
         }
         
-        bool IsMappedPackField(string fieldName) {
+        private bool IsMappedPackField(string fieldName) {
             return mappedFields.ContainsKey(fieldName);
         }
 
