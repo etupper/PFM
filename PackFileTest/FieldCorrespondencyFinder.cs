@@ -42,11 +42,13 @@ namespace PackFileTest {
                         ValuesFromXml(table);
 
                         mappedTables[tableName] = table;
-                    } catch (Exception e) {
 #if DEBUG
+                    } catch (Exception e) {
                         Console.Error.WriteLine(e.Message);
-#endif
                     }
+#else
+                    } catch { }
+#endif
                 }
             }
         }

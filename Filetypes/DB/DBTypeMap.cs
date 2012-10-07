@@ -18,9 +18,9 @@ namespace Filetypes {
         static readonly DBTypeMap instance = new DBTypeMap();        
         public static DBTypeMap Instance {
             get {
-                if (!instance.Initialized) {
-                    instance.InitializeTypeMap(Directory.GetCurrentDirectory());
-                }
+                //if (!instance.Initialized) {
+                //    instance.InitializeTypeMap(Directory.GetCurrentDirectory());
+                //}
                 return instance;
             }
         }
@@ -143,7 +143,7 @@ namespace Filetypes {
             //            typeMap = new XsdParser (xsdFile).loadXsd ();
         }
 
-        public void saveToFile(string path, string suffix) {
+        public void SaveToFile(string path, string suffix) {
             string filename = Path.Combine(path, GetUserFilename(suffix));
             string backupName = filename + ".bak";
             if (File.Exists(filename)) {

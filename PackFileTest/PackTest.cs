@@ -279,7 +279,7 @@ namespace PackFileTest {
             foreach (List<FieldInfo> typeInfos in DBTypeMap.Instance.GuidMap.Values) {
                 MakeFieldNamesUnique(typeInfos);
             }
-            DBTypeMap.Instance.saveToFile(Directory.GetCurrentDirectory(), "user");
+            DBTypeMap.Instance.SaveToFile(Directory.GetCurrentDirectory(), "user");
         }
         void MakeFieldNamesUnique(List<FieldInfo> fields) {
             List<string> used = new List<string>();

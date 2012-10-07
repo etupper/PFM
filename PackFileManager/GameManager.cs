@@ -8,17 +8,27 @@ using System.Windows.Forms;
 
 namespace PackFileManager {
     public class GameManager {
+
         public delegate void GameChange();
         public event GameChange GameChanged;
+
+#if DEBUG
+        bool createdGameSchemata = false;
+#endif
         
         public static readonly GameManager Instance = new GameManager();
         private GameManager() {
+            if (!DBTypeMap.Instance.Initialized) {
+                DBTypeMap.Instance.InitializeTypeMap(InstallationPath);
+            }
+
             string gameName = Settings.Default.CurrentGame;
             if (!string.IsNullOrEmpty(gameName)) {
                 CurrentGame = Game.ById(gameName);
             }
             // correct game install directories 
             // (should be needed for first start only)
+            Game.Games.ForEach(g => LoadGameLocationFromFile(g));
             CheckGameDirectories();
             
             foreach(Game game in Game.Games) {
@@ -33,8 +43,77 @@ namespace PackFileManager {
             if (CurrentGame == null) {
                 CurrentGame = Game.STW;
             }
+
+#if DEBUG
+            if (createdGameSchemata) {
+                MessageBox.Show("Had to create game schema file");
+            }
+#endif
         }
-        
+
+        static string InstallationPath {
+            get {
+                return Path.GetDirectoryName(Application.ExecutablePath);
+            }
+        }
+        #region Game Directories File
+        // path to save game directories in
+        static string GameDirFilepath {
+            get {
+                return Path.Combine(InstallationPath, "gamedirs.txt");
+            }
+        }
+
+        // the entry for the given game
+        static string GamedirFileEntry(Game g) {
+            return string.Format("{0}{1}{2}", g.Id, Path.PathSeparator,
+                                 g.GameDirectory == null ? Game.NOT_INSTALLED : g.GameDirectory);
+        }
+
+        // load the given game's directory from the gamedirs file
+        public static void LoadGameLocationFromFile(Game g) {
+            if (g.IsInstalled) {
+                return;
+            }
+            string result = null;
+            // load from file
+            if (File.Exists(GameDirFilepath)) {
+                // marker that file entry was present
+                result = "";
+                foreach (string line in File.ReadAllLines(GameDirFilepath)) {
+                    string[] split = line.Split(new char[] { Path.PathSeparator });
+                    if (split[0].Equals(g.Id)) {
+                        result = split[1];
+                        break;
+                    }
+                }
+            }
+            if (result != null) {
+                g.GameDirectory = result;
+            }
+        }
+
+        // write game directories to gamedirs file
+        static void SaveGameDirs() {
+            // save to file
+            List<string> entries = new List<string>();
+            if (File.Exists(GameDirFilepath)) {
+                entries.AddRange(File.ReadAllLines(GameDirFilepath));
+            }
+            List<string> newEntries = new List<string>();
+            foreach (Game g in Game.Games) {
+                string write = GamedirFileEntry(g);
+                foreach (string entry in entries) {
+                    if (entry.StartsWith(g.Id)) {
+                        write = GamedirFileEntry(g);
+                    }
+                }
+                newEntries.Add(write);
+            }
+            File.WriteAllLines(GameDirFilepath, newEntries);
+        }
+        #endregion
+
         Game current;
         public Game CurrentGame {
             get {
@@ -80,18 +159,19 @@ namespace PackFileManager {
                     g.GameDirectory = null;
                 }
             }
+            SaveGameDirs();
         }
         
         #region Game-specific schema (typemap) handling
         public void ApplyGameTypemap() {
             try {
                 Game game = CurrentGame;
-                string schemaFile = DBTypeMap.Instance.GetUserFilename(game.Id);
+                string schemaFile = Path.Combine(InstallationPath, DBTypeMap.Instance.GetUserFilename(game.Id));
                 if (!File.Exists(schemaFile)) {
-                    schemaFile = game.SchemaFilename;
+                    schemaFile = Path.Combine(InstallationPath, game.SchemaFilename);
                     if (!File.Exists(schemaFile)) {
                         // rebuild from master schema
-                        DBTypeMap.Instance.InitializeTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
+                        DBTypeMap.Instance.InitializeTypeMap(InstallationPath);
                         CreateSchemaFile(game);
                     }
                 }
@@ -99,12 +179,17 @@ namespace PackFileManager {
             } catch { }
         }
         public void CreateSchemaFile(Game game) {
-            if (game.IsInstalled && !File.Exists(game.SchemaFilename)) {
+            string filePath = Path.Combine(InstallationPath, game.SchemaFilename);
+            if (game.IsInstalled && !File.Exists(filePath)) {
                 SchemaOptimizer optimizer = new SchemaOptimizer() {
                     PackDirectory = Path.Combine(game.GameDirectory, "data"),
-                    SchemaFilename = game.SchemaFilename
+                    SchemaFilename = filePath
                 };
                 optimizer.FilterExistingPacks();
+
+#if DEBUG
+                createdGameSchemata = true;
+#endif
             }
         }
         #endregion
