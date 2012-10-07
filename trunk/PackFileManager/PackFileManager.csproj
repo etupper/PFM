@@ -205,12 +205,6 @@
     <Compile Include="Dialogs\CustomMessageBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\InputBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\InputBox.Designer.cs">
-      <DependentUpon>InputBox.cs</DependentUpon>
-    </Compile>
     <Compile Include="Editors\ImageViewerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -218,6 +212,10 @@
     <Compile Include="GameManager.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommonDialogs\CommonDialogs.csproj">
+      <Project>{1B2FA4F4-C320-496F-9365-636D9180BE03}</Project>
+      <Name>CommonDialogs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{6D23F5FB-04D4-4D7E-BDFF-FCA718309298}</Project>
       <Name>Common</Name>

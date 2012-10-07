@@ -8,6 +8,7 @@ using System.Threading;
 using System.Windows.Forms;
 using MMS.Properties;
 using Common;
+using CommonDialogs;
 
 namespace MMS {
     public partial class MainForm : Form {
@@ -75,7 +76,7 @@ namespace MMS {
          * Lets the user choose the mod installation directory.
          */
         private void SetInstallDirectory(object sender = null, EventArgs e = null) {
-            FolderBrowserDialog folderBrowser = new FolderBrowserDialog() {
+            DirectoryDialog folderBrowser = new DirectoryDialog() {
                 Description = "Please point to the location of your mod tools installation"
             };
             if (folderBrowser.ShowDialog() == DialogResult.OK) {
@@ -89,8 +90,8 @@ namespace MMS {
             // prefer loaded from file so the user can force an installation location
             if (g.GameDirectory == null) {
                 // if there was an empty entry in file, don't ask again
-                FolderBrowserDialog dlg = new FolderBrowserDialog() {
-                    Description = string.Format("Please point to Location of {0}\nCancel if not installed.", g.Id)
+                DirectoryDialog dlg = new DirectoryDialog() {
+                    Description = string.Format("Please enter location of {0}\nCancel if not installed.", g.Id)
                 };
                 if (dlg.ShowDialog() == DialogResult.OK) {
                     g.GameDirectory = dlg.SelectedPath;
@@ -124,7 +125,7 @@ namespace MMS {
                 Text = "Enter new Mod name"
             };
             if (inputBox.ShowDialog() == DialogResult.OK) {
-                MultiMods.Instance.AddMod(inputBox.InputValue);
+                MultiMods.Instance.AddMod(inputBox.Input);
             }
         }
 

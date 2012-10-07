@@ -5,6 +5,7 @@ using Common;
 using Filetypes;
 using PackFileManager.Properties;
 using System.Windows.Forms;
+using CommonDialogs;
 
 namespace PackFileManager {
     public class GameManager {
@@ -145,7 +146,7 @@ namespace PackFileManager {
             foreach(Game g in Game.Games) {
                 if (g.GameDirectory == null) {
                     // if there was an empty entry in file, don't ask again
-                    FolderBrowserDialog dlg = new FolderBrowserDialog() {
+                    DirectoryDialog dlg = new DirectoryDialog() {
                         Description = string.Format("Please point to Location of {0}\nCancel if not installed.", g.Id)
                     };
                     if (dlg.ShowDialog() == DialogResult.OK) {

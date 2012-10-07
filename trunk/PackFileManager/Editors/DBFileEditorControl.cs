@@ -9,6 +9,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using CommonDialogs;
 
 namespace PackFileManager {
     public partial class DBFileEditorControl : UserControl, IPackedFileEditor {

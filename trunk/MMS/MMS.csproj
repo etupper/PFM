@@ -46,12 +46,6 @@
     <Compile Include="DirectorySynchronizer.cs" />
     <Compile Include="ExternalProcesses.cs" />
     <Compile Include="IFileDataAccessor.cs" />
-    <Compile Include="InputBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="InputBox.Designer.cs">
-      <DependentUpon>InputBox.cs</DependentUpon>
-    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -70,9 +64,6 @@
     <Compile Include="WorkInProgressForm.Designer.cs">
       <DependentUpon>WorkInProgressForm.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="InputBox.resx">
-      <DependentUpon>InputBox.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -103,6 +94,10 @@
     <Content Include="Files\executables.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommonDialogs\CommonDialogs.csproj">
+      <Project>{1B2FA4F4-C320-496F-9365-636D9180BE03}</Project>
+      <Name>CommonDialogs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{6D23F5FB-04D4-4D7E-BDFF-FCA718309298}</Project>
       <Name>Common</Name>

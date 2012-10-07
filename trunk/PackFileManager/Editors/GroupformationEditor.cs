@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows.Forms;
 using Common;
 using Filetypes;
+using CommonDialogs;
 
 namespace PackFileManager {
     public class GroupformationEditor : PackedFileEditor<GroupformationFile> {

@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using EsfControl;
 using EsfLibrary;
+using CommonDialogs;
 
 namespace PackFileManager
 {
@@ -241,7 +242,7 @@ namespace PackFileManager
 
         private void exportFileListToolStripMenuItem_Click(object sender, EventArgs e) {
             SaveFileDialog fileListDialog = new SaveFileDialog {
-                InitialDirectory = Settings.Default.ImportExportDirectory,
+                InitialDirectory = ImportExportDirectory,
                 FileName = Path.GetFileNameWithoutExtension(currentPackFile.Filepath) + ".pack-file-list.txt"
             };
             if (fileListDialog.ShowDialog() == DialogResult.OK) {
@@ -604,7 +605,7 @@ namespace PackFileManager
                 return;
             }
             var addReplaceOpenFileDialog = new OpenFileDialog {
-                InitialDirectory = Settings.Default.ImportExportDirectory,
+                InitialDirectory = ImportExportDirectory,
                 Multiselect = true
             };
             if (addReplaceOpenFileDialog.ShowDialog() == DialogResult.OK) {
@@ -649,13 +650,13 @@ namespace PackFileManager
         }
         
         private void addDirectoryToolStripMenuItem_Click(object sender, EventArgs e) {
-            FolderBrowserDialog addDirectoryFolderBrowserDialog = new FolderBrowserDialog() {
+            DirectoryDialog addDirectoryDialog = new DirectoryDialog() {
                 Description = "Add which directory?",
-                SelectedPath = Settings.Default.ImportExportDirectory
+                SelectedPath = ImportExportDirectory
             };
-            if (AddTo != null && addDirectoryFolderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+            if (AddTo != null && addDirectoryDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 try {
-                    string basePath = addDirectoryFolderBrowserDialog.SelectedPath;
+                    string basePath = addDirectoryDialog.SelectedPath;
                     VirtualDirectory addToBase = AddTo;
                     if (ModManager.Instance.CurrentModSet && basePath.StartsWith(ModManager.Instance.CurrentModDirectory)) {
                         string relativePath = GetPathRelativeToMod(basePath);
@@ -665,10 +666,10 @@ namespace PackFileManager
                         }
                         addToBase = addToBase.Parent as VirtualDirectory;
                     }
-                    addToBase.Add(addDirectoryFolderBrowserDialog.SelectedPath);
+                    addToBase.Add(addDirectoryDialog.SelectedPath);
                 } catch (Exception x) {
                     MessageBox.Show(string.Format("Failed to add {0}: {1}", 
-                                                  addDirectoryFolderBrowserDialog.SelectedPath, x.Message), 
+                                                  addDirectoryDialog.SelectedPath, x.Message), 
                                     "Failed to add directory");
                 }
             }
@@ -686,7 +687,7 @@ namespace PackFileManager
 
         private void replaceFileToolStripMenuItem_Click(object sender, EventArgs e) {
             OpenFileDialog replaceFileDialog = new OpenFileDialog() {
-                InitialDirectory = Settings.Default.ImportExportDirectory,
+                InitialDirectory = ImportExportDirectory,
                 Multiselect = false
             };
             if (replaceFileDialog.ShowDialog() == DialogResult.OK) {
@@ -714,12 +715,20 @@ namespace PackFileManager
             }
         }
 
+        string ImportExportDirectory {
+            get {
+                return (ModManager.Instance.CurrentModSet) 
+                    ? ModManager.Instance.CurrentMod.BaseDirectory 
+                    : Settings.Default.ImportExportDirectory;
+            }
+        }
+
         private void dBFileFromTSVToolStripMenuItem_Click(object sender, EventArgs e) {
             VirtualDirectory addToBase = (ModManager.Instance.CurrentModSet)
                 ? currentPackFile.Root : AddTo;
             if (addToBase != null) {
                 OpenFileDialog openDBFileDialog = new OpenFileDialog {
-                    InitialDirectory = Settings.Default.ImportExportDirectory,
+                    InitialDirectory = ImportExportDirectory,
                     Filter = IOFunctions.TSV_FILTER
                 };
                 if (openDBFileDialog.ShowDialog() == DialogResult.OK) {

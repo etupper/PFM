@@ -7,6 +7,7 @@ using System.Drawing.Drawing2D;
 using System.Data;
 using System.Windows.Forms;
 using Filetypes;
+using CommonDialogs;
 
 namespace PackFileManager {
     public delegate T Parser<T>(string parse);

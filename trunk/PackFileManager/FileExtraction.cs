@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using PackFileManager.Properties;
+using CommonDialogs;
 
 namespace PackFileManager {
     public class FileExtractor {
@@ -24,26 +25,28 @@ namespace PackFileManager {
             Preprocessor = new IdentityPreprocessor();
         }
 
-        public static string GetExportDirectory() {
-            string exportDirectory = null;
-            if (!ModManager.Instance.CurrentModSet) {
-                FolderBrowserDialog extractFolderBrowserDialog = new FolderBrowserDialog {
-                    Description = "Extract to what folder?",
-                    SelectedPath = Settings.Default.LastPackDirectory
-                };
-                exportDirectory =
-                    extractFolderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK
-                    ? extractFolderBrowserDialog.SelectedPath : "";
-
-            } else {
-                exportDirectory = ModManager.Instance.CurrentModDirectory;
+        public static string ExportDirectory {
+            get {
+                string exportDirectory = null;
+                if (!ModManager.Instance.CurrentModSet) {
+                    DirectoryDialog directoryDialog = new DirectoryDialog {
+                        Description = "Extract to what folder?",
+                        SelectedPath = Settings.Default.LastPackDirectory
+                    };
+                    directoryDialog.ShowDialog();
+                    exportDirectory = directoryDialog.SelectedPath;
+                    if (!string.IsNullOrEmpty(exportDirectory)) {
+                        Settings.Default.LastPackDirectory = exportDirectory;
+                    }
+                } else {
+                    exportDirectory = ModManager.Instance.CurrentModDirectory;
+                }
+                return exportDirectory;
             }
-            return exportDirectory;
         }
 
         public void extractFiles(List<PackedFile> packedFiles) {
-            string exportDirectory = GetExportDirectory();
-            if (!string.IsNullOrEmpty(exportDirectory)) {
+            if (!string.IsNullOrEmpty(ExportDirectory)) {
                 FileAlreadyExistsDialog.Action action = FileAlreadyExistsDialog.Action.Ask;
                 FileAlreadyExistsDialog.Action defaultAction = FileAlreadyExistsDialog.Action.Ask;
                 SetStatusText(string.Format("Extracting file (0 of {0} files extracted, 0 skipped)", packedFiles.Count));
@@ -61,7 +64,7 @@ namespace PackFileManager {
                         skippedCount++;
                         continue;
                     }
-                    string path = Path.Combine(exportDirectory, Preprocessor.GetFileName(file));
+                    string path = Path.Combine(ExportDirectory, Preprocessor.GetFileName(file));
                     if (File.Exists(path)) {
                         string renamedFilename;
                         if (defaultAction == FileAlreadyExistsDialog.Action.Ask) {
