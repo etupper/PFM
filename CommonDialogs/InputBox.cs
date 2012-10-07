@@ -3,22 +3,18 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace MMS {
+namespace CommonDialogs {
+    /*
+     * Simple form to ask the user for a string.
+     */
     public partial class InputBox : Form {
         public InputBox() {
             InitializeComponent();
-
-            valueField.KeyDown += delegate(object o, KeyEventArgs args) {
-                if (args.KeyCode == Keys.Return || args.KeyCode == Keys.Enter) {
-                    CloseWithOk();
-                    args.Handled = true;
-                } else if (args.KeyCode == Keys.Escape) {
-                    CloseWithCancel();
-                }
-            };
+            AcceptButton = okButton;
+            CancelButton = cancelButton;
         }
 
-        public string InputValue {
+        public string Input {
             get {
                 return valueField.Text;
             }

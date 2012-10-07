@@ -1,4 +1,4 @@
-﻿namespace MMS {
+﻿namespace CommonDialogs {
     partial class InputBox {
         /// <summary>
         /// Erforderliche Designervariable.

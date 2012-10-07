@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using PackFileManager.Properties;
+using CommonDialogs;
 
 namespace PackFileManager {
     public class Mod {
@@ -101,7 +102,7 @@ namespace PackFileManager {
             InputBox box = new InputBox { Text = "Enter Mod Name:", Input = "my_mod" };
             if (box.ShowDialog() == System.Windows.Forms.DialogResult.OK && box.Input.Trim() != "") {
                 string modName = box.Input;
-                FolderBrowserDialog dialog = new FolderBrowserDialog {
+                DirectoryDialog dialog = new DirectoryDialog {
                     SelectedPath = Settings.Default.LastPackDirectory
                 };
                 if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
