@@ -77,6 +77,8 @@ namespace PackFileManager
         #endregion
 
         public PackFileManagerForm (string[] args) {
+            Directory.SetCurrentDirectory(Path.GetDirectoryName(Application.ExecutablePath));
+
             InitializeComponent();
 
             editors = CreateEditors();
@@ -890,7 +892,7 @@ namespace PackFileManager
 
         private void saveToDirectoryToolStripMenuItem_Click(object sender, EventArgs e) {
             try {
-                DBTypeMap.Instance.saveToFile(Path.GetDirectoryName(Application.ExecutablePath), 
+                DBTypeMap.Instance.SaveToFile(Path.GetDirectoryName(Application.ExecutablePath), 
                                               GameManager.Instance.CurrentGame.Id);
                 string message = "You just saved your own DB definitions in a new file.\n" +
                     "This means that these will be used instead of the ones received in updates from TWC.\n" +
@@ -937,7 +939,7 @@ namespace PackFileManager
             try {
                 string path = Path.GetDirectoryName(Application.ExecutablePath);
                 string version = Application.ProductVersion;
-                bool update = DBFileTypesUpdater.checkVersion(path, ref version);
+                bool update = DBFileTypesUpdater.CheckVersion(path, ref version);
                 if (showSuccess) {
                     string message = update ? "DB File description updated." : "No update performed.";
                     MessageBox.Show(message, "Update result", MessageBoxButtons.OK, MessageBoxIcon.Information);

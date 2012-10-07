@@ -47,9 +47,6 @@ namespace Filetypes {
                 break;
             }
 
-            // ignore the table name header line
-            reader.ReadLine();
-   
             DBFile file = null;
             long parseStart = reader.BaseStream.Position;
             
@@ -57,7 +54,10 @@ namespace Filetypes {
             foreach(TypeInfo info in DBTypeMap.Instance.GetVersionedInfos(typeInfoName, version)) {
                 reader.BaseStream.Seek(parseStart, SeekOrigin.Begin);
                 string line = reader.ReadLine ();
-                string[] strArray = line.Split (TABS, StringSplitOptions.None);
+                // the title line isn't written with trailing tabs anymore...
+                // but it used to, so to stay compatible with earlier exported TSVs,
+                // remove empty entries
+                string[] strArray = line.Split (TABS, StringSplitOptions.RemoveEmptyEntries);
                 // verify we have matching amount of fields
                 if (strArray.Length != info.Fields.Count) {
                     continue;
@@ -75,8 +75,12 @@ namespace Filetypes {
                             item.Add (field);
                         }
                         entries.Add (item);
+#if DEBUG
+                    } catch (Exception x) {
+                        Console.WriteLine (x);
+#else
                     } catch {
-                        // Console.WriteLine (x);
+#endif
                         parseSuccessful = false;
                         break;
                     }
@@ -97,19 +101,15 @@ namespace Filetypes {
             // write header
             writer.WriteLine (file.CurrentType.Name);
             writer.WriteLine (Convert.ToString (file.Header.Version));
-            foreach (FieldInfo info2 in file.CurrentType.Fields) {
-                writer.Write (info2.Name + "\t");
-            }
-            writer.WriteLine ();
+            List<string> toWrite = new List<string>();
+            file.CurrentType.Fields.ForEach(f => toWrite.Add(f.Name));
+            writer.Write(string.Join("\t", toWrite));
             // write entries
-            foreach (List<FieldInstance> list in file.Entries) {
-                string str = CsvUtil.Format (list [0].Value);
-                for (int i = 1; i < list.Count; i++) {
-                    string current = list [i].Value;
-                    str += "\t" + CsvUtil.Format (current);
-                }
-                writer.WriteLine (str);
-            }
+            file.Entries.ForEach(e => {
+                toWrite.Clear();
+                e.ForEach(field => toWrite.Add(field.Value));
+                writer.Write(string.Join("\t", toWrite));
+            });
             writer.Flush ();
         }
     }

@@ -17,7 +17,7 @@ namespace PackFileManager
         static Comparer<string> comparator = new BuildVersionComparator();
         static string VERSION_FILE = "xmlversion";
 
-        public static bool checkVersion(string targetDir, ref string swVersion)
+        public static bool CheckVersion(string targetDir, ref string swVersion)
         {
             // read the delivery announcement thread page into a string
             bool result = false;

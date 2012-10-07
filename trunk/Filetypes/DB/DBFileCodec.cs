@@ -60,11 +60,13 @@ namespace Filetypes {
 #endif  
                     DBFile result = ReadFile(reader, header, realInfo);
                     return result;
-                } catch (Exception e) {
 #if DEBUG
+                } catch (Exception e) {
                     Console.Error.WriteLine(e);
-#endif
                 } 
+#else
+                } catch {}
+#endif
             }
             throw new DBFileNotSupportedException(string.Format("No applicable type definition found"));
 		}

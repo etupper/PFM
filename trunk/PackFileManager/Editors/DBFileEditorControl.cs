@@ -535,19 +535,29 @@ namespace PackFileManager {
                 FileName = Settings.Default.TsvFile(EditedFile.CurrentType.Name)
             };
 
+            bool tryAgain = false;
             if (openDBFileDialog.ShowDialog() == DialogResult.OK) {
                 Settings.Default.ImportExportDirectory = Path.GetDirectoryName(openDBFileDialog.FileName);
-                try {
-                    using (var stream = new MemoryStream(File.ReadAllBytes(openDBFileDialog.FileName))) {
-                        EditedFile.Import(new TextDbCodec().Decode(stream));
+                do {
+                    try {
+                        try {
+                            using (var stream = new MemoryStream(File.ReadAllBytes(openDBFileDialog.FileName))) {
+                                EditedFile.Import(new TextDbCodec().Decode(stream));
+                            }
+
+                        } catch (DBFileNotSupportedException exception) {
+                            showDBFileNotSupportedMessage(exception.Message);
+                        }
+
+                        CurrentPackedFile.Data = (Codec.Encode(EditedFile));
+                        Open();
+                    } catch (Exception ex) {
+                        tryAgain = (MessageBox.Show(string.Format("Import failed: {0}", ex.Message),
+                            "Import failed",
+                            MessageBoxButtons.RetryCancel)
+                            == DialogResult.Retry);
                     }
-
-                } catch (DBFileNotSupportedException exception) {
-                    showDBFileNotSupportedMessage(exception.Message);
-                }
-
-                CurrentPackedFile.Data = (Codec.Encode(EditedFile));
-                Open();
+                } while (tryAgain);
             }
         }
         #endregion
