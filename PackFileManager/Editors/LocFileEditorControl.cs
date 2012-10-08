@@ -51,6 +51,8 @@ namespace PackFileManager
                 column.Width = this.columnWidths [i];
                 this.dataGridView.Columns.Add (column);
             }
+
+            new GridViewCopyPaste(dataGridView);
         }
 
         static string[] EXTENSIONS = { ".loc" };

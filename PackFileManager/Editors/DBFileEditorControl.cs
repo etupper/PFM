@@ -63,24 +63,35 @@ namespace PackFileManager {
         }
         #endregion
 
+        private GridViewCopyPaste copyPaste;
+
         public DBFileEditorControl () {
             InitializeComponent ();
             dataGridView.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             dataGridView.ColumnHeaderMouseClick += dataGridView1_ColumnHeaderMouseClick;
-            try {
-                useFirstColumnAsRowHeader.Checked = Settings.Default.UseFirstColumnAsRowHeader;
-                useComboBoxCells.Checked = Settings.Default.UseComboboxCells;
-                showAllColumns.Checked = Settings.Default.ShowAllColumns;
-            } catch {
-                // TODO: Should not need to swallow an exception.
-            }
-            dataGridView.KeyUp += copyPaste;
+            copyPaste = new GridViewCopyPaste(dataGridView);
+            copyPaste.Copied += delegate() {
+                pasteToolStripButton.Enabled = true;
+            };
+            copyPaste.Pasted += delegate() {
+                CurrentPackedFile.Data = Codec.Encode(EditedFile);
+                dataGridView.Refresh();
+            };
+
             dataGridView.SelectionChanged += new EventHandler(delegate(object sender, EventArgs args) 
                 { cloneRowsButton.Enabled = dataGridView.SelectedRows.Count > 0; });
 
             dataGridView.DataError += new DataGridViewDataErrorEventHandler(CellErrorHandler);
             this.useComboBoxCells.CheckedChanged += new System.EventHandler(this.useComboBoxCells_CheckedChanged);            
             this.dataGridView.EditingControlShowing += new DataGridViewEditingControlShowingEventHandler(CellCopyPaste);
+
+            try {
+                FirstColumnAsRowHeader = Settings.Default.UseFirstColumnAsRowHeader;
+                useComboBoxCells.Checked = Settings.Default.UseComboboxCells;
+                showAllColumns.Checked = Settings.Default.ShowAllColumns;
+            } catch {
+                // TODO: Should not need to swallow an exception.
+            }
         }
 
         #region Open/Fill with Data
@@ -296,6 +307,8 @@ namespace PackFileManager {
                     }
                     dataGridView.TopLeftHeaderCell.Value = value ? EditedFile.Entries[0][0].Info.Name : "";
                 }
+
+                copyPaste.IgnoreFirstColumn = value;
                 
                 dataGridView.RowHeadersVisible = !value;
                 Settings.Default.UseFirstColumnAsRowHeader = useFirstColumnAsRowHeader.Checked;
@@ -311,7 +324,7 @@ namespace PackFileManager {
                 Open();
             }
         }
-        private void applyColumnVisibility() 
+        private void ApplyColumnVisibility() 
         {
             if (CurrentPackedFile == null)
                 return;
@@ -336,86 +349,19 @@ namespace PackFileManager {
         private void showAllColumns_CheckedChanged(object sender, EventArgs e) {
             Settings.Default.ShowAllColumns = showAllColumns.Checked;
             if (CurrentPackedFile != null) {
-                applyColumnVisibility();
+                ApplyColumnVisibility();
             }
         }
         #endregion
 
         #region Copy/Paste of Several Cells
-        private void copyPaste(object sender, KeyEventArgs arge) 
-        {
-            if (CurrentPackedFile != null) 
-            {
-                if (arge.Control) 
-                {
-                    if (arge.KeyCode == Keys.C) 
-                    {
-                        copyEvent();
-                    } 
-                    else if (arge.KeyCode == Keys.V) 
-                    {
-                        pasteEvent();
-                    }
-                }
-            }
-        }
-        private void copyToolStripButton_Click(object sender, EventArgs e) {
-            copyEvent();
-        }
-        private void pasteToolStripButton_Click(object sender, EventArgs e) {
-            pasteEvent();
-        }
+        //private void copyToolStripButton_Click(object sender, EventArgs e) {
+        //    copyEvent();
+        //}
+        //private void pasteToolStripButton_Click(object sender, EventArgs e) {
+        //    pasteEvent();
+        //}
 
-
-        private void copyEvent() 
-        {
-            if (EditedFile == null || dataGridView.SelectedCells.Count == 0) {
-                return;
-            }
-
-            string encoded = "";
-            DataGridViewSelectedCellCollection cells = dataGridView.SelectedCells;
-            List<List<DataGridViewCell>> selected = SelectedCells(cells);
-            for (int rowNum = 0; rowNum < selected.Count; rowNum++) {
-                List<DataGridViewCell> row = selected[rowNum];
-                string line = "";
-                for (int colNum = 0; colNum < row.Count; colNum++) {
-                    line += row[colNum].Value + "\t";
-                }
-                line.Remove(line.LastIndexOf("\t"));
-                encoded += line + "\n";
-            }
-
-            Clipboard.SetText(encoded);
-            pasteToolStripButton.Enabled = encoded.Length > 2;
-        }
-
-        private void pasteEvent() {
-            string encoded = Clipboard.GetText();
-            string[] lines = encoded.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            string[][] values = new string[lines.Length][];
-            for (int i = 0; i < lines.Length; i++) {
-                string[] line = lines[i].Split(new char[] { '\t' });
-                values[i] = line;
-            }
-            DataGridViewSelectedCellCollection cells = dataGridView.SelectedCells;
-            List<List<DataGridViewCell>> selected = SelectedCells(cells);
-            for (int rowNum = 0; rowNum < selected.Count; rowNum++) {
-                List<DataGridViewCell> row = selected[rowNum];
-                for (int col = 0; col < row.Count; col++) {
-                    try {
-                        string setValue = values[rowNum][col];
-                        row[col].Value = setValue;
-                    } catch (Exception e) {
-                        MessageBox.Show(string.Format("Could not paste {0}/{1}: {2}", rowNum, col, e), "Failed to paste");
-                        return;
-                    }
-                }
-            }
-
-            CurrentPackedFile.Data = Codec.Encode(EditedFile);
-            dataGridView.Refresh();
-        }
         private void DBFileEditorControl_Enter(object sender, EventArgs e) {
             pasteToolStripButton.Enabled = copiedRows.Count != 0;
         }
@@ -433,36 +379,12 @@ namespace PackFileManager {
                                 MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
-        List<List<DataGridViewCell>> SelectedCells(DataGridViewSelectedCellCollection collection) {
-            List<List<DataGridViewCell>> rows = new List<List<DataGridViewCell>>();
-            bool ignoreColumnZero = !Settings.Default.UseFirstColumnAsRowHeader;
-            foreach (DataGridViewCell cell in collection) {
-                if (cell.ColumnIndex == 0 && ignoreColumnZero) {
-                    continue;
-                }
-                int rowIndex = cell.RowIndex;
-                List<DataGridViewCell> addTo;
-                while (rowIndex >= rows.Count) {
-                    rows.Add(new List<DataGridViewCell>());
-                }
-                addTo = rows[rowIndex];
-                while (cell.ColumnIndex >= addTo.Count) {
-                    addTo.Add(null);
-                }
-                if (cell.ColumnIndex == 0 && ignoreColumnZero) {
-                    continue;
-                }
-                addTo[cell.ColumnIndex] = cell;
-            }
-            List<List<DataGridViewCell>> result = new List<List<DataGridViewCell>>();
-            rows.ForEach(row => {
-                if (row.Count > 0) {
-                    List<DataGridViewCell> newRow = new List<DataGridViewCell>();
-                    row.ForEach(cell => { if (cell != null) newRow.Add(cell); });
-                    result.Add(newRow);
-                }
-            });
-            return result;
+        private void copyToolStripButton_Click(object sender, EventArgs e) {
+            copyPaste.CopyEvent();
+        }
+
+        private void pasteToolStripButton_Click(object sender, EventArgs e) {
+            copyPaste.PasteEvent();
         }
         #endregion
   
@@ -652,26 +574,49 @@ namespace PackFileManager {
                         Settings.Default.IgnoreColumn(CurrentPackedFile.FullPath, ignoreField);
                     }
                     Settings.Default.Save();
-                    applyColumnVisibility();
+                    ApplyColumnVisibility();
                 });
+                menu.MenuItems.Add(item);
 
+                item = new MenuItem("Edit Visible List", delegate {
+                    EditVisibleLists();
+                });
                 menu.MenuItems.Add(item);
 
                 item = new MenuItem("Clear Hide list for this table", delegate {
                     Settings.Default.ResetIgnores(CurrentPackedFile.FullPath);
                     Settings.Default.Save();
-                    applyColumnVisibility();
+                    ApplyColumnVisibility();
                 });
 
                 menu.MenuItems.Add(item);
                 item = new MenuItem("Clear Hide list for all tables", delegate {
                     Settings.Default.IgnoreColumns = "";
                     Settings.Default.Save();
-                    applyColumnVisibility();
+                    ApplyColumnVisibility();
                 });
                 menu.MenuItems.Add(item);
                 menu.Show(dataGridView, e.Location);
                 return;
+            }
+        }
+        private void EditVisibleLists() {
+            List<string> ignored = new List<string>(Settings.Default.IgnoredColumns(CurrentPackedFile.FullPath));
+            List<string> all = new List<string>();
+            EditedFile.CurrentType.Fields.ForEach(f => all.Add(f.Name));
+            List<string> shown = new List<string>(all);
+            shown.RemoveAll(e => ignored.Contains(e));
+            ListEditor editor = new ListEditor {
+                OriginalOrder = all,
+                LeftLabel = "Shown Columns",
+                RightLabel = "Hidden Columns",
+                LeftList = shown,
+                RightList = ignored
+            };
+            if (editor.ShowDialog() == DialogResult.OK) {
+                Settings.Default.ResetIgnores(CurrentPackedFile.FullPath);
+                editor.RightList.ForEach(i => Settings.Default.IgnoreColumn(CurrentPackedFile.FullPath, i));
+                ApplyColumnVisibility();
             }
         }
         #endregion
@@ -708,5 +653,6 @@ namespace PackFileManager {
             }
         }
         #endregion
+
     }
 }
