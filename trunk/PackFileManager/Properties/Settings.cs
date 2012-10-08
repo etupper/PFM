@@ -121,8 +121,7 @@
         {
             SortedSet<string> removeFrom;
             Dictionary<string, SortedSet<string>> dict = decode(IgnoreColumns);
-            if (dict.TryGetValue(key, out removeFrom))
-            {
+            if (dict.TryGetValue(key, out removeFrom)) {
                 removeFrom.Remove(column);
                 if (removeFrom.Count == 0)
                 {
@@ -130,6 +129,12 @@
                 }
             }
             IgnoreColumns = encode(dict);
+        }
+        public ICollection<string> IgnoredColumns(string key) {
+            SortedSet<string> result;
+            Dictionary<string, SortedSet<string>> dict = decode(IgnoreColumns);
+            dict.TryGetValue(key, out result);
+            return result != null ? result : new SortedSet<string>();
         }
         public void ResetIgnores(string key)
         {

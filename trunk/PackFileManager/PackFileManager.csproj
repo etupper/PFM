@@ -80,6 +80,7 @@
     <Compile Include="Editors\FormationPreview.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Editors\GridViewCopyPaste.cs" />
     <Compile Include="Editors\GroupformationEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
