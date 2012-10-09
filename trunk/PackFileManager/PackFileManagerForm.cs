@@ -135,6 +135,9 @@ namespace PackFileManager
             GameManager.Instance.GameChanged += QueryModGameChange;
             // update window title to show new game setting
             GameManager.Instance.GameChanged += RefreshTitle;
+            // change icon upon game change
+            ChangeGameIcon();
+            GameManager.Instance.GameChanged += ChangeGameIcon;
             UpdateGameDirectoryItems();
             GameManager.Instance.GameChanged += UpdateGameDirectoryItems;
 
@@ -311,6 +314,16 @@ namespace PackFileManager
                         OpenExistingPackFile(file, true); 
                     })));
                 }
+            }
+        }
+
+        private void ChangeGameIcon() {
+            if (GameManager.Instance.CurrentGame == Game.STW) {
+                this.Icon = Resources.Shogun;
+            } else if (GameManager.Instance.CurrentGame == Game.NTW) {
+                this.Icon = Resources.Napoleon;
+            } else if (GameManager.Instance.CurrentGame == Game.ETW) {
+                this.Icon = Resources.Empire;
             }
         }
 
