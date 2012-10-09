@@ -53,6 +53,10 @@
       <Project>{A290E27B-4B04-4851-A17D-D0F6AEE533A2}</Project>
       <Name>EsfLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CommonDialogs\CommonDialogs.csproj">
+      <Project>{1B2FA4F4-C320-496F-9365-636D9180BE03}</Project>
+      <Name>CommonDialogs</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

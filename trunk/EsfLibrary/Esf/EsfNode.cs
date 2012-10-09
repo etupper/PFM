@@ -63,6 +63,9 @@ namespace EsfLibrary {
         }
         protected void RaiseModifiedEvent() {
             if (ModifiedEvent != null) {
+#if DEBUG
+                Console.WriteLine("modified: {0}", this);
+#endif
                 ModifiedEvent(this);
             }
         }
