@@ -246,7 +246,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ShogunIcon.bmp" />
     <None Include="Resources\Empire.ico" />
     <None Include="Resources\Napoleon.ico" />
     <None Include="Resources\Shogun.ico" />
