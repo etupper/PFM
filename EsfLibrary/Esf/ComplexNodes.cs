@@ -7,15 +7,26 @@ namespace EsfLibrary {
     // 0x80 - 0x81
     [DebuggerDisplay("ParentNode: {Name}")]
     public abstract class ParentNode : EsfValueNode<List<EsfNode>>, INamedNode {
+        public event Modification RenameEvent;
+
         public ParentNode() : base(new List<EsfNode>()) {
         }
         public ParentNode(byte code) : this() {
             originalCode = code;
         }
         
-        public virtual string Name {
-            get;
-            set;
+        string name;
+        public string Name {
+            get {
+                return name;
+            }
+            set {
+                bool different = !value.Equals(name);
+                name = value;
+                if (different && RenameEvent != null) {
+                    RenameEvent(this);
+                }
+            }
         }
         public byte Version {
             get;
@@ -59,13 +70,16 @@ namespace EsfLibrary {
                     // remove references from children
                     Value.ForEach(node => node.Parent = null);
                     base.Value = value;
-                    //val = value;
                     Value.ForEach(node => node.Parent = this);
                     if (!Modified) {
                         Modified = true;
                     } else {
                         RaiseModifiedEvent();
                     }
+#if DEBUG
+                } else {
+                    Console.WriteLine("Same value set, not regarding as modify");
+#endif
                 }
             }
         }
@@ -200,10 +214,10 @@ namespace EsfLibrary {
                 return base.Value;
             }
             set {
-                for (int i = 0; i < value.Count; i++) {
-                    (value[i] as RecordEntryNode).Name = string.Format("{0} - {1}", Name, i);
-                }
                 base.Value = value;
+                for (int i = 0; i < value.Count; i++) {
+                    (Value[i] as RecordEntryNode).Name = string.Format("{0} - {1}", Name, i);
+                }
             }
         }
         

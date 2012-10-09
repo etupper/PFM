@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 using EsfLibrary;
+using CommonDialogs;
 
 namespace EsfControl {
     public partial class EditEsfComponent : UserControl {
@@ -95,6 +96,8 @@ namespace EsfControl {
                     contextMenu.Items.Add(toolItem);
                     toolItem = CreateMenuItem("Delete", selectedNode, DeleteNode);
                     contextMenu.Items.Add(toolItem);
+                    toolItem = CreateMenuItem("Move", selectedNode, MoveNode);
+                    contextMenu.Items.Add(toolItem);
                 }
                 
                 if (contextMenu.Items.Count != 0) {
@@ -111,29 +114,66 @@ namespace EsfControl {
         
         private void CopyNode(EsfNode node) {
             ParentNode toCopy = node as ParentNode;
-            ParentNode copy;
-            copy = toCopy.CreateCopy() as ParentNode;
+            ParentNode copy = toCopy.CreateCopy() as ParentNode;
             if (copy != null) {
                 ParentNode parent = toCopy.Parent as ParentNode;
                 if (parent != null) {
-                    List<EsfNode> nodes = new List<EsfNode>((toCopy.Parent as RecordArrayNode).Value);
-                    int insertAt = nodes.Count;
-                    insertAt = parent.Children.IndexOf(toCopy) + 1;
+                    List<EsfNode> nodes = new List<EsfNode>(parent.Value);
+                    int insertAt = parent.Children.IndexOf(toCopy) + 1;
                     nodes.Insert(insertAt, copy);
-                    (toCopy.Parent as RecordArrayNode).Value = nodes;
+                    parent.Value = nodes;
+#if DEBUG
+                    Console.Out.WriteLine("new list now {0}", string.Join(",", nodes));
+#endif
                     copy.Modified = true;
                     copy.AllNodes.ForEach(n => n.Modified = false);
+#if DEBUG
+                } else {
+                    Console.WriteLine("no parent to add to");
+#endif
                 }
+#if DEBUG
+            } else {
+                Console.WriteLine("couldn't create copy");
+#endif
             }
         }
 
         private void DeleteNode(EsfNode node) {
-            ParentNode toCopy = node as ParentNode;
-            ParentNode parent = toCopy.Parent as ParentNode;
+            RecordArrayNode parent = node.Parent as RecordArrayNode;
             if (parent != null) {
-                List<EsfNode> nodes = new List<EsfNode>((toCopy.Parent as RecordArrayNode).Value);
+                List<EsfNode> nodes = new List<EsfNode>(parent.Value);
                 nodes.Remove(node);
-                (toCopy.Parent as RecordArrayNode).Value = nodes;
+                parent.Value = nodes;
+            }
+        }
+        
+        private void MoveNode(EsfNode node) {
+            RecordArrayNode parent = node.Parent as RecordArrayNode;
+            if (parent != null) {
+                InputBox input = new InputBox{
+                    Input = "Move to index"
+                };
+                if (input.ShowDialog() == DialogResult.OK) {
+                    int moveToIndex = -1;
+                    List<EsfNode> nodes = new List<EsfNode>(parent.Value);
+                    if (int.TryParse(input.Input, out moveToIndex)) {
+                        if (moveToIndex >= 0 && moveToIndex < nodes.Count) {
+                            nodes.Remove(node);
+                            nodes.Insert(moveToIndex, node);
+#if DEBUG
+                            Console.Out.WriteLine("new list now {0}", string.Join(",", nodes));
+#endif
+                            parent.Value = nodes;
+                        } else {
+                            MessageBox.Show(string.Format("Entry only valid between {0} and {1}", moveToIndex, nodes.Count - 1),
+                                       "Invalid input", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    } else {
+                        MessageBox.Show(string.Format("Enter index (between {0} and {1})", moveToIndex, nodes.Count - 1),
+                                        "Invalid input", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
             }
         }
     }
@@ -160,24 +200,42 @@ namespace EsfControl {
             node.ModifiedEvent += NodeChange;
             ForeColor = node.Modified ? Color.Red : Color.Black;
             ShowCode = showC;
+            
+            node.RenameEvent += delegate(EsfNode n) {
+                Text = node.Name;
+            };
         }
         public void Fill() {
             if (Nodes.Count == 0) {
+#if DEBUG
+                Console.WriteLine("filling list for {0}: {1}", (Tag as ParentNode).Name, string.Join(",", (Tag as ParentNode).Value));
+#endif
                 ParentNode parentNode = (Tag as ParentNode);
                 foreach (ParentNode child in parentNode.Children) {
-                    Nodes.Add(new EsfTreeNode(child, ShowCode));
+                    EsfTreeNode childNode = new EsfTreeNode(child, ShowCode);
+                    Nodes.Add(childNode);
                 }
             }
         }
         public void NodeChange(EsfNode n) {
             ForeColor = n.Modified ? Color.Red : Color.Black;
             ParentNode node = (Tag as ParentNode);
-            if (node != null && node.Children.Count != this.Nodes.Count) {
-                Nodes.Clear();
-                Fill();
-                if (IsExpanded) {
-                    foreach (TreeNode child in Nodes) {
-                        (child as EsfTreeNode).Fill();
+            bool sameChildren = node.Children.Count == this.Nodes.Count;
+            for (int i = 0; sameChildren && i < node.Children.Count; i++) {
+                sameChildren &= node.Children[i].Name.Equals(Nodes[i].Text);
+            }
+            if (node != null) {
+                if (!sameChildren) {
+                    Nodes.Clear();
+                    Fill();
+                    if (IsExpanded) {
+                        foreach (TreeNode child in Nodes) {
+                            (child as EsfTreeNode).Fill();
+                        }
+                    }
+                } else {
+                    for(int i = 0; i < node.Children.Count; i++) {
+                        Nodes[i].Text = node.Children[i].Name;
                     }
                 }
             }
