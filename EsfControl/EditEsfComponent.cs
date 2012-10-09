@@ -166,11 +166,11 @@ namespace EsfControl {
 #endif
                             parent.Value = nodes;
                         } else {
-                            MessageBox.Show(string.Format("Entry only valid between {0} and {1}", moveToIndex, nodes.Count - 1),
+                            MessageBox.Show(string.Format("Entry only valid between 0 and {0}", nodes.Count - 1),
                                        "Invalid input", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     } else {
-                        MessageBox.Show(string.Format("Enter index (between {0} and {1})", moveToIndex, nodes.Count - 1),
+                        MessageBox.Show(string.Format("Enter index (between 0 and {0})", nodes.Count - 1),
                                         "Invalid input", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
