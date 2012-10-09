@@ -44,7 +44,7 @@ namespace CommonDialogs {
                 SelectedPath = SelectedPath
             };
             if (extractFolderBrowserDialog.ShowDialog() == DialogResult.OK) {
-                Description = extractFolderBrowserDialog.SelectedPath;
+                SelectedPath = extractFolderBrowserDialog.SelectedPath;
             }
         }
 
