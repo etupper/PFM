@@ -13,45 +13,35 @@ namespace AutoUpdater {
      * It is meant to provide an automatic update of a program which can't do it for itself
      * because it can't write files it still uses while running.
      */
-    class Updater {
-        static readonly string sourceForgeFormat =
-            "http://downloads.sourceforge.net/project/packfilemanager/Release/" +
-            "Pack%20File%20Manager%20{0}.zip?r=&ts={1}&use_mirror=master";
-
-        static readonly string targetNameFormat = "PackFileManager{0}.zip";
-
+    public class Updater {
         public static void Main(string[] args) {
             // the id of the process to wait for termination of
             int processId;
 
             // the target version identifier
             // determines source URL and target zip filename
-            string version;
+            string downloadUrl;
             
-            // name of the executable to run after the other process has finished
+            // name of the executable to run after the other process has finished (full path)
             string startFileName;
             
             // collect eventual arguments
             List<string> arguments = new List<string> ();
+            
+            Console.WriteLine("Autoupdate started...");
    
             try {
                 processId = int.Parse (args [0]);
-                version = args [1];
+                downloadUrl = args [1];
                 startFileName = args [2];
                 for (int i = 3; i < args.Length; i++) {
                     arguments.Add (args [i]);
                 }
             } catch {
-                Console.WriteLine ("usage: <pid> <version> <executable>");
+                Console.WriteLine ("usage: <pid> <downloadUrl> <executable> [<exec_parameters>]");
                 return;
             }
    
-            // the url to download the update from
-            string dlUrl = string.Format (sourceForgeFormat, version, DateTime.Now.Ticks);
-
-            // the name of the zip file to store in
-            string zipfileName = string.Format (targetNameFormat, version);
-
             Process proc = null;
             try {
                 proc = Process.GetProcessById (processId);
@@ -62,12 +52,13 @@ namespace AutoUpdater {
 
             // download file from URL; this also gives the other process some time to shutdown
             // to avoid superfluous waiting
-            Console.WriteLine ("Downloading from {0}", dlUrl);
-            using (FileStream outfile = File.Open (zipfileName, FileMode.Create)) {
-                var request = (HttpWebRequest)WebRequest.Create (dlUrl);
-                var response = (HttpWebResponse)request.GetResponse ();
-                response.GetResponseStream ().CopyTo (outfile);
+            Console.WriteLine ("Downloading from {0}", downloadUrl);
+            string targetDir = Path.GetDirectoryName(startFileName);
+            string filename = Path.GetFileName(downloadUrl).Replace("%20", " ");
+            if (filename.Contains("?")) {
+                filename = filename.Remove(filename.IndexOf('?'));
             }
+            DownloadFile(downloadUrl, targetDir, filename);
             
             try {
                 if (proc != null && !proc.HasExited) {
@@ -81,20 +72,42 @@ namespace AutoUpdater {
             Console.WriteLine ("Installing...");
 
             // unzip all entries
-            ZipInputStream zipStream = new ZipInputStream (File.OpenRead (zipfileName));
-            ZipEntry entry = zipStream.GetNextEntry ();
-            while (entry != null) {
-                FileStream outStream = File.OpenWrite (entry.Name);
-                zipStream.CopyTo (outStream);
-                entry = zipStream.GetNextEntry ();
-                outStream.Close ();
-            }
-            string asParameters = "";
-            arguments.ForEach (a => asParameters += " " + a);
+            Unzip(filename);
+
+            string asParameters = string.Join(" ", arguments);
             Console.WriteLine ("starting {0} {1}", startFileName, asParameters.Trim ());
             
             Console.WriteLine ("Okay, finished. Restarting.");
             Process.Start (startFileName, asParameters.Trim ());
+        }
+  
+        // downloads the given url to the given target directory, with the optional target filename.
+        // if target filename is null, the url's filename is used 
+        // (which might include encoded characters and http-query information).
+        public static void DownloadFile(string url, string targetDir, string targetFile = null) {
+            if (targetFile == null) {
+                targetFile = Path.GetFileName(url);
+            }
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            using (var dlStream = response.GetResponseStream()) {
+                using (var targetFileStream = File.Create(Path.Combine(targetDir, targetFile))) {
+                    dlStream.CopyTo(targetFileStream);
+                }
+            }
+        }
+        // unzip all entries of the given file to the directory it resides in.
+        public static void Unzip(string zipFile) {
+            string targetDir = Path.GetDirectoryName(zipFile);
+            using (var zipStream = new ZipInputStream(File.OpenRead(zipFile))) {
+            ZipEntry entry = zipStream.GetNextEntry();
+                while (entry != null) {
+                    using (FileStream outStream = File.OpenWrite(Path.Combine(targetDir, entry.Name))) {
+                        zipStream.CopyTo(outStream);
+                    }
+                    entry = zipStream.GetNextEntry();
+                }
+            }
         }
     }
 }
