@@ -318,13 +318,13 @@ namespace PackFileManager
         }
 
         private void ChangeGameIcon() {
-//            if (GameManager.Instance.CurrentGame == Game.STW) {
-//                this.Icon = Resources.Shogun;
-//            } else if (GameManager.Instance.CurrentGame == Game.NTW) {
-//                this.Icon = Resources.Napoleon;
-//            } else if (GameManager.Instance.CurrentGame == Game.ETW) {
-//                this.Icon = Resources.Empire;
-//            }
+            if (GameManager.Instance.CurrentGame == Game.STW) {
+                this.Icon = Resources.Shogun;
+            } else if (GameManager.Instance.CurrentGame == Game.NTW) {
+                this.Icon = Resources.Napoleon;
+            } else if (GameManager.Instance.CurrentGame == Game.ETW) {
+                this.Icon = Resources.Empire;
+            }
         }
 
         protected void EnableMenuItems() {

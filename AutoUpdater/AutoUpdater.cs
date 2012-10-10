@@ -41,6 +41,9 @@ namespace AutoUpdater {
                 Console.WriteLine ("usage: <pid> <downloadUrl> <executable> [<exec_parameters>]");
                 return;
             }
+#if DEBUG
+            Console.WriteLine("startFileName: {0}", startFileName);
+#endif
    
             Process proc = null;
             try {
@@ -52,7 +55,6 @@ namespace AutoUpdater {
 
             // download file from URL; this also gives the other process some time to shutdown
             // to avoid superfluous waiting
-            Console.WriteLine ("Downloading from {0}", downloadUrl);
             string targetDir = Path.GetDirectoryName(startFileName);
             string filename = Path.GetFileName(downloadUrl).Replace("%20", " ");
             if (filename.Contains("?")) {
@@ -91,7 +93,9 @@ namespace AutoUpdater {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             using (var dlStream = response.GetResponseStream()) {
-                using (var targetFileStream = File.Create(Path.Combine(targetDir, targetFile))) {
+                string targetPath = Path.Combine(targetDir, targetFile);
+                using (var targetFileStream = File.Create(targetPath)) {
+                    Console.WriteLine("Downloading from {0} to {1}", url, targetPath);
                     dlStream.CopyTo(targetFileStream);
                 }
             }

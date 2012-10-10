@@ -115,7 +115,7 @@ namespace PackFileManager
         public void UpdatePfm(string openPack = null) {
             Process myProcess = Process.GetCurrentProcess();
             string currentPackPath = openPack == null ? "" : string.Format(" \"{0}\"", openPack);
-            string arguments = string.Format("{0} \"{1}\" {2}{3}", myProcess.Id, PfmUrl, Application.ExecutablePath, currentPackPath);
+            string arguments = string.Format("{0} \"{1}\" \"{2}\"{3}", myProcess.Id, PfmUrl, Application.ExecutablePath, currentPackPath);
 #if DEBUG
             Console.WriteLine("Updating with AutoUpdater.exe {0}", arguments);
 #endif

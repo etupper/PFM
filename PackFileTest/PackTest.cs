@@ -40,8 +40,6 @@ namespace PackFileTest {
             "-cr",
             // -mx: find corresponding fields in mod tools xml files
             "-mx",
-            // -cs: replace current schema names with the ones from CA
-            "-cs"
         };
 #pragma warning restore 414
 
