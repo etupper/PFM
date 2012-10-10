@@ -308,8 +308,6 @@ namespace PackFileManager {
                     dataGridView.TopLeftHeaderCell.Value = value ? EditedFile.Entries[0][0].Info.Name : "";
                 }
 
-                copyPaste.IgnoreFirstColumn = value;
-                
                 dataGridView.RowHeadersVisible = !value;
                 Settings.Default.UseFirstColumnAsRowHeader = useFirstColumnAsRowHeader.Checked;
             }
