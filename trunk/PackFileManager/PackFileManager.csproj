@@ -256,7 +256,7 @@
   <PropertyGroup>
     <PreBuildEvent>copy "$(SolutionDir)Files\master_schema.xml" "$(TargetDir)"
 copy "$(SolutionDir)Files\schema_models.xml" "$(TargetDir)"
-copy "$(SolutionDir)PackFileTest\bin\schema_*" "$(TargetDir)"
+if exist "$(SolutionDir)PackFileTest\bin\schema_*" copy "$(SolutionDir)PackFileTest\bin\schema_*" "$(TargetDir)"
 </PreBuildEvent>
   </PropertyGroup>
   <ItemGroup />
