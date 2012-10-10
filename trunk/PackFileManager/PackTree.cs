@@ -60,17 +60,7 @@ namespace PackFileManager {
                 }
         }
         void Renamed(PackEntry file, string val) {
-            PackedFile file2 = file as PackedFile;
-            //if (!val.Contains("version")) {
-            //    if (file2.Data.Length != 0) {
-            //        try {
-            //            DBFileHeader header = PackedFileDbCodec.readHeader(file2);
-            //            Text = string.Format("{0} - version {1}", val, header.Version);
-            //        } catch (Exception e) {
-            //            Console.WriteLine(e);
-            //        }
-            //    }
-            //}
+            Text = file.Name;
         }
 
         /*

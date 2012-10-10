@@ -87,7 +87,7 @@ namespace PackFileManager
 
             try {
                 if (Settings.Default.UpdateOnStartup) {
-                    tryUpdate (false);
+                    TryUpdate (false);
                 }
             } catch {
             }
@@ -99,7 +99,7 @@ namespace PackFileManager
             } catch (Exception e) {
                 if (MessageBox.Show(string.Format("Could not initialize type map: {0}.\nTry autoupdate?", e.Message),
                     "Initialize failed", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes) {
-                    tryUpdate();
+                    TryUpdate();
                 }
             }
 
@@ -318,13 +318,13 @@ namespace PackFileManager
         }
 
         private void ChangeGameIcon() {
-            if (GameManager.Instance.CurrentGame == Game.STW) {
-                this.Icon = Resources.Shogun;
-            } else if (GameManager.Instance.CurrentGame == Game.NTW) {
-                this.Icon = Resources.Napoleon;
-            } else if (GameManager.Instance.CurrentGame == Game.ETW) {
-                this.Icon = Resources.Empire;
-            }
+//            if (GameManager.Instance.CurrentGame == Game.STW) {
+//                this.Icon = Resources.Shogun;
+//            } else if (GameManager.Instance.CurrentGame == Game.NTW) {
+//                this.Icon = Resources.Napoleon;
+//            } else if (GameManager.Instance.CurrentGame == Game.ETW) {
+//                this.Icon = Resources.Empire;
+//            }
         }
 
         protected void EnableMenuItems() {
@@ -954,33 +954,27 @@ namespace PackFileManager
         }
   
         private void updateToolStripMenuItem_Click(object sender, EventArgs ev) {
-            tryUpdate(true, currentPackFile == null ? null : currentPackFile.Filepath);
+            TryUpdate(true, currentPackFile == null ? null : currentPackFile.Filepath);
         }
 
-        public static void tryUpdate(bool showSuccess = true, string currentPackFile = null) {
+        static void TryUpdate(bool showSuccess = true, string currentPackFile = null) {
             try {
-                string path = Path.GetDirectoryName(Application.ExecutablePath);
-                string version = Application.ProductVersion;
-                bool update = DBFileTypesUpdater.CheckVersion(path, ref version);
-                if (showSuccess) {
-                    string message = update ? "DB File description updated." : "No update performed.";
-                    MessageBox.Show(message, "Update result", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                if (update) {
+                DBFileTypesUpdater updater = new DBFileTypesUpdater();
+                if (updater.NeedsSchemaUpdate) {
+                    updater.UpdateSchema();
                     GameManager.Instance.ApplyGameTypemap();
+                    if (showSuccess) {
+                        MessageBox.Show("DB File description updated.", "Update result", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                } else if (showSuccess) {
+                    MessageBox.Show("No update performed.", "Update result", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-                if (version != Application.ProductVersion) {
-                    if (MessageBox.Show(string.Format("A new version of PFM is available ({0})\nAutoinstall?", version),
-                                         "New Software version available",
-                                         MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes) {
-                        Process myProcess = Process.GetCurrentProcess();
-                        if (myProcess.CloseMainWindow()) {
-                            // re-open file if one is open already
-                            string currentPackPath = currentPackFile == null ? "" : string.Format(" {0}", currentPackFile);
-                            string arguments = string.Format("{0} {1} PackFileManager.exe{2}", myProcess.Id, version, currentPackPath);
-                            Process.Start("AutoUpdater.exe", arguments);
-                            myProcess.Close();
-                        }
+                
+                if (updater.NeedsPfmUpdate) {
+                    if (MessageBox.Show(string.Format("A new version of PFM is available ({0})\nAutoinstall?", updater.LatestPfmVersion),
+                                        "New Software version available",
+                                        MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes) {
+                        updater.UpdatePfm(currentPackFile);
                     }
                 }
             } catch (Exception e) {
