@@ -39,6 +39,25 @@
                 return (Icon) ResourceManager.GetObject("PackFileManager", resourceCulture);
             }
         }
+        internal static System.Drawing.Icon Empire {
+            get {
+                object obj = ResourceManager.GetObject("Empire", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        internal static System.Drawing.Icon Napoleon {
+            get {
+                object obj = ResourceManager.GetObject("Napoleon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+
+        internal static System.Drawing.Icon Shogun {
+            get {
+                object obj = ResourceManager.GetObject("Shogun", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
 
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         internal static System.Resources.ResourceManager ResourceManager
