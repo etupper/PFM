@@ -109,7 +109,7 @@ namespace PackFileManager {
                         write = GamedirFileEntry(g);
                     }
                 }
-                newEntries.Add(write);
+                newEntries.Add(string.Format("{0}{1}", write, Environment.NewLine));
             }
             File.WriteAllLines(GameDirFilepath, newEntries);
         }

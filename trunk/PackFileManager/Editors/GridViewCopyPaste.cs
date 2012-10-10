@@ -5,7 +5,13 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace PackFileManager {
+    /*
+     * Manages copy/paste from and into a DataGridView.
+     * Uses the system clipboard to be able to copy from and paste into outside applications.
+     */
     class GridViewCopyPaste {
+        
+        // notifies clients that a copy or paste took place
         public delegate void CopyPasteEvent();
         public event CopyPasteEvent Copied;
         public event CopyPasteEvent Pasted;
@@ -16,8 +22,6 @@ namespace PackFileManager {
             dataGridView.KeyUp += CopyPaste;
         }
 
-        public bool IgnoreFirstColumn { get; set; }
-
         private void CopyPaste(object sender, KeyEventArgs arge) {
             if (arge.Control) {
                 if (arge.KeyCode == Keys.C) {
@@ -27,15 +31,19 @@ namespace PackFileManager {
                 }
             }
         }
+        
+        /*
+         * Retrieve the cells in the given collection of selected cells as a two-dimensional data structure
+         * (rows/columns).
+         */
         List<List<DataGridViewCell>> SelectedCells(DataGridViewSelectedCellCollection collection) {
             List<List<DataGridViewCell>> rows = new List<List<DataGridViewCell>>();
             foreach (DataGridViewCell cell in collection) {
                 int rowIndex = cell.RowIndex;
-                List<DataGridViewCell> addTo;
                 while (rowIndex >= rows.Count) {
                     rows.Add(new List<DataGridViewCell>());
                 }
-                addTo = rows[rowIndex];
+                List<DataGridViewCell> addTo = rows[rowIndex];
                 while (cell.ColumnIndex >= addTo.Count) {
                     addTo.Add(null);
                 }
@@ -51,6 +59,9 @@ namespace PackFileManager {
             });
             return result;
         }
+        /*
+         * Event handler for copy.
+         */
         public void CopyEvent() {
             if (dataGridView.SelectedCells.Count == 0) {
                 return;
@@ -75,6 +86,9 @@ namespace PackFileManager {
             }
         }
 
+        /*
+         * Event handler for paste.
+         */
         public void PasteEvent() {
             string encoded = Clipboard.GetText();
             string[] lines = encoded.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);

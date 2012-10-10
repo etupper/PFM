@@ -1182,15 +1182,12 @@
     <field name='health' type='float' version_start='2' />
   </table>
   <table name='campaign_clan_level_infos_tables'>
-    <field name='unknown' type='int' />
-    <field name='unknown2' type='string' />
-    <field name='unknown3' type='int' />
-    <field name='unknown4' type='optstring' />
-    <field name='unknown5' type='boolean' />
-    <field name='unknown6' type='boolean' />
-    <field name='unknown7' type='boolean' />
-    <field name='unknown8' type='boolean' />
-    <field name='unknown9' type='boolean' />
+    <field name='clan_level' type='int' />
+    <field name='effect_bundle' type='string' />
+    <field name='modernisation_threshold' type='int' />
+    <field name='optional_faction_key' type='optstring' />
+    <field name='technology_unlock_level' type='int' />
+    <field name='unknown6' type='optstring' />
   </table>
   <table name='campaign_difficulty_handicap_effects_tables'>
     <field name='campaign_difficulty_handicap' type='int' />
@@ -5909,15 +5906,12 @@
   <table table_name='campaign_clan_level_infos_tables'
          table_version='1'
          guid='24a3b534-797e-4282-a157-09402a874ad6'>
-    <field name='unknown' type='int' />
-    <field name='unknown2' type='string' />
-    <field name='unknown3' type='int' />
-    <field name='unknown4' type='optstring' />
-    <field name='unknown5' type='boolean' />
-    <field name='unknown6' type='boolean' />
-    <field name='unknown7' type='boolean' />
-    <field name='unknown8' type='boolean' />
-    <field name='unknown9' type='boolean' />
+    <field name='clan_level' type='int' />
+    <field name='effect_bundle' type='string' />
+    <field name='modernisation_threshold' type='int' />
+    <field name='optional_faction_key' type='optstring' />
+    <field name='technology_unlock_level' type='int' />
+    <field name='unknown6' type='optstring' />
   </table>
   <table table_name='campaign_difficulty_handicap_effects_tables'
          table_version='0'
