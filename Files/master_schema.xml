@@ -3359,7 +3359,7 @@
     <field fkey='battle_personalities_tables.key' name='standard_bearer' type='optstring' />
     <field name='Soldier Model' type='string' />
     <field fkey='battle_entities_tables.key' name='man_entity' type='string' />
-    <field fkey='battle_animations_table_tables.key' name='man_animations_table' type='string' />
+    <field name='man_animations_table' type='string' />
     <field name='Equipment Theme' type='string' />
     <field name='armour' type='int' />
     <field name='armour_audio' type='string' />

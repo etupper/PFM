@@ -20,15 +20,21 @@ namespace PackFileManager
         public static string CreateSourceforgeUrl(string file) {
             return string.Format(sourceForgeFormat, file, DateTime.Now.Ticks);
         }
+        public static string PfmDirectory {
+            get {
+                return Path.GetDirectoryName(Application.ExecutablePath);
+            }
+        }
     }
     
 	class DBFileTypesUpdater {
         static string VERSION_FILE = "xmlversion";
         
-        LatestVersionRetriever versions;
+        ILatestVersionRetriever versions;
         
         public DBFileTypesUpdater() {
-            versions = new LatestVersionRetriever();
+            versions = new TwcVersionRetriever();
+            // versions = new SourceforgeVersionRetriever();
         }
         
         #region Query Update Neccessary
@@ -75,19 +81,6 @@ namespace PackFileManager
         }
         #endregion
 
-        #region Download URLs
-        string SchemaUrl {
-            get {
-                return Util.CreateSourceforgeUrl(string.Format("Schemata/{0}", SchemaZipname));
-            }
-        }
-        string PfmUrl {
-            get {
-                return Util.CreateSourceforgeUrl(string.Format("Release/Pack%20File%20Manager%20{0}.zip", LatestPfmVersion));
-            }
-        }
-        #endregion
-  
         #region Zip File Names
         string PackFileZipname {
             get {
@@ -101,21 +94,15 @@ namespace PackFileManager
         }
         #endregion
         
-        static string PfmDirectory {
-            get {
-                return Path.GetDirectoryName(Application.ExecutablePath);
-            }
-        }
-        
         public void UpdateSchema() {
-            Updater.DownloadFile(SchemaUrl, PfmDirectory, SchemaZipname);
-            Updater.Unzip(Path.Combine(PfmDirectory, SchemaZipname));
+            Updater.DownloadFile(versions.SchemaUrl, Util.PfmDirectory, SchemaZipname);
+            Updater.Unzip(Path.Combine(Util.PfmDirectory, SchemaZipname));
         }
         
         public void UpdatePfm(string openPack = null) {
             Process myProcess = Process.GetCurrentProcess();
             string currentPackPath = openPack == null ? "" : string.Format(" \"{0}\"", openPack);
-            string arguments = string.Format("{0} \"{1}\" \"{2}\"{3}", myProcess.Id, PfmUrl, Application.ExecutablePath, currentPackPath);
+            string arguments = string.Format("{0} \"{1}\" \"{2}\"{3}", myProcess.Id, versions.PfmUrl, Application.ExecutablePath, currentPackPath);
 #if DEBUG
             Console.WriteLine("Updating with AutoUpdater.exe {0}", arguments);
 #endif
@@ -127,17 +114,45 @@ namespace PackFileManager
             }
         }
 	}
-
-    class LatestVersionRetriever {
-        public string LatestPfmVersion { get; private set; }
-        public string LatestSchemaVersion { get; private set; }
+    
+    /*
+     * Retrieve latest versions from any source.
+     */
+    interface ILatestVersionRetriever {
+        string LatestPfmVersion { get; }
+        string LatestSchemaVersion { get; }
         
+        string SchemaUrl { get; }
+        string PfmUrl { get; }
+    }
+ 
+    /*
+     * Retrieves versions from single text file on sourceforge and creates links
+     * from known base path + version information.
+     */
+    class SourceforgeVersionRetriever : ILatestVersionRetriever {
         const string pfmTag = "packfilemanager";
         const string schemaTag = "xmlversion";
         
+        public string LatestPfmVersion { get; private set; }
+        public string LatestSchemaVersion { get; private set; }
+
+        #region Download URLs
+        public string SchemaUrl {
+            get {
+                return Util.CreateSourceforgeUrl(string.Format("Schemata/schema_{0}.zip", LatestSchemaVersion));
+            }
+        }
+        public string PfmUrl {
+            get {
+                return Util.CreateSourceforgeUrl(string.Format("Release/Pack%20File%20Manager%20{0}.zip", LatestPfmVersion));
+            }
+        }
+        #endregion
+        
         static readonly char[] SEPARATOR = { ':' };
         
-        public LatestVersionRetriever() {
+        public SourceforgeVersionRetriever() {
             string url = Util.CreateSourceforgeUrl("latestVersionInfo.txt");
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -165,34 +180,75 @@ namespace PackFileManager
 #endif
         }
     }
+  
+    /*
+     * Retrieves versions from TWC PFM thread; PFM dl link is created from
+     * known SF base path + version information, schema link retrieved from
+     * forum thread href.
+     */
+    class TwcVersionRetriever : ILatestVersionRetriever {
+        public string LatestPfmVersion { get; private set; }
+        public string LatestSchemaVersion { get; private set; }
+  
+        #region Download URLs
+        // retrieved from twc thread link while parsing
+        string schemaUrl;
+        public string SchemaUrl {
+            get {
+                return schemaUrl;
+            }
+            private set {
+                // expects the "attachmentid=..." string for the query parameters, will create URL itself
+                schemaUrl = string.Format("http://www.twcenter.net/forums/attachment.php?{0}", value);
+            }
+        }
+        public string PfmUrl {
+            get {
+                return Util.CreateSourceforgeUrl(string.Format("Release/Pack%20File%20Manager%20{0}.zip", LatestPfmVersion));
+            }
+        }
+        #endregion
+  
+        static Regex FileTypeRegex = new Regex("<a href=\".*(attachmentid=[^\"]*)\"[^>]*>schema_([0-9]*).zip</a>.*</td>");
+        static Regex SwVersionRegex = new Regex(@"Update.*Pack File Manager ([0-9]*\.[0-9]*(\.[0-9]*)?)");
+        static Regex StopReadRegex = new Regex("/ attachments");
 
-    // compare build numbers
-    public class BuildVersionComparator : Comparer<string>
-    {
-        public static readonly Comparer<string> Instance = new BuildVersionComparator();
-        
-        public override int Compare(string v1, string v2) {
-            int result = 0;
-            string[] v1Split = v1.Split('.');
-            string[] v2Split = v2.Split('.');
-            for (int i = 0; i < Math.Min(v1Split.Length, v2Split.Length); i++) {
-                int v1Version = 0, v2Version = 0;
-                int.TryParse(v1Split[i], out v1Version);
-                int.TryParse(v2Split[i], out v2Version);
-                result = v1Version - v2Version;
-                if (result != 0) {
-                    return result;
+        public TwcVersionRetriever() {
+            LatestPfmVersion = LatestSchemaVersion = "0";
+            
+            string url = string.Format("http://www.twcenter.net/forums/showthread.php?t=494248");
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            using (var stream = new StreamReader(response.GetResponseStream())) {
+                string line = stream.ReadLine();
+                while (line != null) {
+                    if (FileTypeRegex.IsMatch(line)) {
+                        Match match = FileTypeRegex.Match(line);
+                        string schemaVersion = match.Groups[2].Value;
+                        if (BuildVersionComparator.Instance.Compare(schemaVersion, LatestSchemaVersion) > 0) {
+                            LatestSchemaVersion = schemaVersion;
+                            schemaUrl = match.Groups[1].Value;
+                        }
+                    } else if (SwVersionRegex.IsMatch(line)) {
+                        string swVersion = SwVersionRegex.Match(line).Groups[1].Value;
+                        if (BuildVersionComparator.Instance.Compare(swVersion, LatestPfmVersion) > 0) {
+                            LatestPfmVersion = swVersion;
+                        }
+                    } else if (StopReadRegex.IsMatch(line)) {
+                        // PFM info is in the post itself, schema info in the attachment links...
+                        // no need to go on
+                        break;
+                    }
+                    line = stream.ReadLine();
                 }
             }
-            if (result == 0) {
-                // different version lengths (eg 1.7.2 and 2.0)
-                result = v1Split.Length != v2Split.Length ? 1 : 0;
-                // longer one is larger (2.0.1 > 2.0)
-                result *= v1Split.Length > v2Split.Length ? 1 : -1;
+            if (LatestPfmVersion == null || LatestSchemaVersion == null) {
+                throw new InvalidDataException(string.Format("Could not determine latest versions: got {0}, {1}", 
+                                                             LatestPfmVersion, LatestSchemaVersion));
             }
-
-            // result > 0: v1 is larger
-            return result;
+#if DEBUG
+            Console.WriteLine("Latest PFM: {0}, Latest Schema: {1}", LatestPfmVersion, LatestSchemaVersion);
+#endif
         }
     }
 }
