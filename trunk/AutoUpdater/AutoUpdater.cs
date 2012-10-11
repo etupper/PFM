@@ -113,5 +113,35 @@ namespace AutoUpdater {
                 }
             }
         }
+    }    
+    
+    // compare build numbers
+    public class BuildVersionComparator : Comparer<string>
+    {
+        public static readonly Comparer<string> Instance = new BuildVersionComparator();
+        
+        public override int Compare(string v1, string v2) {
+            int result = 0;
+            string[] v1Split = v1.Split('.');
+            string[] v2Split = v2.Split('.');
+            for (int i = 0; i < Math.Min(v1Split.Length, v2Split.Length); i++) {
+                int v1Version = 0, v2Version = 0;
+                int.TryParse(v1Split[i], out v1Version);
+                int.TryParse(v2Split[i], out v2Version);
+                result = v1Version - v2Version;
+                if (result != 0) {
+                    return result;
+                }
+            }
+            if (result == 0) {
+                // different version lengths (eg 1.7.2 and 2.0)
+                result = v1Split.Length != v2Split.Length ? 1 : 0;
+                // longer one is larger (2.0.1 > 2.0)
+                result *= v1Split.Length > v2Split.Length ? 1 : -1;
+            }
+
+            // result > 0: v1 is larger
+            return result;
+        }
     }
 }
