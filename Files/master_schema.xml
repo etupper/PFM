@@ -3116,7 +3116,7 @@
     <field name='key' type='string' />
     <field fkey='technologies_tables.key' name='technology_key' type='string' />
     <field fkey='technology_node_sets_tables.key' name='technology_node_set' type='string' />
-    <field name='unknown7' type='float' />
+    <field name='unknown7' type='int' />
   </table>
   <table name='technology_required_building_levels_junctions_tables'>
     <field name='Unused' type='string' />
@@ -8125,7 +8125,7 @@
     <field name='key' type='string' />
     <field fkey='technologies_tables.key' name='technology_key' type='string' />
     <field fkey='technology_node_sets_tables.key' name='technology_node_set' type='string' />
-    <field name='unknown7' type='float' />
+    <field name='unknown7' type='int' />
   </table>
   <table table_name='town_wealth_growth_factors_tables'
          table_version='0'
