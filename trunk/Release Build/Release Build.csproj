@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -69,7 +69,8 @@ copy "$(SolutionDir)\Files\schema_models.xml" "$(TargetDir)"
 
 del "PackFileTest.exe"
 
-start WinRAR.exe a "Pack File Manager.zip" "*dll" "*exe" "schema_*.xml" "xmlversion"</PostBuildEvent>
+start WinRAR.exe a "Pack File Manager.zip" "*dll" "*exe" "schema_*.xml" "xmlversion"
+start WinRAR.exe a "schema.zip" "schema_*.xml" "xmlversion"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
