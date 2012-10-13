@@ -28,11 +28,6 @@ namespace MMS.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string ModToolPath {
             get {
-                try {
-                    return ((string)(this["ModToolPath"]));
-                } catch {
-                    this["ModToolPath"] = "";
-                }
                 return ((string)(this["ModToolPath"]));
             }
             set {
@@ -61,6 +56,18 @@ namespace MMS.Properties {
             }
             set {
                 this["ActiveMod"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PfmPath {
+            get {
+                return ((string)(this["PfmPath"]));
+            }
+            set {
+                this["PfmPath"] = value;
             }
         }
     }

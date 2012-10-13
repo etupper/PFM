@@ -184,8 +184,10 @@ namespace Common {
                 return base.Deleted;
             }
             set {
-                AllEntries.ForEach(e => e.Deleted = value);
-                base.Deleted = value;
+                if (Deleted != value) {
+                    base.Deleted = value;
+                    AllEntries.ForEach(e => e.Deleted = value);
+                }
             }
         }
 

@@ -30,11 +30,16 @@
             this.deleteModToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importModToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setActiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cleanUpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.installToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uninstallToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extrasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.installationDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.restoreOriginalDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.directoriesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.assemblyKitDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.shogunDataDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modPackInPFMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.installDirectoryLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -42,6 +47,7 @@
             this.launchTweak = new System.Windows.Forms.Button();
             this.launchBobButton = new System.Windows.Forms.Button();
             this.modList = new System.Windows.Forms.ListBox();
+            this.setPFMPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -51,13 +57,14 @@
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            toolStripSeparator1.Size = new System.Drawing.Size(135, 6);
             // 
             // menuStrip
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.modsToolStripMenuItem,
-            this.extrasToolStripMenuItem});
+            this.extrasToolStripMenuItem,
+            this.directoriesToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(616, 24);
@@ -72,6 +79,7 @@
             this.importModToolStripMenuItem,
             this.setActiveToolStripMenuItem,
             toolStripSeparator1,
+            this.cleanUpToolStripMenuItem,
             this.installToolStripMenuItem,
             this.uninstallToolStripMenuItem});
             this.modsToolStripMenuItem.Name = "modsToolStripMenuItem";
@@ -81,42 +89,49 @@
             // addModToolStripMenuItem
             // 
             this.addModToolStripMenuItem.Name = "addModToolStripMenuItem";
-            this.addModToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.addModToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.addModToolStripMenuItem.Text = "Add";
             this.addModToolStripMenuItem.Click += new System.EventHandler(this.AddMod);
             // 
             // deleteModToolStripMenuItem
             // 
             this.deleteModToolStripMenuItem.Name = "deleteModToolStripMenuItem";
-            this.deleteModToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.deleteModToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.deleteModToolStripMenuItem.Text = "Delete";
             this.deleteModToolStripMenuItem.Click += new System.EventHandler(this.DeleteMod);
             // 
             // importModToolStripMenuItem
             // 
             this.importModToolStripMenuItem.Name = "importModToolStripMenuItem";
-            this.importModToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.importModToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.importModToolStripMenuItem.Text = "Import pack";
             this.importModToolStripMenuItem.Click += new System.EventHandler(this.ImportExistingPack);
             // 
             // setActiveToolStripMenuItem
             // 
             this.setActiveToolStripMenuItem.Name = "setActiveToolStripMenuItem";
-            this.setActiveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.setActiveToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.setActiveToolStripMenuItem.Text = "Set Active";
             this.setActiveToolStripMenuItem.Click += new System.EventHandler(this.SetMod);
+            // 
+            // cleanUpToolStripMenuItem
+            // 
+            this.cleanUpToolStripMenuItem.Name = "cleanUpToolStripMenuItem";
+            this.cleanUpToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.cleanUpToolStripMenuItem.Text = "Clean Up";
+            this.cleanUpToolStripMenuItem.Click += new System.EventHandler(this.CleanUp);
             // 
             // installToolStripMenuItem
             // 
             this.installToolStripMenuItem.Name = "installToolStripMenuItem";
-            this.installToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.installToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.installToolStripMenuItem.Text = "Install";
             this.installToolStripMenuItem.Click += new System.EventHandler(this.InstallMod);
             // 
             // uninstallToolStripMenuItem
             // 
             this.uninstallToolStripMenuItem.Name = "uninstallToolStripMenuItem";
-            this.uninstallToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.uninstallToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.uninstallToolStripMenuItem.Text = "Uninstall";
             this.uninstallToolStripMenuItem.Click += new System.EventHandler(this.UninstallMod);
             // 
@@ -124,7 +139,8 @@
             // 
             this.extrasToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.installationDirectoryToolStripMenuItem,
-            this.restoreOriginalDataToolStripMenuItem});
+            this.restoreOriginalDataToolStripMenuItem,
+            this.setPFMPathToolStripMenuItem});
             this.extrasToolStripMenuItem.Name = "extrasToolStripMenuItem";
             this.extrasToolStripMenuItem.Size = new System.Drawing.Size(49, 20);
             this.extrasToolStripMenuItem.Text = "Extras";
@@ -142,6 +158,37 @@
             this.restoreOriginalDataToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.restoreOriginalDataToolStripMenuItem.Text = "Restore Original Data";
             this.restoreOriginalDataToolStripMenuItem.Click += new System.EventHandler(this.RestoreData);
+            // 
+            // directoriesToolStripMenuItem
+            // 
+            this.directoriesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.assemblyKitDirectoryToolStripMenuItem,
+            this.shogunDataDirectoryToolStripMenuItem,
+            this.modPackInPFMToolStripMenuItem});
+            this.directoriesToolStripMenuItem.Name = "directoriesToolStripMenuItem";
+            this.directoriesToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
+            this.directoriesToolStripMenuItem.Text = "Open...";
+            // 
+            // assemblyKitDirectoryToolStripMenuItem
+            // 
+            this.assemblyKitDirectoryToolStripMenuItem.Name = "assemblyKitDirectoryToolStripMenuItem";
+            this.assemblyKitDirectoryToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.assemblyKitDirectoryToolStripMenuItem.Text = "Assembly Kit Directory";
+            this.assemblyKitDirectoryToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
+            // 
+            // shogunDataDirectoryToolStripMenuItem
+            // 
+            this.shogunDataDirectoryToolStripMenuItem.Name = "shogunDataDirectoryToolStripMenuItem";
+            this.shogunDataDirectoryToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.shogunDataDirectoryToolStripMenuItem.Text = "Shogun data Directory";
+            this.shogunDataDirectoryToolStripMenuItem.Click += new System.EventHandler(this.OpenDirectory);
+            // 
+            // modPackInPFMToolStripMenuItem
+            // 
+            this.modPackInPFMToolStripMenuItem.Name = "modPackInPFMToolStripMenuItem";
+            this.modPackInPFMToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.modPackInPFMToolStripMenuItem.Text = "Mod Pack in PFM";
+            this.modPackInPFMToolStripMenuItem.Click += new System.EventHandler(this.modPackInPFMToolStripMenuItem_Click);
             // 
             // statusStrip
             // 
@@ -211,6 +258,13 @@
             this.modList.Size = new System.Drawing.Size(616, 219);
             this.modList.TabIndex = 4;
             // 
+            // setPFMPathToolStripMenuItem
+            // 
+            this.setPFMPathToolStripMenuItem.Name = "setPFMPathToolStripMenuItem";
+            this.setPFMPathToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.setPFMPathToolStripMenuItem.Text = "Set PFM path";
+            this.setPFMPathToolStripMenuItem.Click += new System.EventHandler(this.BrowseForPfm);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -252,6 +306,12 @@
         private System.Windows.Forms.ToolStripMenuItem setActiveToolStripMenuItem;
         private System.Windows.Forms.Button launchShogunButton;
         private System.Windows.Forms.ToolStripMenuItem restoreOriginalDataToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem cleanUpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem directoriesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem assemblyKitDirectoryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem shogunDataDirectoryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem modPackInPFMToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem setPFMPathToolStripMenuItem;
     }
 }
 

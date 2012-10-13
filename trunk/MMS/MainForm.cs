@@ -31,6 +31,10 @@ namespace MMS {
             FillModList();
             MultiMods.Instance.ModListChanged += FillModList;
             MultiMods.Instance.CurrentModSet += FillModList;
+            modPackInPFMToolStripMenuItem.Enabled = MultiMods.Instance.CurrentMod != null;
+            MultiMods.Instance.CurrentModSet += delegate() {
+                modPackInPFMToolStripMenuItem.Enabled = MultiMods.Instance.CurrentMod != null;
+            };
 
             FormClosing += delegate(object o, FormClosingEventArgs args) {
                 new Thread(Cleanup).Start();
@@ -43,6 +47,9 @@ namespace MMS {
             };
 
             Text = string.Format("MMS {0} - MultiMod Support", Application.ProductVersion);
+
+            assemblyKitDirectoryToolStripMenuItem.Tag = ModTools.Instance.InstallDirectory;
+            shogunDataDirectoryToolStripMenuItem.Tag = Game.STW.DataDirectory;
         }
 
         List<Process> startedProcesses = new List<Process>();
@@ -144,19 +151,32 @@ namespace MMS {
             }
         }
 
+        bool ModPackRecent {
+            get {
+                // it's normal to have the rules.bob file edited.
+                return SelectedMod.EditedAfterPackCreation.Count <= 1;
+            }
+        }
+
+        bool QueryIgnoreEditedModPack() {
+            bool result = ModPackRecent;
+            if (!result) {
+                string message = string.Join("\n", SelectedMod.EditedAfterPackCreation);
+                message = "The following files were edited after pack creation:\n" + message + "\n" +
+                    "Do you want to install it anyway?";
+                result = MessageBox.Show(message, "Really install mod?", MessageBoxButtons.YesNo) == DialogResult.Yes;
+            }
+            return result;
+        }
+
         private void InstallMod(object sender, EventArgs e) {
             if (SelectedMod != null) {
                 try {
                     SetMod();
 
-                    // it's normal to have the rules.bob file edited.
-                    if (SelectedMod.EditedAfterPackCreation.Count > 1) {
-                        string message = string.Join("\n", SelectedMod.EditedAfterPackCreation);
-                        message = "The following files were edited after pack creation:\n" + message + "\n" +
-                            "Do you want to install it anyway?";
-                        if (MessageBox.Show(message, "Really install mod?", MessageBoxButtons.YesNo) == DialogResult.No) {
-                            return;
-                        }
+                    // check if data was edited or if to ignore this
+                    if (!QueryIgnoreEditedModPack()) {
+                        return;
                     }
 
                     if (File.Exists(SelectedMod.InstalledPackPath)) {
@@ -274,6 +294,69 @@ namespace MMS {
                 }
             }
             ModTools.RestoreOriginalData();
+        }
+
+        private void CleanUp(object sender, EventArgs e) {
+            if (SelectedMod != null) {
+                if (!QueryIgnoreEditedModPack()) {
+                    return;
+                }
+
+                if (MessageBox.Show("This will delete the directories 'battleterrain' and 'variantmodels' from your pack. " +
+                    "Do not do this if you changed anything there.\nContinue?", "Confirm cleanup",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.No) {
+                        return;
+                }
+
+                PackFileCodec codec = new PackFileCodec();
+                PackFile modPack = codec.Open(SelectedMod.PackFilePath);
+                foreach (VirtualDirectory dir in modPack.Root.Subdirectories) {
+                    if (dir.Name.Equals("battleterrain") || dir.Name.Equals("variantmodels")) {
+                        dir.Deleted = true;
+                    }
+                }
+                if (modPack.Root.Modified) {
+                    string tempFilePath = Path.GetTempFileName();
+                    codec.writeToFile(tempFilePath, modPack);
+                    File.Delete(SelectedMod.PackFilePath);
+                    File.Move(tempFilePath, SelectedMod.PackFilePath);
+                }
+            }
+        }
+
+        private void OpenDirectory(object sender, EventArgs args) {
+            string pathToOpen = ((ToolStripMenuItem)sender).Tag as string;
+            if (pathToOpen != null && Directory.Exists(pathToOpen)) {
+                Process.Start("explorer", pathToOpen);
+            }
+        }
+
+        private void modPackInPFMToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (SelectedMod == null) {
+                MessageBox.Show("No active mod");
+                return;
+            } else if (!File.Exists(SelectedMod.PackFilePath)) {
+                MessageBox.Show(string.Format("Pack file {0} not found", SelectedMod.PackFilePath));
+                return;
+            }
+            if (!File.Exists(Settings.Default.PfmPath)) {
+                BrowseForPfm();
+                if (!File.Exists(Settings.Default.PfmPath)) {
+                    return;
+                }
+            }
+            Process.Start(Settings.Default.PfmPath, SelectedMod.PackFilePath);
+        }
+
+        private void BrowseForPfm(object sender = null, EventArgs e = null) {
+            OpenFileDialog dialog = new OpenFileDialog {
+                Title = "Please point to PFM path"
+            };
+            if (dialog.ShowDialog(this) == DialogResult.OK) {
+                Settings.Default.PfmPath = dialog.FileName;
+            } else {
+                return;
+            }
         }
     }
 }
