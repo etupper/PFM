@@ -103,12 +103,12 @@ namespace Filetypes {
             writer.WriteLine (Convert.ToString (file.Header.Version));
             List<string> toWrite = new List<string>();
             file.CurrentType.Fields.ForEach(f => toWrite.Add(f.Name));
-            writer.Write(string.Join("\t", toWrite));
+            writer.WriteLine(string.Join("\t", toWrite));
             // write entries
             file.Entries.ForEach(e => {
                 toWrite.Clear();
                 e.ForEach(field => toWrite.Add(field.Value));
-                writer.Write(string.Join("\t", toWrite));
+                writer.WriteLine(string.Join("\t", toWrite));
             });
             writer.Flush ();
         }
