@@ -60,7 +60,7 @@ namespace PackFileManager {
                 }
         }
         void Renamed(PackEntry file, string val) {
-            Text = file.Name;
+            Text = val;
         }
 
         /*

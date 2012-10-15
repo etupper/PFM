@@ -859,9 +859,9 @@ namespace PackFileManager
 
         #region Extract Packed Files
         private void extractAllTsv_Click(object sender, EventArgs e) {
-            List<PackedFile> files = new List<PackedFile>();
+            List<PackedFile> files = currentPackFile.Files;
             IExtractionPreprocessor tsvExport = new TsvExtractionPreprocessor();
-            currentPackFile.Files.ForEach(f => { if (tsvExport.CanExtract(f)) { files.Add(f); }});
+            files.RemoveAll(f => !tsvExport.CanExtract(f));
             FileExtractor extractor = new FileExtractor(packStatusLabel, packActionProgressBar) {
                 Preprocessor = tsvExport
             };
@@ -869,25 +869,24 @@ namespace PackFileManager
         }
 
         private void extractAllToolStripMenuItem_Click(object sender, EventArgs e) {
-            List<PackedFile> packedFiles = new List<PackedFile>();
-            foreach (TreeNode node in packTreeView.Nodes) {
-                if (node.Nodes.Count > 0) {
-                    getPackedFilesFromBranch(packedFiles, node.Nodes);
-                } else {
-                    packedFiles.Add(node.Tag as PackedFile);
-                }
-            }
-            new FileExtractor(packStatusLabel, packActionProgressBar).extractFiles(packedFiles);
+            new FileExtractor(packStatusLabel, packActionProgressBar).extractFiles(currentPackFile.Files);
+        }
+        
+        private void extractSelectedToolStripMenuItem_Click(object sender, EventArgs e) {
+            new FileExtractor(packStatusLabel, packActionProgressBar).extractFiles(FilesInSelection);
         }
 
-        private void extractSelectedToolStripMenuItem_Click(object sender, EventArgs e) {
-            List<PackedFile> packedFiles = new List<PackedFile>();
-            if (packTreeView.SelectedNode.Nodes.Count > 0) {
-                getPackedFilesFromBranch(packedFiles, packTreeView.SelectedNode.Nodes);
-            } else {
-                packedFiles.Add(packTreeView.SelectedNode.Tag as PackedFile);
+        private ICollection<PackedFile> FilesInSelection {
+            get {
+                List<PackedFile> result = new List<PackedFile>();
+                VirtualDirectory collectFrom = packTreeView.SelectedNode.Tag as VirtualDirectory;
+                if (collectFrom != null) {
+                    result.AddRange(collectFrom.AllFiles);
+                } else if (packTreeView.SelectedNode.Tag is PackedFile) {
+                    result.Add(packTreeView.SelectedNode.Tag as PackedFile);
+                }
+                return result;
             }
-            new FileExtractor(packStatusLabel, packActionProgressBar).extractFiles(packedFiles);
         }
 
         private void exportUnknownToolStripMenuItem_Click(object sender, EventArgs e) {

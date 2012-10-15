@@ -45,7 +45,7 @@ namespace PackFileManager {
             }
         }
 
-        public void extractFiles(List<PackedFile> packedFiles) {
+        public void extractFiles(ICollection<PackedFile> packedFiles) {
             if (!string.IsNullOrEmpty(ExportDirectory)) {
                 FileAlreadyExistsDialog.Action action = FileAlreadyExistsDialog.Action.Ask;
                 FileAlreadyExistsDialog.Action defaultAction = FileAlreadyExistsDialog.Action.Ask;
