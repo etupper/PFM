@@ -133,6 +133,9 @@ namespace Common {
         protected override IEnumerator<PackedFile> NextEnumerator() {
             IEnumerator<PackedFile> result = null;
             if (paths.MoveNext()) {
+#if DEBUG
+                Console.WriteLine("Moving to next pack {0}", paths.Current);
+#endif
                 result = new PackFileEnumerator(paths.Current);
             }
             return result;

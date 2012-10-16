@@ -257,6 +257,16 @@ namespace PackFileManager
                 }
             }
         }
+
+        private void minimizeToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (QuerySaveModifiedFile() == DialogResult.Cancel) {
+                return;
+            }
+            DbFileOptimizer optimizer = new DbFileOptimizer();
+            PackFile optimizedFile = optimizer.CreateOptimizedFile(CurrentPackFile);
+            //optimizedFile.IsModified = false;
+            CurrentPackFile = optimizedFile;
+        }
   
         #region Menu Items
         private void UpdateModMenuItems() {
@@ -331,6 +341,8 @@ namespace PackFileManager
             createReadMeToolStripMenuItem.Enabled = !CanWriteCurrentPack;
             changePackTypeToolStripMenuItem.Enabled = currentPackFile != null;
             exportFileListToolStripMenuItem.Enabled = currentPackFile != null;
+            minimizeToolStripMenuItem.Enabled = currentPackFile != null;
+            renameMultiToolStripMenuItem.Enabled = currentPackFile != null;
 
             filesMenu.Enabled = saveAsToolStripMenuItem.Enabled = 
                 createReadMeToolStripMenuItem.Enabled = true;
@@ -356,6 +368,7 @@ namespace PackFileManager
             // selection-depending items
             bool nodeSelected = packTreeView.SelectedNode != null;
             extractSelectedToolStripMenuItem.Enabled = nodeSelected;
+            renameSelectedToolStripMenuItem.Enabled = nodeSelected;
             openMenuItem.Enabled = nodeSelected;
 
             bool isLeafNode = nodeSelected && (packTreeView.SelectedNode.Nodes.Count == 0);
@@ -364,7 +377,6 @@ namespace PackFileManager
             bool isRootNode = nodeSelected && packTreeView.SelectedNode == packTreeView.Nodes[0];
             renameToolStripMenuItem.Enabled = CanWriteCurrentPack && nodeSelected && !isRootNode;
             deleteFileToolStripMenuItem.Enabled = CanWriteCurrentPack && nodeSelected && !isRootNode;
-            renameToolStripMenuItem.Enabled = CanWriteCurrentPack && nodeSelected && !isRootNode;
         }
 
         private void OpenDirectory(object sender, EventArgs args) {
@@ -454,13 +466,12 @@ namespace PackFileManager
         private void saveToolStripMenuItem_Click(object sender, EventArgs e) {
             if (!CanWriteCurrentPack) {
                 MessageBox.Show(CA_FILE_WARNING);
-            } else
-                if (currentPackFile.Filepath.EndsWith("Untitled.pack")) {
-                    // ask for a name first
-                    saveAsToolStripMenuItem_Click(null, null);
-                } else {
-                    SaveAsFile(currentPackFile.Filepath);
-                }
+            } else if (currentPackFile.Filepath.EndsWith("Untitled.pack")) {
+                // ask for a name first
+                saveAsToolStripMenuItem_Click(null, null);
+            } else {
+                SaveAsFile(currentPackFile.Filepath);
+            }
         }
 
         void SaveAsFile(string filename) {

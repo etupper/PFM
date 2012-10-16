@@ -15,10 +15,10 @@ namespace Common {
         }
 
         public List<string> GetPacksLoadedFrom(string directory) {
+            directory = Path.Combine(directory, "data");
             List<string> paths = new List<string>();
             List<string> result = new List<string>();
             if (Directory.Exists(directory)) {
-                directory = Path.Combine(directory, "data");
                 // remove obsoleted packs
                 List<string> obsoleted = new List<string>();
                 foreach (string filename in Directory.EnumerateFiles(directory, "*.pack")) {
@@ -26,6 +26,10 @@ namespace Common {
                         paths.Add(filename);
                     }
                 }
+#if DEBUG
+                Console.WriteLine("obsoleted: {0}", string.Join(",", obsoleted));
+                Console.WriteLine("from files in {1}: {0}", string.Join(",", Directory.EnumerateFiles(directory, "*.pack")), directory);
+#endif
                 paths.RemoveAll(delegate(string pack) {
                     return obsoleted.Contains(pack);
                 });
@@ -47,6 +51,8 @@ namespace Common {
 #endif
                 });
                 result.Sort(new PackLoadOrder(result));
+            } else {
+                throw new FileNotFoundException(string.Format("Game directory not found: {0}", directory));
             }
             return result;
         }

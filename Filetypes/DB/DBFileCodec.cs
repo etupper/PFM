@@ -82,7 +82,7 @@ namespace Filetypes {
             while (reader.BaseStream.Position < reader.BaseStream.Length) {
 //            for (int i = 0; i < header.EntryCount; i++) {
                 try {
-                    file.Entries.Add (readFields (reader, info));
+                    file.Entries.Add (ReadFields (reader, info));
                     i++;
                 } catch (Exception x) {
                     string message = string.Format ("{2} at entry {0}, db version {1}", i, file.Header.Version, x.Message);
@@ -178,7 +178,7 @@ namespace Filetypes {
 
         // creates a list of field values from the given type.
         // stream needs to be positioned at the beginning of the entry.
-        private List<FieldInstance> readFields(BinaryReader reader, TypeInfo ttype, bool skipHeader = true) {
+        private List<FieldInstance> ReadFields(BinaryReader reader, TypeInfo ttype, bool skipHeader = true) {
 			if (!skipHeader) {
 				readHeader (reader);
 			}
