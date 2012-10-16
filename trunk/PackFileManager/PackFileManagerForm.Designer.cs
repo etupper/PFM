@@ -48,6 +48,8 @@ namespace PackFileManager
             this.extractUnknownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extractSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extractAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.renameSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.renameAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.emptyDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -95,6 +97,7 @@ namespace PackFileManager
             this.openDecodeToolMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openAsTextMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extractToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.renameMultiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportUnknownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extractAllTsv = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
@@ -320,6 +323,21 @@ namespace PackFileManager
             this.extractAllToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.extractAllToolStripMenuItem.Text = "Extract &All...";
             this.extractAllToolStripMenuItem.Click += new System.EventHandler(this.extractAllToolStripMenuItem_Click);
+            // 
+            // renameSelectedToolStripMenuItem
+            // 
+            this.renameSelectedToolStripMenuItem.Name = "renameSelectedToolStripMenuItem";
+            this.renameSelectedToolStripMenuItem.ShortcutKeyDisplayString = "Ctl+X";
+            this.renameSelectedToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.renameSelectedToolStripMenuItem.Text = "Rename &Selected...";
+            this.renameSelectedToolStripMenuItem.Click += new System.EventHandler(this.renameSelectedToolStripMenuItem_Click);
+            // 
+            // renameAllToolStripMenuItem
+            // 
+            this.renameAllToolStripMenuItem.Name = "renameAllToolStripMenuItem";
+            this.renameAllToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.renameAllToolStripMenuItem.Text = "Rename &All...";
+            this.renameAllToolStripMenuItem.Click += new System.EventHandler(this.renameAllToolStripMenuItem_Click);
             // 
             // addToolStripMenuItem
             // 
@@ -650,6 +668,7 @@ namespace PackFileManager
             this.toolStripSeparator4,
             this.openMenuItem,
             this.extractToolStripMenuItem,
+            this.renameMultiToolStripMenuItem,
             this.toolStripSeparator8,
             this.createReadMeToolStripMenuItem,
             this.searchFileToolStripMenuItem});
@@ -740,6 +759,16 @@ namespace PackFileManager
             this.extractAllTsv.Size = new System.Drawing.Size(202, 22);
             this.extractAllTsv.Text = "Extract All as TSV...";
             this.extractAllTsv.Click += new System.EventHandler(this.extractAllTsv_Click);
+            // 
+            // renameMultiToolStripMenuItem
+            // 
+            this.renameMultiToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.renameSelectedToolStripMenuItem,
+            this.renameAllToolStripMenuItem
+            });
+            this.renameMultiToolStripMenuItem.Name = "renameMultiToolStripMenuItem";
+            this.renameMultiToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.renameMultiToolStripMenuItem.Text = "Rename";
             // 
             // toolStripSeparator8
             // 
@@ -1204,6 +1233,9 @@ namespace PackFileManager
         private System.Windows.Forms.ToolStripMenuItem extractToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem extractSelectedToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem extractAllToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem renameMultiToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem renameSelectedToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem renameAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportUnknownToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripMenuItem searchFileToolStripMenuItem;

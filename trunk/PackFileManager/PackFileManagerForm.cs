@@ -857,7 +857,35 @@ namespace PackFileManager
         }
         #endregion
 
-        #region Extract Packed Files
+        #region Mass-operate on Packed Files (extract, rename)
+        /*
+         * Safely retrieves all files in the currently open pack.
+         */
+        private ICollection<PackedFile> AllFiles {
+            get {
+                ICollection<PackedFile> result = (currentPackFile != null) 
+                    ? currentPackFile.Files : new List<PackedFile>();
+                return result;
+            }
+        }
+        /*
+         * Safely retrieves all files below the currently selected node.
+         * Recursively into subdirectories if a directory is selected,
+         * only the single node if a file is selected.
+         */
+        private ICollection<PackedFile> FilesInSelection {
+            get {
+                List<PackedFile> result = new List<PackedFile>();
+                VirtualDirectory collectFrom = packTreeView.SelectedNode.Tag as VirtualDirectory;
+                if (collectFrom != null) {
+                    result.AddRange(collectFrom.AllFiles);
+                } else if (packTreeView.SelectedNode.Tag is PackedFile) {
+                    result.Add(packTreeView.SelectedNode.Tag as PackedFile);
+                }
+                return result;
+            }
+        }
+
         private void extractAllTsv_Click(object sender, EventArgs e) {
             List<PackedFile> files = currentPackFile.Files;
             IExtractionPreprocessor tsvExport = new TsvExtractionPreprocessor();
@@ -869,23 +897,30 @@ namespace PackFileManager
         }
 
         private void extractAllToolStripMenuItem_Click(object sender, EventArgs e) {
-            new FileExtractor(packStatusLabel, packActionProgressBar).extractFiles(currentPackFile.Files);
+            new FileExtractor(packStatusLabel, packActionProgressBar).extractFiles(AllFiles);
         }
         
         private void extractSelectedToolStripMenuItem_Click(object sender, EventArgs e) {
             new FileExtractor(packStatusLabel, packActionProgressBar).extractFiles(FilesInSelection);
         }
 
-        private ICollection<PackedFile> FilesInSelection {
-            get {
-                List<PackedFile> result = new List<PackedFile>();
-                VirtualDirectory collectFrom = packTreeView.SelectedNode.Tag as VirtualDirectory;
-                if (collectFrom != null) {
-                    result.AddRange(collectFrom.AllFiles);
-                } else if (packTreeView.SelectedNode.Tag is PackedFile) {
-                    result.Add(packTreeView.SelectedNode.Tag as PackedFile);
+        private void renameAllToolStripMenuItem_Click(object sender, EventArgs e) {
+            RenameFiles(AllFiles);
+        }
+        
+        private void renameSelectedToolStripMenuItem_Click(object sender, EventArgs e) {
+            RenameFiles(FilesInSelection);
+        }
+        
+        private void RenameFiles(IEnumerable<PackedFile> files) {
+            InputBox box = new InputBox {
+                Text = "Enter prefix to prepend to files"
+            };
+            if (box.ShowDialog() == DialogResult.OK) {
+                string prefix = box.Input;
+                foreach(PackedFile file in files) {
+                    file.Name = string.Format("{0}{1}", prefix, file.Name);
                 }
-                return result;
             }
         }
 
