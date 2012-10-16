@@ -85,6 +85,7 @@ namespace PackFileManager
             this.shader2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.exportFileListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.minimizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filesMenu = new System.Windows.Forms.ToolStripMenuItem();
@@ -113,6 +114,7 @@ namespace PackFileManager
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.postProcessToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
             this.loadGamePacksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
@@ -402,6 +404,7 @@ namespace PackFileManager
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.filesMenu,
+            this.postProcessToolStripMenuItem,
             this.editToolStripMenuItem,
             this.gameToolStripMenuItem,
             this.extrasToolStripMenuItem,
@@ -646,6 +649,14 @@ namespace PackFileManager
             this.exportFileListToolStripMenuItem.Text = "Export File &List...";
             this.exportFileListToolStripMenuItem.Click += new System.EventHandler(this.exportFileListToolStripMenuItem_Click);
             // 
+            // minimizeToolStripMenuItem
+            // 
+            this.minimizeToolStripMenuItem.Enabled = false;
+            this.minimizeToolStripMenuItem.Name = "minimizeToolStripMenuItem";
+            this.minimizeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.minimizeToolStripMenuItem.Text = "Minimize DB Files";
+            this.minimizeToolStripMenuItem.Click += new System.EventHandler(this.minimizeToolStripMenuItem_Click);
+            // 
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
@@ -668,7 +679,6 @@ namespace PackFileManager
             this.toolStripSeparator4,
             this.openMenuItem,
             this.extractToolStripMenuItem,
-            this.renameMultiToolStripMenuItem,
             this.toolStripSeparator8,
             this.createReadMeToolStripMenuItem,
             this.searchFileToolStripMenuItem});
@@ -859,6 +869,16 @@ namespace PackFileManager
             this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
             this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.selectAllToolStripMenuItem.Text = "Select &All";
+            // 
+            // postProcessToolStripMenuItem
+            // 
+            this.postProcessToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.renameMultiToolStripMenuItem,
+            this.minimizeToolStripMenuItem
+            });
+            this.postProcessToolStripMenuItem.Name = "postProcessToolStripMenuItem";
+            this.postProcessToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
+            this.postProcessToolStripMenuItem.Text = "Postprocess";
             // 
             // gameToolStripMenuItem
             // 
@@ -1243,6 +1263,7 @@ namespace PackFileManager
         private System.Windows.Forms.ToolStripMenuItem updateCurrentToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem updateAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportFileListToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem minimizeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem createReadMeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem extrasToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cAPacksAreReadOnlyToolStripMenuItem;
@@ -1280,6 +1301,7 @@ namespace PackFileManager
         private System.Windows.Forms.ToolStripMenuItem csvToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tsvToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gameToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem postProcessToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
         private System.Windows.Forms.ToolStripMenuItem loadGamePacksToolStripMenuItem;

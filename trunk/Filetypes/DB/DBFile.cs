@@ -29,6 +29,8 @@ namespace Filetypes {
             EntryCount = entryCount;
             HasVersionMarker = marker;
         }
+        
+        public DBFileHeader(DBFileHeader toCopy) : this(toCopy.GUID, toCopy.Version, 0, toCopy.HasVersionMarker) {}
 
 		#region Framework Overrides
         public override bool Equals(object other) {

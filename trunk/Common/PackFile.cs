@@ -149,6 +149,11 @@ namespace Common {
             Version = 0;
             ReplacedPackFileNames = new List<string>();
         }
+        
+        public PFHeader(PFHeader toCopy) : this(toCopy.identifier) {
+            Type = toCopy.Type;
+            ReplacedPackFileNames.AddRange(toCopy.ReplacedPackFileNames);
+        }
 
         public int ReplacedFileNamesLength {
             get {

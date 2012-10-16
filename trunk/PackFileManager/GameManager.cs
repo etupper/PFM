@@ -23,15 +23,15 @@ namespace PackFileManager {
                 DBTypeMap.Instance.InitializeTypeMap(InstallationPath);
             }
 
-            string gameName = Settings.Default.CurrentGame;
-            if (!string.IsNullOrEmpty(gameName)) {
-                CurrentGame = Game.ById(gameName);
-            }
             // correct game install directories 
             // (should be needed for first start only)
             Game.Games.ForEach(g => LoadGameLocationFromFile(g));
             CheckGameDirectories();
             
+            string gameName = Settings.Default.CurrentGame;
+            if (!string.IsNullOrEmpty(gameName)) {
+                CurrentGame = Game.ById(gameName);
+            }
             foreach(Game game in Game.Games) {
                 if (CurrentGame != null) {
                     break;
