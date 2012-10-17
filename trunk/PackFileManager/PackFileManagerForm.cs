@@ -166,6 +166,8 @@ namespace PackFileManager
                 OpenExistingPackFile(args[0]);
             }
 
+            EnableMenuItems();
+
             RefreshTitle();
         }
         
@@ -424,8 +426,8 @@ namespace PackFileManager
         #region Save Pack
         private bool CanWriteCurrentPack {
             get {
-                bool result = true;
-                if (cAPacksAreReadOnlyToolStripMenuItem.Checked) {
+                bool result = currentPackFile != null;
+                if (result && cAPacksAreReadOnlyToolStripMenuItem.Checked) {
                     switch (currentPackFile.Type) {
                         case PackType.Mod:
                             // mod files can always be saved
