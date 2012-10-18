@@ -19,34 +19,17 @@ namespace PackFileManager {
             set;
         }
 
-        public FileExtractor(ToolStripStatusLabel l, ToolStripProgressBar b) {
+        private string exportDirectory;
+
+        public FileExtractor(ToolStripStatusLabel l, ToolStripProgressBar b, string exportTo) {
             packStatusLabel = l;
             packActionProgressBar = b;
+            exportDirectory = exportTo;
             Preprocessor = new IdentityPreprocessor();
         }
 
-        public static string ExportDirectory {
-            get {
-                string exportDirectory = null;
-                if (!ModManager.Instance.CurrentModSet) {
-                    DirectoryDialog directoryDialog = new DirectoryDialog {
-                        Description = "Extract to what folder?",
-                        SelectedPath = Settings.Default.LastPackDirectory
-                    };
-                    directoryDialog.ShowDialog();
-                    exportDirectory = directoryDialog.SelectedPath;
-                    if (!string.IsNullOrEmpty(exportDirectory)) {
-                        Settings.Default.LastPackDirectory = exportDirectory;
-                    }
-                } else {
-                    exportDirectory = ModManager.Instance.CurrentModDirectory;
-                }
-                return exportDirectory;
-            }
-        }
-
         public void extractFiles(ICollection<PackedFile> packedFiles) {
-            if (!string.IsNullOrEmpty(ExportDirectory)) {
+            if (!string.IsNullOrEmpty(exportDirectory)) {
                 FileAlreadyExistsDialog.Action action = FileAlreadyExistsDialog.Action.Ask;
                 FileAlreadyExistsDialog.Action defaultAction = FileAlreadyExistsDialog.Action.Ask;
                 SetStatusText(string.Format("Extracting file (0 of {0} files extracted, 0 skipped)", packedFiles.Count));
@@ -64,7 +47,7 @@ namespace PackFileManager {
                         skippedCount++;
                         continue;
                     }
-                    string path = Path.Combine(ExportDirectory, Preprocessor.GetFileName(file));
+                    string path = Path.Combine(exportDirectory, Preprocessor.GetFileName(file));
                     if (File.Exists(path)) {
                         string renamedFilename;
                         if (defaultAction == FileAlreadyExistsDialog.Action.Ask) {

@@ -443,11 +443,21 @@ namespace PackFileManager {
 
         #region File Import/Export
         private void exportButton_Click(object sender, EventArgs e) {
-            List<PackedFile> files = new List<PackedFile>();
-            files.Add(CurrentPackedFile);
-            FileExtractor extractor = new FileExtractor(null, null) { Preprocessor = new TsvExtractionPreprocessor() };
-            extractor.extractFiles(files);
-            MessageBox.Show(string.Format("File exported to TSV."));
+            string extractTo = ModManager.Instance.CurrentModSet ? ModManager.Instance.CurrentModDirectory : null;
+            if (extractTo == null) {
+                DirectoryDialog dialog = new DirectoryDialog {
+                    Description = "Please point to folder to extract to",
+                    SelectedPath = Settings.Default.LastPackDirectory
+                };
+                extractTo = dialog.ShowDialog() == DialogResult.OK ? dialog.SelectedPath : null;
+            }
+            if (!string.IsNullOrEmpty(extractTo)) {
+                List<PackedFile> files = new List<PackedFile>();
+                files.Add(CurrentPackedFile);
+                FileExtractor extractor = new FileExtractor(null, null, extractTo) { Preprocessor = new TsvExtractionPreprocessor() };
+                extractor.extractFiles(files);
+                MessageBox.Show(string.Format("File exported to TSV."));
+            }
         }
 
         private void importButton_Click(object sender, EventArgs e) {
