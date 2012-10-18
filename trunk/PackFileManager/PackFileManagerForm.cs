@@ -899,22 +899,50 @@ namespace PackFileManager
             }
         }
 
+        public string ExportDirectory {
+            get {
+                if (ModManager.Instance.CurrentModSet) {
+                    return ModManager.Instance.CurrentModDirectory;
+                }
+                string exportDirectory = currentPackFile != null ? Path.GetDirectoryName(currentPackFile.Filepath) : null;
+                exportDirectory = (exportDirectory == null) ? Settings.Default.LastPackDirectory : exportDirectory;
+                DirectoryDialog directoryDialog = new DirectoryDialog {
+                    Description = "Extract to what folder?",
+                    SelectedPath = exportDirectory
+                };
+                directoryDialog.ShowDialog();
+                exportDirectory = directoryDialog.SelectedPath;
+                if (!string.IsNullOrEmpty(exportDirectory)) {
+                    Settings.Default.LastPackDirectory = exportDirectory;
+                }
+                return exportDirectory;
+            }
+        }
+
         private void extractAllTsv_Click(object sender, EventArgs e) {
-            List<PackedFile> files = currentPackFile.Files;
-            IExtractionPreprocessor tsvExport = new TsvExtractionPreprocessor();
-            files.RemoveAll(f => !tsvExport.CanExtract(f));
-            FileExtractor extractor = new FileExtractor(packStatusLabel, packActionProgressBar) {
-                Preprocessor = tsvExport
-            };
-            extractor.extractFiles(files);
+            string extractTo = ExportDirectory;
+            if (!string.IsNullOrEmpty(extractTo)) {
+                List<PackedFile> files = currentPackFile.Files;
+                IExtractionPreprocessor tsvExport = new TsvExtractionPreprocessor();
+                files.RemoveAll(f => !tsvExport.CanExtract(f));
+                FileExtractor extractor = new FileExtractor(packStatusLabel, packActionProgressBar, extractTo) {
+                    Preprocessor = tsvExport
+                };
+                extractor.extractFiles(files);
+            }
         }
 
         private void extractAllToolStripMenuItem_Click(object sender, EventArgs e) {
-            new FileExtractor(packStatusLabel, packActionProgressBar).extractFiles(AllFiles);
-        }
-        
+            string extractTo = ExportDirectory;
+            if (!string.IsNullOrEmpty(extractTo)) {
+                new FileExtractor(packStatusLabel, packActionProgressBar, extractTo).extractFiles(AllFiles);
+            }
+        }        
         private void extractSelectedToolStripMenuItem_Click(object sender, EventArgs e) {
-            new FileExtractor(packStatusLabel, packActionProgressBar).extractFiles(FilesInSelection);
+            string extractTo = ExportDirectory;
+            if (!string.IsNullOrEmpty(extractTo)) {
+                new FileExtractor(packStatusLabel, packActionProgressBar, extractTo).extractFiles(FilesInSelection);
+            }
         }
 
         private void renameAllToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -938,11 +966,13 @@ namespace PackFileManager
         }
 
         private void exportUnknownToolStripMenuItem_Click(object sender, EventArgs e) {
-            var packedFiles = new List<PackedFile>();
-            CurrentPackFile.Files.ForEach(f => { if (unknownDbFormat(f)) { packedFiles.Add (f); }});
-            new FileExtractor(packStatusLabel, packActionProgressBar).extractFiles(packedFiles);
+            string extractTo = ExportDirectory;
+            if (!string.IsNullOrEmpty(extractTo)) {
+                var packedFiles = new List<PackedFile>();
+                CurrentPackFile.Files.ForEach(f => { if (unknownDbFormat(f)) { packedFiles.Add(f); } });
+                new FileExtractor(packStatusLabel, packActionProgressBar, extractTo).extractFiles(packedFiles);
+            }
         }
-
         private bool unknownDbFormat(PackedFile file) {
             bool result = file.FullPath.StartsWith ("db");
             string buffer;
