@@ -20,10 +20,12 @@ namespace MMS {
         }
 
         private MultiMods() {
-            if (!string.IsNullOrEmpty(Settings.Default.Mods)) {
+            MoveOldMods();
+
+            if (Directory.Exists(Mod.MmsBaseDirectory)) {
                 // retrieve mod list from settings
-                string[] modNames = Settings.Default.Mods.Split(Path.PathSeparator);
-                foreach (string modname in modNames) {
+                foreach (string modpath in Directory.EnumerateDirectories(Mod.MmsBaseDirectory)) {
+                    string modname = Path.GetFileName(modpath);
                     AddMod(modname, false);
                 }
             } else {
@@ -34,11 +36,6 @@ namespace MMS {
                     mods.Add(existing);
                 }
             }
-
-            // encode mod list in settings
-            ModListChanged += delegate() {
-                Settings.Default.Mods = string.Join(Path.PathSeparator.ToString(), ModNames);
-            };
 
             // set previously active mod and set to settings for next start if changed
             CurrentMod = GetModByName(Settings.Default.ActiveMod);
@@ -116,18 +113,19 @@ namespace MMS {
         /*
          * Remove the given mod from the list.
          */
-        public void DeleteMod(Mod mod, bool deleteData = false) {
+        public void DeleteMod(Mod mod) {
             if (mods.Remove(mod)) {
                 if (mod == CurrentMod) {
                     // prevent the mod from backing up its data upon deactivation
                     // if it is the current mod
                     currentMod = null;
                     ModTools.RestoreOriginalData();
+                    if (CurrentModSet != null) {
+                        CurrentModSet();
+                    }
                 }
                 ModListChanged();
-                if (deleteData) {
-                    Directory.Delete(mod.ModDirectory, true);
-                }
+                Directory.Delete(mod.ModDirectory, true);
             }
         }
 
@@ -143,5 +141,15 @@ namespace MMS {
             return result;
         }
         #endregion
+
+        // in previous versions, the backup path for mms mods was in the modtools install directory.
+        // if the user still has that, move it to the new location in appdata.
+        static void MoveOldMods() {
+            string oldMmsPath = Path.Combine(ModTools.Instance.InstallDirectory, "MMS");
+            string newMmsPath = Mod.MmsBaseDirectory;
+            if (Directory.Exists(oldMmsPath) && !Directory.Exists(newMmsPath)) {
+                Directory.Move(oldMmsPath, newMmsPath);
+            }
+        }
     }
 }

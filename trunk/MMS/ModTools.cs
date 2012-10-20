@@ -104,20 +104,29 @@ namespace MMS {
                 File.WriteAllLines(ModTools.Instance.BobRuleFilePath, lines);
             }
         }
-        
+
+        #region Restore Original Data
+        static DirectorySynchronizer RestoreSynchronizer {
+            get {
+                // restore edited files from original raw data
+                DirectorySynchronizer synchronizer = new DirectorySynchronizer {
+                    // from original raw data directory
+                    SourceAccessor = Instance.OriginalDataAccessor,
+                    // to working set raw data
+                    TargetAccessor = Instance.InstallationAccessor,
+                    // if file was edited from the original
+                    CopyFile = NewerThanOriginalFile,
+                    DeleteAdditionalFiles = true
+                };
+                return synchronizer;
+            }
+        }
         /*
          * Restore raw_data from backup and clean working_data directory.
          */
         public static void RestoreOriginalData() {
             // restore edited files from original raw data
-            DirectorySynchronizer synchronizer = new DirectorySynchronizer {
-                // from original raw data directory
-                SourceAccessor = Instance.OriginalDataAccessor,
-                // to working set raw data
-                TargetAccessor = Instance.InstallationAccessor,
-                // if file was edited from the original
-                CopyFile = NewerThanOriginalFile
-            };
+            DirectorySynchronizer synchronizer = RestoreSynchronizer;
             foreach (string directory in Instance.OriginalDataAccessor.GetDirectories("")) {
                 synchronizer.Synchronize(directory);
             }
@@ -128,15 +137,29 @@ namespace MMS {
                 Directory.Delete(Instance.RetailPath, true);
             }
         }
+        public static void RestoreOriginalData(List<string> restoreCandidates) {
+            // restore edited files from original raw data
+            DirectorySynchronizer synchronizer = RestoreSynchronizer;
+            foreach (string file in restoreCandidates) {
+                synchronizer.SynchronizeFile(file);
+            }
+
+            ModTools.SetBobRulePackName("mod");
+
+            if (Directory.Exists(Instance.RetailPath)) {
+                Directory.Delete(Instance.RetailPath, true);
+            }
+        }
 
         // query if the given file has been edited from the original
-        static bool NewerThanOriginalFile(string file) {
+        public static bool NewerThanOriginalFile(string file) {
             // not present in installation directory... so yeah, get it
             bool result = !Instance.InstallationAccessor.FileExists(file);
             // was edited in the installation directory... restore it
             result |= Instance.InstallationAccessor.GetLastWriteTime(file) > Instance.originalDataAccessor.GetLastWriteTime(file);
             return result;
         }
+        #endregion
 
         /*
         void CreateZipFile() {

@@ -6,17 +6,17 @@ using Filetypes;
 
 using DatabaseRow = System.Collections.Generic.List<Filetypes.FieldInstance>;
 
-namespace PackFileManager {
+namespace CommonUtilities {
     /*
      * Analyses the db files of a pack whether they contain changes
      * to the original game files. Creates a new pack with only changed entries.
      */
     public class DbFileOptimizer {
-        public DbFileOptimizer() {
+        public DbFileOptimizer(Game game) {
             // game packs in correct load order
             packPaths = new PackLoadSequence() {
                 IgnorePack = PackLoadSequence.IsDbCaPack
-            }.GetPacksLoadedFrom(GameManager.Instance.CurrentGame.GameDirectory);
+            }.GetPacksLoadedFrom(game.GameDirectory);
 #if DEBUG
             Console.WriteLine("packs: {0}", string.Join(",", packPaths));
 #endif

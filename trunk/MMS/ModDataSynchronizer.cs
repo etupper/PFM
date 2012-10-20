@@ -26,6 +26,12 @@ namespace MMS {
         public IFileDataAccessor OriginalAccessor;
 
         List<string> restoreFromOriginal = new List<string>();
+        // only valid after a backup has been performed
+        public List<string> ChangedFiles {
+            get {
+                return restoreFromOriginal;
+            }
+        }
 
         public void SynchronizeFromMod() {
             DirectorySynchronizer synchronizer = new DirectorySynchronizer {
@@ -68,20 +74,8 @@ namespace MMS {
                     synchronizer.Synchronize(dir);
                 }
             }
-            DirectorySynchronizer originalSynchronizer = new DirectorySynchronizer {
-                // from modding.zip
-                SourceAccessor = ModTools.Instance.OriginalDataAccessor,
-                // to mod tools installation directory
-                TargetAccessor = WorkingSetAccessor,
-                // copy if file not present or was edited
-                CopyFile = NewerThanOriginalFile,
-                DeleteAdditionalFiles = true
-            };
+            // remember all files that were backed up
             restoreFromOriginal.AddRange(synchronizer.SynchronizedFiles);
-            foreach (string file in restoreFromOriginal) {
-                originalSynchronizer.SynchronizeFile(file);
-            }
-            restoreFromOriginal.Clear();
         }
 
         // query if the given file has been edited from the original

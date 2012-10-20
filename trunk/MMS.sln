@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonDialogs", "CommonDial
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filetypes", "Filetypes\Filetypes.csproj", "{2419C2AF-48A3-40D2-980B-36AB2D81DC74}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonUtilities", "CommonUtilities\CommonUtilities.csproj", "{32F411D6-4EB1-41EA-9071-FC4B3FB62E65}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{2419C2AF-48A3-40D2-980B-36AB2D81DC74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2419C2AF-48A3-40D2-980B-36AB2D81DC74}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2419C2AF-48A3-40D2-980B-36AB2D81DC74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32F411D6-4EB1-41EA-9071-FC4B3FB62E65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32F411D6-4EB1-41EA-9071-FC4B3FB62E65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32F411D6-4EB1-41EA-9071-FC4B3FB62E65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32F411D6-4EB1-41EA-9071-FC4B3FB62E65}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

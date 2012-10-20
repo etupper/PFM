@@ -20,12 +20,17 @@ namespace MMS {
 
         #region Backup Path and Accessor
         public string ModDirectory {
-            get { return Path.Combine(BackupBaseDirectory, Name); }
+            get { return Path.Combine(MmsBaseDirectory, Name); }
         }
+
         // MMS directory
-        static string BackupBaseDirectory {
+        public static string MmsBaseDirectory {
             get {
-                return Path.Combine(ModTools.Instance.InstallDirectory, "MMS");
+                string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                appDataPath = Path.Combine(appDataPath, "MMS");
+                return appDataPath;
+                // the old path (in the ak installation folder)
+                // return Path.Combine(ModTools.Instance.InstallDirectory, "MMS");
             }
         }
         public IFileDataAccessor Accessor {
@@ -54,10 +59,8 @@ namespace MMS {
 #if DEBUG
                     Console.WriteLine("*** restoring backup of {0}", Name);
 #endif
-                    // ModTools.RestoreOriginalData();
-
                     // retrieve data from mod directory
-                    DataSynchronizer.SynchronizeFromMod();
+                    Restore();
 
                     ModTools.SetBobRulePackName(Name);
 
@@ -65,12 +68,22 @@ namespace MMS {
 #if DEBUG
                     Console.WriteLine("*** backing up {0}", Name);
 #endif
-                    // backup files from raw data path to the mod directory
-                    // will also restore original data set
-                    DataSynchronizer.BackupToMod();
+                    Backup(true);
                 }
                 isActive = value;
             }
+        }
+
+        public void Backup(bool restoreOriginal = false) {
+            // backup files from raw data path to the mod directory
+            ModDataSynchronizer synchronizer = DataSynchronizer;
+            synchronizer.BackupToMod();
+            if (restoreOriginal) {
+                ModTools.RestoreOriginalData(synchronizer.ChangedFiles);
+            }
+        }
+        public void Restore() {
+            DataSynchronizer.SynchronizeFromMod();
         }
 
         #region Mod Install/Uninstall

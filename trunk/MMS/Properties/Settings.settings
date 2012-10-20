@@ -5,9 +5,6 @@
     <Setting Name="ModToolPath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="Mods" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="ActiveMod" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
