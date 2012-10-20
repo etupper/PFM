@@ -9,6 +9,8 @@ using System.Windows.Forms;
 using MMS.Properties;
 using Common;
 using CommonDialogs;
+using CommonUtilities;
+using Filetypes;
 
 namespace MMS {
     public partial class MainForm : Form {
@@ -31,10 +33,9 @@ namespace MMS {
             FillModList();
             MultiMods.Instance.ModListChanged += FillModList;
             MultiMods.Instance.CurrentModSet += FillModList;
-            modPackInPFMToolStripMenuItem.Enabled = MultiMods.Instance.CurrentMod != null;
-            MultiMods.Instance.CurrentModSet += delegate() {
-                modPackInPFMToolStripMenuItem.Enabled = MultiMods.Instance.CurrentMod != null;
-            };
+            mmsBackupDirectoryToolStripMenuItem.Tag = Mod.MmsBaseDirectory;
+            EnableMenuItems();
+            MultiMods.Instance.CurrentModSet += EnableMenuItems;
 
             FormClosing += delegate(object o, FormClosingEventArgs args) {
                 new Thread(Cleanup).Start();
@@ -52,22 +53,77 @@ namespace MMS {
             shogunDataDirectoryToolStripMenuItem.Tag = Game.STW.DataDirectory;
         }
 
+        private void EnableMenuItems() {
+            modPackInPFMToolStripMenuItem.Enabled = MultiMods.Instance.CurrentMod != null;
+            backupToolStripMenuItem.Enabled = MultiMods.Instance.CurrentMod != null;
+            restoreBackupToolStripMenuItem.Enabled = MultiMods.Instance.CurrentMod != null;
+        }
+
         List<Process> startedProcesses = new List<Process>();
 
-        void Cleanup() {
-            // the user might close the MMS window before exiting a tool he started,
-            // so wait for all processes to finish
-            foreach (Process process in startedProcesses) {
-                process.Exited -= ProcessExited;
-                process.WaitForExit();
+        #region Display Helpers
+        void SetInstallDirectoryLabelText() {
+            statusLabel.Text = string.Format("Mod Tools Location: {0}", ModTools.Instance.InstallDirectory);
+        }
+
+        void FillModList() {
+            modList.Items.Clear();
+            foreach (Mod mod in MultiMods.Instance.Mods) {
+                modList.Items.Add(mod);
             }
-            if (MultiMods.Instance.CurrentMod != null) {
-                MultiMods.Instance.CurrentMod.IsActive = false;
+            modList.SelectedItem = MultiMods.Instance.CurrentMod;
+        }
+        #endregion
+
+        #region Mod Management
+        // add new (prompt for name)
+        private void AddMod(object sender, EventArgs e) {
+            InputBox inputBox = new InputBox {
+                Text = "Enter new Mod name"
+            };
+            if (inputBox.ShowDialog() == DialogResult.OK) {
+                if (MultiMods.Instance.CurrentMod != null) {
+                    statusLabel.Text = string.Format("Backing up {0}...", MultiMods.Instance.CurrentMod.Name);
+                    Refresh();
+                }
+                MultiMods.Instance.AddMod(inputBox.Input);
             }
         }
-  
+
+        // delete selected mod
+        private void DeleteMod(object sender, EventArgs e) {
+            if (SelectedMod != null) {
+                string message = string.Format("This will delete all changes you have made for mod {0}.\n" +
+                    "Warning: this can not be undone!", SelectedMod);
+                DialogResult query = MessageBox.Show(
+                    message, "Are you sure?",
+                    MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                if (query == DialogResult.OK) {
+                    MultiMods.Instance.DeleteMod(SelectedMod);
+                }
+            }
+        }
+
+        // add from pack file
+        private void ImportExistingPack(object sender, EventArgs e) {
+            OpenFileDialog dialog = new OpenFileDialog {
+                Filter = "Pack Files (*.pack)|*.pack|All files (*.*)|*.*"
+            };
+            if (dialog.ShowDialog() == DialogResult.OK) {
+                try {
+                    new PackImporter().ImportExistingPack(dialog.FileName);
+                } catch (Exception ex) {
+                    MessageBox.Show(ex.ToString(), "Failed to import mod",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+        #endregion
+
+        #region Active/Selected Mod
         /*
          * Retrieve the mod currently selected in the list view.
+         * If none is selected, returns current mod (if any).
          */
         Mod SelectedMod {
             get {
@@ -78,79 +134,19 @@ namespace MMS {
                 return result;
             }
         }
-  
-        /*
-         * Lets the user choose the mod installation directory.
-         */
-        private void SetInstallDirectory(object sender = null, EventArgs e = null) {
-            DirectoryDialog folderBrowser = new DirectoryDialog() {
-                Description = "Please point to the location of your mod tools installation"
-            };
-            if (folderBrowser.ShowDialog() == DialogResult.OK) {
-                ModTools.Instance.InstallDirectory = folderBrowser.SelectedPath;
-                Settings.Default.ModToolPath = folderBrowser.SelectedPath;
+
+        private void SetMod(object sender = null, EventArgs e = null) {
+            if (SelectedMod != null) {
+                statusLabel.Text = string.Format("Restoring data for {0}...", SelectedMod.Name);
+                Refresh();
+                MultiMods.Instance.CurrentMod = SelectedMod;
+                modList.SelectedItem = MultiMods.Instance.CurrentMod;
                 SetInstallDirectoryLabelText();
             }
         }
-        void CheckShogunInstallation() {
-            Game g = Game.STW;
-            // prefer loaded from file so the user can force an installation location
-            if (g.GameDirectory == null) {
-                // if there was an empty entry in file, don't ask again
-                DirectoryDialog dlg = new DirectoryDialog() {
-                    Description = string.Format("Please enter location of {0}\nCancel if not installed.", g.Id)
-                };
-                if (dlg.ShowDialog() == DialogResult.OK) {
-                    g.GameDirectory = dlg.SelectedPath;
-                } else {
-                    // add empty entry to file for next time
-                    g.GameDirectory = Game.NOT_INSTALLED;
-                }
-            } else if (g.GameDirectory.Equals(Game.NOT_INSTALLED)) {
-                // mark as invalid
-                g.GameDirectory = null;
-            }
-            if (g.GameDirectory == null) {
-                throw new InvalidOperationException("Cannot find Shogun installation directory.\n");
-            }
-        }
+        #endregion
 
-        void SetInstallDirectoryLabelText() {
-            installDirectoryLabel.Text = string.Format("Mod Tools Location: {0}", ModTools.Instance.InstallDirectory);
-        }
-
-        void FillModList() {
-            modList.Items.Clear();
-            foreach (Mod mod in MultiMods.Instance.Mods) {
-                modList.Items.Add(mod);
-            }
-            modList.SelectedItem = MultiMods.Instance.CurrentMod;
-        }
-
-        private void AddMod(object sender, EventArgs e) {
-            InputBox inputBox = new InputBox {
-                Text = "Enter new Mod name"
-            };
-            if (inputBox.ShowDialog() == DialogResult.OK) {
-                MultiMods.Instance.AddMod(inputBox.Input);
-            }
-        }
-
-        private void DeleteMod(object sender, EventArgs e) {
-            if (SelectedMod != null) {
-                DialogResult query = MessageBox.Show("Do you also want to delete the mod data?\n" +
-                    "Warning: this can not be undone!",
-                    "Also delete data?",
-                    MessageBoxButtons.YesNoCancel,
-                    MessageBoxIcon.Question);
-                if (query == DialogResult.Cancel) {
-                    return;
-                }
-                bool deleteData = (query == DialogResult.Yes);
-                MultiMods.Instance.DeleteMod(SelectedMod, deleteData);
-            }
-        }
-
+        #region Pack Recent
         bool ModPackRecent {
             get {
                 // it's normal to have the rules.bob file edited.
@@ -163,12 +159,14 @@ namespace MMS {
             if (!result) {
                 string message = string.Join("\n", SelectedMod.EditedAfterPackCreation);
                 message = "The following files were edited after pack creation:\n" + message + "\n" +
-                    "Do you want to install it anyway?";
+                    "Do you want to continue anyway?";
                 result = MessageBox.Show(message, "Really install mod?", MessageBoxButtons.YesNo) == DialogResult.Yes;
             }
             return result;
         }
+        #endregion
 
+        #region Installation
         private void InstallMod(object sender, EventArgs e) {
             if (SelectedMod != null) {
                 try {
@@ -197,13 +195,6 @@ namespace MMS {
             }
         }
 
-        private void SetMod(object sender = null, EventArgs e = null) {
-            if (SelectedMod != null) {
-                MultiMods.Instance.CurrentMod = SelectedMod;
-                modList.SelectedItem = MultiMods.Instance.CurrentMod;
-            }
-        }
-
         private void UninstallMod(object sender, EventArgs e) {
             if (SelectedMod != null) {
                 SetMod();
@@ -211,20 +202,7 @@ namespace MMS {
                 MessageBox.Show("Mod Uninstalled!");
             }
         }
-
-        private void ImportExistingPack(object sender, EventArgs e) {
-            OpenFileDialog dialog = new OpenFileDialog {
-                Filter = "Pack Files (*.pack)|*.pack|All files (*.*)|*.*"
-            };
-            if (dialog.ShowDialog() == DialogResult.OK) {
-                try {
-                    new PackImporter().ImportExistingPack(dialog.FileName);
-                } catch (Exception ex) {
-                    MessageBox.Show(ex.ToString(), "Failed to import mod", 
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
+        #endregion
 
         #region External Processes
         private void LaunchBob(object sender, EventArgs e) {
@@ -286,14 +264,36 @@ namespace MMS {
         }
         #endregion
 
-        private void RestoreData(object sender, EventArgs e) {
+        #region Pack Postprocessing
+        private void OptimizePack(object sender, EventArgs e) {
+            if (!DBTypeMap.Instance.Initialized) {
+                DBTypeMap.Instance.InitializeTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
+            }
             if (SelectedMod != null) {
-                if (MessageBox.Show("This will undo all changes for the currently set mod.\nContinue?", 
-                                    "Really restore data?", MessageBoxButtons.OKCancel) == DialogResult.Cancel) {
+                if (!File.Exists(SelectedMod.PackFilePath)) {
+                    MessageBox.Show(string.Format("Pack file for mod {0}not found ", SelectedMod.Name));
+                    return;
+                } else if (!QueryIgnoreEditedModPack()) {
                     return;
                 }
+                InputBox box = new InputBox {
+                    Text = "Enter prefix for rename"
+                };
+                PackFileCodec codec = new PackFileCodec();
+                PackFile packFile = codec.Open(SelectedMod.PackFilePath);
+                if (box.ShowDialog() == DialogResult.OK) {
+                    PackedFileRenamer renamer = new PackedFileRenamer(box.Input);
+                    renamer.Rename(packFile.Files);
+                }
+                statusLabel.Text = "Optimizing DB files...";
+                Refresh();
+                new DbFileOptimizer(Game.STW).CreateOptimizedFile(packFile);
+                string tempFile = Path.GetTempFileName();
+                codec.writeToFile(tempFile, packFile);
+                File.Delete(SelectedMod.PackFilePath);
+                File.Move(tempFile, SelectedMod.PackFilePath);
+                SetInstallDirectoryLabelText();
             }
-            ModTools.RestoreOriginalData();
         }
 
         private void CleanUp(object sender, EventArgs e) {
@@ -323,7 +323,9 @@ namespace MMS {
                 }
             }
         }
+        #endregion
 
+        #region Open Directories/pack
         private void OpenDirectory(object sender, EventArgs args) {
             string pathToOpen = ((ToolStripMenuItem)sender).Tag as string;
             if (pathToOpen != null && Directory.Exists(pathToOpen)) {
@@ -347,7 +349,9 @@ namespace MMS {
             }
             Process.Start(Settings.Default.PfmPath, SelectedMod.PackFilePath);
         }
+        #endregion
 
+        #region Locations in Filesystem
         private void BrowseForPfm(object sender = null, EventArgs e = null) {
             OpenFileDialog dialog = new OpenFileDialog {
                 Title = "Please point to PFM path"
@@ -358,5 +362,79 @@ namespace MMS {
                 return;
             }
         }
+        /*
+         * Lets the user choose the mod installation directory.
+         */
+        private void SetInstallDirectory(object sender = null, EventArgs e = null) {
+            DirectoryDialog folderBrowser = new DirectoryDialog() {
+                Description = "Please point to the location of your mod tools installation"
+            };
+            if (folderBrowser.ShowDialog() == DialogResult.OK) {
+                ModTools.Instance.InstallDirectory = folderBrowser.SelectedPath;
+                Settings.Default.ModToolPath = folderBrowser.SelectedPath;
+                SetInstallDirectoryLabelText();
+            }
+        }
+        void CheckShogunInstallation() {
+            Game g = Game.STW;
+            // prefer loaded from file so the user can force an installation location
+            if (g.GameDirectory == null) {
+                // if there was an empty entry in file, don't ask again
+                DirectoryDialog dlg = new DirectoryDialog() {
+                    Description = string.Format("Please enter location of {0}\nCancel if not installed.", g.Id)
+                };
+                if (dlg.ShowDialog() == DialogResult.OK) {
+                    g.GameDirectory = dlg.SelectedPath;
+                } else {
+                    // add empty entry to file for next time
+                    g.GameDirectory = Game.NOT_INSTALLED;
+                }
+            } else if (g.GameDirectory.Equals(Game.NOT_INSTALLED)) {
+                // mark as invalid
+                g.GameDirectory = null;
+            }
+            if (g.GameDirectory == null) {
+                throw new InvalidOperationException("Cannot find Shogun installation directory.\n");
+            }
+        }
+        #endregion
+
+        #region Backup
+        private void BackupCurrentMod(object sender, EventArgs e) {
+            if (MultiMods.Instance.CurrentMod != null) {
+                MultiMods.Instance.CurrentMod.Backup();
+            }
+        }
+
+        private void RestoreBackupData(object sender, EventArgs e) {
+            if (MultiMods.Instance.CurrentMod != null) {
+                if (MessageBox.Show("This will undo all changes in this session or after the last backup.\n" +
+                    "Are you sure?", "Restore Backup?", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK) {
+                        MultiMods.Instance.CurrentMod.Restore();
+                }
+            }
+        }
+        private void RestoreOriginalData(object sender, EventArgs e) {
+            if (SelectedMod != null) {
+                if (MessageBox.Show("This will undo all changes for the currently set mod.\nContinue?",
+                                    "Really restore data?", MessageBoxButtons.OKCancel) == DialogResult.Cancel) {
+                    return;
+                }
+            }
+            ModTools.RestoreOriginalData();
+        }
+        void Cleanup() {
+            // the user might close the MMS window before exiting a tool he started,
+            // so wait for all processes to finish
+            foreach (Process process in startedProcesses) {
+                process.Exited -= ProcessExited;
+                process.WaitForExit();
+            }
+            if (MultiMods.Instance.CurrentMod != null) {
+                MultiMods.Instance.CurrentMod.IsActive = false;
+            }
+        }
+
+        #endregion
     }
 }

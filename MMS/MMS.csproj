@@ -99,6 +99,10 @@
       <Project>{1B2FA4F4-C320-496F-9365-636D9180BE03}</Project>
       <Name>CommonDialogs</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CommonUtilities\CommonUtilities.csproj">
+      <Project>{32F411D6-4EB1-41EA-9071-FC4B3FB62E65}</Project>
+      <Name>CommonUtilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{6D23F5FB-04D4-4D7E-BDFF-FCA718309298}</Project>
       <Name>Common</Name>

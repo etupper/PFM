@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using EsfControl;
 using EsfLibrary;
 using CommonDialogs;
+using CommonUtilities;
 
 namespace PackFileManager
 {
@@ -264,7 +265,7 @@ namespace PackFileManager
             if (QuerySaveModifiedFile() == DialogResult.Cancel) {
                 return;
             }
-            DbFileOptimizer optimizer = new DbFileOptimizer();
+            DbFileOptimizer optimizer = new DbFileOptimizer(GameManager.Instance.CurrentGame);
             PackFile optimizedFile = optimizer.CreateOptimizedFile(CurrentPackFile);
             //optimizedFile.IsModified = false;
             CurrentPackFile = optimizedFile;
@@ -958,10 +959,8 @@ namespace PackFileManager
                 Text = "Enter prefix to prepend to files"
             };
             if (box.ShowDialog() == DialogResult.OK) {
-                string prefix = box.Input;
-                foreach(PackedFile file in files) {
-                    file.Name = string.Format("{0}{1}", prefix, file.Name);
-                }
+                PackedFileRenamer renamer = new PackedFileRenamer(box.Input);
+                renamer.Rename(files);
             }
         }
 

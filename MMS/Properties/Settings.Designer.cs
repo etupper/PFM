@@ -38,18 +38,6 @@ namespace MMS.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Mods {
-            get {
-                return ((string)(this["Mods"]));
-            }
-            set {
-                this["Mods"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string ActiveMod {
             get {
                 return ((string)(this["ActiveMod"]));
