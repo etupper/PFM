@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filetypes", "Filetypes\File
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonUtilities", "CommonUtilities\CommonUtilities.csproj", "{32F411D6-4EB1-41EA-9071-FC4B3FB62E65}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Release Build", "Release Build MMS\Release Build.csproj", "{69EFD9F5-3100-4133-B4F5-289D7B07E448}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,8 @@ Global
 		{32F411D6-4EB1-41EA-9071-FC4B3FB62E65}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32F411D6-4EB1-41EA-9071-FC4B3FB62E65}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32F411D6-4EB1-41EA-9071-FC4B3FB62E65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69EFD9F5-3100-4133-B4F5-289D7B07E448}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69EFD9F5-3100-4133-B4F5-289D7B07E448}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
