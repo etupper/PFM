@@ -17,8 +17,6 @@ namespace MMS {
         public MainForm() {
             InitializeComponent();
             
-            CheckShogunInstallation();
-            
             if (string.IsNullOrEmpty(Settings.Default.ModToolPath) || !Directory.Exists(Settings.Default.ModToolPath)) {
                 SetInstallDirectory();
                 if (ModTools.Instance.InstallDirectory == null) {
@@ -28,6 +26,8 @@ namespace MMS {
                 ModTools.Instance.InstallDirectory = Settings.Default.ModToolPath;
             }
 
+            CheckShogunInstallation();
+            
             SetInstallDirectoryLabelText();
 
             FillModList();
@@ -375,16 +375,33 @@ namespace MMS {
                 SetInstallDirectoryLabelText();
             }
         }
+
         void CheckShogunInstallation() {
             Game g = Game.STW;
             // prefer loaded from file so the user can force an installation location
             if (g.GameDirectory == null) {
-                // if there was an empty entry in file, don't ask again
+
+                // check if the game path file is set
+                string gamePathFilename = Path.Combine(ModTools.Instance.BinariesPath, "gamepath.txt");
+                if (File.Exists(gamePathFilename)) {
+
+                    // read path from file
+                    string gamePath = File.ReadAllText(gamePathFilename);
+                    if (File.Exists(gamePath)) {
+                        g.GameDirectory = gamePath;
+                        return;
+                    }
+                }
+                
+                // ask user
                 DirectoryDialog dlg = new DirectoryDialog() {
-                    Description = string.Format("Please enter location of {0}\nCancel if not installed.", g.Id)
+                    Description = string.Format("Please enter location of {0}.", g.Id)
                 };
                 if (dlg.ShowDialog() == DialogResult.OK) {
                     g.GameDirectory = dlg.SelectedPath;
+                    
+                    // write to gamepath file
+                    File.WriteAllText(gamePathFilename, g.GameDirectory);
                 } else {
                     // add empty entry to file for next time
                     g.GameDirectory = Game.NOT_INSTALLED;

@@ -14,13 +14,14 @@ namespace MMS {
         static readonly Regex PACK_FILE_RE = new Regex(".pack");
         public void ImportExistingPack(string packFileName) {
             string modName = PACK_FILE_RE.Replace(Path.GetFileName(packFileName), "");
-            Mod newMod = new Mod(modName);
+
+            // trigger creation of backup folder
+            new Mod(modName);
             MultiMods.Instance.AddMod(modName);
 
             PackFile pack = new PackFileCodec().Open(packFileName);
             foreach (PackedFile packed in pack) {
                 // extract to working_data as binary
-
                 List<string> extractPaths = new List<string>();
                 byte[] data = null;
                 if (DBTypeMap.Instance.IsSupported(DBFile.typename(packed.FullPath))) {
