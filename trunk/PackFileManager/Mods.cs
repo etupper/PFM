@@ -115,7 +115,7 @@ namespace PackFileManager {
                     result = Path.Combine(mod.BaseDirectory, string.Format("{0}.pack", modName));
                     if (Directory.Exists(mod.BaseDirectory) && !File.Exists(result)) {
                         PackFile newFile = new PackFile(result, new PFHeader("PFH3"));
-                        new PackFileCodec().writeToFile(result, newFile);
+                        new PackFileCodec().WriteToFile(result, newFile);
                     }
      
                     mod.Game = GameManager.Instance.CurrentGame;

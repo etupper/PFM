@@ -449,8 +449,7 @@ namespace PackFileManager
         }
 
         static string CA_FILE_WARNING = "Will only save MOD and non-CA MOVIE files with current Setting.";
-        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void QueryNameAndSave(object sender, EventArgs e) {
             if (!CanWriteCurrentPack) {
                 MessageBox.Show(CA_FILE_WARNING);
             } else {
@@ -466,14 +465,16 @@ namespace PackFileManager
             }
         }
 
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void SaveCurrentPack(object sender, EventArgs e) {
             if (!CanWriteCurrentPack) {
                 MessageBox.Show(CA_FILE_WARNING);
             } else if (currentPackFile.Filepath.EndsWith("Untitled.pack")) {
                 // ask for a name first
-                saveAsToolStripMenuItem_Click(null, null);
+                QueryNameAndSave(null, null);
             } else {
-                SaveAsFile(currentPackFile.Filepath);
+                CloseEditors();
+                new PackFileCodec().Save(currentPackFile);
+                OpenExistingPackFile(currentPackFile.Filepath);
             }
         }
 
@@ -483,7 +484,7 @@ namespace PackFileManager
             } else {
                 CloseEditors ();
                 string tempFile = Path.GetTempFileName ();
-                new PackFileCodec ().writeToFile (tempFile, currentPackFile);
+                new PackFileCodec ().WriteToFile (tempFile, currentPackFile);
                 if (File.Exists (filename)) {
                     File.Delete (filename);
                 }
@@ -1244,7 +1245,7 @@ namespace PackFileManager
                                         MessageBoxIcon.Exclamation, 
                                         MessageBoxDefaultButton.Button3)) {
                     case DialogResult.Yes:
-                        saveToolStripMenuItem_Click(this, EventArgs.Empty);
+                        SaveCurrentPack(this, EventArgs.Empty);
                         if (!currentPackFile.IsModified) {
                             break;
                         }
