@@ -96,7 +96,7 @@ namespace Common {
 			return header;
 		}
 
-        public void writeToFile(string FullPath, PackFile packFile) {
+        public void WriteToFile(string FullPath, PackFile packFile) {
             using (BinaryWriter writer = new BinaryWriter(new FileStream(FullPath, FileMode.Create), Encoding.ASCII)) {
                 writer.Write (packFile.Header.PackIdentifier.ToCharArray ());
                 writer.Write ((int)packFile.Header.Type);
@@ -162,6 +162,21 @@ namespace Common {
                     }
                 }
             }
+        }
+        
+        /*
+         * Save the given pack file to its current path.
+         * Because some of its entries might still be drawing their data from the original pack,
+         * we cannot just write over it.
+         * Create a temp file, write into that, then delete the original and move the temp.
+         */
+        public void Save(PackFile packFile) {
+            string tempFile = Path.GetTempFileName();
+            WriteToFile(tempFile, packFile);
+            if (File.Exists(packFile.Filepath)) {
+                File.Delete(packFile.Filepath);
+            }
+            File.Move(tempFile, packFile.Filepath);
         }
 
         private void OnHeaderLoaded(PFHeader header) {

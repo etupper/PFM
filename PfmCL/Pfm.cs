@@ -95,7 +95,7 @@ namespace PfmCL {
                         Console.Error.WriteLine("Failed to add {0}: {1}", file, e.Message);
                     }
                 }
-                new PackFileCodec().writeToFile(packFileName, packFile);
+                new PackFileCodec().WriteToFile(packFileName, packFile);
             } catch (Exception e) {
                 Console.Error.WriteLine("Failed to write {0}: {1}", packFileName, e.Message);
             }
@@ -154,7 +154,7 @@ namespace PfmCL {
                     }
                 }
                 string tempFile = Path.GetTempFileName();
-                new PackFileCodec().writeToFile(tempFile, toUpdate);
+                new PackFileCodec().WriteToFile(tempFile, toUpdate);
                 File.Delete(packFileName);
                 File.Move(tempFile, packFileName);
             } catch (Exception e) {

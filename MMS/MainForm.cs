@@ -271,7 +271,7 @@ namespace MMS {
             }
             if (SelectedMod != null) {
                 if (!File.Exists(SelectedMod.PackFilePath)) {
-                    MessageBox.Show(string.Format("Pack file for mod {0}not found ", SelectedMod.Name));
+                    MessageBox.Show(string.Format("Pack file for mod \"{0}\" not found ", SelectedMod.Name));
                     return;
                 } else if (!QueryIgnoreEditedModPack()) {
                     return;
@@ -288,10 +288,7 @@ namespace MMS {
                 statusLabel.Text = "Optimizing DB files...";
                 Refresh();
                 new DbFileOptimizer(Game.STW).CreateOptimizedFile(packFile);
-                string tempFile = Path.GetTempFileName();
-                codec.writeToFile(tempFile, packFile);
-                File.Delete(SelectedMod.PackFilePath);
-                File.Move(tempFile, SelectedMod.PackFilePath);
+                codec.Save(packFile);
                 SetInstallDirectoryLabelText();
             }
         }
