@@ -16,18 +16,19 @@ namespace MMS {
     public partial class MainForm : Form {
         public MainForm() {
             InitializeComponent();
-            
+
             if (string.IsNullOrEmpty(Settings.Default.ModToolPath) || !Directory.Exists(Settings.Default.ModToolPath)) {
                 SetInstallDirectory();
                 if (ModTools.Instance.InstallDirectory == null) {
                     throw new Exception("Need installation directory to continue.");
                 }
             } else {
-                ModTools.Instance.InstallDirectory = Settings.Default.ModToolPath;
+                string path = Settings.Default.ModToolPath;
+                ModTools.Instance.InstallDirectory = path;
             }
-
-            CheckShogunInstallation();
             
+            CheckShogunInstallation();
+
             SetInstallDirectoryLabelText();
 
             FillModList();
@@ -78,18 +79,66 @@ namespace MMS {
         #region Mod Management
         // add new (prompt for name)
         private void AddMod(object sender, EventArgs e) {
-            InputBox inputBox = new InputBox {
-                Text = "Enter new Mod name"
-            };
-            if (inputBox.ShowDialog() == DialogResult.OK) {
+            string newModName = PromptModName();
+            if (newModName != null) {
                 if (MultiMods.Instance.CurrentMod != null) {
                     statusLabel.Text = string.Format("Backing up {0}...", MultiMods.Instance.CurrentMod.Name);
                     Refresh();
                 }
-                MultiMods.Instance.AddMod(inputBox.Input);
+                MultiMods.Instance.AddMod(newModName);
             }
         }
 
+        /*
+         * Prompt the user for a mod name.
+         * Returns null if user cancels.
+         */
+        string PromptModName(string initialInput = "") {
+            string result = null;
+            while (result == null) {
+                InputBox inputBox = new InputBox {
+                    Text = "Enter new Mod name",
+                    Input = initialInput
+                };
+                if (inputBox.ShowDialog() != DialogResult.Cancel) {
+                    if (inputBox.Input.Contains(" ")) {
+                        string correctedName = inputBox.Input.Replace(" ", "_");
+                        DialogResult query = 
+                            MessageBox.Show(string.Format("Name cannot contain spaces. Want to use name \"{0}\" instead?\n"+
+                                                          "Yes - rename\nNo - enter other name\nCancel - Abort", correctedName),
+                                            "Invalid mod name", MessageBoxButtons.YesNoCancel);
+                        if (query == DialogResult.Yes) {
+                            // will terminate while loop
+                            result = correctedName;
+                        } else if (query == DialogResult.Cancel) {
+                            // out of while; result stays null
+                            break;
+                        } // else query == No: re-enter
+                        initialInput = inputBox.Input;
+                    }
+                } else {
+                    break;
+                }
+            }
+            return result;
+        }
+
+        // rename selected mod
+        private void RenameMod(object sender, EventArgs e) {
+            if (SelectedMod != null) {
+                string previousName = SelectedMod.Name;
+                string newName = PromptModName(previousName);
+                if (newName != null && !newName.Equals(previousName)) {
+                    try {
+                        SelectedMod.Name = newName;
+                    } catch (Exception ex) {
+                        MessageBox.Show(ex.Message, "Rename failed", 
+                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+        
         // delete selected mod
         private void DeleteMod(object sender, EventArgs e) {
             if (SelectedMod != null) {
@@ -314,7 +363,7 @@ namespace MMS {
                 }
                 if (modPack.Root.Modified) {
                     string tempFilePath = Path.GetTempFileName();
-                    codec.writeToFile(tempFilePath, modPack);
+                    codec.WriteToFile(tempFilePath, modPack);
                     File.Delete(SelectedMod.PackFilePath);
                     File.Move(tempFilePath, SelectedMod.PackFilePath);
                 }
@@ -344,6 +393,7 @@ namespace MMS {
                     return;
                 }
             }
+            SetMod ();
             Process.Start(Settings.Default.PfmPath, SelectedMod.PackFilePath);
         }
         #endregion
@@ -375,30 +425,29 @@ namespace MMS {
 
         void CheckShogunInstallation() {
             Game g = Game.STW;
+            string gamePathFilename = Path.Combine(ModTools.Instance.BinariesPath, "gamepath.txt");
             // prefer loaded from file so the user can force an installation location
-            if (g.GameDirectory == null) {
+            if (!g.IsInstalled) {
+                string gamePath = "";
 
                 // check if the game path file is set
-                string gamePathFilename = Path.Combine(ModTools.Instance.BinariesPath, "gamepath.txt");
-                if (File.Exists(gamePathFilename)) {
-
+                try {
                     // read path from file
-                    string gamePath = File.ReadAllText(gamePathFilename);
-                    if (File.Exists(gamePath)) {
+                    gamePath = File.ReadAllText(gamePathFilename).Replace("\"", "").Trim();
+                    if (Directory.Exists(gamePath)) {
                         g.GameDirectory = gamePath;
                         return;
                     }
-                }
+                } catch {}
                 
                 // ask user
                 DirectoryDialog dlg = new DirectoryDialog() {
-                    Description = string.Format("Please enter location of {0}.", g.Id)
+                    Description = string.Format("Please enter location of {0}.", g.Id),
+                    SelectedPath = gamePath
                 };
                 if (dlg.ShowDialog() == DialogResult.OK) {
                     g.GameDirectory = dlg.SelectedPath;
                     
-                    // write to gamepath file
-                    File.WriteAllText(gamePathFilename, g.GameDirectory);
                 } else {
                     // add empty entry to file for next time
                     g.GameDirectory = Game.NOT_INSTALLED;
@@ -407,9 +456,12 @@ namespace MMS {
                 // mark as invalid
                 g.GameDirectory = null;
             }
-            if (g.GameDirectory == null) {
+            if (!g.IsInstalled) {
                 throw new InvalidOperationException("Cannot find Shogun installation directory.\n");
             }
+
+            // write to gamepath file
+            File.WriteAllText(gamePathFilename, g.GameDirectory);
         }
         #endregion
 

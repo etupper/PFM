@@ -28,6 +28,7 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.modsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addModToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.renameModToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importModToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setActiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteModToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -92,6 +93,7 @@
             this.addModToolStripMenuItem,
             this.importModToolStripMenuItem,
             this.setActiveToolStripMenuItem,
+            this.renameModToolStripMenuItem,
             toolStripSeparator1,
             this.deleteModToolStripMenuItem});
             this.modsToolStripMenuItem.Name = "modsToolStripMenuItem";
@@ -125,6 +127,13 @@
             this.deleteModToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.deleteModToolStripMenuItem.Text = "Delete";
             this.deleteModToolStripMenuItem.Click += new System.EventHandler(this.DeleteMod);
+            // 
+            // renameModToolStripMenuItem
+            // 
+            this.renameModToolStripMenuItem.Name = "renameModToolStripMenuItem";
+            this.renameModToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.renameModToolStripMenuItem.Text = "Rename";
+            this.renameModToolStripMenuItem.Click += new System.EventHandler(this.RenameMod);
             // 
             // dataToolStripMenuItem
             // 
@@ -355,6 +364,7 @@
         private System.Windows.Forms.ToolStripMenuItem installationDirectoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem modsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addModToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem renameModToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteModToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importModToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip;

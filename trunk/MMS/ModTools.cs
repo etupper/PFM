@@ -22,9 +22,7 @@ namespace MMS {
             }
         }
 
-        private ModTools() {
-            originalDataAccessor = new ZipFileAccessor(OriginalZipPath);
-        }
+        private ModTools() { }
 
         string installDir;
         public string InstallDirectory {
@@ -54,6 +52,9 @@ namespace MMS {
         IFileDataAccessor originalDataAccessor;
         public IFileDataAccessor OriginalDataAccessor {
             get {
+                if (originalDataAccessor == null) {
+                    originalDataAccessor = new ZipFileAccessor(OriginalZipPath);
+                }
                 return originalDataAccessor;
             }
         }
