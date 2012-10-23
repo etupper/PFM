@@ -16,6 +16,20 @@ namespace MMS {
             get {
                 return name;
             }
+            set {
+                if (name != null) {
+                    string previousDirectory = ModDirectory;
+                    string targetDirectory = Path.Combine(MmsBaseDirectory, value);
+                    if (!Directory.Exists(targetDirectory)) {
+                        Directory.Move(previousDirectory, targetDirectory);
+                        name = value;
+                    } else {
+                        throw new InvalidOperationException(
+                            string.Format("Cannot rename mod: new backup directory {0} exists", 
+                                      targetDirectory));
+                    }
+                }
+            }
         }
 
         #region Backup Path and Accessor
