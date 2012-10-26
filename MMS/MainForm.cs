@@ -425,7 +425,7 @@ namespace MMS {
 
         void CheckShogunInstallation() {
             Game g = Game.STW;
-            string gamePathFilename = Path.Combine(ModTools.Instance.BinariesPath, "gamepath.txt");
+            string gamePathFilename = Path.Combine(ModTools.Instance.BinariesPath, "game_path.txt");
             // prefer loaded from file so the user can force an installation location
             if (!g.IsInstalled) {
                 string gamePath = "";
@@ -433,7 +433,7 @@ namespace MMS {
                 // check if the game path file is set
                 try {
                     // read path from file
-                    gamePath = File.ReadAllText(gamePathFilename).Replace("\"", "").Trim();
+                    gamePath = File.ReadAllText(gamePathFilename).Trim();
                     if (Directory.Exists(gamePath)) {
                         g.GameDirectory = gamePath;
                         return;
