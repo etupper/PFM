@@ -39,13 +39,14 @@
   <PropertyGroup>
     <PostBuildEvent>copy "$(SolutionDir)\MMS\bin\Release\*.exe" "$(TargetDir)"
 copy "$(SolutionDir)\MMS\bin\Release\*.dll" "$(TargetDir)"
+copy "$(SolutionDir)\MMS\Files\executables.txt" "$(TargetDir)"
 
 cd "$(TargetDir)"
 del "Release Build.dll"
 del "*vshost"*
 del "MMS.zip"
 
-start WinRAR.exe a "MMS.zip" "*dll" "*exe" master_schema.xml
+start WinRAR.exe a "MMS.zip" "*dll" "*exe" master_schema.xml executables.txt
 </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
