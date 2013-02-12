@@ -3447,7 +3447,7 @@
     <field name='Unused 95' type='boolean' version_start='5' />
     <field name='is_immune_to_attrition' type='boolean' version_start='13' />
     <field name='New Can Shoot Wile moving' type='boolean' version_start='13' />
-    <field name='musician 2' type='boolean' version_start='13' />
+    <field name='musician 2' type='optstring' version_start='13' />
     <field fkey='warscape_rigid_tables.key' name='ammo_caisson_destroyed_model' type='optstring' version_start='13' />
     <field name='UNKNOWN BOS100' type='optstring' version_start='13' />
     <field name='all_ranks_fire' type='boolean' version_start='13' />
