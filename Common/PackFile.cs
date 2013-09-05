@@ -176,6 +176,7 @@ namespace Common {
                     case "PFH0":
                     case "PFH2":
                     case "PFH3":
+                    case "PFH4":
                         break;
                     default:
                         throw new Exception("Unknown Header Type " + value);
@@ -192,6 +193,7 @@ namespace Common {
         // query/set number of contained files
         public UInt32 FileCount { get; set; }
         // query/set names of pack file replaced by this
+        public UInt32 Unknown { get; set; }
         public List<string> ReplacedPackFileNames {
             get;
             set;
@@ -206,8 +208,11 @@ namespace Common {
                         break;
                     case "PFH2":
                     case "PFH3":
-                        // PFH2/3 contains a FileTime at 0x1C (I think) in addition to PFH0's header
+                        // PFH2+ contain a FileTime at 0x1C (I think) in addition to PFH0's header
                         result = 0x20;
+                        break;
+                    case "PFH4":
+                        result = 0x1C;
                         break;
                     default:
                         // if this ever happens, go have a word with MS
@@ -230,6 +235,10 @@ namespace Common {
         Movie,
         // have to force id value for boot; there are more of those special ones,
         // but we can't handle them yet
+        Sound = 17,
+        Music = 18,
+        Sound1 = 0x17,
+        Music1 = 0x18,
         BootX = 0x40,
         Shader2 = 0x41,
         Shader1 = 0x42

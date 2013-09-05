@@ -86,8 +86,12 @@ namespace Common {
 			header.FileCount = reader.ReadUInt32 ();
 			UInt32 indexSize = reader.ReadUInt32 ();
 			header.DataStart = header.Length + indexSize;
+            
+            if (header.PackIdentifier == "PFH4") {
+                header.Unknown = reader.ReadUInt32();
+            }
 
-			// skip the time
+			// go to correct position
 			reader.BaseStream.Seek (header.Length, SeekOrigin.Begin);
             for (int i = 0; i < header.Version; i++) {
                 header.ReplacedPackFileNames.Add(IOFunctions.readZeroTerminatedAscii(reader));
@@ -126,6 +130,9 @@ namespace Common {
                 if (packFile.Header.PackIdentifier == "PFH2" || packFile.Header.PackIdentifier == "PFH3") {
                     Int64 fileTime = DateTime.Now.ToFileTimeUtc ();
                     writer.Write (fileTime);
+                } else if (packFile.Header.PackIdentifier == "PFH4") {
+                    // hmmm
+                    writer.Write(packFile.Header.Unknown);
                 }
 
                 // Write File Names stored from opening the file

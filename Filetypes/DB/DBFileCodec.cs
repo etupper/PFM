@@ -156,7 +156,7 @@ namespace Filetypes {
 						bytes.AddRange (reader.ReadBytes (3));
 						UInt32 marker = BitConverter.ToUInt32 (bytes.ToArray (), 0);
 						if (marker == GUID_MARKER) {
-							guid = IOFunctions.readCAString (reader);
+							guid = IOFunctions.readCAString (reader, Encoding.Unicode);
 							index = reader.ReadByte ();
 						} else if (marker == VERSION_MARKER) {
 							hasMarker = true;
@@ -220,7 +220,7 @@ namespace Filetypes {
         public static void WriteHeader(BinaryWriter writer, DBFileHeader header) {
 			if (header.GUID != "") {
 				writer.Write (GUID_MARKER);
-				IOFunctions.writeCAString (writer, header.GUID);
+				IOFunctions.writeCAString (writer, header.GUID, Encoding.Unicode);
 			}
 			if (header.Version != 0) {
 				writer.Write (VERSION_MARKER);

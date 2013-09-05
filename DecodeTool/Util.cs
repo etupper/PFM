@@ -30,6 +30,9 @@ namespace DecodeTool {
 				field.Decode (reader);
                 result = field.Value;
 			} catch (Exception x) {
+#if DEBUG
+                Console.WriteLine(x);
+#endif
 				result = x.Message.Replace ("\n", "-");
 			}
 			return result;

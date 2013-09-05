@@ -10,12 +10,18 @@
         public static string TSV_FILTER = "TSV Files (*.csv,*.tsv)|*.csv;*.tsv|Text Files (*.txt)|*.txt|All Files|*.*";
         public static string PACKAGE_FILTER = "Package File (*.pack)|*.pack|Any File|*.*";
 
-        public static string readCAString(BinaryReader reader)
-        {
-            int num = reader.ReadInt16();
-            return new string(Encoding.Unicode.GetChars(reader.ReadBytes(num * 2)));
+        public static string readCAString(BinaryReader reader) {
+            return readCAString(reader, Encoding.Unicode);
         }
-
+        public static string readCAString(BinaryReader reader, Encoding encoding) {
+            int num = reader.ReadInt16();
+            int bytes = num * (encoding.IsSingleByte ? 1 : 2);
+#if DEBUG
+            Console.WriteLine("reading {0} bytes ({1} for {2})", bytes, encoding.IsSingleByte, encoding);
+#endif
+            return new string(encoding.GetChars(reader.ReadBytes(bytes)));
+        }
+        
         public static string readStringContainer(BinaryReader reader)
         {
             byte[] bytes = reader.ReadBytes(0x200);
@@ -41,11 +47,13 @@
             writer.Write(toWrite.ToCharArray());
             writer.Write((byte) 0);
         }
-
-        public static void writeCAString(BinaryWriter writer, string value)
-        {
+  
+        public static void writeCAString(BinaryWriter writer, string value) {
+            writeCAString (writer, value, Encoding.Unicode);
+        }
+        public static void writeCAString(BinaryWriter writer, string value, Encoding encoding) {
             writer.Write((ushort) value.Length);
-            writer.Write(Encoding.Unicode.GetBytes(value));
+            writer.Write(encoding.GetBytes(value));
         }
 
         public static void writeStringContainer(BinaryWriter writer, string value)

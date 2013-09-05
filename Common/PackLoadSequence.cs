@@ -50,7 +50,11 @@ namespace Common {
                     Console.WriteLine("{0} for {1}", DateTime.Now.Subtract(start), Path.GetFileName(p));
 #endif
                 });
-                result.Sort(new PackLoadOrder(result));
+                try {
+                    result.Sort(new PackLoadOrder(result));
+                } catch {
+                    // should do something here...
+                }
             } else {
                 throw new FileNotFoundException(string.Format("Game directory not found: {0}", directory));
             }
@@ -79,7 +83,9 @@ namespace Common {
         private static List<PackType> Ordered = new List<PackType>(new PackType[] {
             PackType.Boot, PackType.BootX, PackType.Shader1, PackType.Shader2,
             PackType.Release, PackType.Patch,
-            PackType.Mod, PackType.Movie
+            PackType.Mod, PackType.Movie, 
+            PackType.Music, PackType.Music1, 
+            PackType.Sound, PackType.Sound1
         });
 
         Dictionary<string, PFHeader> nameToHeader = new Dictionary<string, PFHeader>();

@@ -8,11 +8,12 @@ namespace Common {
         private static string WOW_NODE = @"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {0}";
         private static string WIN_NODE = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {0}";
         
+        public static readonly Game R2TW = new Game("R2TW", "214950", "Rome 2");
         public static readonly Game STW = new Game("STW", "34330", "Shogun2");
         public static readonly Game NTW = new Game("NTW", "34030", "Napoleon");
         public static readonly Game ETW = new Game("ETW", "10500", "Empire", "user.empire_script.txt");
         private static readonly Game[] GAMES = new Game[] {
-            STW, NTW, ETW
+            R2TW, STW, NTW, ETW
         };
 
         public static List<Game> Games {
