@@ -66,17 +66,14 @@ namespace Common {
 			string packIdentifier = new string (reader.ReadChars (4));
 			header = new PFHeader (packIdentifier);
 			int packType = reader.ReadInt32 ();
-            switch (packType) {
-                case 0:
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                case 0x40:
-                case 0x41:
-                case 0x42:
+            bool validType = false;
+            foreach(PackType type in Enum.GetValues(typeof(PackType))) {
+                if (packType == (int) type) {
+                    validType = true;
                     break;
-                default:
+                }
+            }
+            if (!validType) {
                     throw new InvalidDataException("Unknown pack type " + packType);
             }
 			header.Type = (PackType)packType;
