@@ -16,9 +16,6 @@
         public static string readCAString(BinaryReader reader, Encoding encoding) {
             int num = reader.ReadInt16();
             int bytes = num * (encoding.IsSingleByte ? 1 : 2);
-#if DEBUG
-            Console.WriteLine("reading {0} bytes ({1} for {2})", bytes, encoding.IsSingleByte, encoding);
-#endif
             return new string(encoding.GetChars(reader.ReadBytes(bytes)));
         }
         
