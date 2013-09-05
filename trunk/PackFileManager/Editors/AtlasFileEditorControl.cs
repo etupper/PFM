@@ -12,8 +12,7 @@
     public class AtlasFileEditorControl : PackedFileEditor<AtlasFile>
     {
         private ToolStripMenuItem addAtlasEntryToolStripMenuItem;
-        private ToolStripMenuItem addNewAtlasEntryToolStripMenuItem;
-        private CheckBox checkBox1;
+        private CheckBox toggleUnitsCheckbox;
         private IContainer components;
         private ContextMenuStrip contextMenuStrip1;
         private OLVColumn CSCont1;
@@ -30,13 +29,12 @@
         private OLVColumn CY3;
         private ToolStripMenuItem exportEntriesToTextFileToolStripMenuItem;
         private float imageHeight;
-        private Label label1;
-        private ObjectListView objectListView1;
+        private Label heightLabel;
+        //private ObjectListView olv;
         private ObjectListView olv;
         private OLVColumn olvColumn1;
         private ToolStripMenuItem removeAtlasEntryToolStripMenuItem;
-        private TextBox textBox1;
-        private ToolStripMenuItem toolStripMenuItem1;
+        private TextBox textBox;
         
         public AtlasFileEditorControl() : base (AtlasCodec.Instance)
         {
@@ -44,12 +42,11 @@
             this.DataChanged = false;
             this.imageHeight = 4096f;
             this.InitializeComponent();
-            this.textBox1.Text = this.imageHeight.ToString();
+            this.textBox.Text = this.imageHeight.ToString();
             // EditedFile = AtlasCodec.Instance.Decode(packedFile);
             // EditedFile.setPixelUnits(this.imageHeight);
             this.CSCont1.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
             this.CSCont2.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            this.olv = this.objectListView1;
             this.olv.CellEditFinishing += new CellEditEventHandler(this.olv_CellEditFinishing);
         }
 
@@ -61,12 +58,13 @@
         public override AtlasFile EditedFile {
             get { return base.EditedFile; }
             set {
+                base.EditedFile = value;
                 if (value != null) {
                     value.setPixelUnits(imageHeight);
                     olv.Clear();
                     this.olv.AddObjects(this.EditedFile.Entries);
+                    Console.WriteLine("Rows: {0}", this.olv.GetItemCount());
                 }
-                base.EditedFile = value;
             }
         }
 
@@ -84,7 +82,7 @@
 
         private void checkBox1_CheckStateChanged(object sender, EventArgs e)
         {
-            if (this.checkBox1.Checked)
+            if (this.toggleUnitsCheckbox.Checked)
             {
                 this.CX1.MaximumWidth = 0;
                 this.CY1.MaximumWidth = 0;
@@ -154,7 +152,7 @@
         private void InitializeComponent()
         {
             this.components = new Container();
-            this.objectListView1 = new ObjectListView();
+            this.olv = new ObjectListView();
             this.olvColumn1 = new OLVColumn();
             this.CSCont1 = new OLVColumn();
             this.CSCont2 = new OLVColumn();
@@ -168,50 +166,48 @@
             this.CY2 = new OLVColumn();
             this.CX3 = new OLVColumn();
             this.CY3 = new OLVColumn();
-            this.toolStripMenuItem1 = new ToolStripMenuItem();
-            this.addNewAtlasEntryToolStripMenuItem = new ToolStripMenuItem();
             this.contextMenuStrip1 = new ContextMenuStrip(this.components);
             this.addAtlasEntryToolStripMenuItem = new ToolStripMenuItem();
             this.removeAtlasEntryToolStripMenuItem = new ToolStripMenuItem();
             this.exportEntriesToTextFileToolStripMenuItem = new ToolStripMenuItem();
-            this.textBox1 = new TextBox();
-            this.checkBox1 = new CheckBox();
-            this.label1 = new Label();
-            ((ISupportInitialize) this.objectListView1).BeginInit();
+            this.textBox = new TextBox();
+            this.toggleUnitsCheckbox = new CheckBox();
+            this.heightLabel = new Label();
+            ((ISupportInitialize) this.olv).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             base.SuspendLayout();
-            this.objectListView1.AllColumns.Add(this.olvColumn1);
-            this.objectListView1.AllColumns.Add(this.CSCont1);
-            this.objectListView1.AllColumns.Add(this.CSCont2);
-            this.objectListView1.AllColumns.Add(this.CX1P);
-            this.objectListView1.AllColumns.Add(this.CY1P);
-            this.objectListView1.AllColumns.Add(this.CX2P);
-            this.objectListView1.AllColumns.Add(this.CY2P);
-            this.objectListView1.AllColumns.Add(this.CX1);
-            this.objectListView1.AllColumns.Add(this.CY1);
-            this.objectListView1.AllColumns.Add(this.CX2);
-            this.objectListView1.AllColumns.Add(this.CY2);
-            this.objectListView1.AllColumns.Add(this.CX3);
-            this.objectListView1.AllColumns.Add(this.CY3);
-            this.objectListView1.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Top;
-            this.objectListView1.CausesValidation = false;
-            this.objectListView1.CellEditActivation = ObjectListView.CellEditActivateMode.DoubleClick;
-            this.objectListView1.Columns.AddRange(new ColumnHeader[] { 
+            this.olv.AllColumns.Add(this.olvColumn1);
+            this.olv.AllColumns.Add(this.CSCont1);
+            this.olv.AllColumns.Add(this.CSCont2);
+            this.olv.AllColumns.Add(this.CX1P);
+            this.olv.AllColumns.Add(this.CY1P);
+            this.olv.AllColumns.Add(this.CX2P);
+            this.olv.AllColumns.Add(this.CY2P);
+            this.olv.AllColumns.Add(this.CX1);
+            this.olv.AllColumns.Add(this.CY1);
+            this.olv.AllColumns.Add(this.CX2);
+            this.olv.AllColumns.Add(this.CY2);
+            this.olv.AllColumns.Add(this.CX3);
+            this.olv.AllColumns.Add(this.CY3);
+            this.olv.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Top;
+            this.olv.CausesValidation = false;
+            this.olv.CellEditActivation = ObjectListView.CellEditActivateMode.DoubleClick;
+            this.olv.Columns.AddRange(new ColumnHeader[] { 
                 this.olvColumn1, this.CSCont1, this.CSCont2, this.CX1P, this.CY1P, this.CX2P, this.CY2P, this.CX1, this.CY1, this.CX2, this.CY2, this.CX3, this.CY3 });
-            this.objectListView1.Cursor = Cursors.Default;
-            this.objectListView1.HasCollapsibleGroups = false;
-            this.objectListView1.HeaderStyle = ColumnHeaderStyle.Nonclickable;
-            this.objectListView1.Location = new Point(0, 0x1c);
-            this.objectListView1.Name = "objectListView1";
-            this.objectListView1.ShowGroups = false;
-            this.objectListView1.Size = new Size(0x361, 0x27e);
-            this.objectListView1.SortGroupItemsByPrimaryColumn = false;
-            this.objectListView1.SpaceBetweenGroups = 10;
-            this.objectListView1.TabIndex = 0;
-            this.objectListView1.UseCompatibleStateImageBehavior = false;
-            this.objectListView1.View = View.Details;
-            this.objectListView1.CellRightClick += new EventHandler<CellRightClickEventArgs>(this.olv_RightClick);
-            this.objectListView1.CellEditFinishing += new CellEditEventHandler(this.olv_CellEditFinishing);
+            this.olv.Cursor = Cursors.Default;
+            this.olv.HasCollapsibleGroups = false;
+            this.olv.HeaderStyle = ColumnHeaderStyle.Nonclickable;
+            this.olv.Location = new Point(0, 0x1c);
+            this.olv.Name = "olv";
+            this.olv.ShowGroups = false;
+            this.olv.Size = new Size(0x361, 0x27e);
+            this.olv.SortGroupItemsByPrimaryColumn = false;
+            this.olv.SpaceBetweenGroups = 10;
+            this.olv.TabIndex = 0;
+            this.olv.UseCompatibleStateImageBehavior = false;
+            this.olv.View = View.Details;
+            this.olv.CellRightClick += new EventHandler<CellRightClickEventArgs>(this.olv_RightClick);
+            this.olv.CellEditFinishing += new CellEditEventHandler(this.olv_CellEditFinishing);
             this.olvColumn1.HeaderFont = null;
             this.olvColumn1.IsVisible = false;
             this.olvColumn1.MaximumWidth = 0;
@@ -277,12 +273,6 @@
             this.CY3.Text = "Height(PU)";
             this.CY3.ToolTipText = "Height (Y2-Y1) in PU";
             this.CY3.Width = 0x41;
-            this.toolStripMenuItem1.DropDownItems.AddRange(new ToolStripItem[] { this.addNewAtlasEntryToolStripMenuItem });
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new Size(180, 0x16);
-            this.toolStripMenuItem1.Text = "toolStripMenuItem1";
-            this.addNewAtlasEntryToolStripMenuItem.Name = "addNewAtlasEntryToolStripMenuItem";
-            this.addNewAtlasEntryToolStripMenuItem.Size = new Size(0x43, 0x16);
             this.contextMenuStrip1.Items.AddRange(new ToolStripItem[] { 
                 this.addAtlasEntryToolStripMenuItem, this.removeAtlasEntryToolStripMenuItem, this.exportEntriesToTextFileToolStripMenuItem });
             this.contextMenuStrip1.Name = "contextMenuStrip1";
@@ -299,38 +289,38 @@
             this.exportEntriesToTextFileToolStripMenuItem.Size = new Size(0xcb, 0x16);
             this.exportEntriesToTextFileToolStripMenuItem.Text = "Export Entries to TSV File";
             this.exportEntriesToTextFileToolStripMenuItem.Click += new EventHandler(this.exportTSV_Click);
-            this.textBox1.AcceptsReturn = true;
-            this.textBox1.Location = new Point(0x4f, 3);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new Size(0x2e, 20);
-            this.textBox1.TabIndex = 2;
-            this.textBox1.KeyDown += new KeyEventHandler(this.textBox1_KeyDown);
-            this.textBox1.MouseHover += new EventHandler(this.textBox1_MouseHover);
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new Point(0xa3, 5);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new Size(300, 0x11);
-            this.checkBox1.TabIndex = 3;
-            this.checkBox1.Text = "Toggle Coordinates as Pixel Units (PU)/Texture Units (TU)";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckStateChanged += new EventHandler(this.checkBox1_CheckStateChanged);
-            this.label1.AutoSize = true;
-            this.label1.Location = new Point(3, 7);
-            this.label1.Name = "label1";
-            this.label1.Size = new Size(70, 13);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "Image Height";
+            this.textBox.AcceptsReturn = true;
+            this.textBox.Location = new Point(0x4f, 3);
+            this.textBox.Name = "textBox1";
+            this.textBox.Size = new Size(0x2e, 20);
+            this.textBox.TabIndex = 2;
+            this.textBox.KeyDown += new KeyEventHandler(this.textBox1_KeyDown);
+            this.textBox.MouseHover += new EventHandler(this.textBox1_MouseHover);
+            this.toggleUnitsCheckbox.AutoSize = true;
+            this.toggleUnitsCheckbox.Location = new Point(0xa3, 5);
+            this.toggleUnitsCheckbox.Name = "checkBox1";
+            this.toggleUnitsCheckbox.Size = new Size(300, 0x11);
+            this.toggleUnitsCheckbox.TabIndex = 3;
+            this.toggleUnitsCheckbox.Text = "Toggle Coordinates as Pixel Units (PU)/Texture Units (TU)";
+            this.toggleUnitsCheckbox.UseVisualStyleBackColor = true;
+            this.toggleUnitsCheckbox.CheckStateChanged += new EventHandler(this.checkBox1_CheckStateChanged);
+            this.heightLabel.AutoSize = true;
+            this.heightLabel.Location = new Point(3, 7);
+            this.heightLabel.Name = "label1";
+            this.heightLabel.Size = new Size(70, 13);
+            this.heightLabel.TabIndex = 4;
+            this.heightLabel.Text = "Image Height";
             base.AutoScaleDimensions = new SizeF(6f, 13f);
             //base.AutoScaleMode = AutoScaleMode.Font;
             this.AutoSize = true;
             //base.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            base.Controls.Add(this.label1);
-            base.Controls.Add(this.checkBox1);
-            base.Controls.Add(this.objectListView1);
-            base.Controls.Add(this.textBox1);
+            base.Controls.Add(this.heightLabel);
+            base.Controls.Add(this.toggleUnitsCheckbox);
+            base.Controls.Add(this.olv);
+            base.Controls.Add(this.textBox);
             base.Name = "AtlasFileEditorControl";
             base.Size = new Size(0x364, 0x29d);
-            ((ISupportInitialize) this.objectListView1).EndInit();
+            ((ISupportInitialize) this.olv).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             base.ResumeLayout(false);
             base.PerformLayout();
@@ -559,9 +549,9 @@
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (this.textBox1.Modified && (e.KeyCode == Keys.Return))
+            if (this.textBox.Modified && (e.KeyCode == Keys.Return))
             {
-                this.imageHeight = Convert.ToSingle(this.textBox1.Text);
+                this.imageHeight = Convert.ToSingle(this.textBox.Text);
                 this.EditedFile.setPixelUnits(this.imageHeight);
                 this.DataChanged = true;
                 this.olv.RefreshObjects(this.EditedFile.Entries);
@@ -570,7 +560,7 @@
 
         private void textBox1_MouseHover(object sender, EventArgs e)
         {
-            new ToolTip().SetToolTip(this.textBox1, "Width of the .dds texture in Pixel Units");
+            new ToolTip().SetToolTip(this.textBox, "Width of the .dds texture in Pixel Units");
         }
     }
 }
