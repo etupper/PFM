@@ -827,6 +827,10 @@ namespace PackFileManager
             if (packedFile == null) {
                 return;
             }
+            PackedFileSource source = packedFile.Source as PackedFileSource;
+            string sourceInfo = (source != null) ? string.Format("offset {0}", source.Offset) : "from memory";
+            packStatusLabel.Text = String.Format("Viewing {0} ({1})", packedFile.Name, sourceInfo);
+
             IPackedFileEditor editor = null;
             foreach(IPackedFileEditor e in Editors) {
                 if (e.CanEdit(packedFile)) {
@@ -1153,13 +1157,23 @@ namespace PackFileManager
             splitContainer1.Panel2.Controls.Clear();
          
             if (packTreeView.SelectedNode != null) {
-                packStatusLabel.Text = " Viewing: " + packTreeView.SelectedNode.Text;
                 packTreeView.LabelEdit = packTreeView.Nodes.Count > 0 && packTreeView.SelectedNode != packTreeView.Nodes[0];
                 if (packTreeView.SelectedNode.Tag is PackedFile) {
                     OpenPackedFile(packTreeView.SelectedNode.Tag);
                 }
             }
+            // packStatusLabel.Text = PackInfo;
             EnableMenuItems();
+        }
+        
+        private string PackInfo {
+            get {
+                string result = "";
+                if (currentPackFile != null) {
+                    result = String.Format("Data start at {0}", currentPackFile.Header.DataStart);
+                }
+                return result;
+            }
         }
 
         private void packTreeView_MouseDoubleClick(object sender, MouseEventArgs e) {
@@ -1320,6 +1334,7 @@ namespace PackFileManager
                 }
             }
             RefreshTitle();
+            packStatusLabel.Text = PackInfo;
             base.Refresh();
         }
 

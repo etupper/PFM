@@ -71,17 +71,27 @@ namespace Filetypes
      * String Field.
      */
     public class StringField : FieldInstance {
+        private static Encoding stringEncoding = Encoding.Unicode;
+        public static Encoding StringEncoding {
+            get {
+                return stringEncoding;
+            }
+            set {
+                stringEncoding = value;
+            }
+        }
+
         public StringField() : base(Types.StringType(), "") {}
         public override int Length {
             get {
-                return 2 * Value.Length + 2;
+                return Value.Length * (stringEncoding.IsSingleByte ? 1 : 2) + 2;
             }
         }
         public override void Decode(BinaryReader reader) {
-            Value = IOFunctions.readCAString (reader);
+            Value = IOFunctions.readCAString (reader, stringEncoding);
         }
         public override void Encode(BinaryWriter writer) {
-            IOFunctions.writeCAString (writer, Value.Trim());
+            IOFunctions.writeCAString (writer, Value.Trim(), stringEncoding);
         }
     }
 
@@ -183,7 +193,7 @@ namespace Filetypes
             string result = "";
             byte b = reader.ReadByte ();
             if (b == 1) {
-                result = IOFunctions.readCAString (reader);
+                result = IOFunctions.readCAString (reader, StringField.StringEncoding);
             } else if (b != 0) {
                 throw new InvalidDataException (string.Format("- invalid - ({0:x2})", b));
             }
@@ -192,13 +202,17 @@ namespace Filetypes
 
         public override int Length {
             get {
-                return 2 * (Value.Length) + (Value.Length == 0 ? 1 : 3);
+                int len = Value.Length * (StringField.StringEncoding.IsSingleByte ? 1 : 2);
+                // 1 byte for true/false, two for string length if not empty
+                len += (Value.Length == 0 ? 1 : 3);
+                return len;
+                // return 2 * (Value.Length) + (Value.Length == 0 ? 1 : 3);
             }
         }
         public override void Encode(BinaryWriter writer) {
             writer.Write (Value.Length > 0);
             if (Value.Length > 0) {
-                IOFunctions.writeCAString (writer, Value.Trim());
+                IOFunctions.writeCAString (writer, Value.Trim(), StringField.StringEncoding);
             }
         }
     }
@@ -210,6 +224,9 @@ namespace Filetypes
         public VarByteField() : this(1) {}
         public VarByteField(int len) : base(Types.ByteType()) { Length = len; }
         public override void Decode(BinaryReader reader) {
+#if DEBUG
+            Console.WriteLine("decoding {0} bytes", Length);
+#endif
             if (Length == 0) {
                 Value = "";
                 return;
@@ -220,6 +237,9 @@ namespace Filetypes
             for (int i = 1; i < bytes.Length; i++) {
                 result.Append (string.Format (" {0:x2}", bytes [i]));
             }
+#if DEBUG
+            Console.WriteLine("decoded {0} bytes as '{1}'", Length, result);
+#endif
             base.Value = result.ToString ();
         }
         public override void Encode(BinaryWriter writer) {
@@ -233,13 +253,20 @@ namespace Filetypes
                 return base.Value;
             }
             set {
-                StringBuilder result = new StringBuilder(value.Length);
-                string[] split = value.Split(' ');
-                result.Append(string.Format("{0}", byte.Parse(split[0]).ToString()));
-                for(int i = 1; i < split.Length; i++) {
-                    result.Append(string.Format(" {0:x2}", byte.Parse(split[1]).ToString()));
+                if (string.IsNullOrEmpty(value)) {
+                    base.Value = "";
+                } else {
+#if DEBUG
+                    Console.WriteLine("parsing '{0}' as byte", value);
+#endif
+                    StringBuilder result = new StringBuilder(value.Length);
+                    string[] split = value.Split(' ');
+                    result.Append(string.Format("{0}", byte.Parse(split[0]).ToString()));
+                    for(int i = 1; i < split.Length; i++) {
+                        result.Append(string.Format(" {0:x2}", byte.Parse(split[1]).ToString()));
+                    }
+                    base.Value = result.ToString();
                 }
-                base.Value = result.ToString();
             }
         }
     }

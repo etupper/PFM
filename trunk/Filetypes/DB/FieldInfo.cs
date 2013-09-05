@@ -242,6 +242,9 @@ namespace Filetypes
             byteCount = bytes;
 		}
         public override FieldInstance CreateInstance() {
+#if DEBUG
+            Console.WriteLine("Creating varbyte instance");
+#endif
             return new VarByteField(byteCount) {
                 Name = this.Name
             };

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Common;
 using Filetypes;
 using PackFileManager.Properties;
@@ -137,6 +138,12 @@ namespace PackFileManager {
                     }
                     if (GameChanged != null) {
                         GameChanged();
+                    }
+                    // Rome II uses ASCII encoding
+                    if (current == Game.R2TW) {
+                        StringField.StringEncoding = Encoding.ASCII;
+                    } else {
+                        StringField.StringEncoding = Encoding.Unicode;
                     }
                 }
             }

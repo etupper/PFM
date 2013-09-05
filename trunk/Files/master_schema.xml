@@ -4967,6 +4967,18 @@
     <field name='haze_index' type='int' />
     <field name='fog_index' type='int' />
   </table>
+  <table table_name='battle_climate_weather_descriptions_tables'
+         table_version='1'
+         guid='3b459e42-999f-4722-89d4-b3a18811cec2'>
+    <field name='key' type='string' pk='true' />
+    <field fkey='climates_tables.climate_type' name='climate_type' type='string' />
+    <field fkey='seasons_tables.season' name='season' type='string' />
+    <field fkey='battle_weather_types_tables.key' name='weather_type' type='string' />
+    <field name='probability' type='int' />
+    <field name='ambient_fog_probability' type='int' />
+    <field name='volumetric_fog_probability' type='int' />
+    <field name='unknown' type='float' />
+  </table>
   <table table_name='battle_entities_tables'
          table_version='0'
          guid='19d6ea60-c1d9-4cce-bf84-93f6038b0cb5,
@@ -5289,6 +5301,16 @@
     <field fkey='effects_tables.effect' name='effect' type='string' pk='true' />
     <field name='value' type='float' />
   </table>
+  <table table_name='building_effects_junction_tables'
+         table_version='3'
+         guid='9f2d4977-c4c3-4074-9b26-87dfb4c95819'>
+    <field fkey='building_levels_tables.level_name' name='building' type='string' pk='true' />
+    <field fkey='effects_tables.effect' name='effect' type='string' pk='true' />
+    <field name='effected' type='string' />
+    <field name='unknown' type='float' />
+    <field name='unknown' type='float' />
+    <field name='unknown' type='float' />
+  </table>
   <table table_name='building_factionwide_effects_junctions_tables'
          table_version='0'
          guid='175905d8-d4c2-45a4-83b8-914880932f26,
@@ -5312,6 +5334,14 @@
     <field name='unknown3' type='float' />
     <field name='priority' type='int' />
     <field fkey='units_tables.key' name='unit' type='string' />
+  </table>
+  <table table_name='building_level_armed_citizenry_junctions_tables'
+         table_version='1'
+         guid='81712456-019d-4223-8726-ceb6a422fbec'>
+    <field fkey='building_levels_tables.level_name' name='building_level' type='string' />
+    <field name='id' type='int' />
+    <field name='unknown3' type='float' />
+    <field name='unknown' type='string' />
   </table>
   <table table_name='building_level_required_technology_junctions_tables'
          table_version='0'
@@ -5399,6 +5429,43 @@
     <field name='unique_index' type='int' version_start='2' />
     <field fkey='warscape_rigid_tables.key' name='damage_model' type='optstring' version_start='3' />
   </table>
+  <table table_name='building_levels_tables'
+         table_version='6'
+         guid='42622828-b59f-4fd2-a5a1-a5f37a50150c'>
+    <field name='level_name' type='string' pk='true' />
+    <field fkey='building_chains_tables.key' name='Building Chain' type='string' />
+    <field name='level' type='int' />
+    <field name='condition' type='string' />
+    <field name='Create Time' type='int' />
+    <field name='create_cost' type='int' />
+    <field name='Upkeep Cost' type='int' />
+    <field name='Demolition Cost' type='int' />
+    <field name='ZOC' type='int' />
+    <field name='Lower Happiness' type='int' />
+    <field name='Upper Happiness' type='int' />
+    <field name='Repression' type='int' />
+    <field name='GDP' type='int' />
+    <field name='Town Wealth Growth' type='int' />
+    <field name='Population Change' type='int' />
+    <field name='Max Population Change' type='int' />
+    <field name='Commodity' type='string' />
+    <field name='unknown18' type='boolean' />
+    <field name='unknown19' type='boolean' />
+    <field name='unknown20' type='int' />
+    <field name='Unique' type='boolean' />
+    <field name='military_prestige' type='int' />
+    <field name='naval_prestige' type='int' />
+    <field name='economic_prestige' type='int' />
+    <field name='enlightenment_prestige' type='int' />
+    <field name='unknown26' type='int' />
+    <field name='unknown27' type='optstring' />
+    <field name='unknown28' type='string' />
+    <field name='unknown29' type='int' />
+    <field name='unknown30' type='boolean' />
+    <field name='unknown31' type='optstring' />
+    <field name='unknown32' type='string' />
+    <field name='unknown33' type='boolean' />
+  </table>
   <table table_name='building_to_unit_abilities_junctions_tables'
          table_version='0'
          guid='d2ede02b-bf0f-4292-a86e-6544d52c82a7'>
@@ -5427,6 +5494,18 @@
     <field name='unknown9' type='boolean' version_start='2' />
     <field fkey='factions_tables.key' name='faction' type='optstring' version_start='2' />
     <field name='unknown11' type='boolean' version_start='2' />
+  </table>
+  <table table_name='building_units_allowed_tables'
+         table_version='3'
+         guid='98965008-9caa-42bf-8a8c-94b4e3d0b7ce'>
+    <field fkey='building_levels_tables.level_name' name='Building' type='string' pk='true' />
+    <field fkey='units_tables.key' name='unit' type='string' pk='true' />
+    <field name='XP' type='int' />
+    <field name='Condition' type='boolean' />
+    <field name='unknown5' type='int' />
+    <field name='unknown6' type='int' />
+    <field name='unknown7' type='boolean' />
+    <field name='unknown8' type='boolean' />
   </table>
   <table table_name='building_upgrades_junction_tables'
          table_version='0'
@@ -6357,6 +6436,15 @@
     <field name='value' type='float' />
     <field name='is_factionwide' type='boolean' version_start='1' />
   </table>
+  <table table_name='character_skill_level_to_effects_junctions_tables'
+         table_version='1'
+         guid='658c603a-706a-46be-b62e-7211d2a6c0e6'>
+    <field fkey='character_skills_tables.key' name='character_skill_key' type='string' />
+    <field fkey='effects_tables.effect' name='effect_key' type='string' />
+    <field name='effected' type='string' />
+    <field name='level' type='int' />
+    <field name='value' type='float' />
+  </table>
   <table table_name='character_skill_node_links_tables'
          table_version='1'
          guid='58320170-7b11-4094-a70d-9e99e78a9cb5,
@@ -6534,6 +6622,11 @@
                e43c4984-6960-489a-8377-f54bf2d4ce34,
                f36c336a-b458-4600-87fd-55b37e439d8f'>
     <field name='key' type='string' pk='true' />
+  </table>
+  <table name='diplomacy_negotiation_attitudes_tables'>
+    <field name='attitude_name' type='string' />
+    <field name='unknown1' type='int' />
+    <field name='unknown2' type='int' />
   </table>
   <table table_name='diplomacy_negotiation_faction_override_strings_tables'
          table_version='0'
