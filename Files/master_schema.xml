@@ -5008,6 +5008,35 @@
     <field name='turn_speed' type='float' />
     <field name='hit_points' type='int' />
   </table>
+  <table table_name='battle_entities_tables'
+         table_version='5'
+         guid='342349e1-b8f2-4b7f-9383-6c5177921686'>
+    <field name='key' type='string' pk='true' />
+    <field fkey='battle_entities_types_enum_tables.key' name='type' type='string' />
+    <field name='walk_speed' type='float' />
+    <field name='run_speed' type='float' />
+    <field name='acceleration' type='float' />
+    <field name='deceleration' type='float' />
+    <field name='charge_speed' type='float' />
+    <field name='crawl_speed' type='float' />
+    <field name='charge_distance_commence_run' type='float' />
+    <field name='charge_distance_adopt_charge_pose' type='float' />
+    <field name='charge_distance_pick_target' type='float' />
+    <field name='radius' type='float' />
+    <field fkey='battle_entities_shape_enum_tables.key' name='shape' type='string' />
+    <field name='radii_ratio' type='float' />
+    <field name='mass' type='float' />
+    <field name='height' type='float' />
+    <field name='fire_arc_close' type='float' />
+    <field name='fire_arc_loose' type='float' />
+    <field name='turn_speed' type='float' />
+    <field name='hit_points' type='int' />
+    <field name='allow static turn anim' type='boolean' />
+    <field name='allow turn to move anim' type='boolean' />
+    <field name='tracking threshold' type='float' />
+    <field name='min turning speed' type='float' />
+    <field name='display model offset z' type='float' />
+  </table>
   <table table_name='battle_personalities_tables'
          table_version='0'
          guid='03df1da6-9a45-4289-9ae0-dd91dd3d1513,
@@ -7839,6 +7868,44 @@
     <field name='can_penetrate_fortwall' type='boolean' version_start='5' />
     <field name='gravity' type='float' version_start='5' />
   </table>
+  <table table_name='projectiles_tables'
+         table_version='20'
+         guid='b3483a86-fde8-4896-97e3-7b6023953274'>
+    <field name='key' type='string' pk='true' />
+    <field name='Category' type='string' />
+    <field fkey='projectile_shot_type_enum_tables.key' name='shot_type' type='optstring' />
+    <field name='explosiontype' type='string' />
+    <field name='spin type' type='string' />
+    <field name='projectile number' type='int' />
+    <field name='trajectory sight' type='string' />
+    <field name='effective range' type='int' />
+    <field name='minimum range' type='int' />
+    <field name='maximum range' type='int' />
+    <field name='muzzle velocity' type='float' />
+    <field name='marksmanship bonus' type='float' />
+    <field name='ap damage' type='float' />
+    <field name='damage' type='int' />
+    <field name='spread' type='float' />
+    <field name='penetration' type='optstring' />
+    <field name='can bounce' type='boolean' />
+    <field name='can damage buildings' type='boolean' />
+    <field name='is grapple' type='boolean' />
+    <field name='collision radius' type='float' />
+    <field name='base reload time' type='float' />
+    <field name='below waterline damage mod' type='float' />
+    <field name='calibration distance' type='float' />
+    <field name='calibration area' type='float' />
+    <field name='bonus v cav' type='float' />
+    <field name='bonus v elephant' type='float' />
+    <field name='bonus v infantry' type='float' />
+    <field name='projectile display' type='optstring' />
+    <field name='high air resistance' type='boolean' />
+    <field name='projectile audio' type='string' />
+    <field name='shockwave radius' type='float' />
+    <field name='unknown' type='boolean' />
+    <field name='contact stat effect' type='optstring' />
+    <field name='unknown' type='boolean' />
+  </table>
   <table table_name='public_order_factors_tables'
          table_version='0'
          guid='1a6957bf-f191-4dd2-b8f5-a5d5f03fefaa,
@@ -8157,6 +8224,31 @@
     <field name='info_pic' type='string' />
     <field name='ai_bias' type='int' version_start='1' />
     <field name='unique_index' type='int' version_start='2' />
+  </table>
+  <table table_name='technologies_tables'
+         table_version='4'
+         guid='5f434686-d655-4522-b404-98c12f9206e9'>
+    <field name='Technology ID' type='string' pk='true' />
+    <field fkey='building_levels_tables.level_name' name='Building ID' type='string' />
+    <field name='Position Index' type='int' />
+    <field name='research_points_required' type='int' />
+    <field name='icon_name' type='string' />
+    <field name='military_prestige' type='int' />
+    <field name='naval_prestige' type='int' />
+    <field name='economic_prestige' type='int' />
+    <field name='enlightenment_prestige' type='int' />
+    <field name='mp_available_early' type='boolean' />
+    <field name='mp_available_late' type='boolean' />
+    <field name='info_pic' type='string' />
+    <field name='ai_bias' type='int' version_start='1' />
+    <field name='unique_index' type='int' version_start='2' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='is_civil' type='boolean' />
+    <field name='is_engineering' type='boolean' />
+    <field name='is_military' type='boolean' />
   </table>
   <table table_name='technology_categories_tables'
          table_version='0'
@@ -9250,6 +9342,14 @@
     <field name='video_name' type='string' pk='true' />
     <field fkey='video_types_tables.video_type' name='video_type' type='string' />
     <field name='audio_tracks' type='int' />
+  </table>
+  <table table_name='videos_tables'
+         table_version='2'
+         guid='861963f8-af56-47fb-9215-c961493666dd'>
+    <field name='video_name' type='string' pk='true' />
+    <field name='video_type' type='string' />
+    <field name='audio_tracks' type='int' />
+    <field name='unknown' type='int' />
   </table>
   <table table_name='voice_events_tables'
          table_version='0'
