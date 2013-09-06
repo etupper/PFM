@@ -20,6 +20,10 @@ namespace PackFileTest {
         private Dictionary<string, List<FieldInfo>> references = new Dictionary<string, List<FieldInfo>>();
         
         public SchemaIntegrator() {
+            if (!DBTypeMap.Instance.Initialized) {
+                DBTypeMap.Instance.InitializeTypeMap(Directory.GetCurrentDirectory());
+            }
+            
             Console.WriteLine("building reference cache");
             foreach(TypeInfo typeInfo in DBTypeMap.Instance) {
                 foreach(FieldInfo field in typeInfo.Fields) {
@@ -51,6 +55,14 @@ namespace PackFileTest {
                 
                 foreach(string type in importer.Descriptions.Keys) {
                     IntegrateTable(type, importer.Descriptions[type]);
+                }
+                foreach(GuidTypeInfo info in importer.GuidToDescriptions.Keys) {
+                    if (!DBTypeMap.Instance.GuidMap.ContainsKey(info)) {
+                        List<FieldInfo> infos;
+                        if (importer.GuidToDescriptions.TryGetValue(info, out infos)) {
+                            DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, infos);
+                        }
+                    }
                 }
             }
         }

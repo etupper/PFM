@@ -15,6 +15,7 @@ namespace DecodeTool {
     public class Transformations {
         public static readonly ITransform[] TRANSFORMS = new ITransform[] {
             new FixedTransform("optstring", "boolean"),
+            new EncodingTransform(),
             new FixedTransform("4*boolean", "int"),
             new FixedTransform("int", "float"),
             new FixedTransform ("string", "int"),
@@ -22,6 +23,40 @@ namespace DecodeTool {
             new ListAdd(),
             new ListDissolve()
         };
+    }
+    
+    public class EncodingTransform : ITransform {
+        public string Name { get { return "change Encoding"; }}
+        static List<string> valid = new List<string>(new string[] {
+            "string", "string_ascii", "optstring", "optstring_ascii"
+        });
+        
+        public bool CanTransform(List<FieldInfo> infos) {
+            bool result = infos.Count > 0;
+            foreach(FieldInfo info in infos) {
+                if (!valid.Contains(info.TypeName)) {
+                    result = false;
+                    break;
+                }
+            }
+            return result;
+        }
+        
+        public List<FieldInfo> Transform(List<FieldInfo> infos) {
+            List<FieldInfo> result = new List<FieldInfo>();
+            foreach(FieldInfo info in infos) {
+                string newTypeName = "";
+                if (info.TypeName.Contains("_ascii")) {
+                    newTypeName = info.TypeName.Remove(info.TypeName.IndexOf("_ascii"));
+                } else {
+                    newTypeName = string.Format("{0}_ascii", info.TypeName);
+                }
+                FieldInfo transformed = Types.FromTypeName(newTypeName);
+                transformed.Name = info.Name;
+                result.Add (transformed);
+            }
+            return result;
+        }
     }
     
     /*

@@ -102,33 +102,38 @@ namespace Filetypes {
          * Collect the given node's attributes and create a field from them. 
          */
         FieldInfo FromNode(XmlNode fieldNode, bool unify) {
-			XmlAttributeCollection attributes = fieldNode.Attributes;
-			string name = attributes ["name"].Value;
-			string type = attributes ["type"].Value;
-			FieldInfo description = Types.FromTypeName (type);
-			description.Name = name;
-			if (attributes ["fkey"] != null) {
-				string reference = attributes ["fkey"].Value;
-				if (unify) {
-					reference = UnifyName (reference);
-				}
-				description.ForeignReference = reference;
-			}
-			if (attributes ["version_start"] != null) {
-				description.StartVersion = int.Parse (attributes ["version_start"].Value);
-			}
-			if (attributes ["version_end"] != null) {
-				description.LastVersion = int.Parse (attributes ["version_end"].Value);
-			}
-			if (attributes ["pk"] != null) {
-				description.PrimaryKey = true;
-			}
-            
-            ListType list = description as ListType;
-            if (list != null) {
-                FillFieldList(list.Infos, fieldNode.ChildNodes, unify);
-            }
+            FieldInfo description = null;
+            try {
+    			XmlAttributeCollection attributes = fieldNode.Attributes;
+    			string name = attributes ["name"].Value;
+    			string type = attributes ["type"].Value;
+    			description = Types.FromTypeName (type);
+    			description.Name = name;
+    			if (attributes ["fkey"] != null) {
+    				string reference = attributes ["fkey"].Value;
+    				if (unify) {
+    					reference = UnifyName (reference);
+    				}
+    				description.ForeignReference = reference;
+    			}
+    			if (attributes ["version_start"] != null) {
+    				description.StartVersion = int.Parse (attributes ["version_start"].Value);
+    			}
+    			if (attributes ["version_end"] != null) {
+    				description.LastVersion = int.Parse (attributes ["version_end"].Value);
+    			}
+    			if (attributes ["pk"] != null) {
+    				description.PrimaryKey = true;
+    			}
                 
+                ListType list = description as ListType;
+                if (list != null) {
+                    FillFieldList(list.Infos, fieldNode.ChildNodes, unify);
+                }
+            } catch (Exception e) {
+                Console.WriteLine(e);
+                throw e;
+            }
 			return description;
 		}
 
