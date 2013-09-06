@@ -49,6 +49,18 @@
     <field name='Achievements' type='string' pk='true' />
     <field fkey='avatar_aesthetics_tables.key' name='aesthetic' type='optstring' version_start='1' />
   </table>
+  <table table_name='action_results_additional_outcomes_tables'
+         table_version='2'
+         guid='f1535add-21f7-4b43-b2fd-8a27d0ef623a'>
+    <field name='outcome' type='string_ascii' />
+    <field name='action_result_key' type='string_ascii' />
+    <field name='value' type='float' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='effect_scope' type='optstring_ascii' />
+    <field name='key' type='string_ascii' />
+    <field name='unknown' type='boolean' />
+    <field name='opportune_failure_weighting' type='string_ascii' />
+  </table>
   <table name='advice_levels_tables'>
     <field name='key' type='string' />
     <field fkey='advice_threads_tables.thread' name='advice_thread' type='string' />
@@ -4968,6 +4980,19 @@
          guid='f74f00b3-ae5d-41a3-a066-96f179088ed1,
                fbd35e46-35ba-408d-8e97-9c32a861b9ab'>
     <field name='key' type='string' pk='true' />
+    <field name='max_height_large' type='float' />
+    <field name='max_height_small' type='float' />
+    <field name='min_fort_max_height' type='float' />
+    <field name='min_height' type='float' />
+    <field name='move_speed_max_multiplier' type='float' />
+    <field name='move_speed_min_multiplier' type='float' />
+    <field name='turn_speed_multiplier' type='float' />
+    <field name='move_fast_multiplier' type='float' />
+  </table>
+  <table table_name='battle_cameras_tables'
+         table_version='1'
+         guid='936538d6-18e7-4216-8a70-aaea9c90f0ca'>
+    <field name='key' type='string_ascii' />
     <field name='max_height_large' type='float' />
     <field name='max_height_small' type='float' />
     <field name='min_fort_max_height' type='float' />
