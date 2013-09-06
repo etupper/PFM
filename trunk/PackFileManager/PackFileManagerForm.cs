@@ -550,7 +550,8 @@ namespace PackFileManager
         }
 
         private void NewMod(string name) {
-            CurrentPackFile = new PackFile(name, new PFHeader("PFH3"));
+            string packType = GameManager.Instance.CurrentGame.DefaultPfhType;
+            CurrentPackFile = new PackFile(name, new PFHeader(packType));
         }
         
         private void installModMenuItem_Click(object sender, EventArgs e) {
@@ -809,7 +810,8 @@ namespace PackFileManager
                 // best used if a db file...
                 try {
                     string key = DBFile.typename(packedFile.FullPath);
-                    decoder = new DecodeTool.DecodeTool { TypeName = key, Bytes = packedFile.Data };
+                    bool unicode = GameManager.Instance.CurrentGame != Game.R2TW;
+                    decoder = new DecodeTool.DecodeTool(unicode) { TypeName = key, Bytes = packedFile.Data };
                     decoder.ShowDialog();
                 } catch (Exception ex) {
                     MessageBox.Show (string.Format("DecodeTool could not be opened:\n{0}", ex.Message), 
@@ -840,10 +842,6 @@ namespace PackFileManager
             }
             
             OpenPackedFile(editor, packedFile);
-
-            if (packedFile.FullPath.Contains(".rigid")) {
-                // viewModel(packedFile);
-            }
         }
         
         private void OpenPackedFile(IPackedFileEditor editor, PackedFile packedFile) {

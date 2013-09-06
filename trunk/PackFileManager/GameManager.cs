@@ -43,7 +43,7 @@ namespace PackFileManager {
             }
             // no game installed?
             if (CurrentGame == null) {
-                CurrentGame = Game.STW;
+                CurrentGame = Game.R2TW;
             }
 
 #if DEBUG
@@ -138,12 +138,6 @@ namespace PackFileManager {
                     }
                     if (GameChanged != null) {
                         GameChanged();
-                    }
-                    // Rome II uses ASCII encoding
-                    if (current == Game.R2TW) {
-                        StringField.StringEncoding = Encoding.ASCII;
-                    } else {
-                        StringField.StringEncoding = Encoding.Unicode;
                     }
                 }
             }

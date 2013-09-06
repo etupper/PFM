@@ -57,6 +57,9 @@ namespace PackFileTest {
         // test the given packed file as a database file
         // tests PackedFileCodec and the db definitions we have
         public override void TestFile(PackedFile file) {
+            if (!DBTypeMap.Instance.Initialized) {
+                DBTypeMap.Instance.InitializeTypeMap(Directory.GetCurrentDirectory());
+            }
             allTestedFiles.Add(file.FullPath);
             if (file.Size == 0) {
                 emptyTables.Add(new Tuple<string, int>(DBFile.typename(file.FullPath), -1));

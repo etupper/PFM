@@ -56,13 +56,13 @@ namespace Filetypes {
             foreach(TypeInfo realInfo in DBTypeMap.Instance.GetVersionedInfos(typeName, header.Version)) {
                 try {
 #if DEBUG
-                    //Console.WriteLine("Parsing with info {0}", string.Join(",", realInfo.Fields));
+                    Console.WriteLine("Parsing version {1} with info {0}", string.Join(",", realInfo.Fields), header.Version);
 #endif  
                     DBFile result = ReadFile(reader, header, realInfo);
                     return result;
 #if DEBUG
                 } catch (Exception e) {
-                    Console.Error.WriteLine(e);
+                    Console.WriteLine(e.StackTrace);
                 } 
 #else
                 } catch {}
@@ -71,11 +71,6 @@ namespace Filetypes {
             throw new DBFileNotSupportedException(string.Format("No applicable type definition found"));
 		}
         public DBFile ReadFile(BinaryReader reader, DBFileHeader header, TypeInfo info) {
-#if DEBUG
-            if (info.Name.Equals("campaign_map_towns_and_ports_tables")) {
-                Console.WriteLine("we're here");
-            }
-#endif
             reader.BaseStream.Position = header.Length;
             DBFile file = new DBFile (header, info);
             int i = 0;

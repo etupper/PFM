@@ -35,6 +35,7 @@
             this.parseFromStartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
             this.more4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
             this.more5ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            this.toggleEncodingStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer ();
             this.hexView = new System.Windows.Forms.RichTextBox ();
             this.navigationPanel = new System.Windows.Forms.Panel ();
@@ -57,6 +58,7 @@
             this.singleType = new TypeSelection ();
             this.boolType = new TypeSelection ();
             this.deleteButton = new System.Windows.Forms.Button ();
+            this.nameButton = new System.Windows.Forms.Button ();
             this.intType = new TypeSelection ();
             this.stringType = new TypeSelection ();
             this.typeNameLabel = new System.Windows.Forms.Label ();
@@ -135,7 +137,7 @@
             // 
             this.moreToolStripMenuItem.DropDownItems.AddRange (new System.Windows.Forms.ToolStripItem[] {
             this.transformToolStripMenuItem, this.parseHereToolStripMenuItem, this.parseFromStartToolStripMenuItem, 
-                this.more4ToolStripMenuItem, this.more5ToolStripMenuItem, });
+                this.more4ToolStripMenuItem, this.more5ToolStripMenuItem, toggleEncodingStripMenuItem  });
             this.moreToolStripMenuItem.Name = "moreToolStripMenuItem";
             this.moreToolStripMenuItem.Size = new System.Drawing.Size (47, 20);
             this.moreToolStripMenuItem.Text = "More";
@@ -179,6 +181,12 @@
             this.more5ToolStripMenuItem.Text = "Bool <-> OptString";
             this.more5ToolStripMenuItem.Visible = false;
             //this.more5ToolStripMenuItem.Click += new System.EventHandler(this.ToggleBoolOptstring);
+            // 
+            this.toggleEncodingStripMenuItem.Name = "toggleEncodingStripMenuItem";
+            this.toggleEncodingStripMenuItem.Size = new System.Drawing.Size (176, 22);
+            this.toggleEncodingStripMenuItem.Text = "Toggle encoding";
+            this.toggleEncodingStripMenuItem.Visible = true;
+            this.toggleEncodingStripMenuItem.Click += toggleEncoding;
             // 
             // splitContainer1
             // 
@@ -324,48 +332,13 @@
             this.typePreviewPanel.Controls.Add (this.singleType);
             this.typePreviewPanel.Controls.Add (this.boolType);
             this.typePreviewPanel.Controls.Add (this.deleteButton);
+            this.typePreviewPanel.Controls.Add (this.nameButton);
             this.typePreviewPanel.Controls.Add (this.intType);
             this.typePreviewPanel.Controls.Add (this.stringType);
             this.typePreviewPanel.Location = new System.Drawing.Point (7, 288);
             this.typePreviewPanel.Name = "typePreviewPanel";
             this.typePreviewPanel.Size = new System.Drawing.Size (415, 250);
             this.typePreviewPanel.TabIndex = 14;
-            // 
-            // optstringLabel
-            // 
-            this.optstringLabel.AutoSize = true;
-            this.optstringLabel.Location = new System.Drawing.Point (2, 159);
-            this.optstringLabel.Name = "optstringLabel";
-            this.optstringLabel.Size = new System.Drawing.Size (47, 13);
-            this.optstringLabel.TabIndex = 23;
-            this.optstringLabel.Text = "optstring";
-            // 
-            // floatLabel
-            // 
-            this.floatLabel.AutoSize = true;
-            this.floatLabel.Location = new System.Drawing.Point (2, 127);
-            this.floatLabel.Name = "floatLabel";
-            this.floatLabel.Size = new System.Drawing.Size (27, 13);
-            this.floatLabel.TabIndex = 22;
-            this.floatLabel.Text = "float";
-            // 
-            // boolLabel
-            // 
-            this.boolLabel.AutoSize = true;
-            this.boolLabel.Location = new System.Drawing.Point (2, 89);
-            this.boolLabel.Name = "boolLabel";
-            this.boolLabel.Size = new System.Drawing.Size (27, 13);
-            this.boolLabel.TabIndex = 21;
-            this.boolLabel.Text = "bool";
-            // 
-            // intLabel
-            // 
-            this.intLabel.AutoSize = true;
-            this.intLabel.Location = new System.Drawing.Point (2, 55);
-            this.intLabel.Name = "intLabel";
-            this.intLabel.Size = new System.Drawing.Size (18, 13);
-            this.intLabel.TabIndex = 20;
-            this.intLabel.Text = "int";
             // 
             // stringLabel
             // 
@@ -396,30 +369,6 @@
             this.showTypes.UseVisualStyleBackColor = true;
             this.showTypes.Click += new System.EventHandler (this.showTypes_Click);
             // 
-            // optStringType
-            // 
-            this.optStringType.Location = new System.Drawing.Point (55, 150);
-            this.optStringType.Name = "optStringType";
-            this.optStringType.Size = new System.Drawing.Size (302, 31);
-            this.optStringType.TabIndex = 16;
-            this.optStringType.Type = null;
-            // 
-            // singleType
-            // 
-            this.singleType.Location = new System.Drawing.Point (55, 118);
-            this.singleType.Name = "singleType";
-            this.singleType.Size = new System.Drawing.Size (302, 31);
-            this.singleType.TabIndex = 15;
-            this.singleType.Type = null;
-            // 
-            // boolType
-            // 
-            this.boolType.Location = new System.Drawing.Point (55, 84);
-            this.boolType.Name = "boolType";
-            this.boolType.Size = new System.Drawing.Size (302, 28);
-            this.boolType.TabIndex = 14;
-            this.boolType.Type = null;
-            // 
             // deleteButton
             // 
             this.deleteButton.Location = new System.Drawing.Point (3, 224);
@@ -430,13 +379,15 @@
             this.deleteButton.UseVisualStyleBackColor = true;
             this.deleteButton.Click += new System.EventHandler (this.DeleteType);
             // 
-            // intType
+            // nameButton
             // 
-            this.intType.Location = new System.Drawing.Point (55, 46);
-            this.intType.Name = "intType";
-            this.intType.Size = new System.Drawing.Size (302, 33);
-            this.intType.TabIndex = 12;
-            this.intType.Type = null;
+            this.nameButton.Location = new System.Drawing.Point (90, 224);
+            this.nameButton.Name = "nameButton";
+            this.nameButton.Size = new System.Drawing.Size (75, 23);
+            this.nameButton.TabIndex = 13;
+            this.nameButton.Text = "Name";
+            this.nameButton.UseVisualStyleBackColor = true;
+            this.nameButton.Click += new System.EventHandler (this.NameType);
             // 
             // stringType
             // 
@@ -445,6 +396,99 @@
             this.stringType.Size = new System.Drawing.Size (302, 31);
             this.stringType.TabIndex = 11;
             this.stringType.Type = null;
+            // 
+            // stringTypeAscii
+            // 
+//            this.stringType.Location = new System.Drawing.Point (55, 9);
+//            this.stringType.Name = "stringTypeAscii";
+//            this.stringType.Size = new System.Drawing.Size (302, 31);
+//            this.stringType.TabIndex = 11;
+//            this.stringType.Type = null;
+            // 
+            // intLabel
+            // 
+            this.intLabel.AutoSize = true;
+            this.intLabel.Location = new System.Drawing.Point (2, 55);
+            this.intLabel.Name = "intLabel";
+            this.intLabel.Size = new System.Drawing.Size (18, 13);
+            this.intLabel.TabIndex = 20;
+            this.intLabel.Text = "int";
+            // 
+            // intType
+            // 
+            this.intType.Location = new System.Drawing.Point (55, 46);
+            this.intType.Name = "intType";
+            this.intType.Size = new System.Drawing.Size (302, 33);
+            this.intType.TabIndex = 12;
+            this.intType.Type = null;
+            // 
+            // boolLabel
+            // 
+            this.boolLabel.AutoSize = true;
+            this.boolLabel.Location = new System.Drawing.Point (2, 89);
+            this.boolLabel.Name = "boolLabel";
+            this.boolLabel.Size = new System.Drawing.Size (27, 13);
+            this.boolLabel.TabIndex = 21;
+            this.boolLabel.Text = "bool";
+            // 
+            // boolType
+            // 
+            this.boolType.Location = new System.Drawing.Point (55, 84);
+            this.boolType.Name = "boolType";
+            this.boolType.Size = new System.Drawing.Size (302, 28);
+            this.boolType.TabIndex = 14;
+            this.boolType.Type = null;
+            // 
+            // floatLabel
+            // 
+            this.floatLabel.AutoSize = true;
+            this.floatLabel.Location = new System.Drawing.Point (2, 127);
+            this.floatLabel.Name = "floatLabel";
+            this.floatLabel.Size = new System.Drawing.Size (27, 13);
+            this.floatLabel.TabIndex = 22;
+            this.floatLabel.Text = "float";
+            // 
+            // singleType
+            // 
+            this.singleType.Location = new System.Drawing.Point (55, 118);
+            this.singleType.Name = "singleType";
+            this.singleType.Size = new System.Drawing.Size (302, 31);
+            this.singleType.TabIndex = 15;
+            this.singleType.Type = null;
+            // 
+            // optstringLabel
+            // 
+            this.optstringLabel.AutoSize = true;
+            this.optstringLabel.Location = new System.Drawing.Point (2, 159);
+            this.optstringLabel.Name = "optstringLabel";
+            this.optstringLabel.Size = new System.Drawing.Size (47, 13);
+            this.optstringLabel.TabIndex = 23;
+            this.optstringLabel.Text = "optstring";
+            // 
+            // optStringType
+            // 
+            this.optStringType.Location = new System.Drawing.Point (55, 150);
+            this.optStringType.Name = "optStringType";
+            this.optStringType.Size = new System.Drawing.Size (302, 31);
+            this.optStringType.TabIndex = 16;
+            this.optStringType.Type = null;
+            // 
+            // byteLabel
+            // 
+            this.byteLabel.AutoSize = true;
+            this.byteLabel.Location = new System.Drawing.Point (2, 196);
+            this.byteLabel.Name = "byteLabel";
+            this.byteLabel.Size = new System.Drawing.Size (27, 13);
+            this.byteLabel.TabIndex = 25;
+            this.byteLabel.Text = "byte";
+            // 
+            // byteType
+            // 
+            this.byteType.Location = new System.Drawing.Point (55, 187);
+            this.byteType.Name = "byteType";
+            this.byteType.Size = new System.Drawing.Size (302, 31);
+            this.byteType.TabIndex = 24;
+            this.byteType.Type = null;
             // 
             // typeNameLabel
             // 
@@ -504,23 +548,6 @@
             this.repeatInfo.TabIndex = 9;
             this.repeatInfo.Text = "select data...";
             // 
-            // byteLabel
-            // 
-            this.byteLabel.AutoSize = true;
-            this.byteLabel.Location = new System.Drawing.Point (2, 196);
-            this.byteLabel.Name = "byteLabel";
-            this.byteLabel.Size = new System.Drawing.Size (27, 13);
-            this.byteLabel.TabIndex = 25;
-            this.byteLabel.Text = "byte";
-            // 
-            // byteType
-            // 
-            this.byteType.Location = new System.Drawing.Point (55, 187);
-            this.byteType.Name = "byteType";
-            this.byteType.Size = new System.Drawing.Size (302, 31);
-            this.byteType.TabIndex = 24;
-            this.byteType.Type = null;
-            // 
             // DecodeTool
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF (6F, 13F);
@@ -572,6 +599,7 @@
         private TypeSelection singleType;
         private TypeSelection boolType;
         private System.Windows.Forms.Button deleteButton;
+        private System.Windows.Forms.Button nameButton;
         private TypeSelection intType;
         private TypeSelection stringType;
         private System.Windows.Forms.SplitContainer listSplitter;
@@ -584,6 +612,7 @@
         private System.Windows.Forms.ToolStripMenuItem parseFromStartToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem more4ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem more5ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toggleEncodingStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.Button setButton;
         private System.Windows.Forms.Label stringLabel;

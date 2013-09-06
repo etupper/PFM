@@ -71,15 +71,7 @@ namespace Filetypes
      * String Field.
      */
     public class StringField : FieldInstance {
-        private static Encoding stringEncoding = Encoding.Unicode;
-        public static Encoding StringEncoding {
-            get {
-                return stringEncoding;
-            }
-            set {
-                stringEncoding = value;
-            }
-        }
+        protected Encoding stringEncoding = Encoding.Unicode;
 
         public StringField() : base(Types.StringType(), "") {}
         public override int Length {
@@ -93,6 +85,10 @@ namespace Filetypes
         public override void Encode(BinaryWriter writer) {
             IOFunctions.writeCAString (writer, Value.Trim(), stringEncoding);
         }
+    }
+    
+    public class StringFieldAscii : StringField {
+        public StringFieldAscii() : base() { stringEncoding = Encoding.ASCII; }
     }
 
     /*
@@ -188,12 +184,13 @@ namespace Filetypes
      * Opt String Field.
      */
     public class OptStringField : FieldInstance {
+        protected Encoding stringEncoding = Encoding.Unicode;
         public OptStringField() : base(Types.OptStringType()) {}
         public override void Decode(BinaryReader reader) {
             string result = "";
             byte b = reader.ReadByte ();
             if (b == 1) {
-                result = IOFunctions.readCAString (reader, StringField.StringEncoding);
+                result = IOFunctions.readCAString (reader, stringEncoding);
             } else if (b != 0) {
                 throw new InvalidDataException (string.Format("- invalid - ({0:x2})", b));
             }
@@ -202,7 +199,7 @@ namespace Filetypes
 
         public override int Length {
             get {
-                int len = Value.Length * (StringField.StringEncoding.IsSingleByte ? 1 : 2);
+                int len = Value.Length * (stringEncoding.IsSingleByte ? 1 : 2);
                 // 1 byte for true/false, two for string length if not empty
                 len += (Value.Length == 0 ? 1 : 3);
                 return len;
@@ -212,9 +209,12 @@ namespace Filetypes
         public override void Encode(BinaryWriter writer) {
             writer.Write (Value.Length > 0);
             if (Value.Length > 0) {
-                IOFunctions.writeCAString (writer, Value.Trim(), StringField.StringEncoding);
+                IOFunctions.writeCAString (writer, Value.Trim(), stringEncoding);
             }
         }
+    }
+    public class OptStringFieldAscii : OptStringField {
+        public OptStringFieldAscii() : base() { stringEncoding = Encoding.ASCII; }
     }
 
     /*

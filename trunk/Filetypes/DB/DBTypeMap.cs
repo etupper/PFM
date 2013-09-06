@@ -91,6 +91,9 @@ namespace Filetypes {
                 result.Fields.AddRange(FilterForVersion(list, version));
                 AddOrMerge(typeInfos, result);
             }
+#if DEBUG
+            Console.WriteLine("returning {0} infos", typeInfos.Count);
+#endif
             return typeInfos;
         }
         void AddOrMerge(List<TypeInfo> list, TypeInfo toAdd) {
@@ -115,6 +118,9 @@ namespace Filetypes {
             }
         }
         public void initializeFromFile(string filename) {
+#if DEBUG
+            Console.WriteLine("initializing type map from {0}", filename);
+#endif
             XmlImporter importer = null;
             using (Stream stream = File.OpenRead(filename)) {
                 importer = new XmlImporter(stream);
@@ -149,6 +155,9 @@ namespace Filetypes {
             if (File.Exists(filename)) {
                 File.Copy(filename, backupName);
             }
+#if DEBUG
+            Console.WriteLine("saving schema file {0}", filename);
+#endif
             var stream = File.Create(filename);
             new XmlExporter(stream).Export(typeMap, guidMap);
             stream.Close();
@@ -160,9 +169,15 @@ namespace Filetypes {
   
         #region Setting Changed Definitions
         public void SetByName(string key, List<FieldInfo> setTo) {
+#if DEBUG
+            Console.WriteLine("adding table definition by name for {0}", key);
+#endif
             typeMap[key] = setTo;
         }
         public void SetByGuid(string guid, string tableName, int version, List<FieldInfo> setTo) {
+#if DEBUG
+            Console.WriteLine("adding table definition by GUID {1} for {0}", tableName, guid);
+#endif
             GuidTypeInfo info = new GuidTypeInfo(guid, tableName, version);
             guidMap[info] = setTo;
         }

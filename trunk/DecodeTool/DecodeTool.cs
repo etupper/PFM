@@ -6,18 +6,26 @@ using System.Text.RegularExpressions;
 using System.Text;
 using System.Windows.Forms;
 using Common;
+using CommonDialogs;
 using Filetypes;
 
 using TableRow = System.Collections.Generic.List<Filetypes.FieldInstance>;
 
 namespace DecodeTool {
     public partial class DecodeTool : Form {
-        public DecodeTool () {
+        private bool unicode;
+        public DecodeTool (bool encodeUnicode = false) {
             InitializeComponent ();
-
+            
+            unicode = encodeUnicode;
+            
             #region Type Selection Listener Initialization
             /* Add to the TypeSelection listeners. */
-            stringType.Factory = Types.StringType;
+            if (unicode) {
+                stringType.Factory = Types.StringType;
+            } else {
+                stringType.Factory = Types.StringTypeAscii;
+            }
             stringType.Selected += AddType;
 
             intType.Factory = Types.IntType;
@@ -28,8 +36,12 @@ namespace DecodeTool {
 
             singleType.Factory = Types.SingleType;
             singleType.Selected += AddType;
-
-            optStringType.Factory = Types.OptStringType;
+   
+            if (unicode) {
+                optStringType.Factory = Types.OptStringType;
+            } else {
+                optStringType.Factory = Types.OptStringTypeAscii;
+            }
             optStringType.Selected += AddType;
 
             byteType.Factory = Types.ByteType;
@@ -66,7 +78,7 @@ namespace DecodeTool {
 				return bytes;
 			}
 		}
-       
+        
         #region Data Header
         /* The header within the data (excluded from parsing of contained values). */
         int headerLength;
@@ -256,10 +268,12 @@ namespace DecodeTool {
             }
             using (BinaryReader reader = new BinaryReader(new MemoryStream(Bytes))) {
                 DBFileHeader header = PackedFileDbCodec.readHeader(reader);
-                if (DBTypeMap.Instance.IsSupported(TypeName) && Bytes != null) {
-                    CurrentTypeInfo = DBTypeMap.Instance.GetVersionedInfo(TypeName, header.Version);
-                    guid = header.GUID;
-                    version = header.Version;
+                if (Bytes != null) {
+                    if (DBTypeMap.Instance.IsSupported(TypeName)) {
+                        guid = header.GUID;
+                        version = header.Version;
+                        CurrentTypeInfo = DBTypeMap.Instance.GetVersionedInfo(TypeName, header.Version);
+                    }
                 }
                 HeaderLength = header.Length;
                 ExpectedEntries = header.EntryCount;
@@ -446,6 +460,22 @@ namespace DecodeTool {
             }
             FieldTypes = types;
         }
+        
+        private void NameType(object sender, EventArgs e) {
+            if (typeList.Items.Count == 0) {
+                return;
+            }
+            InputBox box = new InputBox();
+            List<FieldInfo> types = new List<FieldInfo> (FieldTypes);
+            foreach(int i in typeList.SelectedIndices) {
+                box.Input = types[i].Name;
+                if (box.ShowDialog() == DialogResult.OK) {
+                    types[i].Name = box.Input;
+                }
+            }
+            FieldTypes = types;
+        }
+        
         /*
          * Menu handler for the transform menu items.
          * Apply the corresponding Transformation on the selected types.
@@ -498,7 +528,13 @@ namespace DecodeTool {
                 }
             }
         }
-        #endregion
+
+        private void toggleEncoding(object sender, EventArgs e) {
+            unicode = !unicode;
+            stringType.Factory = Types.StringTypeAscii;
+            optStringType.Factory = Types.OptStringTypeAscii;
+        }
+#endregion
 
         #region Browsing
         private void goStart_Click(object sender, EventArgs e) {
@@ -534,7 +570,11 @@ namespace DecodeTool {
 		}
 
         private void setButton_Click(object sender, EventArgs e) {
-            DBTypeMap.Instance.SetByName(TypeName, FieldTypes);
+            if (!string.IsNullOrEmpty(guid)) {
+                DBTypeMap.Instance.SetByGuid(guid, TypeName, version, FieldTypes);
+            } else {
+                DBTypeMap.Instance.SetByName(TypeName, FieldTypes);
+            }
         }
 
         #region Extended Type Management

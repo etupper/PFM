@@ -12,8 +12,12 @@ namespace Filetypes
 			switch (typeName) {
 			case "string":
 				return StringType ();
+            case "string_ascii":
+                return StringTypeAscii();
 			case "optstring":
 				return OptStringType ();
+            case "optstring_ascii":
+                return OptStringTypeAscii();
 			case "int":
 				return IntType ();
 			case "short":
@@ -30,13 +34,15 @@ namespace Filetypes
 				int length = int.Parse (lengthPart);
 				return new VarBytesType (length);
 			}
-			return null;
+            throw new InvalidOperationException(String.Format("Cannot create field info from {0}", typeName));
 		}
         public static FieldInfo StringType() { return new StringType() { Name = "unknown" }; }
+        public static FieldInfo StringTypeAscii() { return new StringTypeAscii() { Name = "unknown" }; }
         public static FieldInfo IntType() { return new IntType() { Name = "unknown" }; }
         public static FieldInfo ShortType() { return new ShortType() { Name = "unknown" }; }
         public static FieldInfo BoolType() { return new BoolType() { Name = "unknown" }; }
         public static FieldInfo OptStringType() { return new OptStringType() { Name = "unknown" }; }
+        public static FieldInfo OptStringTypeAscii() { return new OptStringTypeAscii() { Name = "unknown" }; }
         public static FieldInfo SingleType() { return new SingleType() { Name = "unknown" }; }
         public static FieldInfo ByteType() { return new VarBytesType(1) { Name = "unknown" }; }
         public static FieldInfo ListType() { return new ListType() { Name = "unknown" }; }
@@ -168,6 +174,18 @@ namespace Filetypes
             };
         }
 	}
+    class StringTypeAscii : FieldInfo {
+         public StringTypeAscii () {
+             TypeName = "string_ascii";
+             TypeCode = TypeCode.String;
+         }
+        public override FieldInstance CreateInstance() {
+            return new StringFieldAscii() {
+                Name = this.Name,
+                Value = ""
+            };
+        }
+    }
 
 	class IntType : FieldInfo {
 		public IntType () {
@@ -233,6 +251,18 @@ namespace Filetypes
             };
         }
 	}
+    class OptStringTypeAscii : FieldInfo {
+        public OptStringTypeAscii () {
+            TypeName = "optstring_ascii";
+            TypeCode = TypeCode.String;
+        }
+        public override FieldInstance CreateInstance() {
+            return new OptStringFieldAscii() {
+                Name = this.Name,
+                Value = ""
+            };
+        }
+    }
 
 	public class VarBytesType : FieldInfo {
         int byteCount;
