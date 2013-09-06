@@ -830,7 +830,7 @@ namespace PackFileManager
                 return;
             }
             PackedFileSource source = packedFile.Source as PackedFileSource;
-            string sourceInfo = (source != null) ? string.Format("offset {0}", source.Offset) : "from memory";
+            string sourceInfo = (source != null) ? string.Format("offset {0}", source.Offset.ToString("x2")) : "from memory";
             packStatusLabel.Text = String.Format("Viewing {0} ({1})", packedFile.Name, sourceInfo);
 
             IPackedFileEditor editor = null;

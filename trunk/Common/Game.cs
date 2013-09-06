@@ -9,7 +9,10 @@ namespace Common {
         private static string WIN_NODE = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {0}";
         
         public static readonly Game R2TW = new Game("R2TW", "214950", "Rome 2") {
-            DefaultPfhType = "PFH4"
+            DefaultPfhType = "PFH4",
+            GameDirectory = @"C:\Program Files (x86)\Steam\steamapps\common\Total War Rome II",
+            UserDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                                   "The Creative Assembly", "Rome2")
         };
         public static readonly Game STW = new Game("STW", "34330", "Shogun2");
         public static readonly Game NTW = new Game("NTW", "34030", "Napoleon");
