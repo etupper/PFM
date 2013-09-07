@@ -10491,6 +10491,29 @@
     <field name='info_card_tooltip_text' type='optstring' version_start='1' />
     <field name='button_tooltip_text' type='optstring' version_start='1' />
   </table>
+  <table table_name='unit_abilities_tables'
+         table_version='4'
+         guid='0eec4bcb-62dd-45fb-81ed-38c02f9ca6f2'>
+    <field name='key' type='string_ascii' />
+    <field name='stationary_for_turn' type='boolean' />
+    <field name='supersedes_ability' type='optstring_ascii' />
+    <field name='requires_effect_enabling' type='boolean' />
+    <field name='tooltip_text' type='optstring_ascii' />
+  </table>
+  <table table_name='unit_armour_types_tables'
+         table_version='1'
+         guid='ac9373fd-7f82-417a-a325-ea5df5d44e2e'>
+    <field name='armour_value' type='int' />
+    <field name='bonus_vs_missiles' type='optstring_ascii' />
+    <field name='key' type='string_ascii' />
+    <field name='weak_v_missiles' type='optstring_ascii' />
+    <field name='audio_material' type='string_ascii' />
+  </table>
+  <table table_name='unit_attributes_groups_tables'
+         table_version='0'
+         guid='104eecef-279a-4860-9d05-ab620cc7fae7'>
+    <field name='group_name' type='string_ascii' />
+  </table>
   <table table_name='unit_castes_tables'
          table_version='1'
          guid='89ff2575-c6a0-4317-8cf8-0228f3514b94,
@@ -10499,6 +10522,24 @@
                b27bb08e-e2a9-4d55-947c-9c08518e0507'>
     <field name='caste' type='string' pk='true' />
     <field name='localised_name' type='optstring' />
+  </table>
+  <table table_name='unit_attributes_tables'
+         table_version='3'
+         guid='eb2ce6b8-23f5-4406-9ccc-8333b131d1be'>
+    <field name='key' type='string_ascii' />
+  </table>
+  <table table_name='unit_attributes_to_groups_junctions_tables'
+         table_version='2'
+         guid='5e9107a4-77c3-4822-b994-cf8972197f9f'>
+    <field name='attribute' type='string_ascii' />
+    <field name='attribute_group' type='optstring_ascii' />
+  </table>
+  <table table_name='unit_castes_tables'
+         table_version='2'
+         guid='b27bb08e-e2a9-4d55-947c-9c08518e0507'>
+    <field name='caste' type='string_ascii' />
+    <field name='localised_name' type='optstring_ascii' />
+    <field name='sort_priority' type='float' />
   </table>
   <table table_name='unit_category_tables'
          table_version='1'
@@ -10527,10 +10568,18 @@
   <table table_name='unit_class_tables'
          table_version='0'
          guid='155bf0d0-6471-49bb-b216-247c4df3107a,
-               68bf6d71-9ee5-4f13-b094-ba927d711e17,
                df5412e1-95f1-4a18-8f8f-fce4e230bfa3'>
     <field name='key' type='string' pk='true' />
     <field name='onscreen' type='string' />
+  </table>
+  <table table_name='unit_class_tables'
+         table_version='3'
+         guid='68bf6d71-9ee5-4f13-b094-ba927d711e17'>
+    <field name='key' type='string_ascii' />
+    <field name='onscreen' type='string_ascii' />
+    <field name='sort_priority' type='int' />
+    <field name='icon' type='string_ascii' />
+    <field name='can_assault_settlement' type='boolean' />
   </table>
   <table table_name='unit_class_to_population_class_priorities_tables'
          table_version='0'
@@ -10546,6 +10595,34 @@
                52cd7086-a0da-4179-a762-33405609d74c'>
     <field fkey='unit_class_tables.key' name='unit_class' type='string' pk='true' />
     <field fkey='unit_abilities_tables.key' name='unit_ability' type='string' pk='true' />
+  </table>
+  <table table_name='unit_description_gameplay_texts_tables'
+         table_version='0'
+         guid='57506231-1e88-4a1a-a98b-8848ef39d776'>
+    <field name='key' type='string_ascii' />
+  </table>
+  <table table_name='unit_description_historical_texts_tables'
+         table_version='0'
+         guid='5b4d6976-f968-48eb-ba42-ae43e53d2531'>
+    <field name='key' type='string_ascii' />
+  </table>
+  <table table_name='unit_description_short_texts_tables'
+         table_version='0'
+         guid='00947d74-182c-469e-b164-0e73440988c1'>
+    <field name='key' type='string_ascii' />
+  </table>
+  <table table_name='unit_description_strengths_weaknesses_texts_tables'
+         table_version='0'
+         guid='d04784d8-4807-4076-b4ea-2815f7d25295'>
+    <field name='key' type='string_ascii' />
+  </table>
+  <table table_name='unit_experience_bonuses_tables'
+         table_version='1'
+         guid='4ced22a7-1eb9-4a21-9082-5af03faf84a0'>
+    <field name='stat' type='string_ascii' />
+    <field name='value' type='float' />
+    <field name='growth_rate' type='float' />
+    <field name='growth_scalar' type='float' />
   </table>
   <table table_name='unit_experience_threshold_modifiers_tables'
          table_version='0'
@@ -10580,6 +10657,13 @@
     <field name='fatigue_level' type='string_ascii' />
     <field name='stat' type='string_ascii' />
     <field name='value' type='float' />
+  </table>
+  <table table_name='unit_ground_type_movement_modifiers_tables'
+         table_version='0'
+         guid='7e9a5770-06db-4646-bebd-30adabb7f3a6'>
+    <field name='unit_class' type='string_ascii' />
+    <field name='terrain_type' type='string_ascii' />
+    <field name='modifier' type='float' />
   </table>
   <table table_name='unit_info_card_abilities_strings_tables'
          table_version='1'
@@ -10622,6 +10706,21 @@
     <field fkey='units_tables.key' name='unit_key' type='string_ascii' />
     <field fkey='technologies_tables.key' name='technology_key' type='string_ascii' />
   </table>
+  <table table_name='unit_set_to_unit_junctions_tables'
+         table_version='0'
+         guid='2bc7bfb2-7b8f-4713-9d33-5f1f6548e811'>
+    <field name='exclude' type='boolean' />
+    <field name='unit_caste' type='optstring_ascii' />
+    <field name='unit_category' type='optstring_ascii' />
+    <field name='unit_class' type='optstring_ascii' />
+    <field name='unit_record' type='optstring_ascii' />
+    <field name='unit_set' type='string_ascii' />
+  </table>
+  <table table_name='unit_sets_tables'
+         table_version='0'
+         guid='1ec2416a-a62b-476c-8609-8bab3a87b1cc'>
+    <field name='key' type='string_ascii' />
+  </table>
   <table table_name='unit_special_abilities_tables'
          table_version='5'
          guid='004e4884-2b3a-420a-b0a8-285917278d69,
@@ -10638,6 +10737,32 @@
     <field name='update_targets_every_frame' type='boolean' version_start='5' />
     <field name='initial_recharge' type='float' version_start='5' />
     <field fkey='projectiles_tables.key' name='activated_projectile' type='optstring' version_start='5' />
+  </table>
+  <table table_name='unit_shield_types_tables'
+         table_version='2'
+         guid='e526af58-4155-4966-bcfc-70d45d9d79a2'>
+    <field name='key' type='string_ascii' />
+    <field name='shield_defence_value' type='int' />
+    <field name='shield_armour_value' type='int' />
+    <field name='audio_material' type='string_ascii' />
+  </table>
+  <table table_name='unit_spacings_tables'
+         table_version='2'
+         guid='90094125-4b13-4b66-95b0-e92d6d1f6ca1'>
+    <field name='close_formation_spacing_horizontal' type='float' />
+    <field name='close_formation_spacing_variation' type='float' />
+    <field name='close_formation_spacing_vertical' type='float' />
+    <field name='dismounted_close_formation_spacing_horizontal' type='float' />
+    <field name='dismounted_close_formation_spacing_variation' type='float' />
+    <field name='dismounted_close_formation_spacing_vertical' type='float' />
+    <field name='dismounted_loose_formation_spacing_horizontal' type='float' />
+    <field name='dismounted_loose_formation_spacing_variation' type='float' />
+    <field name='dismounted_loose_formation_spacing_vertical' type='float' />
+    <field name='unknown' type='boolean' />
+    <field name='key' type='string_ascii' />
+    <field name='loose_formation_spacing_horizontal' type='float' />
+    <field name='loose_formation_spacing_variation' type='float' />
+    <field name='loose_formation_spacing_vertical' type='float' />
   </table>
   <table table_name='unit_special_abilities_tables'
          table_version='6'
@@ -11295,6 +11420,27 @@
                bb65707c-b16a-479a-8c38-ead58858b58a'>
     <field fkey='units_tables.key' name='unit_name' type='string' pk='true' />
     <field fkey='unit_abilities_tables.key' name='ability' type='string' pk='true' />
+  </table>
+  <table table_name='unit_type_enums_tables'
+         table_version='0'
+         guid='d9033994-2d6b-43e5-af06-7f78b4150766'>
+    <field name='key' type='string_ascii' />
+  </table>
+  <table table_name='unit_variants_colours_tables'
+         table_version='1'
+         guid='2cb5c2c8-5d96-4db7-9bb7-bebecfeb060e'>
+    <field name='faction' type='optstring_ascii' />
+    <field name='primary_colour_b' type='int' />
+    <field name='primary_colour_g' type='int' />
+    <field name='primary_colour_r' type='int' />
+    <field name='secondary_colour_b' type='int' />
+    <field name='secondary_colour_g' type='int' />
+    <field name='secondary_colour_r' type='int' />
+    <field name='soldier_type' type='optstring_ascii' />
+    <field name='tertiary_colour_b' type='int' />
+    <field name='tertiary_colour_g' type='int' />
+    <field name='tertiary_colour_r' type='int' />
+    <field name='unit_variant' type='string_ascii' />
   </table>
   <table table_name='unit_voice_categories_tables'
          table_version='0'
