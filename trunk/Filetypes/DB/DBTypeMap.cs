@@ -107,6 +107,17 @@ namespace Filetypes {
             list.Add(toAdd);
         }
 
+        public List<FieldInfo> GetInfoByGuid(string guid) {
+            List<FieldInfo> result = null;
+            foreach (GuidTypeInfo info in guidMap.Keys) {
+                if (info.Guid.Equals(guid)) {
+                    result = guidMap[info];
+                    break;
+                }
+            }
+            return result;
+        }
+
         #region Initialization / IO
         public void InitializeTypeMap(string basePath) {
             foreach(string file in SCHEMA_FILENAMES) {
@@ -175,11 +186,15 @@ namespace Filetypes {
             typeMap[key] = setTo;
         }
         public void SetByGuid(string guid, string tableName, int version, List<FieldInfo> setTo) {
+                GuidTypeInfo info = new GuidTypeInfo(guid, tableName, version);
+            if (setTo != null) {
 #if DEBUG
-            Console.WriteLine("adding table definition by GUID {1} for {0}", tableName, guid);
+                Console.WriteLine("adding table definition by GUID {1} for {0}", tableName, guid);
 #endif
-            GuidTypeInfo info = new GuidTypeInfo(guid, tableName, version);
-            guidMap[info] = setTo;
+                guidMap[info] = setTo;
+            } else {
+                guidMap.Remove(info);
+            }
         }
         #endregion
 

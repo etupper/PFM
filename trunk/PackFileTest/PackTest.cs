@@ -30,6 +30,8 @@ namespace PackFileTest {
             "-w",
             // -as: add entries from other schema file by GUID if they don't exists already
             "-as",
+            // -cs: convert string entries to string_ascii entries for tables that aren't already there
+            "-cs",
             // -i : integrate other schema file, overwrite existing entries
             "-i",
             // -v : verbose output
@@ -89,6 +91,9 @@ namespace PackFileTest {
                     foreach (string file in files) {
                         addSchemaFile(file);
                     }
+                } else if (dir.StartsWith("-cs")) {
+                    string packFile = dir.Substring(3);
+                    ConvertAllStringsToAscii(packFile);
                 } else if (dir.StartsWith("-i")) {
                     string integrateFrom = dir.Substring(2);
                     SchemaIntegrator integrator = new SchemaIntegrator{
@@ -162,6 +167,75 @@ namespace PackFileTest {
             }
             string outfile = Path.Combine(Directory.GetCurrentDirectory(), DBTypeMap.SCHEMA_USER_FILE_NAME);
             DBTypeMap.Instance.SaveToFile(Directory.GetCurrentDirectory(), "added");
+        }
+
+        static void ConvertAllStringsToAscii(string packFile) {
+            if (!DBTypeMap.Instance.Initialized) {
+                DBTypeMap.Instance.initializeFromFile(Path.Combine(Directory.GetCurrentDirectory(), DBTypeMap.MASTER_SCHEMA_FILE_NAME));
+            }
+            PackFile file = new PackFileCodec().Open(packFile);
+            foreach (PackedFile packed in file) {
+                if (packed.FullPath.StartsWith("db")) {
+                    string typename = DBFile.typename(packed.FullPath);
+                    DBFileHeader header = PackedFileDbCodec.readHeader(packed);
+                    if (!string.IsNullOrEmpty(header.GUID)) {
+                        List<FieldInfo> infos = DBTypeMap.Instance.GetInfoByGuid(header.GUID);
+                        if (!CanDecode(header, packed)) {
+                            // we don't have an entry for this yet; try out the ones we have
+                            List<TypeInfo> allInfos = DBTypeMap.Instance.GetAllInfos(typename);
+                            if (allInfos.Count > 0) {
+                                TryDecode(packed, header, allInfos);
+                            } else {
+                                Console.WriteLine("no info at all for {0}", typename);
+                            }
+                        } else {
+                            Console.WriteLine("already have info for {0}", header.GUID);
+                        }
+                    }
+                }
+            }
+            DBTypeMap.Instance.SaveToFile(Directory.GetCurrentDirectory(), "ascii");
+        }
+        static void TryDecode(PackedFile dbFile, DBFileHeader header, List<TypeInfo> infos) {
+            foreach (TypeInfo info in infos) {
+                // register converted to type map
+                List<FieldInfo> converted = ConvertToAscii(info.Fields);
+                DBTypeMap.Instance.SetByGuid(header.GUID, DBFile.typename(dbFile.FullPath), header.Version, converted);
+                bool valid = CanDecode(header, dbFile);
+                if (!valid) {
+                    DBTypeMap.Instance.SetByGuid(header.GUID, DBFile.typename(dbFile.FullPath), header.Version, null);
+                } else {
+                    // found it! :)
+                    Console.WriteLine("adding converted info for guid {0}", header.GUID);
+                    break;
+                }
+            }
+        }
+        static bool CanDecode(DBFileHeader header, PackedFile dbFile) {
+            bool valid = false;
+            try {
+                DBFile decoded = PackedFileDbCodec.Decode(dbFile);
+                valid = (decoded.Entries.Count == header.EntryCount);
+                return valid;
+            } catch (Exception) {
+            }
+            return valid;
+        }
+        static List<FieldInfo> ConvertToAscii(List<FieldInfo> old) {
+            List<FieldInfo> newInfos = new List<FieldInfo>(old.Count);
+            foreach (FieldInfo info in old) {
+                string typeName = info.TypeName.EndsWith("string") ? string.Format("{0}_ascii", info.TypeName) : info.TypeName;
+                FieldInfo newInfo = Types.FromTypeName(typeName);
+                newInfo.Name = info.Name;
+                newInfo.FieldReference = info.FieldReference;
+                if (!string.IsNullOrEmpty(newInfo.ForeignReference)) {
+                    newInfo.ForeignReference = info.ForeignReference;
+                    //newInfo.ReferencedField = info.ReferencedField;
+                }
+                newInfo.PrimaryKey = info.PrimaryKey;
+                newInfos.Add(newInfo);   
+            }
+            return newInfos;
         }
 
         void ReplaceSchemaNames(string xmlDirectory) {
