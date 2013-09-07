@@ -268,7 +268,9 @@ namespace DecodeTool {
             }
             using (BinaryReader reader = new BinaryReader(new MemoryStream(Bytes))) {
                 DBFileHeader header = PackedFileDbCodec.readHeader(reader);
-                if (Bytes != null) {
+                if (Bytes != null && header != null) {
+                    guid = header.GUID;
+                    version = header.Version;
                     if (DBTypeMap.Instance.IsSupported(TypeName)) {
                         guid = header.GUID;
                         version = header.Version;
@@ -575,6 +577,7 @@ namespace DecodeTool {
             } else {
                 DBTypeMap.Instance.SetByName(TypeName, FieldTypes);
             }
+            Close();
         }
 
         #region Extended Type Management
