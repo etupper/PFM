@@ -28,7 +28,9 @@ namespace PackFileTest {
             "-pr", 
             // -w : write schema_user.xml after iterating all db files
             "-w",
-            // -i : integrate other schema file
+            // -as: add entries from other schema file by GUID if they don't exists already
+            "-as",
+            // -i : integrate other schema file, overwrite existing entries
             "-i",
             // -v : verbose output
             "-v",
@@ -81,6 +83,12 @@ namespace PackFileTest {
                     CheckReferences();
                 } else if (dir.Equals("-x")) {
                     waitForKey = false;
+                } else if (dir.StartsWith("-as")) {
+                    string integrateFrom = dir.Substring(3);
+                    string[] files = integrateFrom.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (string file in files) {
+                        addSchemaFile(file);
+                    }
                 } else if (dir.StartsWith("-i")) {
                     string integrateFrom = dir.Substring(2);
                     SchemaIntegrator integrator = new SchemaIntegrator{
@@ -136,6 +144,24 @@ namespace PackFileTest {
                 Console.WriteLine("Test run finished, press any key");
                 Console.ReadKey();
             }
+        }
+
+        void addSchemaFile(string file) {
+            if (!DBTypeMap.Instance.Initialized) {
+                DBTypeMap.Instance.initializeFromFile(Path.Combine(Directory.GetCurrentDirectory(), DBTypeMap.MASTER_SCHEMA_FILE_NAME));
+            }
+            using (var stream = File.OpenRead(file)) {
+                XmlImporter importer = new XmlImporter(stream);
+                importer.Import();
+                foreach (GuidTypeInfo info in importer.GuidToDescriptions.Keys) {
+                    if (!DBTypeMap.Instance.GuidMap.ContainsKey(info)) {
+                        Console.WriteLine("adding {0}", info.Guid);
+                        DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, importer.GuidToDescriptions[info]);
+                    }
+                }
+            }
+            string outfile = Path.Combine(Directory.GetCurrentDirectory(), DBTypeMap.SCHEMA_USER_FILE_NAME);
+            DBTypeMap.Instance.SaveToFile(Directory.GetCurrentDirectory(), "added");
         }
 
         void ReplaceSchemaNames(string xmlDirectory) {

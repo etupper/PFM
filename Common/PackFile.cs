@@ -143,7 +143,8 @@ namespace Common {
 
         public PFHeader(string id) {
             Type = PackType.Mod;
-            DataStart = 0x20;
+            // Rome II headers are longer
+            DataStart = "PFH4".Equals(id) ? 0x28 : 0x20;
             PackIdentifier = id;
             FileCount = 0;
             Version = 0;
