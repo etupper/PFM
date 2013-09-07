@@ -5916,13 +5916,13 @@
   </table>
   <table table_name='building_effects_junction_tables'
          table_version='3'
-         guid='9f2d4977-c4c3-4074-9b26-87dfb4c95819'>
-    <field fkey='building_levels_tables.level_name' name='building' type='string_ascii' pk='true' />
-    <field fkey='effects_tables.effect' name='effect' type='string_ascii' pk='true' />
-    <field name='effected' type='string_ascii' />
-    <field name='unknown' type='float' />
-    <field name='unknown' type='float' />
-    <field name='unknown' type='float' />
+         guid='86cf874d-854e-41ce-848b-ff14f362cf23'>
+    <field name='building' type='string_ascii' />
+    <field name='effect' type='string_ascii' />
+    <field name='effect_scope' type='string_ascii' />
+    <field name='value' type='float' />
+    <field name='value_damaged' type='float' />
+    <field name='value_ruined' type='float' />
   </table>
   <table table_name='building_faction_variants_tables'
          table_version='0'
@@ -6809,6 +6809,14 @@
     <field fkey='effects_tables.effect' name='effect' type='string' />
     <field name='effect_value' type='float' />
     <field fkey='campaigns_tables.campaign_name' name='optional_campaign_key' type='optstring' version_start='1' />
+  </table>
+  <table table_name='campaign_difficulty_handicap_effects_tables'
+         table_version='0'
+         guid='d7253ae9-568c-4121-b1e4-53bab296f4cb'>
+    <field name='campaign_difficulty_handicap' type='int' />
+    <field name='human' type='boolean' />
+    <field fkey='effects_tables.effect' name='Effect' type='string_ascii' />
+    <field name='value' type='float' />
   </table>
   <table table_name='campaign_ground_types_tables'
          table_version='2'
@@ -9365,6 +9373,15 @@
     <field name='Description' type='optstring_ascii' />
     <field name='Release Order' type='int' />
   </table>
+  <table table_name='political_parties_tables'
+           table_version='3'
+           guid='40beda0e-249a-44fe-b2bb-62770c0219ef'>
+    <field name='key' type='string_ascii' />
+    <field name='playable' type='boolean' />
+    <field name='ui_icon' type='string_ascii' />
+    <field name='effect_bundle' type='string_ascii' />
+    <field name='initial_power' type='int' />
+  </table> 
   <table table_name='population_classes_tables'
          table_version='0'
          guid='64ea05eb-3751-4b55-825b-9cbdfd639a59'>
