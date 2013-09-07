@@ -4011,6 +4011,17 @@
     <field name='Actor_Effects' type='string_ascii' />
     <field name='Target_Effects' type='string_ascii' />
   </table>
+  <table table_name='advice_info_texts_tables'
+         table_version='2'
+         guid='30db796d-1595-4eb0-abf4-774ea1ae6682'>
+    <field name='unknown' type='int' />
+    <field name='unknown' type='string_ascii' />
+    <field name='persistant' type='boolean' />
+    <field name='show_instant' type='boolean' />
+    <field name='show_on_navigate' type='boolean' />
+    <field name='is_header' type='boolean' />
+    <field name='navigation_order' type='int' />
+  </table>
   <table table_name='advice_levels_tables'
          table_version='2'
          guid='12e46695-0257-4c63-81e6-8223882e01e5,
@@ -4544,6 +4555,38 @@
     <field name='unknown' type='string_ascii' />
     <field name='unknown' type='int' />
     <field name='unknown' type='int' />
+  </table>
+  <table table_name='armed_citizenry_unit_groups_tables'
+         table_version='0'
+         guid='64c9cc4f-447a-42d0-bdfc-04ea483ecd59'>
+    <field name='unit_group' type='string_ascii' />
+  </table>
+  <table table_name='armed_citizenry_units_to_unit_groups_junctions_tables'
+         table_version='0'
+         guid='fb8185e3-00c9-48cc-8209-19992cd2a3c0'>
+    <field name='id' type='int' />
+    <field name='unknown' type='int' />
+    <field name='priority' type='int' />
+    <field name='unit' type='string_ascii' />
+    <field name='unit_group' type='string_ascii' />
+  </table>
+  <table table_name='audio_campaign_building_enums_tables'
+         table_version='0'
+         guid='45d93a58-912c-44d9-be61-329110b2d496'>
+    <field name='key' type='string_ascii' />
+  </table>
+  <table table_name='audio_projectiles_tables'
+         table_version='1'
+         guid='89112f85-ff69-4855-9d8d-a6ff963d8d77'>
+    <field name='key' type='string_ascii' />
+    <field name='audio_projectile_type' type='string_ascii' />
+    <field name='max_attenuation_fire' type='float' />
+    <field name='max_attenuation_impart' type='float' />
+    <field name='max_attenuation_inflight' type='float' />
+    <field name='play_incoming_sound' type='boolean' />
+    <field name='requires_distance' type='boolean' />
+    <field name='requires_speed' type='boolean' />
+    <field name='unknown' type='float' />
   </table>
   <table table_name='avatar_advanced_skills_requirements_tables'
          table_version='0'
@@ -5823,6 +5866,16 @@
     <field name='unknown' type='float' />
     <field name='unknown' type='float' />
     <field name='unknown' type='float' />
+  </table>
+  <table table_name='building_effects_junction_tables'
+         table_version='3'
+         guid='86cf874d-854e-41ce-848b-ff14f362cf23'>
+    <field name='building' type='string_ascii' />
+    <field name='effect' type='string_ascii' />
+    <field name='effect_scope' type='string_ascii' />
+    <field name='value' type='float' />
+    <field name='value_damaged' type='float' />
+    <field name='value_ruined' type='float' />
   </table>
   <table table_name='building_faction_variants_tables'
          table_version='0'
