@@ -53,7 +53,20 @@ namespace Filetypes {
 			BinaryReader reader = new BinaryReader (stream);
 			reader.BaseStream.Position = 0;
 			DBFileHeader header = readHeader (reader);
-            foreach(TypeInfo realInfo in DBTypeMap.Instance.GetVersionedInfos(typeName, header.Version)) {
+            List<TypeInfo> infos = DBTypeMap.Instance.GetVersionedInfos(typeName, header.Version);
+            if (!string.IsNullOrEmpty(header.GUID)) {
+                List<FieldInfo> byGuid = DBTypeMap.Instance.GetInfoByGuid(header.GUID);
+                if (byGuid != null) {
+                    TypeInfo typeByGuid = new TypeInfo(byGuid) {
+                        Name = typeName,
+                        Version = header.Version
+                    };
+                    typeByGuid.ApplicableGuids.Add(header.GUID);
+                    infos = new List<TypeInfo>();
+                    infos.Add(typeByGuid);
+                }
+            }
+            foreach(TypeInfo realInfo in infos) {
                 try {
 #if DEBUG
                     Console.WriteLine("Parsing version {1} with info {0}", string.Join(",", realInfo.Fields), header.Version);
@@ -65,7 +78,7 @@ namespace Filetypes {
                     Console.WriteLine(e.StackTrace);
                 } 
 #else
-                } catch {}
+                } catch (Exception) {}
 #endif
             }
             throw new DBFileNotSupportedException(string.Format("No applicable type definition found"));
