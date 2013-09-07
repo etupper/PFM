@@ -224,9 +224,6 @@ namespace Filetypes
         public VarByteField() : this(1) {}
         public VarByteField(int len) : base(Types.ByteType()) { Length = len; }
         public override void Decode(BinaryReader reader) {
-#if DEBUG
-            Console.WriteLine("decoding {0} bytes", Length);
-#endif
             if (Length == 0) {
                 Value = "";
                 return;
@@ -237,9 +234,6 @@ namespace Filetypes
             for (int i = 1; i < bytes.Length; i++) {
                 result.Append (string.Format (" {0:x2}", bytes [i]));
             }
-#if DEBUG
-            Console.WriteLine("decoded {0} bytes as '{1}'", Length, result);
-#endif
             base.Value = result.ToString ();
         }
         public override void Encode(BinaryWriter writer) {
