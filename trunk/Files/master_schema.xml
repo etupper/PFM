@@ -5701,6 +5701,14 @@
          guid='dd4cdb49-73ae-4ff1-b2aa-795a25cfcdb7'>
     <field name='transformation' type='string_ascii' />
   </table>
+  <table table_name='battlefield_buildings_names_tables'
+         table_version='0'
+         guid='e511a1da-c34f-4b2e-ad77-b2b80b1001b9'>
+    <field name='key' type='string_ascii' />
+    <field name='onscreen_name' type='string_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown4' type='optstring_ascii' />
+  </table>
   <table table_name='battlefield_buildings_tables'
          table_version='2'
          guid='3913248c-da3e-4fe9-889b-e018ef212bfd'>
@@ -6358,6 +6366,88 @@
          table_version='0'
          guid='84e4227d-88f3-4cb0-8779-e4e0fce58fea'>
     <field name='key' type='string_ascii' />
+  </table>
+  <table table_name='cai_construction_system_province_template_assignment_policies_tables'
+         table_version='0'
+         guid='926f5922-c021-4ebc-ac8d-f867d341555c'>
+    <field name='capital_province_template' type='string_ascii' />
+    <field name='economic_port_province_template' type='string_ascii' />
+    <field name='economic_province_template' type='string_ascii' />
+    <field name='key' type='string_ascii' />
+    <field name='military_port_province_template' type='string_ascii' />
+    <field name='military_province_template' type='string_ascii' />
+    <field name='non_port_province_military_ideal_percentage' type='int' />
+    <field name='port_province_military_ideal_percentage' type='int' />
+  </table>
+  <table table_name='cai_construction_system_strategic_context_template_policies_tables'
+         table_version='0'
+         guid='88a4e9ee-989a-4da5-996c-2431545b9688'>
+    <field name='default_cai_construction_system_template' type='string_ascii' />
+    <field name='key' type='string_ascii' />
+  </table>
+  <table table_name='cai_construction_system_strategic_context_template_policy_junctions_tables'
+         table_version='0'
+         guid='f403c827-e77d-4ebe-bf9c-97b270bffb52'>
+    <field name='cai_construction_system_strategic_context_policy' type='string_ascii' />
+    <field name='cai_construction_system_template' type='string_ascii' />
+    <field name='cai_strategic_context' type='string_ascii' />
+  </table>
+  <table table_name='cai_construction_system_synergies_tables'
+         table_version='0'
+         guid='86c53cdf-a6cb-4a64-8ab3-3e48cac4ca19'>
+    <field name='existing_building_chain_key' type='optstring_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown3' type='optstring_ascii' />
+    <field name='potential_buiding_chain_key' type='optstring_ascii' />
+    <field name='unknown5' type='optstring_ascii' />
+    <field name='unknown6' type='optstring_ascii' />
+    <field name='synergy_level_key' type='string_ascii' />
+    <field name='synergy_policy_key' type='string_ascii' />
+    <field name='unknown9' type='optstring_ascii' />
+    <field name='existing_building_super_chain' type='string_ascii' />
+    <field name='unknown11' type='optstring_ascii' />
+    <field name='potential_building_super_chain' type='string_ascii' />
+  </table>
+  <table table_name='cai_construction_system_synergy_levels_tables'
+         table_version='0'
+         guid='ee7e52d5-2201-4530-b82a-47c2b969b8d2'>
+    <field name='absolute_effect' type='float' />
+    <field name='key' type='string_ascii' />
+    <field name='priority' type='int' />
+    <field name='relative_effect' type='float' />
+  </table>
+  <table table_name='cai_construction_system_synergy_policies_tables'
+         table_version='0'
+         guid='1504e6fe-dcb8-4c80-997c-4a52fd8ed87c'>
+    <field name='key' type='string_ascii' />
+  </table>
+  <table table_name='cai_construction_system_templates_junctions_tables'
+         table_version='0'
+         guid='79e227e3-83b1-4c86-97cf-7228a5827814'>
+    <field name='unknown' type='optstring_ascii' />
+    <field name='cai_construction_system_category_group' type='optstring_ascii' />
+    <field name='cai_construction_system_template' type='string_ascii' />
+    <field name='value' type='float' />
+  </table>
+  <table table_name='cai_construction_system_templates_tables'
+         table_version='0'
+         guid='45bd0606-88c6-4f2a-8781-b6bfa812ab10'>
+    <field name='value' type='float' />
+    <field name='default_category_and_group_value' type='string_ascii' />
+  </table>
+  <table table_name='cai_diplomacy_complex_treacheries_tables'
+         table_version='0'
+         guid='1fa86c7a-5df3-4196-909e-58580adde296'>
+    <field name='first_event' type='string_ascii' />
+    <field name='max_turn_difference' type='int' />
+    <field name='second_event' type='string_ascii' />
+    <field name='value' type='float' />
+  </table>
+  <table table_name='cai_diplomacy_simple_treacheries_tables'
+         table_version='0'
+         guid='42b0201a-ace4-41ac-a453-907a6fd6f0ca'>
+    <field name='event' type='string_ascii' />
+    <field name='value' type='float' />
   </table>
   <table table_name='cai_military_aggressiveness_policies_tables'
          table_version='0'
