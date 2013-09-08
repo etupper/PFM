@@ -12853,9 +12853,8 @@
     <field name='unit_variant' type='string_ascii' />
   </table>
   <table table_name='unit_variants_tables'
-         table_version='0'
-         guid='5c270704-0ea3-45d7-81f0-c75af817bded,
-               5c270704-0ea3-45d7-81f0-c75af817bded'>
+         table_version='4'
+         guid='5c270704-0ea3-45d7-81f0-c75af817bded'>
     <field name='faction' type='optstring_ascii' />
     <field name='name' type='string_ascii' />
     <field name='unit' type='string_ascii' />
@@ -13099,12 +13098,12 @@
   </table>
   <table table_name='variants_tables'
          table_version='0'
-         guid='a239ed07-5abe-4b42-b53b-62464441bfc3'>
+         guid='04c12ccf-48cd-4187-966f-2e04b67bd121'>
     <field name='variant_name' type='string_ascii' pk='true' />
   </table>
   <table table_name='victory_conditions_tables'
          table_version='0'
-         guid='7cfad747-f458-45ff-90b0-a6d5269553be'>
+         guid='0bdd4f27-a696-4332-b187-011749363595'>
     <field name='condition' type='string_ascii' pk='true' />
   </table>
   <table table_name='videos_subtitles_junctions_tables'
