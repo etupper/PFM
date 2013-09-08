@@ -59,6 +59,13 @@
             }
         }
 
+        internal static System.Drawing.Icon Rome2 {
+            get {
+                object obj = ResourceManager.GetObject("Rome2", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         internal static System.Resources.ResourceManager ResourceManager
         {
