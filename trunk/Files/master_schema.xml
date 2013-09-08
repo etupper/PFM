@@ -12637,6 +12637,17 @@
     <field name='tertiary_colour_r' type='int' />
     <field name='unit_variant' type='string_ascii' />
   </table>
+<table table_name='unit_variants_tables'
+         table_version='4'
+         guid='5c270704-0ea3-45d7-81f0-c75af817bded'>
+    <field name='faction' type='optstring_ascii' />
+    <field name='name' type='string_ascii' />
+    <field name='unit' type='string_ascii' />
+    <field name='variant' type='string_ascii' />
+    <field name='height_variation' type='float' />
+    <field name='height_scale' type='float' />
+    <field name='unit_card' type='string_ascii' />
+  </table>
   <table table_name='unit_voice_categories_tables'
          table_version='0'
          guid='3c89bf27-d97c-49b8-a331-be5fff0dd87d,
