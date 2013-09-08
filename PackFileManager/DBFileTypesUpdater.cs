@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 using ICSharpCode.SharpZipLib.Zip;
 using AutoUpdater;
@@ -15,7 +16,8 @@ namespace PackFileManager
 {
     class Util {
         static readonly string sourceForgeFormat =
-            "http://downloads.sourceforge.net/project/packfilemanager/{0}?r=&ts={1}&use_mirror=master";
+            "http://sourceforge.net/projects/packfilemanager/files/{0}/download";
+            // "http://downloads.sourceforge.net/project/packfilemanager/{0}?r=&ts={1}&use_mirror=master";
 
         public static string CreateSourceforgeUrl(string file) {
             return string.Format(sourceForgeFormat, file, DateTime.Now.Ticks);
@@ -33,8 +35,8 @@ namespace PackFileManager
         ILatestVersionRetriever versions;
         
         public DBFileTypesUpdater() {
-            versions = new TwcVersionRetriever();
-            // versions = new SourceforgeVersionRetriever();
+            // versions = new TwcVersionRetriever();
+            versions = new SourceforgeVersionRetriever();
         }
         
         #region Query Update Neccessary
@@ -151,26 +153,31 @@ namespace PackFileManager
         #endregion
         
         static readonly char[] SEPARATOR = { ':' };
-        
+
+        static Regex schema_file_re = new Regex("schema_([0-9]*).zip");
+        static Regex pfm_file_re = new Regex("Pack File Manager (.*).zip");
         public SourceforgeVersionRetriever() {
-            string url = Util.CreateSourceforgeUrl("latestVersionInfo.txt");
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            using (var stream = new StreamReader(response.GetResponseStream())) {
-                string line = stream.ReadLine();
-                while (line != null) {
-                    string[] split = line.Split(SEPARATOR);
-                    switch(split[0]) {
-                    case pfmTag:
-                        LatestPfmVersion = split[1];
-                        break;
-                    case schemaTag:
-                        LatestSchemaVersion = split[1];
-                        break;
-                    }
-                    line = stream.ReadLine();
-                }
+            Console.WriteLine("looking up sf");
+            FindOnPage findSchema = new FindOnPage {
+                Url = "https://sourceforge.net/projects/packfilemanager/files/Schemata/",
+                ToFind = schema_file_re
+            };
+            FindOnPage findPfmVersion = new FindOnPage {
+                Url = "https://sourceforge.net/projects/packfilemanager/files/Release/",
+                ToFind = pfm_file_re
+            };
+            Thread[] findThreads = new Thread[] {
+                new Thread(findSchema.Search),
+                new Thread(findPfmVersion.Search)
+            };
+            foreach (Thread t in findThreads) {
+                t.Start();
             }
+            foreach (Thread t in findThreads) {
+                t.Join();
+            }
+            LatestSchemaVersion = findSchema.Result;
+            LatestPfmVersion = findPfmVersion.Result;
             if (LatestPfmVersion == null || LatestSchemaVersion == null) {
                 throw new InvalidDataException(string.Format("Could not determine latest versions: got {0}, {1}", 
                                                              LatestPfmVersion, LatestSchemaVersion));
@@ -249,6 +256,31 @@ namespace PackFileManager
 #if DEBUG
             Console.WriteLine("Latest PFM: {0}, Latest Schema: {1}", LatestPfmVersion, LatestSchemaVersion);
 #endif
+        }
+    }
+
+    class FindOnPage {
+        public Regex ToFind { get; set; }
+        public string Url { get; set; }
+        public string Result { get; private set; }
+
+        public void Search() {
+            if (Url == null || ToFind == null) {
+                return;
+            }
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url);
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            using (var stream = new StreamReader(response.GetResponseStream())) {
+                string line = stream.ReadLine();
+                while (line != null) {
+                    if (ToFind.IsMatch(line)) {
+                        Match match = ToFind.Match(line);
+                        Result = match.Groups[1].Value;
+                        break;
+                    }
+                    line = stream.ReadLine();
+                }
+            }
         }
     }
 }

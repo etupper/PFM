@@ -16,8 +16,13 @@ namespace PackFileTest {
         public bool Verbose {
             get; set;
         }
+        public Game VerifyAgainst {
+            get;
+            set;
+        }
         
         private Dictionary<string, List<FieldInfo>> references = new Dictionary<string, List<FieldInfo>>();
+        private Dictionary<string, PackedFile> packedFiles = new Dictionary<string, PackedFile>();
         
         public SchemaIntegrator() {
             if (!DBTypeMap.Instance.Initialized) {
@@ -34,6 +39,22 @@ namespace PackFileTest {
                             addTo = new List<FieldInfo>();
                         }
                         addTo.Add(field);
+                    }
+                }
+            }
+
+            if (VerifyAgainst != null) {
+                Console.WriteLine("building pack file cache");
+                foreach (string file in new PackLoadSequence().GetPacksLoadedFrom(VerifyAgainst.DataDirectory)) {
+                    PackFile p = new PackFile(file);
+                    foreach (PackedFile packed in p) {
+                        Console.WriteLine("loading from {0}", p);
+                        if (packed.FullPath.StartsWith("db")) {
+                            string typename = DBFile.typename(packed.FullPath);
+                            if (!packedFiles.ContainsKey(typename)) {
+                                packedFiles[typename] = packed;
+                            }
+                        }
                     }
                 }
             }
@@ -61,6 +82,19 @@ namespace PackFileTest {
                         List<FieldInfo> infos;
                         if (importer.GuidToDescriptions.TryGetValue(info, out infos)) {
                             DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, infos);
+                        }
+                    } else {
+                        PackedFile dbPacked;
+                        if (packedFiles.TryGetValue(info.TypeName, out dbPacked)) {
+                            if (!CanDecode(dbPacked)) {
+                                List<FieldInfo> infos;
+                                if (importer.GuidToDescriptions.TryGetValue(info, out infos)) {
+                                    DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, infos);
+                                    Console.WriteLine("Using new schema for {0}", info.TypeName);
+                                }
+                            } else {
+                                Console.WriteLine("Can already decode {0}", info.TypeName);
+                            }
                         }
                     }
                 }
@@ -139,6 +173,18 @@ namespace PackFileTest {
         
         static string FormatTable(string tableName, List<FieldInfo> info) {
             return string.Format("{0}: {1}", tableName, string.Join(",", info));
+        }
+
+        public static bool CanDecode(PackedFile dbFile) {
+            bool valid = false;
+            try {
+                DBFileHeader header = PackedFileDbCodec.readHeader(dbFile);
+                DBFile decoded = PackedFileDbCodec.Decode(dbFile);
+                valid = (decoded.Entries.Count == header.EntryCount);
+                return valid;
+            } catch (Exception) {
+            }
+            return valid;
         }
         
         static ICollection<int> GetVersions(List<FieldInfo> infos) {
