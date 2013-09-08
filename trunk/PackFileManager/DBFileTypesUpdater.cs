@@ -202,11 +202,11 @@ namespace PackFileManager
         string schemaUrl;
         public string SchemaUrl {
             get {
-                return schemaUrl;
+                return Util.CreateSourceforgeUrl(string.Format("Schemata/schema_{0}.zip", LatestSchemaVersion));
             }
             private set {
                 // expects the "attachmentid=..." string for the query parameters, will create URL itself
-                schemaUrl = string.Format("http://www.twcenter.net/forums/attachment.php?{0}", value);
+                // schemaUrl = string.Format("http://www.twcenter.net/forums/attachment.php?{0}", value);
             }
         }
         public string PfmUrl {
