@@ -337,6 +337,8 @@ namespace PackFileManager
                 this.Icon = Resources.Napoleon;
             } else if (GameManager.Instance.CurrentGame == Game.ETW) {
                 this.Icon = Resources.Empire;
+            } else if (GameManager.Instance.CurrentGame == Game.R2TW) {
+                this.Icon = Resources.Rome2;
             }
         }
 
