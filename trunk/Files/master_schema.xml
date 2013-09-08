@@ -8284,6 +8284,19 @@
     <field name='tertiary_green' type='int' />
     <field name='tertiary_red' type='int' />
   </table>
+  <table table_name='faction_groups_tables'
+         table_version='0'
+         guid='5afa7aa8-8c9f-48a5-8741-f22aa9b91ceb'>
+    <field name='effect_bundle' type='string_ascii' />
+    <field name='key' type='string_ascii' />
+    <field name='ui_icon' type='string_ascii' />
+  </table>
+  <table table_name='faction_political_parties_junctions_tables'
+         table_version='0'
+         guid='89c6acbc-aae3-4e59-888d-5b8bbdd5e14b'>
+    <field name='faction_key' type='string_ascii' />
+    <field name='political_party_key' type='string_ascii' />
+  </table>
   <table table_name='faction_rebellion_units_junctions_tables'
          table_version='0'
          guid='07eca01b-46c6-4720-9b6d-cecb7f1cdaad,
@@ -10365,6 +10378,14 @@
                d2b65fd2-a6e7-11e0-8001-6cf049ef02b0'>
     <field fkey='character_trait_levels_tables.key' name='trait_level' type='string' pk='true' />
     <field fkey='effects_tables.effect' name='effect' type='string' pk='true' />
+    <field name='value' type='float' />
+  </table>
+  <table table_name='trait_level_effects_tables'
+         table_version='0'
+         guid='1155cf64-b90a-4a4d-aeda-933023a56b86'>
+    <field fkey='character_trait_levels_tables.key' name='trait_level' type='string_ascii' pk='true' />
+    <field fkey='agent_attributes_tables.key' name='attribute' type='string_ascii' pk='true' />
+    <field fkey='effects_tables.effect' name='effect' type='string_ascii' pk='true' />
     <field name='value' type='float' />
   </table>
   <table table_name='trait_to_antitraits_tables'

@@ -180,7 +180,7 @@ namespace PackFileTest {
                     DBFileHeader header = PackedFileDbCodec.readHeader(packed);
                     if (!string.IsNullOrEmpty(header.GUID)) {
                         List<FieldInfo> infos = DBTypeMap.Instance.GetInfoByGuid(header.GUID);
-                        if (!CanDecode(header, packed)) {
+                        if (!SchemaIntegrator.CanDecode(packed)) {
                             // we don't have an entry for this yet; try out the ones we have
                             List<TypeInfo> allInfos = DBTypeMap.Instance.GetAllInfos(typename);
                             if (allInfos.Count > 0) {
@@ -201,7 +201,7 @@ namespace PackFileTest {
                 // register converted to type map
                 List<FieldInfo> converted = ConvertToAscii(info.Fields);
                 DBTypeMap.Instance.SetByGuid(header.GUID, DBFile.typename(dbFile.FullPath), header.Version, converted);
-                bool valid = CanDecode(header, dbFile);
+                bool valid = SchemaIntegrator.CanDecode(dbFile);
                 if (!valid) {
                     DBTypeMap.Instance.SetByGuid(header.GUID, DBFile.typename(dbFile.FullPath), header.Version, null);
                 } else {
@@ -211,16 +211,7 @@ namespace PackFileTest {
                 }
             }
         }
-        static bool CanDecode(DBFileHeader header, PackedFile dbFile) {
-            bool valid = false;
-            try {
-                DBFile decoded = PackedFileDbCodec.Decode(dbFile);
-                valid = (decoded.Entries.Count == header.EntryCount);
-                return valid;
-            } catch (Exception) {
-            }
-            return valid;
-        }
+
         static List<FieldInfo> ConvertToAscii(List<FieldInfo> old) {
             List<FieldInfo> newInfos = new List<FieldInfo>(old.Count);
             foreach (FieldInfo info in old) {
