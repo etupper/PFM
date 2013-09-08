@@ -994,7 +994,7 @@ namespace PackFileManager
         private void saveToDirectoryToolStripMenuItem_Click(object sender, EventArgs e) {
             try {
                 DBTypeMap.Instance.SaveToFile(Path.GetDirectoryName(Application.ExecutablePath), 
-                                              GameManager.Instance.CurrentGame.Id);
+                                              string.Format("{0}_{1}", GameManager.Instance.CurrentGame.Id, "user"));
                 string message = "You just saved your own DB definitions in a new file.\n" +
                     "This means that these will be used instead of the ones received in updates from TWC.\n" +
                     "Once you have uploaded your changes and they have been integrated,\n" +

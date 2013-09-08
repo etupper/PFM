@@ -97,7 +97,8 @@ namespace PackFileTest {
                 } else if (dir.StartsWith("-i")) {
                     string integrateFrom = dir.Substring(2);
                     SchemaIntegrator integrator = new SchemaIntegrator{
-                        Verbose = verbose
+                        Verbose = verbose,
+                        VerifyAgainst = Game.R2TW
                     };
                     string[] files = integrateFrom.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                     foreach(string file in files) {

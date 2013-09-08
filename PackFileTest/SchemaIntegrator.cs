@@ -20,13 +20,16 @@ namespace PackFileTest {
             get;
             set;
         }
+        public bool IntegrateExisting {
+            get; set;
+        }
         
         private Dictionary<string, List<FieldInfo>> references = new Dictionary<string, List<FieldInfo>>();
         private Dictionary<string, PackedFile> packedFiles = new Dictionary<string, PackedFile>();
         
         public SchemaIntegrator() {
             if (!DBTypeMap.Instance.Initialized) {
-                DBTypeMap.Instance.InitializeTypeMap(Directory.GetCurrentDirectory());
+                DBTypeMap.Instance.initializeFromFile(Path.Combine(Directory.GetCurrentDirectory(), DBTypeMap.MASTER_SCHEMA_FILE_NAME));
             }
             
             Console.WriteLine("building reference cache");
@@ -43,21 +46,6 @@ namespace PackFileTest {
                 }
             }
 
-            if (VerifyAgainst != null) {
-                Console.WriteLine("building pack file cache");
-                foreach (string file in new PackLoadSequence().GetPacksLoadedFrom(VerifyAgainst.DataDirectory)) {
-                    PackFile p = new PackFile(file);
-                    foreach (PackedFile packed in p) {
-                        Console.WriteLine("loading from {0}", p);
-                        if (packed.FullPath.StartsWith("db")) {
-                            string typename = DBFile.typename(packed.FullPath);
-                            if (!packedFiles.ContainsKey(typename)) {
-                                packedFiles[typename] = packed;
-                            }
-                        }
-                    }
-                }
-            }
             Console.WriteLine("ok, done");
         }
         
@@ -69,13 +57,30 @@ namespace PackFileTest {
         }
         
         public void IntegrateFile(string filename) {
+            if (VerifyAgainst != null) {
+                Console.WriteLine("building pack file cache");
+                foreach (string file in new PackLoadSequence().GetPacksLoadedFrom(VerifyAgainst.GameDirectory)) {
+                    PackFile p = new PackFileCodec().Open(file);
+                    foreach (PackedFile packed in p) {
+                        Console.WriteLine("loading from {0}", p);
+                        if (packed.FullPath.StartsWith("db")) {
+                            string typename = DBFile.typename(packed.FullPath);
+                            if (!packedFiles.ContainsKey(typename)) {
+                                packedFiles[typename] = packed;
+                            }
+                        }
+                    }
+                }
+            }
             Console.WriteLine("Integrating schema file {0}", filename);
             using (var stream = File.OpenRead(filename)) {
                 XmlImporter importer = new XmlImporter(stream);
                 importer.Import();
-                
-                foreach(string type in importer.Descriptions.Keys) {
-                    IntegrateTable(type, importer.Descriptions[type]);
+
+                if (IntegrateExisting) {
+                    foreach (string type in importer.Descriptions.Keys) {
+                        IntegrateTable(type, importer.Descriptions[type]);
+                    }
                 }
                 foreach(GuidTypeInfo info in importer.GuidToDescriptions.Keys) {
                     if (!DBTypeMap.Instance.GuidMap.ContainsKey(info)) {
@@ -87,10 +92,15 @@ namespace PackFileTest {
                         PackedFile dbPacked;
                         if (packedFiles.TryGetValue(info.TypeName, out dbPacked)) {
                             if (!CanDecode(dbPacked)) {
+                                List<FieldInfo> oldInfo = DBTypeMap.Instance.GetInfoByGuid(info.Guid);
                                 List<FieldInfo> infos;
                                 if (importer.GuidToDescriptions.TryGetValue(info, out infos)) {
                                     DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, infos);
-                                    Console.WriteLine("Using new schema for {0}", info.TypeName);
+                                    if (CanDecode(dbPacked)) {
+                                        Console.WriteLine("Using new schema for {0}", info.TypeName);
+                                    } else {
+                                        DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, oldInfo);
+                                    }
                                 }
                             } else {
                                 Console.WriteLine("Can already decode {0}", info.TypeName);
