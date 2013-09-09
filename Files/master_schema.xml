@@ -10571,25 +10571,19 @@
   <table table_name='melee_weapons_tables'
          table_version='6'
          guid='4a001d91-c43c-4e88-ae4a-5690fda1e72c'>
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='int' />
-    <field name='unknown' type='int' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='string_ascii' />
-    <field name='unknown' type='int' />
-    <field name='unknown' type='int' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='float' />
-    <field name='unknown' type='string_ascii' />
-    <field name='unknown' type='string_ascii' />
+    <field name='armour_penetrating' type='boolean' />
+    <field name='armour_piercing' type='boolean' />
+    <field name='bonus_v_elephants' type='int' />
+    <field name='bonus_v_cavalry' type='int' />
+    <field name='bonus_v_infantry' type='int' />
+    <field name='key' type='string_ascii' />
+    <field name='damage' type='int' />
+    <field name='ap_damage' type='int' />
+    <field name='first_strike' type='int' />
+    <field name='shield_piercing' type='boolean' />
+    <field name='weapon_length' type='float' />
+    <field name='melee_weapon_type' type='string_ascii' />
+    <field name='audio_material' type='string_ascii' />
   </table>
   <table table_name='message_event_strings_tables'
          table_version='0'
@@ -13309,30 +13303,27 @@
   <table table_name='unit_special_abilities_tables'
          table_version='16'
          guid='7ea40f1e-abb7-4a66-99bd-a0077bf57b6f'>
-    <field name='key' type='string_ascii' />
-    <field name='active_time' type='float' />
-    <field name='recharge_time' type='float' />
-    <field name='num_uses' type='int' />
-    <field name='effect_range' type='float' version_start='5' />
-    <field name='affect_self' type='boolean' version_start='5' />
-    <field name='num_effected_friendly_units' type='int' version_start='5' />
-    <field name='num_effected_enemy_units' type='int' version_start='5' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='float' />
-    <field name='unknown' type='optstring_ascii' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='float' />
-    <field name='unknown' type='optstring_ascii' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='int' />
+	<field name='key' type='string_ascii' />
+	<field name='active_time' type='float' />
+	<field name='recharge_time' type='float' />
+	<field name='num_uses' type='int' />
+	<field name='effect_range' type='float' version_start='5' />
+	<field name='affect_self' type='boolean' version_start='5' />
+	<field name='num_effected_friendly_units' type='int' version_start='5' />
+	<field name='num_effected_enemy_units' type='int' version_start='5' />
+	<field name='update_targets_every_frame' type='boolean' />
+	<field name='initial_recharge' type='float' />
+	<field name='activated_projectile' type='optstring_ascii' />
+	<field name='can_autotrigger' type='boolean' />
+	<field name='target_friends' type='boolean' />
+	<field name='target_enemies' type='boolean' />
+	<field name='target_ground' type='boolean' />
+	<field name='target_intercept_range' type='float' />
+	<field name='assume_specific_behaviour' type='optstring_ascii' />
+	<field name='clear_current_order' type='boolean' />
+	<field name='passive' type='boolean' />
+	<field name='wind_up_time' type='float' />
+	<field name='unique_id' type='int' />
   </table>
   <table table_name='unit_special_abilities_tables'
          table_version='6'
