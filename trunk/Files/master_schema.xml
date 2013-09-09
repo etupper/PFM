@@ -3994,6 +3994,18 @@
   </table>
   <table table_name='action_results_additional_outcomes_tables'
          table_version='2'
+         guid='1515549c-9055-4c78-ab78-41694a267484'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='float' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='string_ascii' />
+  </table>
+  <table table_name='action_results_additional_outcomes_tables'
+         table_version='2'
          guid='f1535add-21f7-4b43-b2fd-8a27d0ef623a'>
     <field name='outcome' type='string_ascii' />
     <field name='action_result_key' type='string_ascii' />
