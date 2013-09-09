@@ -76,21 +76,22 @@ namespace PackFileManager {
                     text = string.Format("{0} (empty)", packedFile.Name);
                 } else {
                     string mouseover;
-                    if (!PackedFileDbCodec.CanDecode(packedFile, out mouseover)) {
-                        if (Parent != null) {
-                            Parent.ToolTipText = mouseover;
-                            Parent.ForeColor = Color.Red;
-                        }
-                        ForeColor = Color.Red;
-                    }
+                    
                     try {
                         DBFileHeader header = PackedFileDbCodec.readHeader(packedFile);
                         // text = string.Format("{0} - version {1}", text, header.Version);
                         if (header.EntryCount == 0) {
                             // empty db file
-                            if (NodeFont != null) {
-                                NodeFont = new Font(NodeFont, FontStyle.Strikeout);
+                            ForeColor = Color.Blue;
+                            if (Parent != null) {
+                                Parent.ForeColor = Color.Blue;
                             }
+                        } else if (!PackedFileDbCodec.CanDecode(packedFile, out mouseover)) {
+                            if (Parent != null) {
+                                Parent.ToolTipText = mouseover;
+                                Parent.ForeColor = Color.Red;
+                            }
+                            ForeColor = Color.Red;
                         } else if (HeaderVersionObsolete(packedFile)) {
                             if (Parent != null) {
                                 Parent.BackColor = Color.Yellow;
