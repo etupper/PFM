@@ -10568,6 +10568,29 @@
     <field name='Region_Unit_Resource_Requirement' type='optstring_ascii' />
     <field name='Audio_Language' type='string_ascii' />
   </table>
+  <table table_name='melee_weapons_tables'
+         table_version='6'
+         guid='4a001d91-c43c-4e88-ae4a-5690fda1e72c'>
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='int' />
+    <field name='unknown' type='int' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='int' />
+    <field name='unknown' type='int' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='float' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+  </table>
   <table table_name='message_event_strings_tables'
          table_version='0'
          guid='0022a4bf-a461-4a52-8078-3e7a9a865b05,
@@ -10708,6 +10731,20 @@
                e772c218-99fb-40d0-a460-add11a61289a'>
     <field fkey='ministerial_positions_tables.minister_key' name='ministerial_position' type='string' pk='true' />
     <field fkey='governorships_tables.governorship' name='governorship' type='string' />
+  </table>
+  <table table_name='missile_weapons_tables'
+         table_version='6'
+         guid='ef081887-bf1d-43b3-a709-b2b91350ea14'>
+    <field name='key' type='string_ascii' />
+    <field name='can_fire_at_buildings' type='boolean' />
+    <field name='default_projectile' type='string_ascii' />
+    <field name='precursor' type='boolean' />
+  </table>
+  <table table_name='missile_weapons_to_projectiles_tables'
+         table_version='0'
+         guid='7db7fceb-a8f8-46a1-8a70-2f02186d3096'>
+    <field name='missile_weapons' type='string_ascii' />
+    <field name='projectile' type='string_ascii' />
   </table>
   <table table_name='mission_issuers_tables'
          table_version='0'
