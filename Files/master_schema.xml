@@ -3996,13 +3996,13 @@
          table_version='2'
          guid='1515549c-9055-4c78-ab78-41694a267484'>
     <field name='unknown' type='string_ascii' />
-    <field name='unknown' type='string_ascii' />
-    <field name='unknown' type='float' />
-    <field name='unknown' type='optstring_ascii' />
-    <field name='unknown' type='optstring_ascii' />
-    <field name='unknown' type='string_ascii' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown' type='string_ascii' />
+    <field name='unknown2' type='string_ascii' />
+    <field name='unknown3' type='float' />
+    <field name='unknown4' type='optstring_ascii' />
+    <field name='unknown5' type='optstring_ascii' />
+    <field name='unknown6' type='string_ascii' />
+    <field name='unknown7' type='boolean' />
+    <field name='unknown8' type='string_ascii' />
   </table>
   <table table_name='action_results_additional_outcomes_tables'
          table_version='2'
@@ -11139,9 +11139,9 @@
   <table table_name='name_orders_tables'
          table_version='0'
          guid='d1db2ea4-bd61-4d24-96b9-4187589c158e'>
-    <field name='unknown' type='int' />
-    <field name='unknown2' type='int' />
-    <field name='unknown3' type='string_ascii' />
+    <field name='name_group' type='int' />
+    <field name='order' type='int' />
+    <field name='type' type='string_ascii' />
   </table>
   <table table_name='names_forts_tables'
          table_version='1'
@@ -11152,13 +11152,17 @@
   </table>
   <table table_name='names_groups_tables'
          table_version='0'
-         guid='1af54b5c-5c25-4497-b8c8-85045a71dd90,
-               2235db53-1926-4e19-8f7a-18b96e8a2311,
+         guid='2235db53-1926-4e19-8f7a-18b96e8a2311,
                32c0157b-c149-43de-a9ad-79187adb65c4,
                6e20e884-c222-40a4-8166-7316886592ac,
                9acd9903-c9ff-44bc-9425-d35a0dcfd70e'>
     <field name='ID' type='string' pk='true' />
     <field name='Description' type='string' />
+  </table>
+  <table table_name='names_groups_tables'
+         table_version='1'
+         guid='1af54b5c-5c25-4497-b8c8-85045a71dd90'>
+    <field name='key' type='int' />
   </table>
   <table table_name='names_royalty_tables'
          table_version='1'
@@ -11173,7 +11177,6 @@
   <table table_name='names_tables'
          table_version='0'
          guid='22c2d25d-20c6-46c7-9a75-0be25fe5382d,
-               23303254-1609-4938-a504-82b07d5c61bc,
                453c038d-e5a4-40fa-ad5f-7800780ffdc5,
                4b9e8c56-883b-43a5-9988-3179483ec31a,
                7d0cdbfd-a2c0-4027-9913-2e00d2f8dacc'>
@@ -11185,26 +11188,35 @@
     <field name='nobility' type='boolean' />
     <field name='id' type='string' />
   </table>
+  <table table_name='names_tables'
+         table_version='1'
+         guid='23303254-1609-4938-a504-82b07d5c61bc'>
+    <field name='names_group' type='int' />
+    <field name='order' type='int' />
+    <field name='gender' type='int' />
+    <field name='frequency' type='int' />
+    <field name='id' type='string_ascii' />
+  </table>
   <table table_name='naval_effects_tables'
          table_version='0'
          guid='140e9ed8-94ec-4fee-bee2-9840d0674967'>
-    <field name='unknown' type='optstring_ascii' />
-    <field name='unknown2' type='string_ascii' />
+    <field name='effect_name' type='optstring_ascii' />
+    <field name='key' type='string_ascii' />
   </table>
   <table table_name='naval_fire_junctions_tables'
          table_version='0'
          guid='0957dfda-3a43-42a6-ab0b-e250a1b3644f'>
-    <field name='unknown' type='float' />
-    <field name='unknown2' type='string_ascii' />
-    <field name='unknown3' type='string_ascii' />
+    <field name='chance_of_fire' type='float' />
+    <field name='incendiary_level' type='string_ascii' />
+    <field name='unit_category' type='string_ascii' />
   </table>
   <table table_name='naval_ramming_events_tables'
          table_version='0'
          guid='4a5d8cc3-c110-4c75-aa92-1f058f4cf239'>
-    <field name='unknown' type='int' />
-    <field name='unknown2' type='string_ascii' />
-    <field name='unknown3' type='string_ascii' />
-    <field name='unknown4' type='string_ascii' />
+    <field name='base_damage' type='int' />
+    <field name='key' type='string_ascii' />
+    <field name='rammed_ship' type='string_ascii' />
+    <field name='ramming_ship' type='string_ascii' />
   </table>
   <table table_name='naval_uniforms_tables'
          table_version='2'
@@ -11224,44 +11236,44 @@
   <table table_name='naval_units_tables'
          table_version='15'
          guid='269f2524-7374-4ebb-84b7-44c2af15f14e'>
-    <field name='Campaign_Action_Points' type='int' />
-    <field name='Category' type='string_ascii' />
-    <field name='Class' type='string_ascii' />
-    <field name='Gameplay_Description_Text' type='string_ascii' />
-    <field name='Historical_Description_Text' type='string_ascii' />
-    <field name='Key' type='string_ascii' />
-    <field name='Ship' type='string_ascii' />
-    <field name='Short_Description_Text' type='string_ascii' />
-    <field name='Strengths_Weaknesses_Text' type='string_ascii' />
-    <field name='unknown' type='optstring_ascii' />
-    <field name='unknown11' type='optstring_ascii' />
-    <field name='Primary_Naval_Weapon' type='optstring_ascii' />
-    <field name='Secondary_Naval_Weapon' type='optstring_ascii' />
-    <field name='Rank_Depth' type='int' />
-    <field name='Supports_First_Person' type='boolean' />
-    <field name='Can_Board' type='boolean' />
-    <field name='Unit_Card' type='string_ascii' />
-    <field name='Is_Composite' type='boolean' />
-    <field name='Ignition_Threshold' type='int' />
+    <field name='campaign_action_points' type='int' />
+    <field name='category' type='string_ascii' />
+    <field name='class' type='string_ascii' />
+    <field name='gameplay_description_text' type='string_ascii' />
+    <field name='historical_description_text' type='string_ascii' />
+    <field name='key' type='string_ascii' />
+    <field name='ship' type='string_ascii' />
+    <field name='short_description_text' type='string_ascii' />
+    <field name='strengths_weaknesses_text' type='string_ascii' />
+    <field name='unit_type_icon' type='optstring_ascii' />
+    <field name='attribute_groups' type='optstring_ascii' />
+    <field name='primary_naval_weapon' type='optstring_ascii' />
+    <field name='secondary_naval_weapon' type='optstring_ascii' />
+    <field name='rank_depth' type='int' />
+    <field name='supports_first_person' type='boolean' />
+    <field name='can_board' type='boolean' />
+    <field name='unit_card' type='string_ascii' />
+    <field name='is_composite' type='boolean' />
+    <field name='ignition_threshold' type='int' />
   </table>
   <table table_name='naval_units_to_unit_abilites_junctions_tables'
          table_version='0'
          guid='3b33be77-a967-422f-80eb-01ed24bbcdfb'>
-    <field name='unknown' type='string_ascii' />
-    <field name='unknown2' type='string_ascii' />
+    <field name='ability' type='string_ascii' />
+    <field name='naval_unit' type='string_ascii' />
   </table>
   <table table_name='naval_weapons_enums_tables'
          table_version='0'
          guid='31de0ad6-bf9e-4eeb-b192-8221e7e2d613'>
-    <field name='unknown' type='string_ascii' />
+    <field name='types' type='string_ascii' />
   </table>
   <table table_name='naval_weapons_tables'
          table_version='2'
          guid='6fdea8a4-9e14-47d5-a35b-a81f44c3b123'>
-    <field name='unknown' type='optstring_ascii' />
-    <field name='unknown2' type='string_ascii' />
-    <field name='unknown3' type='optstring_ascii' />
-    <field name='unknown4' type='string_ascii' />
+    <field name='autonomous_engine' type='optstring_ascii' />
+    <field name='key' type='string_ascii' />
+    <field name='models_entity_weaponry' type='optstring_ascii' />
+    <field name='type' type='string_ascii' />
   </table>
   <table table_name='particle_effects_tables'
          table_version='0'
@@ -13301,31 +13313,6 @@
     <field fkey='projectiles_tables.key' name='activated_projectile' type='optstring' version_start='5' />
   </table>
   <table table_name='unit_special_abilities_tables'
-         table_version='16'
-         guid='7ea40f1e-abb7-4a66-99bd-a0077bf57b6f'>
-	<field name='key' type='string_ascii' />
-	<field name='active_time' type='float' />
-	<field name='recharge_time' type='float' />
-	<field name='num_uses' type='int' />
-	<field name='effect_range' type='float' version_start='5' />
-	<field name='affect_self' type='boolean' version_start='5' />
-	<field name='num_effected_friendly_units' type='int' version_start='5' />
-	<field name='num_effected_enemy_units' type='int' version_start='5' />
-	<field name='update_targets_every_frame' type='boolean' />
-	<field name='initial_recharge' type='float' />
-	<field name='activated_projectile' type='optstring_ascii' />
-	<field name='can_autotrigger' type='boolean' />
-	<field name='target_friends' type='boolean' />
-	<field name='target_enemies' type='boolean' />
-	<field name='target_ground' type='boolean' />
-	<field name='target_intercept_range' type='float' />
-	<field name='assume_specific_behaviour' type='optstring_ascii' />
-	<field name='clear_current_order' type='boolean' />
-	<field name='passive' type='boolean' />
-	<field name='wind_up_time' type='float' />
-	<field name='unique_id' type='int' />
-  </table>
-  <table table_name='unit_special_abilities_tables'
          table_version='6'
          guid='19d79504-de3f-4d83-a25f-076c6c8d3d5e,
                33753898-acf4-4d8d-8b73-6e78f3c12df4,
@@ -13343,6 +13330,31 @@
     <field name='initial_recharge' type='float' version_start='5' />
     <field fkey='projectiles_tables.key' name='activated_projectile' type='optstring' version_start='5' />
     <field name='can_autotrigger' type='boolean' version_start='6' />
+  </table>
+  <table table_name='unit_special_abilities_tables'
+         table_version='16'
+         guid='7ea40f1e-abb7-4a66-99bd-a0077bf57b6f'>
+    <field name='key' type='string_ascii' />
+    <field name='active_time' type='float' />
+    <field name='recharge_time' type='float' />
+    <field name='num_uses' type='int' />
+    <field name='effect_range' type='float' version_start='5' />
+    <field name='affect_self' type='boolean' version_start='5' />
+    <field name='num_effected_friendly_units' type='int' version_start='5' />
+    <field name='num_effected_enemy_units' type='int' version_start='5' />
+    <field name='update_targets_every_frame' type='boolean' />
+    <field name='initial_recharge' type='float' />
+    <field name='activated_projectile' type='optstring_ascii' />
+    <field name='can_autotrigger' type='boolean' />
+    <field name='target_friends' type='boolean' />
+    <field name='target_enemies' type='boolean' />
+    <field name='target_ground' type='boolean' />
+    <field name='target_intercept_range' type='float' />
+    <field name='assume_specific_behaviour' type='optstring_ascii' />
+    <field name='clear_current_order' type='boolean' />
+    <field name='passive' type='boolean' />
+    <field name='wind_up_time' type='float' />
+    <field name='unique_id' type='int' />
   </table>
   <table table_name='unit_special_ability_effects_tables'
          table_version='1'
