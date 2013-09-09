@@ -5402,18 +5402,6 @@
     <field name='volumetric_fog_probability' type='int' />
     <field name='unknown' type='float' />
   </table>
-  <table table_name='battle_climate_weather_descriptions_tables'
-         table_version='1'
-         guid='9501be88-90d5-4578-b0bb-2771e312c19d'>
-    <field name='key' type='string_ascii' pk='true' />
-    <field fkey='climates_tables.climate_type' name='climate_type' type='string_ascii' />
-    <field fkey='seasons_tables.season' name='season' type='string_ascii' />
-    <field fkey='battle_weather_types_tables.key' name='weather_type' type='string_ascii' />
-    <field name='probability' type='int' />
-    <field name='heat_fatigue' type='int' />
-    <field name='cold_fatigue' type='int' />
-    <field name='spotting_scalar' type='float' />
-  </table>
   <table table_name='battle_difficulty_modifiers_tables'
          table_version='1'
          guid='10b9a0bd-03a0-4ce0-af6a-1ec38467c7e1'>

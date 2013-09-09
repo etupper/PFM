@@ -19,12 +19,17 @@ namespace Filetypes
             case "optstring_ascii":
                 return OptStringTypeAscii();
 			case "int":
+            case "integer":
 				return IntType ();
 			case "short":
 				return ShortType ();
 			case "float":
+            case "single":
 				return SingleType ();
+            case "double":
+                return DoubleType ();
 			case "boolean":
+            case "yesno":
 				return BoolType ();
             case "list":
                 return ListType();
@@ -44,6 +49,7 @@ namespace Filetypes
         public static FieldInfo OptStringType() { return new OptStringType() { Name = "unknown" }; }
         public static FieldInfo OptStringTypeAscii() { return new OptStringTypeAscii() { Name = "unknown" }; }
         public static FieldInfo SingleType() { return new SingleType() { Name = "unknown" }; }
+        public static FieldInfo DoubleType() { return new DoubleType() { Name = "unknown" }; }
         public static FieldInfo ByteType() { return new VarBytesType(1) { Name = "unknown" }; }
         public static FieldInfo ListType() { return new ListType() { Name = "unknown" }; }
     }
@@ -225,6 +231,19 @@ namespace Filetypes
             };
         }
 	}
+
+    class DoubleType : FieldInfo {
+     public DoubleType () {
+         TypeName = "double";
+         TypeCode = TypeCode.Single;
+     }
+        public override FieldInstance CreateInstance() {
+            return new DoubleField() {
+                Name = this.Name,
+                Value = "0"
+            };
+        }
+ }
 
 	class BoolType : FieldInfo {
 		public BoolType () {

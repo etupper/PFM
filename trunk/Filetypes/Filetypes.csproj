@@ -66,6 +66,7 @@
     <Compile Include="DB\TextDbCodec.cs" />
     <Compile Include="DB\ModToolDBCodec.cs" />
     <Compile Include="DB\FieldMappingManager.cs" />
+    <Compile Include="DB\CaXmlDbFileCodec.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
