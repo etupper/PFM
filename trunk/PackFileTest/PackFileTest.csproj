@@ -36,7 +36,7 @@
     <CodeAnalysisFailOnMissingRules>true</CodeAnalysisFailOnMissingRules>
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
-    <Commandlineparameters>-ca/opt/mono/Mods/db/land_units.xml</Commandlineparameters>
+    <Commandlineparameters>-ipietro_p.xml -w</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\</OutputPath>
