@@ -39,20 +39,26 @@ namespace PackFileManager {
         public bool CanEdit(PackedFile file) {
             bool result = file.FullPath.StartsWith("db");
             try {
-            if (result) {
-                DBFileHeader header = PackedFileDbCodec.readHeader(file);
-                TypeInfo info = DBTypeMap.Instance.GetVersionedInfo(DBFile.typename(file.FullPath), header.Version);
-                if (info != null) {
-                    foreach(FieldInfo field in info.Fields) {
-                        result &= !(field is ListType);
-                        if (!result) {
-                            break;
-                        }
+                if (result) {
+                    DBFileHeader header = PackedFileDbCodec.readHeader(file);
+                    TypeInfo info = null;
+                    if (!string.IsNullOrEmpty(header.GUID)) {
+                        DBTypeMap.Instance.GetInfoByGuid(header.GUID);
                     }
-                } else {
-                    result = false;
+                    if (info == null) {
+                        info = DBTypeMap.Instance.GetVersionedInfo(DBFile.typename(file.FullPath), header.Version);
+                    }
+                    if (info != null) {
+                        foreach(FieldInfo field in info.Fields) {
+                            result &= !(field is ListType);
+                            if (!result) {
+                                break;
+                            }
+                        }
+                    } else {
+                        result = false;
+                    }
                 }
-            }
             } catch {
                 result = false;
             }

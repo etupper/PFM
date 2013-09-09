@@ -23,6 +23,9 @@ namespace PackFileTest {
         public bool IntegrateExisting {
             get; set;
         }
+        public bool OverwriteExisting {
+            get; set;
+        }
         
         private Dictionary<string, List<FieldInfo>> references = new Dictionary<string, List<FieldInfo>>();
         private Dictionary<string, PackedFile> packedFiles = new Dictionary<string, PackedFile>();
@@ -38,7 +41,9 @@ namespace PackFileTest {
                     if (!string.IsNullOrEmpty(field.ForeignReference)) {
                         List<FieldInfo> addTo;
                         if (!references.TryGetValue(field.ForeignReference, out addTo)) {
-                            Console.WriteLine("Reference found: {0}", field.ForeignReference);
+#if DEBUG
+                            // Console.WriteLine("Reference found: {0}", field.ForeignReference);
+#endif
                             addTo = new List<FieldInfo>();
                         }
                         addTo.Add(field);
@@ -83,25 +88,27 @@ namespace PackFileTest {
                     }
                 }
                 foreach(GuidTypeInfo info in importer.GuidToDescriptions.Keys) {
+                    List<FieldInfo> infos;
+                    if (!importer.GuidToDescriptions.TryGetValue(info, out infos)) {
+                        // nothing to integrate
+                        continue;
+                    }
                     if (!DBTypeMap.Instance.GuidMap.ContainsKey(info)) {
-                        List<FieldInfo> infos;
-                        if (importer.GuidToDescriptions.TryGetValue(info, out infos)) {
-                            DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, infos);
-                        }
+                        DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, infos);
                     } else {
                         PackedFile dbPacked;
+                        List<FieldInfo> oldInfo = DBTypeMap.Instance.GetInfoByGuid(info.Guid);
                         if (packedFiles.TryGetValue(info.TypeName, out dbPacked)) {
-                            if (!CanDecode(dbPacked)) {
-                                List<FieldInfo> oldInfo = DBTypeMap.Instance.GetInfoByGuid(info.Guid);
-                                List<FieldInfo> infos;
-                                if (importer.GuidToDescriptions.TryGetValue(info, out infos)) {
-                                    DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, infos);
-                                    if (CanDecode(dbPacked)) {
-                                        Console.WriteLine("Using new schema for {0}", info.TypeName);
-                                    } else {
-                                        DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, oldInfo);
-                                    }
+                            if (OverwriteExisting || !CanDecode(dbPacked)) {
+                                DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, infos);
+                                if (CanDecode(dbPacked)) {
+                                    Console.WriteLine("Using new schema for {0}", info.TypeName);
+                                } else {
+                                    DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, oldInfo);
                                 }
+                            } else if (IntegrateExisting) {
+                                IntegrateInto(info.TypeName, oldInfo, infos);
+                                DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, oldInfo);
                             } else {
                                 Console.WriteLine("Can already decode {0}", info.TypeName);
                             }
@@ -139,7 +146,7 @@ namespace PackFileTest {
             }
         }
         
-        static readonly Regex UNKNOWN_RE = new Regex("[Uu]nknown");
+        static readonly Regex UNKNOWN_RE = new Regex("[Uu]nknown[0-9]*");
         void IntegrateInto (string type, List<FieldInfo> integrateInto, List<FieldInfo> integrateFrom) {
             for(int i = 0; i < integrateFrom.Count; i++) {
                 FieldInfo fromInfo = integrateFrom[i];
