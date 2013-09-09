@@ -13270,10 +13270,37 @@
     <field fkey='projectiles_tables.key' name='activated_projectile' type='optstring' version_start='5' />
   </table>
   <table table_name='unit_special_abilities_tables'
+         table_version='16'
+         guid='7ea40f1e-abb7-4a66-99bd-a0077bf57b6f'>
+    <field name='key' type='string_ascii' />
+    <field name='active_time' type='float' />
+    <field name='recharge_time' type='float' />
+    <field name='num_uses' type='int' />
+    <field name='effect_range' type='float' version_start='5' />
+    <field name='affect_self' type='boolean' version_start='5' />
+    <field name='num_effected_friendly_units' type='int' version_start='5' />
+    <field name='num_effected_enemy_units' type='int' version_start='5' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='float' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='float' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='int' />
+  </table>
+  <table table_name='unit_special_abilities_tables'
          table_version='6'
          guid='19d79504-de3f-4d83-a25f-076c6c8d3d5e,
                33753898-acf4-4d8d-8b73-6e78f3c12df4,
-               7ea40f1e-abb7-4a66-99bd-a0077bf57b6f,
                93d92080-7c6f-495b-8e1c-0038f5375467'>
     <field fkey='unit_special_ability_types_tables.special_ability_type' name='key' type='string' pk='true' />
     <field name='active_time' type='float' />
