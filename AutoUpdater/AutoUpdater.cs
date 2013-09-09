@@ -106,10 +106,14 @@ namespace AutoUpdater {
             using (var zipStream = new ZipInputStream(File.OpenRead(zipFile))) {
             ZipEntry entry = zipStream.GetNextEntry();
                 while (entry != null) {
-                    using (FileStream outStream = File.OpenWrite(Path.Combine(targetDir, entry.Name))) {
-                        zipStream.CopyTo(outStream);
+                    try {
+                        using (FileStream outStream = File.OpenWrite(Path.Combine(targetDir, entry.Name))) {
+                            zipStream.CopyTo(outStream);
+                        }
+                        entry = zipStream.GetNextEntry();
+                    } catch (Exception e) {
+                        Console.WriteLine("Could not unpack {0}", entry.Name);
                     }
-                    entry = zipStream.GetNextEntry();
                 }
             }
         }
