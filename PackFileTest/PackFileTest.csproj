@@ -36,7 +36,7 @@
     <CodeAnalysisFailOnMissingRules>true</CodeAnalysisFailOnMissingRules>
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
-    <Commandlineparameters>-ischema_jinarik3.xml -w</Commandlineparameters>
+    <Commandlineparameters>-ca/opt/mono/Mods/db/land_units.xml</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\</OutputPath>

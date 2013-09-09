@@ -28,6 +28,8 @@ namespace PackFileTest {
             "-pr", 
             // -w : write schema_user.xml after iterating all db files
             "-w",
+            // -ca: read CA schema file
+            "-ca",
             // -as: add entries from other schema file by GUID if they don't exists already
             "-as",
             // -cs: convert string entries to string_ascii entries for tables that aren't already there
@@ -89,6 +91,11 @@ namespace PackFileTest {
                     CheckReferences();
                 } else if (dir.Equals("-x")) {
                     waitForKey = false;
+                } else if (dir.StartsWith("-ca")) {
+                    string caXml = dir.Substring(3);
+                    string path = Path.GetDirectoryName(caXml);
+                    CaXmlDbFileCodec codec = new CaXmlDbFileCodec(path);
+                    codec.Decode(File.OpenRead(caXml));
                 } else if (dir.StartsWith("-as")) {
                     string integrateFrom = dir.Substring(3);
                     string[] files = integrateFrom.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);

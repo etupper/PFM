@@ -268,19 +268,21 @@ namespace PackFileManager
             if (Url == null || ToFind == null) {
                 return;
             }
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url);
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            using (var stream = new StreamReader(response.GetResponseStream())) {
-                string line = stream.ReadLine();
-                while (line != null) {
-                    if (ToFind.IsMatch(line)) {
-                        Match match = ToFind.Match(line);
-                        Result = match.Groups[1].Value;
-                        break;
+            try {
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url);
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                using (var stream = new StreamReader(response.GetResponseStream())) {
+                    string line = stream.ReadLine();
+                    while (line != null) {
+                        if (ToFind.IsMatch(line)) {
+                            Match match = ToFind.Match(line);
+                            Result = match.Groups[1].Value;
+                            break;
+                        }
+                        line = stream.ReadLine();
                     }
-                    line = stream.ReadLine();
                 }
-            }
+            } catch {}
         }
     }
 }

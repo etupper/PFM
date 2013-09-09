@@ -73,7 +73,8 @@ namespace Filetypes
     public class StringField : FieldInstance {
         protected Encoding stringEncoding = Encoding.Unicode;
 
-        public StringField() : base(Types.StringType(), "") {}
+        public StringField() : this(Types.StringType()) {}
+        public StringField(FieldInfo info) : base(info, "") {}
         public override int Length {
             get {
                 return Value.Length * (stringEncoding.IsSingleByte ? 1 : 2) + 2;
@@ -88,7 +89,9 @@ namespace Filetypes
     }
     
     public class StringFieldAscii : StringField {
-        public StringFieldAscii() : base() { stringEncoding = Encoding.ASCII; }
+        public StringFieldAscii() : base(Types.StringTypeAscii()) { 
+            stringEncoding = Encoding.ASCII; 
+        }
     }
 
     /*
@@ -154,6 +157,24 @@ namespace Filetypes
         }
     }
     
+    public class DoubleField : FieldInstance {
+        public DoubleField() : base(Types.DoubleType(), "0") { Length = 8; }
+        public override void Decode(BinaryReader reader) {
+            Value = reader.ReadDouble ().ToString ();
+        }
+        public override void Encode(BinaryWriter writer) {
+            writer.Write (double.Parse (Value));
+        }
+        public override string Value {
+            get {
+                return base.Value;
+            }
+            set {
+                base.Value = double.Parse(value).ToString();
+            }
+        }
+    }
+    
     /*
      * Bool Field.
      */
@@ -186,6 +207,7 @@ namespace Filetypes
     public class OptStringField : FieldInstance {
         protected Encoding stringEncoding = Encoding.Unicode;
         public OptStringField() : base(Types.OptStringType()) {}
+        public OptStringField(FieldInfo info) : base(info) {}
         public override void Decode(BinaryReader reader) {
             string result = "";
             byte b = reader.ReadByte ();
@@ -214,7 +236,9 @@ namespace Filetypes
         }
     }
     public class OptStringFieldAscii : OptStringField {
-        public OptStringFieldAscii() : base() { stringEncoding = Encoding.ASCII; }
+        public OptStringFieldAscii() : base(Types.OptStringTypeAscii()) { 
+            stringEncoding = Encoding.ASCII; 
+        }
     }
 
     /*
