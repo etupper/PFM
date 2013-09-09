@@ -59,6 +59,7 @@ namespace Filetypes {
                         // table with GUIDs
                         id = tableNode.Attributes[GUID_TAG].Value.Trim();
                         string table_name = tableNode.Attributes["table_name"].Value.Trim();
+                
                         string table_version = tableNode.Attributes["table_version"].Value.Trim();
                         string[] guids = id.Split(GUID_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
                         // create separate entry for each GUID
@@ -107,6 +108,7 @@ namespace Filetypes {
     			XmlAttributeCollection attributes = fieldNode.Attributes;
     			string name = attributes ["name"].Value;
     			string type = attributes ["type"].Value;
+                
     			description = Types.FromTypeName (type);
     			description.Name = name;
     			if (attributes ["fkey"] != null) {
@@ -241,6 +243,7 @@ namespace Filetypes {
         private SortedDictionary<GuidList, FieldInfoList> CompileSameDefinitions(SortedDictionary<GuidTypeInfo, FieldInfoList> guidMap) {
             SortedDictionary<GuidList, FieldInfoList> result = 
                 new SortedDictionary<GuidList, FieldInfoList>(GuidListComparer.Instance);
+            
             foreach(GuidTypeInfo guid in guidMap.Keys) {
                 GuidList addTo = new GuidList();
                 FieldInfoList typeDef = guidMap[guid];
@@ -331,7 +334,7 @@ namespace Filetypes {
 
         public override string FormatHeader(GuidList info) {
             List<string> guids = new List<string>(info.Count);
-            info.ForEach(i => { guids.Add(i.Guid); });
+            info.ForEach(i => { if (!guids.Contains(i.Guid)) { guids.Add(i.Guid);  }});
             return string.Format(HEADER_FORMAT, string.Join(GUID_SEPARATOR, guids), info[0].TypeName, info[0].Version);
         }
     }

@@ -186,14 +186,17 @@ namespace Filetypes {
             typeMap[key] = setTo;
         }
         public void SetByGuid(string guid, string tableName, int version, List<FieldInfo> setTo) {
-                GuidTypeInfo info = new GuidTypeInfo(guid, tableName, version);
+            foreach(GuidTypeInfo infos in new List<GuidTypeInfo>(guidMap.Keys)) {
+                if (infos.Guid.Equals(guid)) {
+                    guidMap.Remove(infos);
+                }
+            }
+            GuidTypeInfo info = new GuidTypeInfo(guid, tableName, version);
             if (setTo != null) {
 #if DEBUG
                 Console.WriteLine("adding table definition by GUID {1} for {0}", tableName, guid);
 #endif
                 guidMap[info] = setTo;
-            } else {
-                guidMap.Remove(info);
             }
         }
         #endregion

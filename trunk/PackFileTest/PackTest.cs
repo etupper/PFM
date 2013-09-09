@@ -71,6 +71,10 @@ namespace PackFileTest {
                 }
             }
             
+            if (!DBTypeMap.Instance.Initialized) {
+                DBTypeMap.Instance.initializeFromFile(DBTypeMap.MASTER_SCHEMA_FILE_NAME);
+            }
+            
             bool saveSchema = false;
             foreach (string dir in arguments) {
                 if (dir.StartsWith("#") || dir.Trim().Equals("")) {
@@ -95,10 +99,16 @@ namespace PackFileTest {
                     string packFile = dir.Substring(3);
                     ConvertAllStringsToAscii(packFile);
                 } else if (dir.StartsWith("-i")) {
+                    if (File.Exists("gamedir_r2tw.txt")) {
+                        Game.R2TW.GameDirectory = File.ReadAllText("gamedir_r2tw.txt").Trim();
+                    }
                     string integrateFrom = dir.Substring(2);
+                    Console.WriteLine("verifying against R2 in '{0}/data'", Game.R2TW.GameDirectory);
                     SchemaIntegrator integrator = new SchemaIntegrator{
                         Verbose = verbose,
-                        VerifyAgainst = Game.R2TW
+                        VerifyAgainst = Game.R2TW,
+                        OverwriteExisting = true,
+                        IntegrateExisting = true
                     };
                     string[] files = integrateFrom.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                     foreach(string file in files) {
@@ -163,6 +173,10 @@ namespace PackFileTest {
                     if (!DBTypeMap.Instance.GuidMap.ContainsKey(info)) {
                         Console.WriteLine("adding {0}", info.Guid);
                         DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, importer.GuidToDescriptions[info]);
+                    } else {
+                        List<FieldInfo> existingInfo = DBTypeMap.Instance.GetInfoByGuid(info.Guid);
+                        List<FieldInfo> update = importer.GuidToDescriptions[info];
+                        ReplaceUnknowns(existingInfo, update);
                     }
                 }
             }
@@ -197,6 +211,26 @@ namespace PackFileTest {
             }
             DBTypeMap.Instance.SaveToFile(Directory.GetCurrentDirectory(), "ascii");
         }
+        
+        static Regex unknown_re = new Regex("[Uu]nknown[0-9]*");
+        static void ReplaceUnknowns(List<FieldInfo> replaceIn, List<FieldInfo> replaceFrom) {
+            if (replaceIn.Count != replaceFrom.Count) {
+                return;
+            }
+            for (int i = 0; i < replaceIn.Count; i++) {
+                FieldInfo fromInfo = replaceFrom[i];
+                if (!unknown_re.IsMatch(fromInfo.Name)) {
+                    continue;
+                }
+                FieldInfo toInfo = replaceIn[i];
+                
+                if (!fromInfo.TypeName.Equals(toInfo.TypeName)) {
+                    return;
+                }
+                toInfo.Name = fromInfo.Name.ToLower();
+            }
+        }
+        
         static void TryDecode(PackedFile dbFile, DBFileHeader header, List<TypeInfo> infos) {
             foreach (TypeInfo info in infos) {
                 // register converted to type map
