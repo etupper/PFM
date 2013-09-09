@@ -9578,6 +9578,12 @@
     <field name='tertiary_green' type='int' />
     <field name='tertiary_red' type='int' />
   </table>
+  <table table_name='faction_civil_war_setups_tables'
+         table_version='0'
+         guid='2fb0658d-ad1d-4194-9b39-07c23f0832c5'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+  </table>
   <table table_name='faction_groups_tables'
          table_version='0'
          guid='5afa7aa8-8c9f-48a5-8741-f22aa9b91ceb'>
@@ -9612,6 +9618,18 @@
                c4d0c5f2-ec14-41d5-bd0b-dae16aa1d87d'>
     <field name='number_of_regions' type='int' />
     <field name='resource_consumption' type='int' />
+  </table>
+  <table table_name='faction_to_faction_groups_junctions_tables'
+         table_version='0'
+         guid='7a01185b-a616-4c95-af1b-0790e2897a1d'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+  </table>
+  <table table_name='faction_to_mercenary_set_junctions_tables'
+         table_version='0'
+         guid='497fb718-74e3-436a-9a4e-afdb4f82e33b'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
   </table>
   <table table_name='faction_uniform_colours_tables'
          table_version='0'
@@ -9904,6 +9922,33 @@
     <field name='track_projectile_distance' type='float' />
     <field name='turn_delay' type='float' />
   </table>
+  <table table_name='font_names_tables'
+         table_version='0'
+         guid='01e069e0-dd6d-4510-94f0-e54bdbc47ada'>
+    <field name='unknown' type='string_ascii' />
+  </table>
+  <table table_name='fonts_tables'
+         table_version='0'
+         guid='e5bd3563-0de9-47a1-91a8-aa85808f56e0'>
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='int' />
+  </table>
+  <table table_name='formations_tables'
+         table_version='2'
+         guid='8477f597-6195-45f0-a001-2226a38b090c'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='int' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+  </table>
+  <table table_name='formations_to_subcultures_tables'
+         table_version='0'
+         guid='27ad3179-be14-4fb2-aa5b-3be8fcf8ae58'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+  </table>
   <table table_name='frontend_faction_leaders_tables'
          table_version='0'
          guid='7924a6ce-6c18-4c91-84ce-e4b8d5769fe7'>
@@ -9935,6 +9980,11 @@
     <field name='uniform' type='string_ascii' />
     <field name='x_offset' type='float' version_start='1' />
     <field name='y_offset' type='float' version_start='1' />
+  </table>
+  <table table_name='game_area_enums_tables'
+         table_version='0'
+         guid='b8248ef9-5fdd-4dc1-be38-37103b16cbe4'>
+    <field name='unknown' type='string_ascii' />
   </table>
   <table table_name='general_command_star_level_effects_tables'
          table_version='0'
@@ -9979,6 +10029,22 @@
          table_version='0'
          guid='e4a6a2d8-b967-45aa-b893-46ad4ec7b175'>
     <field name='governorship' type='string' pk='true' />
+  </table>
+  <table table_name='ground_type_to_stat_effects_tables'
+         table_version='1'
+         guid='e3da0bf9-93c7-419e-816b-1f48c379ac3f'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='float' />
+  </table>
+  <table table_name='ground_types_tables'
+         table_version='1'
+         guid='daab119b-4cbe-4430-b8cd-d6addbed4c70'>
+    <field name='unknown' type='int' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
   </table>
   <table table_name='groupings_continents_junct_tables'
          table_version='0'
@@ -10061,6 +10127,14 @@
     <field fkey='warscape_rigid_tables.key' name='destroyed_model' type='string_ascii' />
     <field fkey='warscape_animated_tables.key' name='destruction_animation' type='string_ascii' />
     <field fkey='gun_types_enum_tables.key' name='engine_type' type='string_ascii' />
+  </table>
+  <table table_name='historical_battles_ui_locations_tables'
+         table_version='1'
+         guid='2afe0679-3eb4-4599-adb8-a5b775c97d88'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='int' />
+    <field name='unknown' type='int' />
+    <field name='unknown' type='int' />
   </table>
   <table table_name='historical_character_traits_tables'
          table_version='0'
@@ -10156,6 +10230,18 @@
     <field name='ui_image' type='string_ascii' />
     <field name='prioritised' type='boolean' />
   </table>
+  <table table_name='land_units_officers_tables'
+         table_version='2'
+         guid='67b11898-6596-41e1-9282-ae78c1e931e6'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+  </table>
   <table table_name='land_units_tables'
          table_version='26'
          guid='3e8ad861-4c5a-402b-8b0a-703658fc6203'>
@@ -10211,6 +10297,12 @@
     <field name='Selectied_VO_Secondary' type='string_ascii' />
     <field name='Selected_VO_Tertiary' type='string_ascii' />
     <field name='Hiding_Scalar' type='float' />
+  </table>
+  <table table_name='land_units_to_unit_abilites_junctions_tables'
+         table_version='0'
+         guid='d71a96d1-dc5b-4555-8c59-7c5598ca7caa'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
   </table>
   <table table_name='loading_screens_tables'
          table_version='0'
@@ -10865,6 +10957,13 @@
     <field name='key' type='string' pk='true' />
     <field name='value' type='float' />
   </table>
+  <table table_name='name_orders_tables'
+         table_version='0'
+         guid='d1db2ea4-bd61-4d24-96b9-4187589c158e'>
+    <field name='unknown' type='int' />
+    <field name='unknown' type='int' />
+    <field name='unknown' type='string_ascii' />
+  </table>
   <table table_name='names_forts_tables'
          table_version='1'
          guid='243fd421-3a43-4274-a995-9f305d0ea817'>
@@ -10938,6 +11037,68 @@
     <field name='Uniform_Name' type='string' />
     <field fkey='unit_stats_naval_tables.key' name='Unit' type='string' />
     <field fkey='imposter_sharing_enums_tables.key' name='imposter_sharing' type='optstring' />
+  </table>
+  <table table_name='naval_effects_tables'
+         table_version='0'
+         guid='140e9ed8-94ec-4fee-bee2-9840d0674967'>
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='string_ascii' />
+  </table>
+  <table table_name='naval_fire_junctions_tables'
+         table_version='0'
+         guid='0957dfda-3a43-42a6-ab0b-e250a1b3644f'>
+    <field name='unknown' type='float' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+  </table>
+  <table table_name='naval_ramming_events_tables'
+         table_version='0'
+         guid='4a5d8cc3-c110-4c75-aa92-1f058f4cf239'>
+    <field name='unknown' type='int' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+  </table>
+  <table table_name='naval_units_tables'
+         table_version='15'
+         guid='269f2524-7374-4ebb-84b7-44c2af15f14e'>
+    <field name='unknown' type='int' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='int' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='int' />
+  </table>
+  <table table_name='naval_units_to_unit_abilites_junctions_tables'
+         table_version='0'
+         guid='3b33be77-a967-422f-80eb-01ed24bbcdfb'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+  </table>
+  <table table_name='naval_weapons_enums_tables'
+         table_version='0'
+         guid='31de0ad6-bf9e-4eeb-b192-8221e7e2d613'>
+    <field name='unknown' type='string_ascii' />
+  </table>
+  <table table_name='naval_weapons_tables'
+         table_version='2'
+         guid='6fdea8a4-9e14-47d5-a35b-a81f44c3b123'>
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='string_ascii' />
   </table>
   <table table_name='particle_effects_tables'
          table_version='0'
@@ -11025,6 +11186,20 @@
     <field name='key' type='string' pk='true' />
     <field fkey='pre_battle_speech_types_enum_tables.description' name='type' type='int' />
     <field fkey='pre_battle_speech_parameters_enum_tables.key' name='parameter' type='optstring' />
+  </table>
+  <table table_name='projectile_displays_tables'
+         table_version='3'
+         guid='2d5000ab-6822-4cfc-bd7d-62309c68aec0'>
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='optstring_ascii' />
   </table>
   <table table_name='projectile_impacts_tables'
          table_version='0'
@@ -11302,6 +11477,26 @@
     <field name='contact_stat_effect' type='optstring_ascii' />
     <field name='unknown34' type='boolean' />
   </table>
+  <table table_name='provinces_tables'
+         table_version='0'
+         guid='19be9701-8e62-4307-9bfd-56ef393a621c'>
+    <field name='unknown' type='string_ascii' />
+  </table>
+  <table table_name='provincial_initiative_records_tables'
+         table_version='2'
+         guid='157148df-3dc3-491c-b4eb-0983193dae73'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='int' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+  </table>
+  <table table_name='provincial_initiatives_to_subculture_junctions_tables'
+         table_version='0'
+         guid='2f76fdd7-1781-475f-89fd-8d480b3757c2'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+  </table>
   <table table_name='public_order_factors_tables'
          table_version='0'
          guid='1a6957bf-f191-4dd2-b8f5-a5d5f03fefaa,
@@ -11427,6 +11622,12 @@
     <field name='group_key' type='string_ascii' />
     <field name='round' type='int' />
   </table>
+  <table table_name='region_to_province_junctions_tables'
+         table_version='0'
+         guid='3089c0a3-3c18-4e78-a8f9-d954b0e051f2'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+  </table>
   <table table_name='region_unit_resources_tables'
          table_version='0'
          guid='1d07d922-6f22-49bf-8e06-be21edf9d3ea,
@@ -11518,6 +11719,13 @@
     <field name='convertibility' type='int' />
     <field name='ui_icon_path' type='string_ascii' />
   </table>
+  <table table_name='resource_effects_tables'
+         table_version='0'
+         guid='894c031a-8542-41b0-b93e-e0887fb66366'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='float' />
+  </table>
   <table table_name='resources_tables'
          table_version='1'
          guid='245917b0-4cb7-40c6-b7aa-6c4f32202116,
@@ -11540,6 +11748,17 @@
     <field name='trade_value' type='int' />
     <field name='Icon Path' type='string' />
     <field name='strategic_value' type='int' version_start='1' />
+  </table>
+  <table table_name='scripted_objectives_tables'
+         table_version='1'
+         guid='5d7f2ebb-7e62-408e-9ef9-f7192c768c69'>
+    <field name='unknown' type='string_ascii' />
+  </table>
+  <table table_name='scripted_subtitles_tables'
+         table_version='2'
+         guid='35b105ff-0e18-4966-bbad-c1a01e272a8b'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='optstring_ascii' />
   </table>
   <table table_name='sea_climate_details_tables'
          table_version='0'
@@ -11589,6 +11808,14 @@
     <field name='onscreen' type='string' />
     <field name='order' type='string' />
   </table>
+  <table table_name='ship_dbs_tables'
+         table_version='0'
+         guid='b6f6fa99-77a5-4b64-a164-5c713bcb148a'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+  </table>
   <table table_name='ship_names_tables'
          table_version='1'
          guid='95fdee6f-6ce6-46fa-8634-740ea19b818a'>
@@ -11596,6 +11823,24 @@
     <field fkey='names_groups_tables.ID' name='name_group' type='string' />
     <field name='Ship_Name' type='string' />
     <field fkey='factions_tables.key' name='exclusive_to_faction' type='optstring' />
+  </table>
+  <table table_name='slot_template_to_building_superchain_junctions_tables'
+         table_version='0'
+         guid='fa041213-60a3-4ccb-ba9d-fdc2da809dbc'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+  </table>
+  <table table_name='slot_templates_tables'
+         table_version='0'
+         guid='593163b5-3c4a-4bc5-9384-5e264fed2671'>
+    <field name='unknown' type='string_ascii' />
+  </table>
+  <table table_name='slot_types_tables'
+         table_version='0'
+         guid='acd60faf-f95a-45aa-99bf-31f6960a2c36'>
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='optstring_ascii' />
   </table>
   <table table_name='slots_art_tables'
          table_version='0'
@@ -11693,6 +11938,98 @@
                fae40b53-4971-40bf-8638-7ce05df02c48'>
     <field name='name' type='optstring' />
   </table>
+  <table table_name='special_ability_groups_tables'
+         table_version='0'
+         guid='a9351546-90b8-4530-b700-173a8807e04a'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+  </table>
+  <table table_name='special_ability_groups_to_unit_abilities_junctions_tables'
+         table_version='1'
+         guid='ef88d458-4d85-43e9-b364-d1c699cc4aa3'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+  </table>
+  <table table_name='special_ability_invalid_usage_flags_tables'
+         table_version='0'
+         guid='59bf388b-841c-4578-a703-1c3c4af35dcb'>
+    <field name='unknown' type='string_ascii' />
+  </table>
+  <table table_name='special_ability_phase_attribute_effects_tables'
+         table_version='0'
+         guid='ad8836c7-7b5b-4321-9482-55bfe7ae27aa'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+  </table>
+  <table table_name='special_ability_phase_stat_effects_tables'
+         table_version='1'
+         guid='5c4edcfe-bc5e-4b87-a4ea-60f915f01501'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='float' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+  </table>
+  <table table_name='special_ability_phases_tables'
+         table_version='11'
+         guid='de131a11-0522-4beb-b135-eaecfe943632'>
+    <field name='unknown' type='float' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='float' />
+    <field name='unknown' type='float' />
+    <field name='unknown' type='float' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+  </table>
+  <table table_name='special_ability_to_invalid_usage_flags_tables'
+         table_version='0'
+         guid='f988e27b-f3c7-448b-b727-f2ce3303962e'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+  </table>
+  <table table_name='special_ability_to_special_ability_phase_junctions_tables'
+         table_version='1'
+         guid='cd7f33da-f749-4e49-9232-244e2fc9eb11'>
+    <field name='unknown' type='int' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+  </table>
+  <table table_name='spotting_and_hiding_values_tables'
+         table_version='1'
+         guid='00c7169b-78e6-4e6d-988d-4051face33b3'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='int' />
+    <field name='unknown' type='int' />
+    <field name='unknown' type='int' />
+    <field name='unknown' type='int' />
+  </table>
+  <table table_name='start_pos_past_events_tables'
+         table_version='0'
+         guid='2d5e7f83-b907-47d1-ad0c-4c6751cf1ac3'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='int' />
+  </table>
+  <table table_name='start_pos_region_slot_templates_tables'
+         table_version='0'
+         guid='efb06e5b-e549-442f-a2df-e1c54c15c27b'>
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+  </table>
   <table table_name='stances_tables'
          table_version='0'
          guid='8c085913-5b68-4ef1-9e05-132441603ff8'>
@@ -11789,10 +12126,22 @@
     <field name='subtitle_key' type='string' pk='true' />
     <field name='subtitle_text' type='string' />
   </table>
+  <table table_name='subtitle_timings_tables'
+         table_version='0'
+         guid='00b6ec3c-b4cc-4606-9377-78386727a3c6'>
+    <field name='unknown' type='int' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='int' />
+    <field name='unknown' type='int' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='int' />
+    <field name='unknown' type='string_ascii' />
+    <field name='unknown' type='string_ascii' />
+  </table>
   <table table_name='taxes_classes_tables'
          table_version='0'
          guid='3d108fdf-3ade-4f33-a408-8f83fcc7f890'>
-    <field name='tax' type='string' pk='true' />
+    <field name='tax' type='string_ascii' />
   </table>
   <table table_name='taxes_effects_jct_tables'
          table_version='0'
