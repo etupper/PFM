@@ -11033,9 +11033,9 @@
          table_version='6'
          guid='ef081887-bf1d-43b3-a709-b2b91350ea14'>
     <field name='key' type='string_ascii' />
-    <field name='can_fire_at_buildings' type='boolean' />
-    <field name='default_projectile' type='string_ascii' />
     <field name='precursor' type='boolean' />
+    <field name='default_projectile' type='string_ascii' />
+    <field name='can_fire_at_buildings' type='boolean' />
   </table>
   <table table_name='missile_weapons_to_projectiles_tables'
          table_version='0'
