@@ -2088,8 +2088,8 @@
     <field name='minimum_value' type='int' />
   </table>
   <table name='incident_heading_texts_tables'>
-    <field name='unknown1' type='string' pk='true' />
-    <field name='unknown2' type='string' />
+    <field name='key' type='string' pk='true' />
+    <field name='localised_heading_string' type='string' />
   </table>
   <table name='incidents_tables'>
     <field name='generate' type='boolean' />
@@ -7840,13 +7840,13 @@
     <field name='radar_file' type='optstring_ascii' />
     <field name='meaningful_id' type='string_ascii' />
     <field name='preview_width' type='int' />
-    <field name='preview_hieght' type='int' />
-    <field name='unknown' type='float' />
-    <field name='unknown10' type='float' />
+    <field name='preview_height' type='int' />
+    <field name='preview_border' type='int' />
+    <field name='minx' type='float' />
     <field name='maxx' type='float' />
-    <field name='unknown12' type='float' />
+    <field name='miny' type='float' />
     <field name='maxy' type='float' />
-    <field name='mapName' type='string_ascii' />
+    <field name='mapname' type='string_ascii' />
     <field name='minimap_lookup_file' type='optstring_ascii' />
   </table>
   <table table_name='campaign_map_regions_tables'
@@ -10670,62 +10670,6 @@
   </table>
   <table table_name='land_units_tables'
          table_version='26'
-         guid='3da64ea8-f4d4-48f8-9e31-2197383841f1'>
-    <field name='Accuracy' type='int' />
-    <field name='Ammo' type='int' />
-    <field name='Armour' type='string_ascii' />
-    <field name='Campaign_Action_Points' type='int' />
-    <field name='Category' type='string_ascii' />
-    <field name='Charge_Bonus' type='int' />
-    <field name='Class' type='string_ascii' />
-    <field name='Dismounted_Charge_Bonus' type='int' />
-    <field name='Dismounted_Melee_Attack' type='int' />
-    <field name='Dismounted_Melee_Defense' type='int' />
-    <field name='Gameplay_Description_Text' type='string_ascii' />
-    <field name='Historical_Description_Text' type='string_ascii' />
-    <field name='Key' type='string_ascii' />
-    <field name='Man_Animation' type='optstring_ascii' />
-    <field name='Man_Entity' type='string_ascii' />
-    <field name='Melee_Attack' type='int' />
-    <field name='Melee_Defense' type='int' />
-    <field name='Morale' type='int' />
-    <field name='Bonus_Hit_Points' type='int' />
-    <field name='Mount' type='optstring_ascii' />
-    <field name='Num_Animals' type='int' />
-    <field name='Animal' type='optstring_ascii' />
-    <field name='Num_Mounts' type='int' />
-    <field name='Primary_Melee_Weapon' type='string_ascii' />
-    <field name='Primary_Missile_Weapon' type='optstring_ascii' />
-    <field name='Rank-Depth' type='int' />
-    <field name='Shield' type='string_ascii' />
-    <field name='Short_Description_Text' type='string_ascii' />
-    <field name='Spacing' type='string_ascii' />
-    <field name='Strengths_Weaknesses_Text' type='string_ascii' />
-    <field name='unknown' type='boolean' />
-    <field name='Training_Level' type='string_ascii' />
-    <field name='Numb_Guns' type='int' />
-    <field name='Officer' type='string_ascii' />
-    <field name='unknown35' type='optstring_ascii' />
-    <field name='Engine' type='optstring_ascii' />
-    <field name='unknown37' type='boolean' />
-    <field name='Visibility_Spotting_Distance_Min' type='float' />
-    <field name='Visibility_Spotting_Distance_Max' type='float' />
-    <field name='unknown40' type='int' />
-    <field name='Attribute_Group' type='optstring_ascii' />
-    <field name='Spot_Distance_Tree' type='float' />
-    <field name='Spot_Distance_Scrub' type='float' />
-    <field name='Chariot' type='optstring_ascii' />
-    <field name='Num_Chariots' type='int' />
-    <field name='Reload' type='int' />
-    <field name='unknown47' type='boolean' />
-    <field name='Spotting_and_Hiding' type='optstring_ascii' />
-    <field name='Selection_VO' type='string_ascii' />
-    <field name='Selectied_VO_Secondary' type='string_ascii' />
-    <field name='Selected_VO_Tertiary' type='string_ascii' />
-    <field name='Hiding_Scalar' type='float' />
-  </table>
-  <table table_name='land_units_tables'
-         table_version='26'
          guid='3e8ad861-4c5a-402b-8b0a-703658fc6203,
                3da64ea8-f4d4-48f8-9e31-2197383841f1'>
     <field name='accuracy' type='int' />
@@ -10982,7 +10926,8 @@
   </table>
   <table table_name='military_force_legacy_names_tables'
          table_version='1'
-         guid='c4f912b1-83dc-4169-9229-e43a35ad8b32'>
+         guid='c4f912b1-83dc-4169-9229-e43a35ad8b32,
+               1a89561d-7466-4e26-b306-327db3da3ed7'>
     <field name='key' type='string_ascii' />
     <field name='subculture' type='optstring_ascii' />
     <field name='for_army' type='boolean' />
