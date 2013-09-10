@@ -13557,7 +13557,8 @@
   </table>
   <table table_name='unit_description_short_texts_tables'
          table_version='0'
-         guid='00947d74-182c-469e-b164-0e73440988c1'>
+         guid='00947d74-182c-469e-b164-0e73440988c1,
+               c89125d2-065c-4551-b5af-f834b8fb0308'>
     <field name='key' type='string_ascii' />
   </table>
   <table table_name='unit_description_strengths_weaknesses_texts_tables'
