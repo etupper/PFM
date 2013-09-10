@@ -10478,7 +10478,7 @@
   </table>
   <table table_name='land_units_officers_tables'
          table_version='2'
-         guid='67b11898-6596-41e1-9282-ae78c1e931e6'>
+         guid='349f304a-245c-497d-9bc5-2fb6b8486ee2'>
     <field name='key' type='string_ascii' />
     <field name='officer_1' type='optstring_ascii' />
     <field name='unknown' type='optstring_ascii' />
@@ -10490,7 +10490,7 @@
   </table>
   <table table_name='land_units_tables'
          table_version='26'
-         guid='3e8ad861-4c5a-402b-8b0a-703658fc6203'>
+         guid='3da64ea8-f4d4-48f8-9e31-2197383841f1'>
     <field name='Accuracy' type='int' />
     <field name='Ammo' type='int' />
     <field name='Armour' type='string_ascii' />
