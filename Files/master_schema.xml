@@ -10777,35 +10777,35 @@
          guid='1d4f9025-df30-4ef0-a3f3-71e74d34fbe9,
                dee394be-7843-4291-bc4b-b7c7e37c696f'>
     <field name='unknown' type='optstring_ascii' />
-    <field name='Campaign_Cap' type='int' />
-    <field name='Caste' type='string_ascii' />
-    <field name='Create_Time' type='int' />
-    <field name='Is_Naval' type='boolean' />
-    <field name='Land_Unit' type='string_ascii' />
-    <field name='Num_Men' type='int' />
-    <field name='Multiplayer_Cap' type='int' />
-    <field name='Recruitment_Cost' type='int' />
-    <field name='Naval_Unit' type='optstring_ascii' />
-    <field name='Num_Ships' type='int' />
-    <field name='Min_Men_Per_Ship' type='int' />
-    <field name='Max_Men_Per_Ship' type='int' />
-    <field name='Prestige' type='int' />
-    <field name='Recruitment_Cost15' type='int' />
+    <field name='campaign_cap' type='int' />
+    <field name='caste' type='string_ascii' />
+    <field name='create_time' type='int' />
+    <field name='is_naval' type='boolean' />
+    <field name='land_unit' type='string_ascii' />
+    <field name='num_men' type='int' />
+    <field name='multiplayer_cap' type='int' />
+    <field name='recruitment_cost' type='int' />
+    <field name='naval_unit' type='optstring_ascii' />
+    <field name='num_ships' type='int' />
+    <field name='min_men_per_ship' type='int' />
+    <field name='max_men_per_ship' type='int' />
+    <field name='prestige' type='int' />
+    <field name='multiplayer_cost' type='int' />
     <field name='unknown16' type='optstring_ascii' />
     <field name='unknown17' type='optstring_ascii' />
-    <field name='Unit' type='string_ascii' />
-    <field name='Upkeep_Cost' type='int' />
-    <field name='Weight' type='optstring_ascii' />
-    <field name='Campaign_Total_Cap' type='int' />
+    <field name='unit' type='string_ascii' />
+    <field name='upkeep_cost' type='int' />
+    <field name='weight' type='optstring_ascii' />
+    <field name='campaign_total_cap' type='int' />
     <field name='unknown22' type='boolean' />
     <field name='unknown23' type='boolean' />
     <field name='unknown24' type='boolean' />
-    <field name='Special_Edition_Mask' type='int' />
-    <field name='Unique_Index' type='int' />
+    <field name='special_edition_mask' type='int' />
+    <field name='unique_index' type='int' />
     <field name='unknown27' type='int' />
-    <field name='In_Encyclopedia' type='boolean' />
-    <field name='Region_Unit_Resource_Requirement' type='optstring_ascii' />
-    <field name='Audio_Language' type='string_ascii' />
+    <field name='in_encyclopedia' type='boolean' />
+    <field name='region_unit_resource_requirement' type='optstring_ascii' />
+    <field name='audio_language' type='string_ascii' />
   </table>
   <table table_name='melee_weapons_tables'
          table_version='6'

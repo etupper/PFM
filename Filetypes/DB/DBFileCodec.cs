@@ -136,6 +136,9 @@ namespace Filetypes {
                 display = string.Format("{0}: no definition available", key);
                 result = false;
             }
+#if DEBUG
+        Console.WriteLine(display);
+#endif
             return result;
         }
 
