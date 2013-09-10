@@ -95,6 +95,22 @@ namespace Filetypes {
                 addTo[key] = FilterList(DBTypeMap.Instance.TypeMap[key.TypeName], key.Version, key.Version);
                 // also add to guid map in DBTypeMap
                 DBTypeMap.Instance.GuidMap[key] = addTo[key];
+            } else {
+                List<TypeInfo> allInfos = DBTypeMap.Instance.GetAllInfos(key.TypeName);
+                Console.WriteLine("no info for {2} guid {0}, using highest of {1}", key.Guid, allInfos.Count, key.TypeName);
+                int highestVersion = -1;
+                TypeInfo useInfo = null;
+                if (allInfos.Count > 0) {
+                    allInfos.ForEach(i => {
+                        if (i.Version > highestVersion) {
+                            highestVersion = i.Version;
+                            useInfo = i;
+                        }
+                    });
+                    if (useInfo != null) {
+                        DBTypeMap.Instance.GuidMap[key] = useInfo.Fields;
+                    }
+                }
             }
         }
         

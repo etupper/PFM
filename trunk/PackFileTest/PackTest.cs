@@ -14,6 +14,8 @@ namespace PackFileTest {
         // -mt: run building models test
         // -mb: run naval models test
         private static string[] OPTIONS = { 
+            // -tm: initialize DBTypeMap from given game
+            "-tm",
             // -db: test db files; -t: also run tsv export/reimport test
             "-db", "-t",
             // -Xm: run building/naval model tests
@@ -46,6 +48,8 @@ namespace PackFileTest {
             "-cr",
             // -mx: find corresponding fields in mod tools xml files
             "-mx",
+            // -dg: dump guids from pack db files
+            "-dg"
         };
 #pragma warning restore 414
 
@@ -73,8 +77,9 @@ namespace PackFileTest {
                 }
             }
             
-            if (!DBTypeMap.Instance.Initialized) {
-                DBTypeMap.Instance.initializeFromFile(DBTypeMap.MASTER_SCHEMA_FILE_NAME);
+            // make sure R2 knows its directory (no autodetect)
+            if (File.Exists("gamedir_r2tw.txt")) {
+                Game.R2TW.GameDirectory = File.ReadAllText("gamedir_r2tw.txt").Trim();
             }
             
             bool saveSchema = false;
@@ -91,6 +96,9 @@ namespace PackFileTest {
                     CheckReferences();
                 } else if (dir.Equals("-x")) {
                     waitForKey = false;
+                } else if (dir.StartsWith("-tm")) {
+                    string typeMapFile = dir.Substring(3);
+                    DBTypeMap.Instance.initializeFromFile(typeMapFile);
                 } else if (dir.StartsWith("-ca")) {
                     string caXml = dir.Substring(3);
                     string path = Path.GetDirectoryName(caXml);
@@ -106,9 +114,6 @@ namespace PackFileTest {
                     string packFile = dir.Substring(3);
                     ConvertAllStringsToAscii(packFile);
                 } else if (dir.StartsWith("-i")) {
-                    if (File.Exists("gamedir_r2tw.txt")) {
-                        Game.R2TW.GameDirectory = File.ReadAllText("gamedir_r2tw.txt").Trim();
-                    }
                     string integrateFrom = dir.Substring(2);
                     Console.WriteLine("verifying against R2 in '{0}/data'", Game.R2TW.GameDirectory);
                     SchemaIntegrator integrator = new SchemaIntegrator{
@@ -156,6 +161,18 @@ namespace PackFileTest {
                     FindCorrespondingFields(split[0], split[1]);
                 } else if (dir.StartsWith("-cs")) {
                     ReplaceSchemaNames(dir.Substring(3));
+                } else if (dir.StartsWith("-dg")) {
+                    string file = dir.Substring(3);
+                    PackFile pack = null;
+                    List<string> tables = new List<string>();
+                    foreach(string line in File.ReadAllLines(file)) {
+                        if (pack == null) {
+                            pack = new PackFileCodec().Open(line);
+                        } else {
+                            tables.Add(line);
+                        }
+                    }
+                    DumpAllGuids(pack, tables);
                 } else {
                     PackedFileTest.TestAllPacks(testFactories, dir, verbose);
                 }
@@ -166,6 +183,18 @@ namespace PackFileTest {
             if (waitForKey) {
                 Console.WriteLine("Test run finished, press any key");
                 Console.ReadKey();
+            }
+        }
+        
+        void DumpAllGuids(PackFile pack, List<string> tables) {
+            foreach(PackedFile file in pack) {
+                if (file.FullPath.StartsWith("db")) {
+                    string table = DBFile.typename(file.FullPath);
+                    if (tables.Contains(table)) {
+                        DBFileHeader header = PackedFileDbCodec.readHeader(file);
+                        Console.WriteLine("{0} - {1}", table, header.GUID);
+                    }
+                }
             }
         }
 
@@ -358,7 +387,7 @@ namespace PackFileTest {
             List<Thread> threads = new List<Thread>();
             foreach (Game game in Game.Games) {
                 if (game.IsInstalled) {
-                    string datapath = Path.Combine(game.GameDirectory, "data");
+                    string datapath = game.DataDirectory;
                     string outfile = string.Format("schema_{0}.xml", game.Id);
                     SchemaOptimizer optimizer = new SchemaOptimizer() {
                         PackDirectory = datapath,

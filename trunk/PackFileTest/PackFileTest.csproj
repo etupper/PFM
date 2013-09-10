@@ -36,7 +36,7 @@
     <CodeAnalysisFailOnMissingRules>true</CodeAnalysisFailOnMissingRules>
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
-    <Commandlineparameters>-ipietro_p.xml -w</Commandlineparameters>
+    <Commandlineparameters>-tmmaster_schema.xml -db -tgR2TW</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\</OutputPath>
