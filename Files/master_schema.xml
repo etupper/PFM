@@ -10185,8 +10185,8 @@
     <field name='rebel_colour_g' type='float' />
     <field name='rebel_colour_b' type='float' />
     <field name='movie_death_event' type='optstring_ascii' />
-    <field name='unknown42' type='optstring_ascii' />
-    <field name='unknown43' type='optstring_ascii' />
+    <field name='screen_name_when_rebels' type='optstring_ascii' />
+    <field name='unknown' type='optstring_ascii' />
     <field name='unit_regiment_name_group' type='int' />
     <field name='ship_name_group' type='int' />
     <field name='attack_desc' type='string_ascii' />
@@ -10198,7 +10198,7 @@
     <field name='primary_colour_g' type='float' />
     <field name='primary_colour_b' type='float' />
     <field name='diplomacy_culture' type='string_ascii' />
-    <field name='unknown55' type='int' />
+    <field name='senator_total' type='int' />
   </table>
   <table table_name='factions_tables'
          table_version='13'
