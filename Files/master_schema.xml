@@ -14500,7 +14500,8 @@
   </table>
   <table table_name='units_custom_battle_permissions_tables'
          table_version='4'
-         guid='178dd306-cb82-454c-a54b-fbded4f74520'>
+         guid='178dd306-cb82-454c-a54b-fbded4f74520,
+               6597f7fc-6640-45b8-a20a-d90828acfd32'>
     <field name='faction' type='string_ascii' />
     <field name='general_unit' type='boolean' />
     <field name='unit' type='string_ascii' />
