@@ -4221,8 +4221,10 @@
     <field name='General_Bodyguard' type='optstring_ascii' />
     <field name='Key' type='int' />
     <field name='level' type='int' />
-    <field name='unknown6' type='int' />
-    <field name='Gender' type='string_ascii' />
+    <field name='unknown6' type='boolean' />
+    <field name='unknown6' type='boolean' />
+    <field name='unknown6' type='boolean' />
+    <field name='gender' type='optstring_ascii' />
   </table>
   <table table_name='agent_localisations_tables'
          table_version='0'
@@ -4400,16 +4402,16 @@
   <table table_name='agents_tables'
          table_version='8'
          guid='872a5029-ab65-4728-b7d3-1fda3b1248e6'>
-    <field name='Agent' type='string_ascii' />
+    <field name='agent' type='string_ascii' />
     <field name='move_points' type='int' />
     <field name='line_of_sight' type='int' />
-    <field name='Playable' type='boolean' />
-    <field name='Portrait_Override' type='optstring_ascii' />
-    <field name='Primary_Attribute' type='string_ascii' />
-    <field name='unknown7' type='int' />
-    <field name='unknown8' type='optstring_ascii' />
+    <field name='playable' type='boolean' />
+    <field name='portrait_override' type='optstring_ascii' />
+    <field name='primary_attribute' type='string_ascii' />
+    <field name='unknown' type='boolean' />
+    <field name='faction_total_cap' type='int' />
     <field name='cost' type='int' />
-    <field name='In_Encyclopedia' type='boolean' />
+    <field name='in_encyclopedia' type='boolean' />
   </table>
   <table table_name='aide_de_camp_speeches_tables'
          table_version='1'
@@ -5553,8 +5555,8 @@
          table_version='0'
          guid='bfcd942d-5cd7-46d0-88c1-6dd6e3e22ab7'>
     <field fkey='particle_effects_tables.key' name='deep_water' type='optstring_ascii' />
-    <field name='unknown' type='optstring_ascii' />
-    <field name='unknown3' type='optstring_ascii' />
+    <field name='forest' type='optstring_ascii' />
+    <field name='grass' type='optstring_ascii' />
     <field fkey='particle_effects_tables.key' name='mud' type='optstring_ascii' />
     <field name='name' type='string_ascii' />
     <field name='unknown6' type='optstring_ascii' />
@@ -5943,22 +5945,16 @@
     <field name='key' type='string_ascii' />
     <field fkey='models_sieges_tables.key' name='model' type='string_ascii' />
     <field fkey='battle_entities_tables.key' name='battle_entity' type='string_ascii' />
-    <field name='unknown' type='boolean' />
+    <field name='gun_type' type='optstring' />
     <field name='docking_clearance' type='float' />
     <field fkey='battlefield_engines_tables.key' name='engine' type='string_ascii' />
     <field name='image_path' type='string_ascii' />
     <field name='recruitment_cap' type='int' />
     <field name='uses_8m_wall' type='boolean' />
     <field name='uses_15m_wall' type='boolean' />
-    <field name='unknown12' type='boolean' />
-    <field name='unknown13' type='boolean' />
-    <field name='unknown14' type='boolean' />
-    <field name='unknown15' type='boolean' />
+    <field name='cost' type='int' />
     <field name='category_image_path' type='string_ascii' />
-    <field name='unknown17' type='boolean' />
-    <field name='unknown18' type='boolean' />
-    <field name='unknown19' type='boolean' />
-    <field name='unknown20' type='boolean' />
+    <field name='special_edition_mask' type='int' />
     <field name='ignition_threshold' type='int' />
     <field name='attack_damage' type='float' />
   </table>
@@ -6060,22 +6056,22 @@
   <table table_name='battles_tables'
          table_version='6'
          guid='9b45392b-cae2-4e11-bedc-d1c95d9fa792'>
-    <field name='Map ID' type='string_ascii' pk='true' />
-    <field fkey='battle_types_tables.type' name='Battle Type' type='string_ascii' />
-    <field name='Naval' type='boolean' />
+    <field name='key' type='string_ascii' pk='true' />
+    <field fkey='battle_types_tables.type' name='type' type='string_ascii' />
+    <field name='is_naval' type='boolean' />
     <field name='specification' type='string_ascii' />
-    <field name='Screenshot Path' type='optstring_ascii' />
-    <field name='Map Path' type='boolean' />
+    <field name='screenshot_path' type='optstring_ascii' />
+    <field name='unknown' type='boolean' />
     <field name='team_size_1' type='int' />
     <field name='team_size_2' type='int' />
     <field name='release' type='boolean' />
     <field name='Multi-player' type='boolean' />
     <field name='Single Player' type='boolean' />
-    <field name='unknown12' type='optstring_ascii' version_start='1' />
+    <field name='unknown12' type='optstring_ascii' />
     <field name='year' type='int' version_start='1' />
-    <field name='defender_funds_ratio' type='float' version_start='2' />
-    <field name='has_key_buildings' type='boolean' version_start='3' />
-    <field name='matchmaking' type='boolean' version_start='4' />
+    <field name='defender_funds_ratio' type='float' />
+    <field name='has_key_buildings' type='boolean' />
+    <field name='matchmaking' type='boolean' />
     <field name='unknown' type='float' />
     <field name='unknown18' type='float' />
     <field name='Is_Large_Settlement' type='boolean' />
