@@ -4002,14 +4002,14 @@
   <table table_name='action_results_additional_outcomes_tables'
          table_version='2'
          guid='1515549c-9055-4c78-ab78-41694a267484'>
-    <field name='unknown' type='string_ascii' />
-    <field name='unknown2' type='string_ascii' />
-    <field name='unknown3' type='float' />
-    <field name='unknown4' type='optstring_ascii' />
-    <field name='unknown5' type='optstring_ascii' />
-    <field name='unknown6' type='string_ascii' />
+    <field name='outcome' type='string_ascii' />
+    <field name='action_result_key' type='string_ascii' />
+    <field name='value' type='float' />
+    <field name='effect_record' type='optstring_ascii' />
+    <field name='effect_scope' type='optstring_ascii' />
+    <field name='key' type='string_ascii' />
     <field name='unknown7' type='boolean' />
-    <field name='unknown8' type='string_ascii' />
+    <field name='opportune_failure_weighing' type='string_ascii' />
   </table>
   <table table_name='action_results_additional_outcomes_tables'
          table_version='2'
