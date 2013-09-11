@@ -1119,10 +1119,12 @@ namespace PackFileManager
                     "\r\nBased on original work by Matt Chambers\r\n" +
                     "\r\nPack File Manager Update for NTW by erasmus777\r\n" +
                     "\r\nPack File Manager Update for TWS2 by Lord Maximus and Porphyr\r\n" +
-                    "Copyright 2009-2012 Distributed under the Simple Public License 2.0\r\n" +
+                    "Copyright 2009-2013 Distributed under the Simple Public License 2.0\r\n" +
                     "\r\nThanks to the hard work of the people at twcenter.net.\r\n" +
+                    "\r\nIcons created by Lomp, Rome 2 icon by Sarsay\r\n" +
                     "\r\nSpecial thanks to alpaca, just, ancientxx, Delphy, Scanian, iznagi11, barvaz, " +
-                    "Mechanic, mac89, badger1815, husserlTW, The Vicar, AveiMil, and many others!", Application.ProductVersion)
+                    "Mechanic, mac89, badger1815, husserlTW, The Vicar, AveiMil, Jinarik, PietroMicca "+
+                    "and many others!", Application.ProductVersion)
             };
             form.Controls.Add (label);
             form.ShowDialog (this);

@@ -92,7 +92,7 @@ namespace Filetypes {
                 AddOrMerge(typeInfos, result);
             }
 #if DEBUG
-            Console.WriteLine("returning {0} infos", typeInfos.Count);
+            //Console.WriteLine("returning {0} infos", typeInfos.Count);
 #endif
             return typeInfos;
         }

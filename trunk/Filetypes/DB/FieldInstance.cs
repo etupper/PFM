@@ -110,7 +110,7 @@ namespace Filetypes
                 return base.Value;
             }
             set {
-                base.Value = int.Parse(value).ToString();
+                base.Value = string.IsNullOrEmpty(value) ? "0" : int.Parse(value).ToString();
             }
         }
     }

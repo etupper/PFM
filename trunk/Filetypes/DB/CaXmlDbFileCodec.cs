@@ -13,6 +13,15 @@ namespace Filetypes {
             xmlPath = path;
         }
         
+        public TypeInfo TypeInfoByTableName(string tablename) {
+            TypeInfo info = null;
+            if (!allInfos.ContainsKey(tablename)) {
+                allInfos[tablename] = LoadTypeInfos(tablename);
+            }
+            allInfos.TryGetValue(tablename, out info);
+            return info;
+        }
+        
         public DBFile Decode(Stream stream) {
             DBFile result = null;
             using (TextReader reader = new StreamReader(stream)) {
@@ -46,12 +55,17 @@ namespace Filetypes {
                         List<FieldInstance> fields = result.GetNewEntry();
                         foreach(FieldInstance field in fields) {
                             string val;
-                            if (fieldValues.TryGetValue(field.Name, out val)) {
-                                if (field.Info.TypeName.Equals("boolean")) {
-                                    field.Value = "1".Equals(val) ? "true" : "false";
-                                } else {
-                                    field.Value = val;
+                            try {
+                                if (fieldValues.TryGetValue(field.Name, out val)) {
+                                    if (field.Info.TypeName.Equals("boolean")) {
+                                        field.Value = "1".Equals(val) ? "true" : "false";
+                                    } else {
+                                        field.Value = val;
+                                    }
                                 }
+                            } catch (Exception e) {
+                                Console.WriteLine("Wait a minute!");
+                                throw e;
                             }
                         }
                         result.Entries.Add(fields);
@@ -73,8 +87,11 @@ namespace Filetypes {
         }
         
         private TypeInfo LoadTypeInfos(string name) {
-            string twadFilename = string.Format("TWaD_{0}.xml", name);
+            string twadFilename = string.Format("TWaD_{0}.xml", name.Replace("_tables", ""));
             string twadPath = Path.Combine(xmlPath, twadFilename);
+            if (!File.Exists(twadPath)) {
+                return null;
+            }
             List<FieldInfo> fieldInfos = new List<FieldInfo>();
             string guid = "";
             using (var reader = File.OpenText(twadPath)) {
@@ -106,6 +123,13 @@ namespace Filetypes {
             info.Optional = optional;
             info.Name = node["name"].InnerText;
             info.PrimaryKey = "1".Equals(node["primary_key"].InnerText);
+            XmlNode refTableNode = node["column_source_table"];
+            if (refTableNode != null) {
+                string refTable = refTableNode.InnerText;
+                string refColumn = node["column_source_column"].InnerText;
+                // Console.WriteLine("reference found: {0}:{1}", string.Format("{0}_tables", refTable), refColumn);
+                info.FieldReference = new FieldReference(string.Format("{0}_tables", refTable), refColumn);
+            }
             return info;
         }
 
