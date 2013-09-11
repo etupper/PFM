@@ -20,11 +20,13 @@ namespace Filetypes
                 return OptStringTypeAscii();
 			case "int":
             case "integer":
+            case "autonumber":
 				return IntType ();
 			case "short":
 				return ShortType ();
 			case "float":
             case "single":
+            case "decimal":
 				return SingleType ();
             case "double":
                 return DoubleType ();

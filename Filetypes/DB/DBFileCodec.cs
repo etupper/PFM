@@ -69,7 +69,7 @@ namespace Filetypes {
             foreach(TypeInfo realInfo in infos) {
                 try {
 #if DEBUG
-                    Console.WriteLine("Parsing version {1} with info {0}", string.Join(",", realInfo.Fields), header.Version);
+                    // Console.WriteLine("Parsing version {1} with info {0}", string.Join(",", realInfo.Fields), header.Version);
 #endif  
                     DBFile result = ReadFile(reader, header, realInfo);
                     return result;
@@ -136,9 +136,6 @@ namespace Filetypes {
                 display = string.Format("{0}: no definition available", key);
                 result = false;
             }
-#if DEBUG
-        Console.WriteLine(display);
-#endif
             return result;
         }
 

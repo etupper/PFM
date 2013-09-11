@@ -22,6 +22,8 @@ namespace PackFileTest {
             "-bm", "-nm",
             // -uv: run unit variant tests
             "-uv", 
+            // -g: set games to run against (default: none)
+            "-g",
             // -gf: run group formation tests
             "-gf", 
             // -os: optimize schema
@@ -30,11 +32,11 @@ namespace PackFileTest {
             "-pr", 
             // -w : write schema_user.xml after iterating all db files
             "-w",
-            // -ca: read CA schema file
+            // -ca: read CA schema files and get the references
             "-ca",
             // -as: add entries from other schema file by GUID if they don't exists already
             "-as",
-            // -cs: convert string entries to string_ascii entries for tables that aren't already there
+            // -cs: read from CA schema directory and correct references
             "-cs",
             // -i : integrate other schema file, overwrite existing entries
             "-i",
@@ -59,6 +61,12 @@ namespace PackFileTest {
         bool waitForKey = true;
 
         private List<PackedFileTest.TestFactory> testFactories = new List<PackedFileTest.TestFactory>();
+        private List<Game> games = new List<Game>();
+        private SchemaIntegrator integrator = new SchemaIntegrator {
+            OverwriteExisting = true,
+            IntegrateExisting = true,
+            CheckAllFields = true
+        };
 
 		private static string OPTIONS_FILENAME = "testoptions.txt";
 
@@ -89,6 +97,17 @@ namespace PackFileTest {
                 }
                 if (dir.Equals("-pr")) {
                     PrepareRelease();
+                } else if (dir.StartsWith("-g")) {
+                    games.Clear();
+                    string gamesArg = dir.Substring(2);
+                    if ("ALL".Equals(gamesArg)) {
+                        games.AddRange(Game.Games);
+                    } else {
+                        string[] gameIds = gamesArg.Split(new char[] { ','}, StringSplitOptions.RemoveEmptyEntries);
+                        foreach(string gameId in gameIds) {
+                            games.Add(Game.ById(gameId));
+                        }
+                    }
                 } else if (dir.Equals("-v")) {
                     Console.WriteLine("Running in verbose mode");
                     verbose = true;
@@ -100,32 +119,14 @@ namespace PackFileTest {
                     string typeMapFile = dir.Substring(3);
                     DBTypeMap.Instance.initializeFromFile(typeMapFile);
                 } else if (dir.StartsWith("-ca")) {
-                    string caXml = dir.Substring(3);
-                    string path = Path.GetDirectoryName(caXml);
-                    CaXmlDbFileCodec codec = new CaXmlDbFileCodec(path);
-                    codec.Decode(File.OpenRead(caXml));
+                    string path = dir.Substring(3);
+                    IntegrateAll(path, integrator.AddCaData);
                 } else if (dir.StartsWith("-as")) {
-                    string integrateFrom = dir.Substring(3);
-                    string[] files = integrateFrom.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                    foreach (string file in files) {
-                        addSchemaFile(file);
-                    }
-                } else if (dir.StartsWith("-cs")) {
-                    string packFile = dir.Substring(3);
-                    ConvertAllStringsToAscii(packFile);
+                    string path = dir.Substring(3);
+                    IntegrateAll(path, integrator.AddSchemaFile);
                 } else if (dir.StartsWith("-i")) {
-                    string integrateFrom = dir.Substring(2);
-                    Console.WriteLine("verifying against R2 in '{0}/data'", Game.R2TW.GameDirectory);
-                    SchemaIntegrator integrator = new SchemaIntegrator{
-                        Verbose = verbose,
-                        VerifyAgainst = Game.R2TW,
-                        OverwriteExisting = true,
-                        IntegrateExisting = true
-                    };
-                    string[] files = integrateFrom.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                    foreach(string file in files) {
-                        integrator.IntegrateFile(file);
-                    }
+                    string path = dir.Substring(2);
+                    IntegrateAll(path, integrator.IntegrateFile);
                 } else if (dir.Equals("-t")) {
                     Console.WriteLine("TSV export/import enabled");
                     testTsvExport = true;
@@ -146,16 +147,10 @@ namespace PackFileTest {
                     outputTables = true;
                     Console.WriteLine("will output tables of db files");
                 } else if (dir.StartsWith("-tg")) {
-                    string gameName = dir.Substring(3);
-                    Game game = Game.ById(gameName);
-                    Console.WriteLine("Testing game {0}", gameName);
-                    PackedFileTest.TestAllPacks(testFactories, Path.Combine(game.DataDirectory), verbose);
-//                } else if (dir.Equals("-bm")) {
-//                    testFactories.Add(CreateBuildingModelTest);
-//                    Console.WriteLine("building models test enabled");
-//                } else if (dir.Equals("-nm")) {
-//                    testFactories.Add(CreateNavalModelTest);
-//                    Console.WriteLine("naval models test enabled");
+                    foreach(Game game in games) {
+                        Console.WriteLine("Testing game {0}", game.Id);
+                        PackedFileTest.TestAllPacks(testFactories, Path.Combine(game.DataDirectory), verbose);
+                    }
                 } else if (dir.StartsWith("-mx")) {
                     string[] split = dir.Substring(3).Split(Path.PathSeparator);
                     FindCorrespondingFields(split[0], split[1]);
@@ -186,6 +181,22 @@ namespace PackFileTest {
             }
         }
         
+        delegate void Integrate(string path);
+        
+        void IntegrateAll(string paths, Integrate integrate)  {
+            if (games.Count == 0) {
+                Console.WriteLine("Warning: no games set for integration!");
+            }
+            foreach(Game g in games) {
+                integrator.VerifyAgainst = g;
+                integrator.Verbose = verbose;
+                string[] files = paths.Split(new char[] { Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries);
+                foreach(string file in files) {
+                    integrate(file);
+                }
+            }
+        }
+        
         void DumpAllGuids(PackFile pack, List<string> tables) {
             foreach(PackedFile file in pack) {
                 if (file.FullPath.StartsWith("db")) {
@@ -196,108 +207,6 @@ namespace PackFileTest {
                     }
                 }
             }
-        }
-
-        void addSchemaFile(string file) {
-            if (!DBTypeMap.Instance.Initialized) {
-                DBTypeMap.Instance.initializeFromFile(Path.Combine(Directory.GetCurrentDirectory(), DBTypeMap.MASTER_SCHEMA_FILE_NAME));
-            }
-            using (var stream = File.OpenRead(file)) {
-                XmlImporter importer = new XmlImporter(stream);
-                importer.Import();
-                foreach (GuidTypeInfo info in importer.GuidToDescriptions.Keys) {
-                    if (!DBTypeMap.Instance.GuidMap.ContainsKey(info)) {
-                        Console.WriteLine("adding {0}", info.Guid);
-                        DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, importer.GuidToDescriptions[info]);
-                    } else {
-                        List<FieldInfo> existingInfo = DBTypeMap.Instance.GetInfoByGuid(info.Guid);
-                        List<FieldInfo> update = importer.GuidToDescriptions[info];
-                        ReplaceUnknowns(existingInfo, update);
-                    }
-                }
-            }
-            string outfile = Path.Combine(Directory.GetCurrentDirectory(), DBTypeMap.SCHEMA_USER_FILE_NAME);
-            DBTypeMap.Instance.SaveToFile(Directory.GetCurrentDirectory(), "added");
-        }
-
-        static void ConvertAllStringsToAscii(string packFile) {
-            if (!DBTypeMap.Instance.Initialized) {
-                DBTypeMap.Instance.initializeFromFile(Path.Combine(Directory.GetCurrentDirectory(), DBTypeMap.MASTER_SCHEMA_FILE_NAME));
-            }
-            PackFile file = new PackFileCodec().Open(packFile);
-            foreach (PackedFile packed in file) {
-                if (packed.FullPath.StartsWith("db")) {
-                    string typename = DBFile.typename(packed.FullPath);
-                    DBFileHeader header = PackedFileDbCodec.readHeader(packed);
-                    if (!string.IsNullOrEmpty(header.GUID)) {
-                        List<FieldInfo> infos = DBTypeMap.Instance.GetInfoByGuid(header.GUID);
-                        if (!SchemaIntegrator.CanDecode(packed)) {
-                            // we don't have an entry for this yet; try out the ones we have
-                            List<TypeInfo> allInfos = DBTypeMap.Instance.GetAllInfos(typename);
-                            if (allInfos.Count > 0) {
-                                TryDecode(packed, header, allInfos);
-                            } else {
-                                Console.WriteLine("no info at all for {0}", typename);
-                            }
-                        } else {
-                            Console.WriteLine("already have info for {0}", header.GUID);
-                        }
-                    }
-                }
-            }
-            DBTypeMap.Instance.SaveToFile(Directory.GetCurrentDirectory(), "ascii");
-        }
-        
-        static Regex unknown_re = new Regex("[Uu]nknown[0-9]*");
-        static void ReplaceUnknowns(List<FieldInfo> replaceIn, List<FieldInfo> replaceFrom) {
-            if (replaceIn.Count != replaceFrom.Count) {
-                return;
-            }
-            for (int i = 0; i < replaceIn.Count; i++) {
-                FieldInfo fromInfo = replaceFrom[i];
-                if (!unknown_re.IsMatch(fromInfo.Name)) {
-                    continue;
-                }
-                FieldInfo toInfo = replaceIn[i];
-                
-                if (!fromInfo.TypeName.Equals(toInfo.TypeName)) {
-                    return;
-                }
-                toInfo.Name = fromInfo.Name.ToLower();
-            }
-        }
-        
-        static void TryDecode(PackedFile dbFile, DBFileHeader header, List<TypeInfo> infos) {
-            foreach (TypeInfo info in infos) {
-                // register converted to type map
-                List<FieldInfo> converted = ConvertToAscii(info.Fields);
-                DBTypeMap.Instance.SetByGuid(header.GUID, DBFile.typename(dbFile.FullPath), header.Version, converted);
-                bool valid = SchemaIntegrator.CanDecode(dbFile);
-                if (!valid) {
-                    DBTypeMap.Instance.SetByGuid(header.GUID, DBFile.typename(dbFile.FullPath), header.Version, null);
-                } else {
-                    // found it! :)
-                    Console.WriteLine("adding converted info for guid {0}", header.GUID);
-                    break;
-                }
-            }
-        }
-
-        static List<FieldInfo> ConvertToAscii(List<FieldInfo> old) {
-            List<FieldInfo> newInfos = new List<FieldInfo>(old.Count);
-            foreach (FieldInfo info in old) {
-                string typeName = info.TypeName.EndsWith("string") ? string.Format("{0}_ascii", info.TypeName) : info.TypeName;
-                FieldInfo newInfo = Types.FromTypeName(typeName);
-                newInfo.Name = info.Name;
-                newInfo.FieldReference = info.FieldReference;
-                if (!string.IsNullOrEmpty(newInfo.ForeignReference)) {
-                    newInfo.ForeignReference = info.ForeignReference;
-                    //newInfo.ReferencedField = info.ReferencedField;
-                }
-                newInfo.PrimaryKey = info.PrimaryKey;
-                newInfos.Add(newInfo);   
-            }
-            return newInfos;
         }
 
         void ReplaceSchemaNames(string xmlDirectory) {
@@ -361,23 +270,28 @@ namespace PackFileTest {
         }
         
         void CheckReferences() {
-            List<ReferenceChecker> checkers = ReferenceChecker.CreateCheckers();
-            foreach (string packPath in Directory.GetFiles(Game.ETW.DataDirectory, "*pack")) {
-                Console.WriteLine("adding {0}", packPath);
-                PackFile packFile = new PackFileCodec().Open(packPath);
-                foreach (ReferenceChecker checker in checkers) {
-                    checker.PackFiles.Add(packFile);
+            foreach(Game game in games) {
+                if (!game.IsInstalled) {
+                    continue;
                 }
-            }
-            Console.WriteLine();
-            Console.Out.Flush();
-            foreach (ReferenceChecker checker in checkers) {
-                checker.CheckReferences();
-                Dictionary<PackFile, CheckResult> result = checker.FailedResults;
-                foreach (PackFile pack in result.Keys) {
-                    CheckResult r = result[pack];
-                    Console.WriteLine("pack {0} failed reference from {1} to {2}",
-                        pack.Filepath, r.ReferencingString, r.ReferencedString, string.Join(",", r.UnfulfilledReferences));
+                List<ReferenceChecker> checkers = ReferenceChecker.CreateCheckers();
+                foreach (string packPath in Directory.GetFiles(game.DataDirectory, "*pack")) {
+                    Console.WriteLine("adding {0}", packPath);
+                    PackFile packFile = new PackFileCodec().Open(packPath);
+                    foreach (ReferenceChecker checker in checkers) {
+                        checker.PackFiles.Add(packFile);
+                    }
+                }
+                Console.WriteLine();
+                Console.Out.Flush();
+                foreach (ReferenceChecker checker in checkers) {
+                    checker.CheckReferences();
+                    Dictionary<PackFile, CheckResult> result = checker.FailedResults;
+                    foreach (PackFile pack in result.Keys) {
+                        CheckResult r = result[pack];
+                        Console.WriteLine("pack {0} failed reference from {1} to {2}",
+                            pack.Filepath, r.ReferencingString, r.ReferencedString, string.Join(",", r.UnfulfilledReferences));
+                    }
                 }
             }
         }
