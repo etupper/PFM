@@ -107,7 +107,9 @@ namespace Filetypes {
                     }
                 }
             }
-            TypeInfo typeInfo = new TypeInfo(fieldInfos);
+            TypeInfo typeInfo = new TypeInfo(fieldInfos) {
+                Name = name
+            };
             typeInfo.ApplicableGuids.Add(guid);
             return typeInfo;
         }

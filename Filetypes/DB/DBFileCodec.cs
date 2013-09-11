@@ -81,7 +81,8 @@ namespace Filetypes {
                 } catch (Exception) {}
 #endif
             }
-            throw new DBFileNotSupportedException(string.Format("No applicable type definition found"));
+            return null;
+            // throw new DBFileNotSupportedException(string.Format("No applicable type definition found"));
 		}
         public DBFile ReadFile(BinaryReader reader, DBFileHeader header, TypeInfo info) {
             reader.BaseStream.Position = header.Length;
