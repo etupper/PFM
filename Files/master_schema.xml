@@ -10165,57 +10165,56 @@
          guid='62a956e2-d151-4cdf-93a2-567546ba78c3'>
     <field name='key' type='string_ascii' />
     <field name='index' type='int' />
-    <field name='unknown' type='int' />
+    <field name='unknown1' type='int' />
     <field name='subculture' type='string_ascii' />
     <field name='category' type='string_ascii' />
-    <field name='screen_adjective' type='string_ascii' />
     <field name='screen_name' type='string_ascii' />
+    <field name='screen_adjective' type='string_ascii' />
     <field name='name_group' type='int' />
     <field name='skin' type='string_ascii' />
-    <field name='unknown10' type='boolean' />
+    <field name='ui_skin' type='optstring_ascii' />
     <field name='is_rebel' type='boolean' />
-    <field name='can_be_regionless' type='boolean' />
-    <field name='can_be_regionless_2' type='boolean' />
+    <field name='mp_use_republic_early' type='boolean' />
+    <field name='mp_use_republic_late' type='boolean' />
     <field name='icons_path_units' type='string_ascii' />
     <field name='flags_path' type='string_ascii' />
-    <field name='unknown16' type='optstring_ascii' />
+    <field name='republican_flag_path' type='optstring_ascii' />
     <field name='same_gov_type_revolution_flag_path' type='optstring_ascii' />
-    <field name='card_color_r' type='float' />
-    <field name='card_color_g' type='float' />
-    <field name='card_color_b' type='float' />
+    <field name='primary_colour_r' type='float' />
+    <field name='primary_colour_g' type='float' />
+    <field name='primary_colour_b' type='float' />
     <field name='alt_primary_colour_r' type='float' />
     <field name='alt_primary_colour_g' type='float' />
     <field name='alt_primary_colour_b' type='float' />
-    <field name='alt_secondary_colour_r' type='float' />
-    <field name='alt_secondary_colour_g' type='float' />
-    <field name='alt_secondary_colour_b' type='float' />
     <field name='secondary_colour_r' type='float' />
     <field name='secondary_colour_g' type='float' />
     <field name='secondary_colour_b' type='float' />
+    <field name='alt_secondary_colour_r' type='float' />
+    <field name='alt_secondary_colour_g' type='float' />
+    <field name='alt_secondary_colour_b' type='float' />
     <field name='uniform_colour_r' type='float' />
     <field name='uniform_colour_g' type='float' />
     <field name='uniform_colour_b' type='float' />
     <field name='alt_uniform_colour_r' type='float' />
     <field name='alt_uniform_colour_g' type='float' />
     <field name='alt_uniform_colour_b' type='float' />
-    <field name='military_group' type='string_ascii' />
+    <field name='alt_uniform_colour_b' type='string_ascii' />
     <field name='settler_rebellion_faction' type='optstring_ascii' />
     <field name='rebel_colour_r' type='float' />
     <field name='rebel_colour_g' type='float' />
     <field name='rebel_colour_b' type='float' />
     <field name='movie_death_event' type='optstring_ascii' />
-    <field name='screen_name_when_rebels' type='optstring_ascii' />
-    <field name='unknown43' type='optstring_ascii' />
+    <field name='screen_name_when_rebels' type='string_ascii' />
     <field name='unit_regiment_name_group' type='int' />
     <field name='ship_name_group' type='int' />
     <field name='attack_desc' type='string_ascii' />
     <field name='defend_desc' type='string_ascii' />
-    <field name='unknown48' type='optstring_ascii' />
+    <field name='clan_summary_name' type='optstring_ascii' />
     <field name='pre_battle_speech_parameter' type='string_ascii' />
-    <field name='unknown50' type='boolean' />
-    <field name='primary_colour_r' type='float' />
-    <field name='primary_colour_g' type='float' />
-    <field name='primary_colour_b' type='float' />
+    <field name='can_be_regionless' type='boolean' />
+    <field name='card_colour_r' type='float' />
+    <field name='card_colour_g' type='float' />
+    <field name='card_colour_b' type='float' />
     <field name='diplomacy_culture' type='string_ascii' />
     <field name='senator_total' type='int' />
   </table>
