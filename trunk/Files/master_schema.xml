@@ -4105,7 +4105,8 @@
     <field name='unknown15' type='boolean' />
     <field name='unknown16' type='boolean' />
     <field name='suppressible' type='boolean' />
-    <field name='unknown18' type='int' />
+    <field name='unknown17' type='boolean' />
+    <field name='audio_clip' type='string_ascii' />
     <field fkey='advisors_tables.advisor_name' name='advisor_name' type='string_ascii' />
     <field name='for_loading_screen' type='boolean' />
     <field name='movie_link' type='optstring_ascii' />
@@ -7754,11 +7755,11 @@
          guid='6f546bee-361e-4df6-8510-cf59acb22fa2,
                edf9f92c-4a95-425b-a833-b893e3003681'>
     <field name='key' type='string_ascii' />
-    <field name='location' type='string_ascii' />
+    <field fkey='campaign_effect_scope_locations_tables.key' name='location' type='string_ascii' />
     <field name='order' type='int' />
-    <field name='ownership' type='optstring_ascii' />
-    <field name='source' type='string_ascii' />
-    <field name='target' type='string_ascii' />
+    <field fkey='campaign_effect_scope_ownerships_tables.key' name='ownership' type='optstring_ascii' />
+    <field fkey='campaign_effect_scope_objects_tables.key' name='source' type='string_ascii' />
+    <field fkey='campaign_effect_scope_objects_tables.key' name='target' type='string_ascii' />
   </table>
   <table table_name='campaign_ground_types_tables'
          table_version='2'
