@@ -292,13 +292,18 @@ namespace PackFileTest {
         }
 
         void addCaReferences(TypeInfo caInfo, List<FieldInfo> existingInfo) {
-            foreach(FieldInfo caField in caInfo.Fields) {
+            foreach (FieldInfo caField in caInfo.Fields) {
                 if (caField.FieldReference != null) {
                     // we found a reference, add it to the one we have
-                    foreach(FieldInfo ourField in existingInfo) {
+                    foreach (FieldInfo ourField in existingInfo) {
                         if (ourField.Name.Equals(caField.Name)) {
-                            // found the corresponding field
-                            ourField.FieldReference = caField.FieldReference;
+                            if (packedFiles.ContainsKey(caField.ReferencedTable)) {
+                                // found the corresponding field
+                                ourField.FieldReference = caField.FieldReference;
+                                break;
+                            } else if (ourField.FieldReference != null) {
+                                ourField.FieldReference = null;
+                            }
                             break;
                         }
                     }
