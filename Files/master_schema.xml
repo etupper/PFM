@@ -1171,7 +1171,7 @@
   </table>
   <table name='campaign_character_arts_tables'>
     <field fkey='campaign_character_art_sets_tables.art_set_id' name='art_set_id' type='string' />
-    <field fkey='warscape_equipment_themes_tables.theme' name='equipment' type='optstring' />
+    <field name='equipment' type='optstring' />
     <field name='level' type='int' />
     <field name='age' type='int' />
     <field name='portrait' type='optstring' />
@@ -1996,7 +1996,7 @@
   </table>
   <table name='frontend_faction_leaders_tables'>
     <field name='animation' type='optstring' />
-    <field fkey='warscape_equipment_themes_tables.theme' name='equipment_theme' type='string' />
+    <field name='equipment_theme' type='string' />
     <field fkey='factions_tables.key' name='faction' type='string' />
     <field name='uniform' type='string' />
     <field name='x_offset' type='float' version_start='1' />
@@ -2054,7 +2054,7 @@
     <field fkey='battle_entities_tables.key' name='battle_entity' type='string' />
     <field fkey='warscape_animated_tables.key' name='model' type='string' />
     <field fkey='battle_animations_table_tables.key' name='gun_animations_table' type='string' />
-    <field fkey='warscape_equipment_themes_tables.theme' name='equipment_table' type='string' />
+    <field name='equipment_table' type='string' />
     <field fkey='warscape_rigid_tables.key' name='destroyed_model' type='string' />
     <field fkey='warscape_animated_tables.key' name='destruction_animation' type='string' />
     <field fkey='gun_types_enum_tables.key' name='engine_type' type='string' />
@@ -3489,7 +3489,7 @@
     <field name='Infantry Entity' type='string' />
     <field name='Soldier Model' type='string' />
     <field fkey='battle_animations_table_tables.key' name='man_animations_table' type='string' />
-    <field fkey='warscape_equipment_themes_tables.theme' name='equipment_theme' type='string' />
+    <field name='equipment_theme' type='string' />
     <field name='Armour Audio' type='string' />
     <field name='Armour' type='int' />
     <field name='Spacing' type='float' />
@@ -3746,9 +3746,9 @@
     <field name='Unit' type='string' />
   </table>
   <table name='unrest_cause_to_demands_tables'>
-    <field fkey='TExc_unrest_causes_tables.cause' name='cause' type='string' pk='true' />
+    <field name='cause' type='string' pk='true' />
     <field name='level_of_unrest' type='string' pk='true' />
-    <field fkey='TExc_unrest_demands_tables.demand' name='demand' type='string' />
+    <field name='demand' type='string' />
     <field fkey='message_event_strings_tables.event' name='message' type='string' />
   </table>
   <table name='videos_subtitles_junctions_tables'>
@@ -5579,7 +5579,7 @@
     <field name='key' type='string' pk='true' />
     <field fkey='warscape_animated_tables.key' name='soldier_model' type='string' />
     <field fkey='battle_animations_table_tables.key' name='man_animations_table' type='string' />
-    <field fkey='warscape_equipment_themes_tables.theme' name='equipment_theme' type='string' />
+    <field name='equipment_theme' type='string' />
     <field fkey='battle_personality_types_enum_tables.key' name='type' type='string' />
     <field fkey='projectiles_tables.key' name='missile_type' type='optstring' version_start='1' />
   </table>
@@ -7626,7 +7626,7 @@
                cbb66fe5-7214-4455-9c78-d7d3ff7b3018,
                d61dcc2d-ae68-4a6f-8e7d-5ffb4f7beea9'>
     <field fkey='campaign_character_art_sets_tables.art_set_id' name='art_set_id' type='string' />
-    <field fkey='warscape_equipment_themes_tables.theme' name='equipment' type='optstring' />
+    <field name='equipment' type='optstring' />
     <field name='level' type='int' />
     <field name='age' type='int' />
     <field name='portrait' type='optstring' />
@@ -7639,7 +7639,7 @@
          table_version='2'
          guid='bdebb92a-412e-4efc-9c32-72f41177c39c'>
     <field fkey='campaign_character_art_sets_tables.art_set_id' name='art_set_id' type='string' />
-    <field fkey='warscape_equipment_themes_tables.theme' name='equipment' type='optstring' />
+    <field name='equipment' type='optstring' />
     <field name='level' type='int' />
     <field name='age' type='int' />
     <field name='portrait' type='optstring' />
@@ -10290,7 +10290,7 @@
          table_version='0'
          guid='7924a6ce-6c18-4c91-84ce-e4b8d5769fe7'>
     <field name='animation' type='optstring' />
-    <field fkey='warscape_equipment_themes_tables.theme' name='equipment_theme' type='string' />
+    <field name='equipment_theme' type='string' />
     <field fkey='factions_tables.key' name='faction' type='string' />
     <field name='uniform' type='string' />
   </table>
@@ -10301,7 +10301,7 @@
                c83710bf-0242-402b-a7c6-c2707fa78217,
                f7fa8630-102d-4656-a55b-5dc7b61a5c7b'>
     <field name='animation' type='optstring' />
-    <field fkey='warscape_equipment_themes_tables.theme' name='equipment_theme' type='string' />
+    <field name='equipment_theme' type='string' />
     <field fkey='factions_tables.key' name='faction' type='string' />
     <field name='uniform' type='string' />
     <field name='x_offset' type='float' version_start='1' />
@@ -10445,7 +10445,7 @@
     <field fkey='battle_entities_tables.key' name='battle_entity' type='string' />
     <field fkey='warscape_animated_tables.key' name='model' type='string' />
     <field fkey='battle_animations_table_tables.key' name='gun_animations_table' type='string' />
-    <field fkey='warscape_equipment_themes_tables.theme' name='equipment_table' type='string' />
+    <field name='equipment_table' type='string' />
     <field fkey='warscape_rigid_tables.key' name='destroyed_model' type='string' />
     <field fkey='warscape_animated_tables.key' name='destruction_animation' type='string' />
     <field fkey='gun_types_enum_tables.key' name='engine_type' type='string' />
@@ -10457,7 +10457,7 @@
     <field fkey='battle_entities_tables.key' name='battle_entity' type='string_ascii' />
     <field fkey='warscape_animated_tables.key' name='model' type='string_ascii' />
     <field fkey='battle_animations_table_tables.key' name='gun_animations_table' type='string_ascii' />
-    <field fkey='warscape_equipment_themes_tables.theme' name='equipment_table' type='string_ascii' />
+    <field name='equipment_table' type='string_ascii' />
     <field fkey='warscape_rigid_tables.key' name='destroyed_model' type='string_ascii' />
     <field fkey='warscape_animated_tables.key' name='destruction_animation' type='string_ascii' />
     <field fkey='gun_types_enum_tables.key' name='engine_type' type='string_ascii' />
@@ -13730,7 +13730,7 @@
     <field fkey='warscape_animated_tables.key' name='soldier_model' type='string' />
     <field fkey='battle_entities_tables.key' name='man_entity' type='string' />
     <field fkey='battle_animations_table_tables.key' name='man_animations_table' type='string' />
-    <field fkey='warscape_equipment_themes_tables.theme' name='equipment_theme' type='string' />
+    <field name='equipment_theme' type='string' />
     <field name='armour' type='int' />
     <field name='armour_audio' type='string' />
     <field name='man_health' type='int' />
@@ -13850,7 +13850,7 @@
     <field fkey='warscape_animated_tables.key' name='soldier_model' type='string' />
     <field fkey='battle_entities_tables.key' name='man_entity' type='string' />
     <field fkey='battle_animations_table_tables.key' name='man_animations_table' type='string' />
-    <field fkey='warscape_equipment_themes_tables.theme' name='equipment_theme' type='string' />
+    <field name='equipment_theme' type='string' />
     <field name='armour' type='int' />
     <field name='armour_audio' type='string' />
     <field name='man_health' type='int' />
@@ -13971,7 +13971,7 @@
     <field name='Infantry Entity' type='string_ascii' />
     <field name='Soldier Model' type='string_ascii' />
     <field fkey='battle_animations_table_tables.key' name='man_animations_table' type='string_ascii' />
-    <field fkey='warscape_equipment_themes_tables.theme' name='equipment_theme' type='string_ascii' />
+    <field name='equipment_theme' type='string_ascii' />
     <field name='Armour Audio' type='string_ascii' />
     <field name='Armour' type='int' />
     <field name='Spacing' type='float' />
@@ -13995,7 +13995,7 @@
     <field fkey='battle_entities_tables.key' name='battle_entity' type='string' />
     <field fkey='warscape_animated_tables.key' name='soldier_model' type='string' />
     <field fkey='battle_animations_table_tables.key' name='man_animations_table' type='string' />
-    <field fkey='warscape_equipment_themes_tables.theme' name='equipment_theme' type='string' />
+    <field name='equipment_theme' type='string' />
     <field name='armour_audio' type='string' />
     <field name='armour' type='int' />
     <field name='spacing' type='float' />
