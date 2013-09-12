@@ -477,11 +477,22 @@ namespace PackFileManager {
                 Settings.Default.ImportExportDirectory = Path.GetDirectoryName(openDBFileDialog.FileName);
                 do {
                     try {
+                        DialogResult question = MessageBox.Show("Replace the current data?", "Replace data?", 
+                                                                MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                        if (question == DialogResult.Cancel) {
+                            return;
+                        }
+                        DBFile imported;
                         try {
                             using (var stream = new MemoryStream(File.ReadAllBytes(openDBFileDialog.FileName))) {
-                                EditedFile.Import(new TextDbCodec().Decode(stream));
+                                imported = new TextDbCodec().Decode(stream);
+                                EditedFile = imported;
                             }
-
+                            if (question == DialogResult.Yes) {
+                                EditedFile = imported;
+                            } else {
+                                EditedFile.Import(imported);
+                            }
                         } catch (DBFileNotSupportedException exception) {
                             showDBFileNotSupportedMessage(exception.Message);
                         }
