@@ -263,7 +263,7 @@ namespace PackFileTest {
                                 }
                             }
                         }
-                        addCaReferences (caInfo, existingInfo);
+                        AddCaReferences (caInfo, existingInfo);
                     }
                 }
             }
@@ -291,13 +291,18 @@ namespace PackFileTest {
             return result;
         }
 
-        void addCaReferences(TypeInfo caInfo, List<FieldInfo> existingInfo) {
+        void AddCaReferences(TypeInfo caInfo, List<FieldInfo> existingInfo) {
+            List<FieldInfo> ourPrimaryKeys = new List<FieldInfo>();
             foreach (FieldInfo caField in caInfo.Fields) {
-                if (caField.FieldReference != null) {
-                    // we found a reference, add it to the one we have
+                if (caField.FieldReference != null || caField.PrimaryKey) {
+
+                    // find our field so we can set reference or pkey
                     foreach (FieldInfo ourField in existingInfo) {
                         if (ourField.Name.Equals(caField.Name)) {
-                            if (packedFiles.ContainsKey(caField.ReferencedTable)) {
+                            if (caField.PrimaryKey) {
+                                ourPrimaryKeys.Add(ourField);
+                            }
+                            if (caField.FieldReference != null && packedFiles.ContainsKey(caField.ReferencedTable)) {
                                 // found the corresponding field
                                 ourField.FieldReference = caField.FieldReference;
                                 break;
@@ -309,6 +314,18 @@ namespace PackFileTest {
                     }
                 }
             }
+            // adjust pkeys
+            //if (ourPrimaryKey.Count != 0) {
+            foreach(FieldInfo info in existingInfo) {
+                bool newPkey = ourPrimaryKeys.Contains(info);
+#if DEBUG
+                if (newPkey != info.PrimaryKey) {
+                    Console.WriteLine("{0}setting {1} as primary key", (newPkey ? "" : "un"), info.Name);
+                    info.PrimaryKey = newPkey;
+                }
+#endif
+            }
+            //}
         }
         
         void CorrectReferences(string type, FieldInfo toInfo, string newName) {

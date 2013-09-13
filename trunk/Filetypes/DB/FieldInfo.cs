@@ -27,9 +27,9 @@ namespace Filetypes
 			case "float":
             case "single":
             case "decimal":
-				return SingleType ();
             case "double":
-                return DoubleType ();
+                return SingleType ();
+                // return DoubleType ();
 			case "boolean":
             case "yesno":
 				return BoolType ();
