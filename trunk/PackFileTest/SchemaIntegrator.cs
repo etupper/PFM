@@ -93,40 +93,41 @@ namespace PackFileTest {
             LoadDbFiles();
             BuildReferenceCache();
             Console.WriteLine("Integrating schema file {0}", filename);
+            XmlImporter importer = null;
             using (var stream = File.OpenRead(filename)) {
-                XmlImporter importer = new XmlImporter(stream);
+                importer = new XmlImporter(stream);
                 importer.Import();
+            }
 
-                if (IntegrateExisting) {
-                    foreach (string type in importer.Descriptions.Keys) {
-                        IntegrateTable(type, importer.Descriptions[type]);
-                    }
+            if (IntegrateExisting) {
+                foreach (string type in importer.Descriptions.Keys) {
+                    IntegrateTable(type, importer.Descriptions[type]);
                 }
-                foreach(GuidTypeInfo info in importer.GuidToDescriptions.Keys) {
-                    List<FieldInfo> infos;
-                    if (!importer.GuidToDescriptions.TryGetValue(info, out infos)) {
-                        // nothing to integrate
-                        continue;
-                    }
-                    if (!DBTypeMap.Instance.GuidMap.ContainsKey(info)) {
-                        DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, infos);
-                    } else {
-                        PackedFile dbPacked;
-                        List<FieldInfo> oldInfo = DBTypeMap.Instance.GetInfoByGuid(info.Guid);
-                        if (packedFiles.TryGetValue(info.TypeName, out dbPacked)) {
-                            if (OverwriteExisting || !CanDecode(dbPacked)) {
-                                DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, infos);
-                                if (CanDecode(dbPacked)) {
-                                    Console.WriteLine("Using new schema for {0}", info.TypeName);
-                                } else {
-                                    DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, oldInfo);
-                                }
-                            } else if (IntegrateExisting) {
-                                IntegrateInto(info.TypeName, oldInfo, infos);
-                                DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, oldInfo);
+            }
+            foreach(GuidTypeInfo info in importer.GuidToDescriptions.Keys) {
+                List<FieldInfo> infos;
+                if (!importer.GuidToDescriptions.TryGetValue(info, out infos)) {
+                    // nothing to integrate
+                    continue;
+                }
+                if (!DBTypeMap.Instance.GuidMap.ContainsKey(info)) {
+                    DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, infos);
+                } else {
+                    PackedFile dbPacked;
+                    List<FieldInfo> oldInfo = DBTypeMap.Instance.GetInfoByGuid(info.Guid);
+                    if (packedFiles.TryGetValue(info.TypeName, out dbPacked)) {
+                        if (OverwriteExisting || !CanDecode(dbPacked)) {
+                            DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, infos);
+                            if (CanDecode(dbPacked)) {
+                                Console.WriteLine("Using new schema for {0}", info.TypeName);
                             } else {
-                                Console.WriteLine("Can already decode {0}", info.TypeName);
+                                DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, oldInfo);
                             }
+                        } else if (IntegrateExisting) {
+                            IntegrateInto(info.TypeName, oldInfo, infos);
+                            DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, oldInfo);
+                        } else {
+                            Console.WriteLine("Can already decode {0}", info.TypeName);
                         }
                     }
                 }
@@ -195,7 +196,6 @@ namespace PackFileTest {
                 toInfo.Name = fromInfo.Name.ToLower();
             }
         }
-        
 
         static readonly Regex UNKNOWN_RE = new Regex("[Uu]nknown[0-9]*");
         void IntegrateInto (string type, List<FieldInfo> integrateInto, List<FieldInfo> integrateFrom) {
@@ -228,6 +228,12 @@ namespace PackFileTest {
         }
         
         public void AddCaData(string caDir) {
+            HandleAllCaFields(caDir, AddCaFieldInfo);
+        }
+        public void VerifyData(string caDir) {
+            HandleAllCaFields(caDir, SearchMissingData);
+        }
+        private void HandleAllCaFields(string caDir, HandleCaField handle) {
             CaXmlDbFileCodec codec = new CaXmlDbFileCodec(caDir);
             LoadDbFiles();
 
@@ -242,31 +248,111 @@ namespace PackFileTest {
                     TypeInfo caInfo = codec.TypeInfoByTableName(dbType);
                     List<FieldInfo> existingInfo = DBTypeMap.Instance.GetInfoByGuid(header.GUID);
                     if (caInfo != null && existingInfo != null) {
-                        for (int fieldIndex = 0; fieldIndex < existingInfo.Count; fieldIndex++) {
-                            FieldInfo info = existingInfo[fieldIndex];
-                            if (CheckAllFields || UNKNOWN_RE.IsMatch(info.Name)) {
-                                try {
-                                    DBFile packData = PackedFileDbCodec.Decode(packedFiles[dbType]);
-                                    string caXmlFile = string.Format("{0}.xml", dbType.Replace("_tables", ""));
-                                    caXmlFile = Path.Combine(caDir, caXmlFile);
-                                    DBFile caData = codec.Decode(File.OpenRead(caXmlFile));
-                                    List<string> fieldValues = GetFieldValues(packData.Entries, fieldIndex);
-                                    List<string> fieldNames = GetMatchingFieldNames(caData, fieldValues);
-                                    if (fieldNames.Count != 1) {
-                                        Console.WriteLine("no unique fields matching data from {0}:{1}", dbType, info.Name);
-                                    } else if (!info.Name.Equals(fieldNames[0])) {
-                                        Console.WriteLine("resolved {0}:{1} to {2}", dbType, info.Name, fieldNames[0]);
-                                        info.Name = fieldNames[0];
-                                    }
-                                } catch (Exception e) {
-                                    Console.WriteLine(e);
-                                }
-                            }
+                        DBFile packData = PackedFileDbCodec.Decode(packedFiles[caInfo.Name]);
+                        string caXmlFile = string.Format("{0}.xml", caInfo.Name.Replace("_tables", ""));
+                        caXmlFile = Path.Combine(caDir, caXmlFile);
+                        DBFile caData = codec.Decode(File.OpenRead(caXmlFile));
+
+                        if (caData == null) {
+                            Console.WriteLine("Could not decode xml file for type {0}", caInfo.Name);
+                            continue;
                         }
-                        AddCaReferences (caInfo, existingInfo);
+                        if (packData == null) {
+                            Console.WriteLine("Could not decode pack file data for type {0}", caInfo.Name);
+                            continue;
+                        }
+                        handle(caData, packData);
                     }
                 }
             }
+        }
+        
+        private delegate void HandleCaField(DBFile xmlData, DBFile packData);
+        private void AddCaFieldInfo(DBFile xmlData, DBFile packData) {
+            TypeInfo caInfo = xmlData.CurrentType;
+            List<FieldInfo> existingInfo = packData.CurrentType.Fields;
+            for (int fieldIndex = 0; fieldIndex < existingInfo.Count; fieldIndex++) {
+                FieldInfo info = existingInfo[fieldIndex];
+                if (CheckAllFields || UNKNOWN_RE.IsMatch(info.Name)) {
+                    try {
+                        List<string> fieldValues = GetFieldValues(packData.Entries, fieldIndex);
+                        List<string> fieldNames = GetMatchingFieldNames(xmlData, fieldValues);
+                        if (fieldNames.Count != 1) {
+                            Console.WriteLine("no unique fields matching data from {0}:{1}", caInfo.Name, info.Name);
+                        } else if (!info.Name.Equals(fieldNames[0])) {
+                            Console.WriteLine("resolved {0}:{1} to {2}", caInfo.Name, info.Name, fieldNames[0]);
+                            info.Name = fieldNames[0];
+                        }
+                    } catch (Exception e) {
+                        Console.WriteLine(e);
+                    }
+                }
+            }
+            AddCaReferences (caInfo, existingInfo);
+        }
+        /*
+         * Looks for data contained in the pack file that doesn't have 
+         * a correspondence in the xml. Outputs to console.
+         */
+        private void SearchMissingData(DBFile xmlData, DBFile packData) {
+            List<string> missing = new List<string>();
+            DoSearch(xmlData, packData);
+            if (missing.Count > 0) {
+                missing.Insert(0, "Not in XML:");
+            }
+            List<string> missingInPack = DoSearch(packData, xmlData);
+            if (missingInPack.Count > 0) {
+                missingInPack.Insert(0, "Not in Pack:");
+            }
+            missing.AddRange(missingInPack);
+            if (missing.Count > 0) {
+                Console.WriteLine("{0}:", xmlData.CurrentType.Name);
+                missing.ForEach(m => Console.WriteLine(m));
+            }
+        }
+        private List<string> DoSearch(DBFile dataOne, DBFile dataTwo) {
+            List<string> messages = new List<string>();
+            if (dataTwo.Entries.Count == 0) {
+                return messages;
+            }
+            for(int i = 0; i < dataTwo.CurrentType.Fields.Count; i++) {
+                FieldInfo info = dataTwo.CurrentType.Fields[i];
+                if (dataOne.Entries.Count == 0 || dataOne.Entries.Count != dataTwo.Entries.Count) {
+                    continue;
+                }
+                if (dataTwo.Entries[0][i].RequiresTranslation) {
+                    continue;
+                }
+                
+                // description fields are localized, so they are not packed directly
+                if (info.Name.Contains("description") || info.Name.Contains("localis") || 
+                    info.Name.Contains("onscreen") || info.Name.Equals("author")) {
+                    continue;
+                }
+                List<string> fieldValues = GetFieldValues(dataTwo.Entries, i);
+                if (fieldValues == null) {
+                    continue;
+                }
+                List<string> correspondingFields = GetMatchingFieldNames(dataOne, fieldValues);
+                if (correspondingFields.Count == 0 && !AllValuesEqual(fieldValues)) {
+                    messages.Add(string.Format("No matching fields found for {0}:{1}", dataTwo.CurrentType.Name, info.Name));
+                    messages.Add(string.Format("values: {0}", string.Join(",", fieldValues)));
+                }
+            }
+            return messages;
+        }
+        private bool AllValuesEqual(List<string> fieldValues) {
+            string firstValue = null;
+            foreach(string value in fieldValues) {
+                if (firstValue == null) {
+                    firstValue = value;
+                    continue;
+                }
+                if (!firstValue.Equals(value)) {
+                    return false;
+                }
+            }
+            return true;
         }
         
         // when integrating CA tables, check all values for all fields?
@@ -286,6 +372,20 @@ namespace PackFileTest {
                 List<string> values = GetFieldValues(file.Entries, i);
                 if (Enumerable.SequenceEqual<string>(values, toMatch)) {
                     result.Add(file.CurrentType.Fields[i].Name);
+                } else if (file.CurrentType.Name.Equals("boolean") && values.Count == toMatch.Count) {
+                    // check for booleans stored as ints in the xml
+                    bool match = true;
+                    for(int valIndex = 0; valIndex < toMatch.Count; valIndex++) {
+                        bool matchValue = Boolean.Parse(toMatch[i]);
+                        bool checkValue = "1".Equals(values[i]);
+                        if (matchValue != checkValue) {
+                            match = false;
+                            break;
+                        }
+                    }
+                    if (match) {
+                        result.Add(file.CurrentType.Fields[i].Name);
+                    }
                 }
             }
             return result;
@@ -315,7 +415,6 @@ namespace PackFileTest {
                 }
             }
             // adjust pkeys
-            //if (ourPrimaryKey.Count != 0) {
             foreach(FieldInfo info in existingInfo) {
                 bool newPkey = ourPrimaryKeys.Contains(info);
 #if DEBUG
@@ -325,7 +424,6 @@ namespace PackFileTest {
                 }
 #endif
             }
-            //}
         }
         
         void CorrectReferences(string type, FieldInfo toInfo, string newName) {
