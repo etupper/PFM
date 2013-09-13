@@ -6385,15 +6385,18 @@
     <field name='Population Change' type='int' />
     <field name='Max Population Change' type='int' />
     <field name='Commodity' type='string_ascii' />
-    <field name='only_in_capital' type='boolean' />
-    <field name='only_in_capital19' type='boolean' />
+    <field name='unknown' type='boolean' />
+    <field name='unknown19' type='boolean' />
     <field name='unknown20' type='int' />
-    <field name='only_in_capital21' type='boolean' />
+    <field name='unknown21' type='boolean' />
     <field name='military_prestige' type='int' />
     <field name='naval_prestige' type='int' />
     <field name='economic_prestige' type='int' />
     <field name='enlightenment_prestige' type='int' />
-    <field name='unknown26' type='int' />
+    <field name='destruction_terminator' type='boolean' />
+    <field name='faction_unique' type='boolean' />
+    <field name='unknown28' type='boolean' />
+    <field name='unknown29' type='boolean' />
     <field fkey='resources_tables.key' name='resource_requirement' type='optstring_ascii' />
     <field fkey='warscape_rigid_tables.key' name='working_model' type='string_ascii' />
     <field name='unique_index' type='int' />
@@ -7254,9 +7257,9 @@
   <table table_name='cai_task_management_system_task_generator_groups_generators_junctions_tables'
          table_version='0'
          guid='afff1678-11d5-4fc0-98fc-4d3447f2c8ac'>
-    <field name='unknown' type='float' />
-    <field name='unknown2' type='string_ascii' />
-    <field name='unknown3' type='string_ascii' />
+    <field name='priority' type='float' />
+    <field name='task_generator_group_key' type='string_ascii' />
+    <field name='task_generator_key' type='string_ascii' />
   </table>
   <table table_name='cai_task_management_system_task_generator_groups_tables'
          table_version='0'
@@ -7266,7 +7269,7 @@
   <table table_name='cai_task_management_system_task_generators_tables'
          table_version='0'
          guid='007dd3f8-01f8-4a35-bd20-5b65c22bf5c3'>
-    <field name='unknown' type='string_ascii' />
+    <field name='key' type='string_ascii' />
   </table>
   <table table_name='campaign_ai_character_skill_tree_distribution_junctions_tables'
          table_version='0'

@@ -34,6 +34,8 @@ namespace PackFileTest {
             "-w",
             // -ca: read CA schema files and get the references
             "-ca",
+            // -vd: read CA files and verify if each line in pack data has an xml correspondence
+            "-vs",
             // -as: add entries from other schema file by GUID if they don't exists already
             "-as",
             // -cs: read from CA schema directory and correct references
@@ -127,6 +129,9 @@ namespace PackFileTest {
                 } else if (dir.StartsWith("-i")) {
                     string path = dir.Substring(2);
                     IntegrateAll(path, integrator.IntegrateFile);
+                } else if (dir.StartsWith("-vd")) {
+                    string path = dir.Substring(3);
+                    IntegrateAll(path, integrator.VerifyData);
                 } else if (dir.Equals("-t")) {
                     Console.WriteLine("TSV export/import enabled");
                     testTsvExport = true;

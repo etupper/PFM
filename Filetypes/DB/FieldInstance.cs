@@ -43,7 +43,8 @@ namespace Filetypes
         public virtual int Length {
             get; protected set;
         }
-        
+        public bool RequiresTranslation { get; set; }
+
         public virtual FieldInstance CreateCopy() {
             FieldInstance copy = Info.CreateInstance();
             copy.Value = Value;

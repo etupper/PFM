@@ -49,8 +49,13 @@ namespace Filetypes {
                         }
 
                         Dictionary<string, string> fieldValues = new Dictionary<string, string>();
+                        List<string> requireTranslation = new List<string>();
                         foreach(XmlNode row in entry.ChildNodes) {
                             fieldValues[row.Name] = row.InnerText;
+                            XmlAttribute at = row.Attributes["requires_translation"];
+                            if (at != null && "true".Equals(at.Value)) {
+                                requireTranslation.Add(row.Name);
+                            }
                         }
                         List<FieldInstance> fields = result.GetNewEntry();
                         foreach(FieldInstance field in fields) {
@@ -62,6 +67,7 @@ namespace Filetypes {
                                     } else {
                                         field.Value = val;
                                     }
+                                    field.RequiresTranslation = requireTranslation.Contains(field.Name);
                                 }
                             } catch (Exception e) {
                                 Console.WriteLine("Wait a minute!");
