@@ -47,17 +47,22 @@ namespace Filetypes {
                 maxVersion.Clear();
 
                 List<GuidTypeInfo> allUsed = new List<GuidTypeInfo>();
+                Dictionary<GuidTypeInfo, PackedFile> infos = new Dictionary<GuidTypeInfo, PackedFile>();
                 foreach (string path in Directory.EnumerateFiles(PackDirectory, "*.pack")) {
                     PackFile pack = new PackFileCodec().Open (path);
-                    List<GuidTypeInfo> infos = GetUsedTypes(pack);
-                    
+                    GetUsedTypes(pack, infos);
+
                     // add all infos we don't have yet
-                    infos.ForEach(info => { if (!allUsed.Contains(info)) { allUsed.Add(info); } });
+                    foreach(GuidTypeInfo info in infos.Keys) {
+                        if (!allUsed.Contains(info)) { 
+                            allUsed.Add(info); 
+                        }
+                    }
                 }
                 
                 foreach(GuidTypeInfo info in allUsed) {
                     if (!string.IsNullOrEmpty(info.Guid)) {
-                        AddSafe(info, guidMap);
+                        AddSafe(info, infos[info], guidMap);
                         continue;
                     }
                 }
@@ -87,7 +92,7 @@ namespace Filetypes {
             }
         }
 
-        private void AddSafe(GuidTypeInfo key, SortedDictionary<GuidTypeInfo, List<FieldInfo>> addTo) {
+        private void AddSafe(GuidTypeInfo key, PackedFile packedFile, SortedDictionary<GuidTypeInfo, List<FieldInfo>> addTo) {
             List<FieldInfo> addValue;
             if (DBTypeMap.Instance.GuidMap.TryGetValue(key, out addValue) && !addTo.ContainsKey(key)) {
                 addTo[key] = addValue;
@@ -96,20 +101,26 @@ namespace Filetypes {
                 // also add to guid map in DBTypeMap
                 DBTypeMap.Instance.GuidMap[key] = addTo[key];
             } else {
-                List<TypeInfo> allInfos = DBTypeMap.Instance.GetAllInfos(key.TypeName);
-                Console.WriteLine("no info for {2} guid {0}, using highest of {1}", key.Guid, allInfos.Count, key.TypeName);
-                int highestVersion = -1;
                 TypeInfo useInfo = null;
-                if (allInfos.Count > 0) {
-                    allInfos.ForEach(i => {
-                        if (i.Version > highestVersion) {
-                            highestVersion = i.Version;
-                            useInfo = i;
-                        }
-                    });
-                    if (useInfo != null) {
-                        DBTypeMap.Instance.GuidMap[key] = useInfo.Fields;
+                DBFile checkFile = PackedFileDbCodec.Decode(packedFile);
+                if (checkFile != null) {
+                    useInfo = checkFile.CurrentType;
+                    Console.WriteLine("no info for {2} guid {0}, but can use {1}", key.Guid, useInfo, key.TypeName);
+                } else {
+                    List<TypeInfo> allInfos = DBTypeMap.Instance.GetAllInfos(key.TypeName);
+                    Console.WriteLine("no info for {2} guid {0}, using highest of {1}", key.Guid, allInfos.Count, key.TypeName);
+                    int highestVersion = -1;
+                    if (allInfos.Count > 0) {
+                        allInfos.ForEach(i => {
+                            if (i.Version > highestVersion) {
+                                highestVersion = i.Version;
+                                useInfo = i;
+                            }
+                        });
                     }
+                }
+                if (useInfo != null) {
+                    DBTypeMap.Instance.GuidMap[key] = useInfo.Fields;
                 }
             }
         }
@@ -132,8 +143,7 @@ namespace Filetypes {
             return result;
         }
 
-        private List<GuidTypeInfo> GetUsedTypes(PackFile pack) {
-            List<GuidTypeInfo> infos = new List<GuidTypeInfo>();
+        private Dictionary<GuidTypeInfo, PackedFile> GetUsedTypes(PackFile pack, Dictionary<GuidTypeInfo, PackedFile> infos) {
             foreach (PackedFile packed in pack.Files) {
                 if (packed.FullPath.StartsWith("db")) {
                     AddFromPacked(infos, packed);
@@ -142,11 +152,11 @@ namespace Filetypes {
             return infos;
         }
 
-        private void AddFromPacked(List<GuidTypeInfo> infos, PackedFile packed) {
+        private void AddFromPacked(Dictionary<GuidTypeInfo, PackedFile> infos, PackedFile packed) {
             if (packed.Size != 0) {
                 string type = DBFile.typename(packed.FullPath);
                 DBFileHeader header = PackedFileDbCodec.readHeader(packed);
-                infos.Add(new GuidTypeInfo(header.GUID, type, header.Version));
+                infos[new GuidTypeInfo(header.GUID, type, header.Version)] = packed;
                 if (string.IsNullOrEmpty(header.GUID)) {
                     int min = int.MaxValue;
                     minVersion.TryGetValue(type, out min);

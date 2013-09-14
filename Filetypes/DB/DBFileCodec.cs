@@ -38,9 +38,6 @@ namespace Filetypes {
 
         private PackedFileDbCodec(string type) {
             typeName = type;
-            if (!DBTypeMap.Instance.IsSupported(typeName)) {
-                throw new DBFileNotSupportedException(string.Format("No DB definition found for {0}", typeName));
-            }
             AutoadjustGuid = true;
         }
 

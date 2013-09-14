@@ -41,7 +41,7 @@ namespace Filetypes {
         }
         public SortedDictionary<GuidTypeInfo, List<FieldInfo>> GuidMap {
             get {
-                return new SortedDictionary<GuidTypeInfo, List<FieldInfo>>(guidMap);
+                return guidMap;
             }
         }
         public bool Initialized {
