@@ -556,7 +556,8 @@ namespace PackFileManager {
                 var info = newColumn.Tag as FieldInfo;
 
                 // edit number items
-                if (info != null && (info.TypeCode == TypeCode.Int16 || info.TypeCode == TypeCode.UInt32 || info.TypeCode == TypeCode.Single)) {
+                if (info != null && (info.TypeCode == TypeCode.Int16 || info.TypeCode == TypeCode.Int32 ||
+                                    info.TypeCode == TypeCode.UInt32 || info.TypeCode == TypeCode.Single)) {
                     item = new MenuItem("Edit...");
                     item.MenuItems.Add(new MenuItem("Add value to All", delegate {
                         AddToAll(e.ColumnIndex);
