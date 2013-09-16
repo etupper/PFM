@@ -69,9 +69,9 @@ namespace PackFileManager {
         public override bool CanEdit(Common.PackedFile file) {
             bool result = false;
             try {
-                (codec as DelegatingDbFileCodec).Codec = PackedFileDbCodec.GetCodec(file);
+                //(codec as DelegatingDbFileCodec).Codec = PackedFileDbCodec.GetCodec(file);
                 // result = DBFile.typename(file.FullPath).Equals("models_building_tables");
-                result = codec != null;
+                //result = codec != null;
             } catch { }
             return result;
         }
@@ -82,13 +82,15 @@ namespace PackFileManager {
             }
             set {
                 base.EditedFile = value;
-                dataGridView.DataSource = new List<FieldInstance>();
-                treeView.Nodes.Clear();
-                foreach (List<FieldInstance> fields in EditedFile.Entries) {
-                    if (fields.Count > 0) {
-                        treeView.Nodes.Add(new FieldInstanceNode(fields, -1));
-                    } else {
-                        treeView.Nodes.Add(new TreeNode("This entry is empty."));
+                if (value != null) {
+                    dataGridView.DataSource = new List<FieldInstance>();
+                    treeView.Nodes.Clear();
+                    foreach (List<FieldInstance> fields in EditedFile.Entries) {
+                        if (fields.Count > 0) {
+                            treeView.Nodes.Add(new FieldInstanceNode(fields, -1));
+                        } else {
+                            treeView.Nodes.Add(new TreeNode("This entry is empty."));
+                        }
                     }
                 }
             }

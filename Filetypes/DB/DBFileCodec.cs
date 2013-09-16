@@ -101,9 +101,9 @@ namespace Filetypes {
             // auto-adjust header guid
             if (AutoadjustGuid && !info.ApplicableGuids.Contains(header.GUID)) {
 #if DEBUG
-                Console.WriteLine("adjusting guid from {0} to {1}", header.GUID, info.ApplicableGuids[0]);
+                Console.WriteLine("adding guid {0} to valid guids for current info", header.GUID);
 #endif
-                header.GUID = info.ApplicableGuids[0];
+                info.ApplicableGuids.Add (header.GUID);
             }
             return file;
         }

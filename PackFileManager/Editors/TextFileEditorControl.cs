@@ -12,12 +12,23 @@
     public class TextFileEditorControl : PackedFileEditor<string>
     {
         private IContainer components = null;
-        private RichTextBox richTextBox1;
+        private RichTextBox richTextBox;
 
         public TextFileEditorControl() : base(TextCodec.Instance) {
             this.InitializeComponent();
 
-            richTextBox1.TextChanged += (b, e) => DataChanged = true;
+            richTextBox.TextChanged += (b, e) => DataChanged = true;
+            richTextBox.KeyUp += HandleRichTextBoxKeyUp;
+        }
+
+        void HandleRichTextBoxKeyUp (object sender, KeyEventArgs e) {
+            if (e.Control) {
+                if (e.KeyCode == Keys.C) {
+                    richTextBox.Copy();
+                } else if (e.KeyCode == Keys.V) {
+                    richTextBox.Paste();
+                }
+            }
         }
 
         string[] EXTENSIONS = { ".txt", ".lua", ".csv", ".fx", ".fx_fragment", 
@@ -30,10 +41,10 @@
         
         public override string EditedFile {
             get {
-                return richTextBox1.Text;
+                return richTextBox.Text;
             }
             set {
-                richTextBox1.Text = value;
+                richTextBox.Text = value;
                 DataChanged = false;
             }
         }
@@ -55,16 +66,16 @@
 
         private void InitializeComponent()
         {
-            this.richTextBox1 = new RichTextBox();
+            this.richTextBox = new RichTextBox();
             base.SuspendLayout();
-            this.richTextBox1.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Top;
-            this.richTextBox1.Location = new Point(0, 0);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new Size(0x4a2, 0x28c);
-            this.richTextBox1.TabIndex = 0;
-            this.richTextBox1.Text = "";
+            this.richTextBox.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Top;
+            this.richTextBox.Location = new Point(0, 0);
+            this.richTextBox.Name = "richTextBox1";
+            this.richTextBox.Size = new Size(0x4a2, 0x28c);
+            this.richTextBox.TabIndex = 0;
+            this.richTextBox.Text = "";
             base.AutoScaleDimensions = new SizeF(6f, 13f);
-            base.Controls.Add(this.richTextBox1);
+            base.Controls.Add(this.richTextBox);
             base.Name = "TextFileEditorControl";
             base.Size = new Size(0x4a2, 0x28c);
             base.ResumeLayout(false);
@@ -78,6 +89,9 @@
             using (var reader = new StreamReader(file, Encoding.ASCII)) {
                 result = reader.ReadToEnd();
             }
+#if DEBUG
+            Console.WriteLine("read string\n{0}", result);
+#endif
             return result;
         }
         public void Encode(Stream stream, string toEncode) {
