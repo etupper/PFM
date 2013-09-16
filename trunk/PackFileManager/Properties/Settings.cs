@@ -35,6 +35,20 @@
             }
         }
 
+        [DefaultSettingValue("True"), UserScopedSetting]
+        public bool FirstStart
+        {
+            get
+            {
+                return (bool) this["FirstStart"];
+            }
+            set
+            {
+                this["FirstStart"] = value;
+                Save();
+            }
+        }
+
         [DefaultSettingValue(""), UserScopedSetting]
         public string IgnoreColumns
         {
@@ -209,7 +223,7 @@
             }
         }
 
-        [DebuggerNonUserCode, DefaultSettingValue("False"), UserScopedSetting]
+        [DebuggerNonUserCode, DefaultSettingValue("True"), UserScopedSetting]
         public bool UpdateOnStartup
         {
             get

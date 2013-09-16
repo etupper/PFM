@@ -87,7 +87,14 @@ namespace PackFileManager
             dbUpdater.DetermineGuid = QueryGuid;
 
             try {
-                if (Settings.Default.UpdateOnStartup) {
+                if (Settings.Default.FirstStart) {
+                    Settings.Default.UpdateOnStartup = (MessageBox.Show(
+                        "Looking for updated schema files for decoding DB files.\n" +
+                        "Do you want to do this every time the PFM is started (recommended)?", 
+                        "First start", MessageBoxButtons.YesNo) == DialogResult.Yes);
+                    Settings.Default.FirstStart = false;
+                    TryUpdate (false);
+                } else if (Settings.Default.UpdateOnStartup) {
                     TryUpdate (false);
                 }
             } catch {
