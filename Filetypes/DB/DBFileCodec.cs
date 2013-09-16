@@ -59,9 +59,12 @@ namespace Filetypes {
                         Version = header.Version
                     };
                     typeByGuid.ApplicableGuids.Add(header.GUID);
-                    infos = new List<TypeInfo>();
+                    // infos = new List<TypeInfo>();
                     infos.Add(typeByGuid);
                 }
+            }
+            if (infos.Count == 0) {
+                infos.AddRange(DBTypeMap.Instance.GetAllInfos(typeName));
             }
             foreach(TypeInfo realInfo in infos) {
                 try {

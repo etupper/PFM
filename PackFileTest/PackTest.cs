@@ -312,6 +312,7 @@ namespace PackFileTest {
                         PackDirectory = datapath,
                         SchemaFilename = outfile
                     };
+                    //optimizer.FilterExistingPacks();
                     ThreadStart start = new ThreadStart(optimizer.FilterExistingPacks);
                     Thread worker = new Thread(start);
                     threads.Add(worker);

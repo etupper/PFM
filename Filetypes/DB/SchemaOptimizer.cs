@@ -62,7 +62,7 @@ namespace Filetypes {
                 
                 foreach(GuidTypeInfo info in allUsed) {
                     if (!string.IsNullOrEmpty(info.Guid)) {
-                        AddSafe(info, infos[info], guidMap);
+                        AddSafe(info, infos[info]);
                         continue;
                     }
                 }
@@ -70,11 +70,6 @@ namespace Filetypes {
                     List<FieldInfo> add = new List<FieldInfo>();
                     List<FieldInfo> addFrom;
                     if (DBTypeMap.Instance.TypeMap.TryGetValue(type, out addFrom)) {
-#if DEBUG
-                        if (type.Equals("agents_tables")) {
-                            Console.WriteLine();
-                        }
-#endif
                         int min = minVersion[type];
                         int max = maxVersion[type];
                         
@@ -92,36 +87,28 @@ namespace Filetypes {
             }
         }
 
-        private void AddSafe(GuidTypeInfo key, PackedFile packedFile, SortedDictionary<GuidTypeInfo, List<FieldInfo>> addTo) {
-            List<FieldInfo> addValue;
-            if (DBTypeMap.Instance.GuidMap.TryGetValue(key, out addValue) && !addTo.ContainsKey(key)) {
-                addTo[key] = addValue;
-            } else if (DBTypeMap.Instance.TypeMap.ContainsKey(key.TypeName)) {
-                addTo[key] = FilterList(DBTypeMap.Instance.TypeMap[key.TypeName], key.Version, key.Version);
-                // also add to guid map in DBTypeMap
-                DBTypeMap.Instance.GuidMap[key] = addTo[key];
+        private void AddSafe(GuidTypeInfo key, PackedFile packedFile) {
+            // try out all available schemata (PackedFileDbCodec does that)
+            TypeInfo useInfo = null;
+            DBFile checkFile = PackedFileDbCodec.Decode(packedFile);
+            if (checkFile != null) {
+                useInfo = checkFile.CurrentType;
+                Console.WriteLine("no info for {2} guid {0}, but can use {1}", key.Guid, useInfo, key.TypeName);
             } else {
-                TypeInfo useInfo = null;
-                DBFile checkFile = PackedFileDbCodec.Decode(packedFile);
-                if (checkFile != null) {
-                    useInfo = checkFile.CurrentType;
-                    Console.WriteLine("no info for {2} guid {0}, but can use {1}", key.Guid, useInfo, key.TypeName);
-                } else {
-                    List<TypeInfo> allInfos = DBTypeMap.Instance.GetAllInfos(key.TypeName);
-                    Console.WriteLine("no info for {2} guid {0}, using highest of {1}", key.Guid, allInfos.Count, key.TypeName);
-                    int highestVersion = -1;
-                    if (allInfos.Count > 0) {
-                        allInfos.ForEach(i => {
-                            if (i.Version > highestVersion) {
-                                highestVersion = i.Version;
-                                useInfo = i;
-                            }
-                        });
-                    }
+                List<TypeInfo> allInfos = DBTypeMap.Instance.GetAllInfos(key.TypeName);
+                Console.WriteLine("no info for {2} guid {0}, using highest of {1}", key.Guid, allInfos.Count, key.TypeName);
+                int highestVersion = -1;
+                if (allInfos.Count > 0) {
+                    allInfos.ForEach(i => {
+                        if (i.Version > highestVersion) {
+                            highestVersion = i.Version;
+                            useInfo = i;
+                        }
+                    });
                 }
-                if (useInfo != null) {
-                    DBTypeMap.Instance.GuidMap[key] = useInfo.Fields;
-                }
+            }
+            if (useInfo != null) {
+                guidMap[key] = useInfo.Fields;
             }
         }
         
