@@ -55,6 +55,9 @@ namespace Filetypes
         public abstract void Decode(BinaryReader reader);
         
         #region Framework Overrides
+        public override string ToString() {
+            return Value;
+        }
         public override bool Equals(object o) {
             bool result = o is FieldInstance;
             if (result) {
