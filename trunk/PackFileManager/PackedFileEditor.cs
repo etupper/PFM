@@ -83,11 +83,11 @@ namespace PackFileManager {
             }
         }
 
-        public static bool HasExtension(PackedFile file, string[] extensions) {
+        public static bool HasExtension(PackedFile file, IEnumerable<string> extensions) {
             bool result = false;
             if (file != null) {
                 foreach (string ext in extensions) {
-                    if (Path.GetExtension(file.FullPath).Equals(ext)) {
+                    if (Path.GetExtension(file.FullPath).Equals(ext.Trim())) {
                         result = true;
                         break;
                     }

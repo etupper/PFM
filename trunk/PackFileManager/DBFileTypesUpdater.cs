@@ -152,7 +152,7 @@ namespace PackFileManager
         }
         #endregion
         
-        static readonly char[] SEPARATOR = { ':' };
+        //static readonly char[] SEPARATOR = { ':' };
 
         static Regex schema_file_re = new Regex("schema_([0-9]*).zip");
         static Regex pfm_file_re = new Regex("Pack File Manager (.*).zip");
@@ -202,16 +202,16 @@ namespace PackFileManager
         string schemaUrl;
         public string SchemaUrl {
             get {
-                return Util.CreateSourceforgeUrl(string.Format("Schemata/schema_{0}.zip", LatestSchemaVersion));
+                return string.Format(schemaUrl, LatestSchemaVersion);
             }
             private set {
                 // expects the "attachmentid=..." string for the query parameters, will create URL itself
-                // schemaUrl = string.Format("http://www.twcenter.net/forums/attachment.php?{0}", value);
+                schemaUrl = string.Format("http://www.twcenter.net/forums/attachment.php?{0}", value);
             }
         }
         public string PfmUrl {
             get {
-                return Util.CreateSourceforgeUrl(string.Format("Release/Pack%20File%20Manager%20{0}.zip", LatestPfmVersion));
+                return string.Format(schemaUrl, LatestPfmVersion);
             }
         }
         #endregion
