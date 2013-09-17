@@ -1,16 +1,25 @@
-﻿namespace PackFileManager
-{
-    using Common;
-    using Filetypes;
-    using System;
-    using System.ComponentModel;
-    using System.Drawing;
-    using System.IO;
-    using System.Text;
-    using System.Windows.Forms;
+﻿using Common;
+using Filetypes;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Text;
+using System.Windows.Forms;
 
-    public class TextFileEditorControl : PackedFileEditor<string>
-    {
+namespace PackFileManager {
+
+    public class TextFileEditorControl : PackedFileEditor<string> {
+        
+        #region file extensions for text files
+        static string[] DEFAULT_EXTENSIONS = { ".txt", ".lua", ".csv", ".fx", ".fx_fragment", 
+                ".h", ".battle_script", ".xml", ".tai", ".xml.rigging", ".placement", ".hlsl"
+            };
+        static readonly string EXTENSION_FILENAME = "text_extensions.txt";
+        List<string> textExtensions = new List<string>();
+        #endregion
+
         private IContainer components = null;
         private RichTextBox richTextBox;
 
@@ -19,6 +28,18 @@
 
             richTextBox.TextChanged += (b, e) => DataChanged = true;
             richTextBox.KeyUp += HandleRichTextBoxKeyUp;
+            
+            // read text file containing text extensions (one per line)
+            // or fill extension list with default
+            try {
+                string extensionFilePath = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), EXTENSION_FILENAME);
+                textExtensions.AddRange(File.ReadAllLines(extensionFilePath));
+            } catch (Exception e) {
+                Console.WriteLine(e);
+            }
+            if (textExtensions.Count == 0) {
+                textExtensions.AddRange(DEFAULT_EXTENSIONS);
+            }
         }
 
         void HandleRichTextBoxKeyUp (object sender, KeyEventArgs e) {
@@ -31,12 +52,11 @@
             }
         }
 
-        string[] EXTENSIONS = { ".txt", ".lua", ".csv", ".fx", ".fx_fragment", 
-                ".h", ".battle_script", ".xml", 
-                ".tai", ".xml.rigging", ".placement", ".hlsl"
-            };
+        /*
+         * Can edit if given file has one of the configured text file extensions.
+         */
         public override bool CanEdit(PackedFile file) {
-            return HasExtension(file, EXTENSIONS);
+            return HasExtension(file, DEFAULT_EXTENSIONS);
         }
         
         public override string EditedFile {
@@ -82,6 +102,9 @@
         }
     }
     
+    /*
+     * Lightweight codec to read data as ASCII string from the stream.
+     */
     public class TextCodec : Codec<string> {
         public static readonly TextCodec Instance = new TextCodec();
         public string Decode(Stream file) {
