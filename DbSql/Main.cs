@@ -35,6 +35,8 @@ namespace DbSql {
                         command = new DeleteCommand(sql) {
                             ToSave = pack
                         };
+                    } else if (HelpCommand.HELP_RE.IsMatch(sql)) {
+                        command = new HelpCommand(sql);
                     }
                 }
             }
@@ -46,8 +48,9 @@ namespace DbSql {
         }
     }
     
-    abstract class SqlCommand {
+    public abstract class SqlCommand {
         public virtual void Commit() {}
+        protected bool AllTables { get; set; }
         
         private IEnumerable<PackedFile> allPackedFiles;
         public IEnumerable<PackedFile> PackedFiles { 
@@ -61,7 +64,7 @@ namespace DbSql {
                         continue;
                     }
                     string tableType = DBFile.typename(file.FullPath);
-                    if (tables.Contains(tableType)) {
+                    if (AllTables || tables.Contains(tableType)) {
                         filtered.Add(file);
                     }
                 }
@@ -75,7 +78,10 @@ namespace DbSql {
             get {
                 List<DBFile> result = new List<DBFile>();
                 foreach(PackedFile packed in PackedFiles) {
-                    result.Add(PackedFileDbCodec.Decode(packed));
+                    try {
+                        result.Add(PackedFileDbCodec.Decode(packed));
+                    } catch (Exception) {
+                    }
                 }
                 return result;
             }
@@ -95,12 +101,14 @@ namespace DbSql {
 
         protected void ParseTables(string parse) {
             foreach (string table in parse.Split(',')) {
-                tables.Add (table.Trim());
+                if (!string.IsNullOrEmpty(table.Trim())) {
+                    tables.Add (table.Trim());
+                }
             }
         }
     }
     
-    abstract class FieldCommand : SqlCommand {
+    public abstract class FieldCommand : SqlCommand {
         private List<string> fields = new List<string>();
         public List<string> Fields { 
             get { 

@@ -129,9 +129,6 @@ namespace Filetypes {
             }
         }
         public void initializeFromFile(string filename) {
-#if DEBUG
-            Console.WriteLine("initializing type map from {0}", filename);
-#endif
             XmlImporter importer = null;
             using (Stream stream = File.OpenRead(filename)) {
                 importer = new XmlImporter(stream);

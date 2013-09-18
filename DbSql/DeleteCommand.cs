@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace DbSql {
-    class DeleteCommand : SqlCommand {
+    public class DeleteCommand : SqlCommand {
         public static Regex DELETE_RE = new Regex("delete from (.*)( where .*)", RegexOptions.RightToLeft);
         
         private WhereClause whereClause;

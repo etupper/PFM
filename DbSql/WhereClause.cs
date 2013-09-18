@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace DbSql {
     using QueryResult = List<FieldInstance>;
 
-    class WhereClause {
+    public class WhereClause {
         public static Regex WHERE_RE = new Regex("where (.*)");
         private string fieldName;
         private Regex matchRe;

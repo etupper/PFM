@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace DbSql {
-    class UpdateCommand : FieldCommand {
+    public class UpdateCommand : FieldCommand {
         public static Regex UPDATE_RE = new Regex("update (.*) set (.*)( where .*)", RegexOptions.RightToLeft);
 
         private WhereClause whereClause;
