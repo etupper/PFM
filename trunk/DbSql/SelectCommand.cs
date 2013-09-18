@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace DbSql {
     using QueryResult = List<FieldInstance>;
-    class SelectCommand : FieldCommand {
+    public class SelectCommand : FieldCommand {
         public static Regex SELECT_RE = new Regex("select (.*) from (.*)( *where .*)?", RegexOptions.RightToLeft);
         
         private WhereClause whereClause;

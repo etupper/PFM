@@ -19,7 +19,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Externalconsole>true</Externalconsole>
-    <Commandlineparameters>-tm/opt/mono/PackFileManager/Files/master_schema.xml -p/opt/mono/Mods/r2tw_test/r2tw_test.pack -s"delete from _kv_rules_tables where key=test_key"</Commandlineparameters>
+    <Commandlineparameters>-tm/opt/mono/PackFileManager/Files/master_schema.xml -p/opt/mono/Mods/r2tw_test/r2tw_test.pack -s"help"</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -41,6 +41,7 @@
     <Compile Include="InsertCommand.cs" />
     <Compile Include="UpdateCommand.cs" />
     <Compile Include="DeleteCommand.cs" />
+    <Compile Include="HelpCommand.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
