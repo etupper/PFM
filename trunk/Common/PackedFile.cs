@@ -366,6 +366,11 @@ namespace Common {
      * A class providing data for a PackedFile content object.
      */
     public abstract class DataSource {
+        /*
+         * Retrieve the amount of data in this source in bytes.
+         * Has an attribute of its own to avoid having to call ReadData().length
+         * every time which might be time-consuming.
+         */
         public long Size {
             get;
             protected set;

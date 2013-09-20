@@ -106,7 +106,7 @@ namespace PackFileManager {
 
         public static bool HeaderVersionObsolete(PackedFile packedFile) {
             DBFileHeader header = PackedFileDbCodec.readHeader(packedFile);
-            string type = DBFile.typename(packedFile.FullPath);
+            string type = DBFile.Typename(packedFile.FullPath);
             int maxVersion = DBTypeMap.Instance.MaxVersion(type);
             return DBTypeMap.Instance.IsSupported(type) && maxVersion != 0 && (header.Version < maxVersion);
         }

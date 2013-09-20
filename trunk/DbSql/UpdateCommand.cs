@@ -5,14 +5,22 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace DbSql {
+    /*
+     * Update data for rows in a table.
+     */
     public class UpdateCommand : FieldCommand {
+        // form of the update command.
+        // the part after the "set" contains comma-separated key=value pairs, with the key being the field name
         public static Regex UPDATE_RE = new Regex("update (.*) set (.*)( where .*)", RegexOptions.RightToLeft);
 
         private WhereClause whereClause;
         
         List<string> assignedValues = new List<string>();
         public PackFile ToSave { get; set; }
-
+  
+        /*
+         * Parse the given string to create an update command.
+         */
         public UpdateCommand(string toParse) {
             Match m = UPDATE_RE.Match(toParse);
             ParseTables(m.Groups[1].Value);
@@ -25,7 +33,12 @@ namespace DbSql {
                 whereClause = new WhereClause(m.Groups[3].Value);
             }
         }
-        
+        /*
+         * Select all rows matching the where clause (or all in none was given)
+         * and set the given values to all corresponding fields.
+         * Note: If the assignment list contains a non-existing field,
+         * that assignment is ignored without warning.
+         */
         public override void Execute() {
             foreach(PackedFile packed in PackedFiles) {
                 DBFile dbFile = PackedFileDbCodec.Decode(packed);
@@ -38,13 +51,17 @@ namespace DbSql {
                 packed.Data = PackedFileDbCodec.GetCodec(packed).Encode(dbFile);
             }
         }
-        
+        /*
+         * Save the pack file if one was set.
+         */
         public override void Commit() {
             if (ToSave != null) {
                 new PackFileCodec().Save(ToSave);
             }
         }
-        
+        /*
+         * Set the given values to the appropriate fields for the given list.
+         */
         private void AdjustValues(List<FieldInstance> fields) {
             foreach(FieldInstance field in fields) {
                 if (Fields.Contains(field.Info.Name)) {

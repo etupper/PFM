@@ -22,6 +22,10 @@ namespace Common {
             return filepath;
         }
     }
+    /*
+     * Enumerates packed files contained in a pack without reading in the 
+     * full file list from the pack so iteration can be interrupted once a file is found.
+     */
     public class PackFileEnumerator : IEnumerator<PackedFile>, IDisposable {
         BinaryReader reader;
         PFHeader header;
@@ -35,6 +39,9 @@ namespace Common {
                 return header;
             }
         }
+        /*
+         * Enumerator for pack at given file path.
+         */
         public PackFileEnumerator(string path) {
             filepath = path;
             reader = new BinaryReader(File.OpenRead(path));
@@ -42,14 +49,18 @@ namespace Common {
             startPosition = reader.BaseStream.Position;
             Reset();
         }
-
+        /*
+         * Re-start enumeration.
+         */
         public void Reset() {
             currentFileIndex = 0;
             reader.BaseStream.Seek(startPosition, SeekOrigin.Begin);
             offset = header.DataStart;
             currentFile = null;
         }
-
+        /*
+         * Find next file entry and return true if there is one, otherwise false.
+         */
         public bool MoveNext() {
             currentFileIndex++;
             if (currentFileIndex > header.FileCount) {
@@ -66,7 +77,7 @@ namespace Common {
                     break;
             }
             try {
-                string packedFileName = IOFunctions.readZeroTerminatedAscii(reader);
+                string packedFileName = IOFunctions.ReadZeroTerminatedAscii(reader);
                 // this is easier because we can use the Path methods
                 // under both Windows and Unix
                 packedFileName = packedFileName.Replace('\\', Path.DirectorySeparatorChar);
@@ -83,11 +94,15 @@ namespace Common {
             }
             return false;
         }
-
+        /*
+         * Dispose of the reader which is kept open throughout enumeration to release its resources.
+         */
         public void Dispose() {
             reader.Dispose();
         }
-
+        /*
+         * Retrieve current pack file if any.
+         */
         public PackedFile Current {
             get {
                 return currentFile;
@@ -120,26 +135,38 @@ namespace Common {
             return string.Join(new string(Path.PathSeparator, 1), paths);
         }
     }
-
+    /*
+     * Enumerate several pack's contained files by enumerating every one of them.
+     */
     public class MultiPackEnumerator : DelegatingEnumerator<PackedFile> {
+        // the paths of the pack files to enumerate
         IEnumerator<string> paths;
+        /*
+         * Create enumerator for given pack files.
+         */
         public MultiPackEnumerator(IEnumerable<string> files) {
             paths = files.GetEnumerator();
         }
+        /*
+         * Restart enumeration.
+         */
         public override void Reset() {
             base.Reset();
             paths.Reset();
         }
+        /*
+         * Create next pack file enumerable if there are paths left.
+         */
         protected override IEnumerator<PackedFile> NextEnumerator() {
             IEnumerator<PackedFile> result = null;
             if (paths.MoveNext()) {
-#if DEBUG
-                Console.WriteLine("Moving to next pack {0}", paths.Current);
-#endif
                 result = new PackFileEnumerator(paths.Current);
             }
             return result;
         }
+        /*
+         * Dispose of all contained enumerators.
+         */
         public override void Dispose() {
             base.Dispose();
             paths.Dispose();

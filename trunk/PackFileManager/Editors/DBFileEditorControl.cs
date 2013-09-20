@@ -46,7 +46,7 @@ namespace PackFileManager {
                         DBTypeMap.Instance.GetInfoByGuid(header.GUID);
                     }
                     if (info == null) {
-                        info = DBTypeMap.Instance.GetVersionedInfo(DBFile.typename(file.FullPath), header.Version);
+                        info = DBTypeMap.Instance.GetVersionedInfo(DBFile.Typename(file.FullPath), header.Version);
                     }
                     if (info != null) {
                         foreach(FieldInfo field in info.Fields) {
@@ -105,7 +105,7 @@ namespace PackFileManager {
 #if DEBUG
             Console.WriteLine("Opening {0}", CurrentPackedFile.FullPath);
 #endif
-            string key = DBFile.typename(CurrentPackedFile.FullPath);
+            string key = DBFile.Typename(CurrentPackedFile.FullPath);
 
             if (!DBTypeMap.Instance.IsSupported(key)) {
                 showDBFileNotSupportedMessage("Sorry, this db file isn't supported yet.\r\n\r\nCurrently supported files:\r\n");
@@ -212,7 +212,7 @@ namespace PackFileManager {
             DataGridViewColumn column = null;
             if (Settings.Default.UseComboboxCells) {
                 try {
-                    ICollection<string> items = DBReferenceMap.Instance.resolveReference(fieldInfo.ForeignReference);
+                    ICollection<string> items = DBReferenceMap.Instance.ResolveReference(fieldInfo.ForeignReference);
 
                     if (items != null) {
                         column = new DataGridViewComboBoxColumn();

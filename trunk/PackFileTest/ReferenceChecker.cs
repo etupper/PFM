@@ -77,7 +77,7 @@ namespace PackFileTest {
                         referenced = packed;
                     }
                     foreach (string referenceFrom in referencesFrom) {
-                        if (referenceFrom.Split('.')[0].Equals(DBFile.typename(packed.FullPath))) {
+                        if (referenceFrom.Split('.')[0].Equals(DBFile.Typename(packed.FullPath))) {
                             List<string> referencingList;
                             if (!referencing.TryGetValue(packed, out referencingList)) {
                                 referencingList = new List<string>();

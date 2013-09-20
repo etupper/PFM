@@ -62,12 +62,12 @@ namespace PackFileTest {
             }
             allTestedFiles.Add(file.FullPath);
             if (file.Size == 0) {
-                emptyTables.Add(new Tuple<string, int>(DBFile.typename(file.FullPath), -1));
+                emptyTables.Add(new Tuple<string, int>(DBFile.Typename(file.FullPath), -1));
                 return;
             }
 
             // PackedFileDbCodec packedCodec = PackedFileDbCodec.FromFilename(file.FullPath);
-            string type = DBFile.typename(file.FullPath);
+            string type = DBFile.Typename(file.FullPath);
             DBFileHeader header = PackedFileDbCodec.readHeader(file);
             Tuple<string, int> tuple = new Tuple<string, int>(string.Format("{0} # {1}", type, header.GUID), header.Version);
             if (OutputTable) {

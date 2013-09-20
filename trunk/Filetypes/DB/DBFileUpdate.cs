@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using Common;
 
 namespace Filetypes {
+    /*
+     * Class updating a db file to the highest version available for the file's type.
+     * This is one of the reasons why the schema files have to be separated and released
+     * per game, because each game has a different range of versions it can load at all
+     * and we can't let a user update a table to a version the game doesn't even support.
+     */
     public class DBFileUpdate {
         public delegate string GuidDeterminator(List<string> options);
         
@@ -18,7 +24,7 @@ namespace Filetypes {
         // we also know obsolete fields and can remove them,
         // and we can add fields in the middle instead of assuming they got appended.
         public void UpdatePackedFile(PackedFile packedFile) {
-            string key = DBFile.typename(packedFile.FullPath);
+            string key = DBFile.Typename(packedFile.FullPath);
             if (DBTypeMap.Instance.IsSupported(key)) {
                 PackedFileDbCodec codec = PackedFileDbCodec.FromFilename(packedFile.FullPath);
                 int maxVersion = DBTypeMap.Instance.MaxVersion(key);
@@ -47,7 +53,9 @@ namespace Filetypes {
                 }
             }
         }
-        
+        /*
+         * Find the type info for the given type and version to update to.
+         */
         TypeInfo GetTargetTypeInfo(string key, int maxVersion, out string guid) {
             TypeInfo targetInfo = null;
             List<string> newGuid = GetGuidsForInfo(key, maxVersion);

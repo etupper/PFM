@@ -86,10 +86,10 @@ namespace CommonUtilities {
          */
         DBFile FindInGamePacks(PackedFile file) {
             DBFile result = null;
-            string typeName = DBFile.typename(file.FullPath);
+            string typeName = DBFile.Typename(file.FullPath);
             
             foreach (PackedFile gamePacked in PackedInGame) {
-                if (DBFile.typename(gamePacked.FullPath).Equals(typeName)) {
+                if (DBFile.Typename(gamePacked.FullPath).Equals(typeName)) {
                     result = FromPacked(gamePacked);
                     break;
                 }

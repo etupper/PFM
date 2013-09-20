@@ -79,7 +79,7 @@ namespace PackFileTest {
                     foreach (PackedFile packed in pack) {
                         Console.WriteLine("loading {0}", packed.FullPath);
                         if (packed.FullPath.StartsWith("db")) {
-                            string typename = DBFile.typename(packed.FullPath);
+                            string typename = DBFile.Typename(packed.FullPath);
                             if (!packedFiles.ContainsKey(typename)) {
                                 packedFiles[typename] = packed;
                             }
@@ -488,7 +488,7 @@ namespace PackFileTest {
             PackFile file = new PackFileCodec().Open(packFile);
             foreach (PackedFile packed in file) {
                 if (packed.FullPath.StartsWith("db")) {
-                    string typename = DBFile.typename(packed.FullPath);
+                    string typename = DBFile.Typename(packed.FullPath);
                     DBFileHeader header = PackedFileDbCodec.readHeader(packed);
                     if (!string.IsNullOrEmpty(header.GUID)) {
                         // List<FieldInfo> infos = DBTypeMap.Instance.GetInfoByGuid(header.GUID);
@@ -512,10 +512,10 @@ namespace PackFileTest {
             foreach (TypeInfo info in infos) {
                 // register converted to type map
                 List<FieldInfo> converted = ConvertToAscii(info.Fields);
-                DBTypeMap.Instance.SetByGuid(header.GUID, DBFile.typename(dbFile.FullPath), header.Version, converted);
+                DBTypeMap.Instance.SetByGuid(header.GUID, DBFile.Typename(dbFile.FullPath), header.Version, converted);
                 bool valid = SchemaIntegrator.CanDecode(dbFile);
                 if (!valid) {
-                    DBTypeMap.Instance.SetByGuid(header.GUID, DBFile.typename(dbFile.FullPath), header.Version, null);
+                    DBTypeMap.Instance.SetByGuid(header.GUID, DBFile.Typename(dbFile.FullPath), header.Version, null);
                 } else {
                     // found it! :)
                     Console.WriteLine("adding converted info for guid {0}", header.GUID);

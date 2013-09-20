@@ -1,36 +1,49 @@
-﻿namespace Common
-{
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
-    public class IOFunctions
-    {
+namespace Common {
+
+    /*
+     * Utility methods to read common data from streams.
+     */
+    public class IOFunctions {
+        // filter string for tsv files
         public static string TSV_FILTER = "TSV Files (*.csv,*.tsv)|*.csv;*.tsv|Text Files (*.txt)|*.txt|All Files|*.*";
+        // filter string for pack files
         public static string PACKAGE_FILTER = "Package File (*.pack)|*.pack|Any File|*.*";
-
-        public static string readCAString(BinaryReader reader) {
-            return readCAString(reader, Encoding.Unicode);
+  
+        /*
+         * Read a unicode string from the given reader.
+         */
+        public static string ReadCAString(BinaryReader reader) {
+            return ReadCAString(reader, Encoding.Unicode);
         }
-        public static string readCAString(BinaryReader reader, Encoding encoding) {
+        /*
+         * Read a string from the given reader, using the given encoding.
+         * First 2 bytes contain the string length, string is not zero-terminated.
+         */
+        public static string ReadCAString(BinaryReader reader, Encoding encoding) {
             int num = reader.ReadInt16();
             int bytes = num * (encoding.IsSingleByte ? 1 : 2);
             return new string(encoding.GetChars(reader.ReadBytes(bytes)));
         }
-        
-        public static string readStringContainer(BinaryReader reader)
-        {
+        /*
+         * Read a zero-terminated Unicode string.
+         */
+        public static string ReadZeroTerminatedUnicode(BinaryReader reader) {
             byte[] bytes = reader.ReadBytes(0x200);
             StringBuilder builder = new StringBuilder();
-            for (int i = 0; bytes[i] != 0; i += 2)
-            {
+            for (int i = 0; bytes[i] != 0; i += 2) {
                 builder.Append(Encoding.Unicode.GetChars(bytes, i, 2));
             }
             return builder.ToString();
         }
-
-        public static string readZeroTerminatedAscii(BinaryReader reader) {
+        /*
+         * Read a zero-terminated ASCII string.
+         */
+        public static string ReadZeroTerminatedAscii(BinaryReader reader) {
             StringBuilder builder2 = new StringBuilder();
             byte ch2 = reader.ReadByte();
             while (ch2 != '\0') {
@@ -39,27 +52,40 @@
             }
             return builder2.ToString();
         }
-        
+        /*
+         * Write the given zero-terminated ASCII string to the given writer.
+         */
         public static void WriteZeroTerminatedAscii(BinaryWriter writer, string toWrite) {
             writer.Write(toWrite.ToCharArray());
             writer.Write((byte) 0);
         }
-  
-        public static void writeCAString(BinaryWriter writer, string value) {
-            writeCAString (writer, value, Encoding.Unicode);
+        /*
+         * Write the given string to the given writer in Unicode.
+         */
+        public static void WriteCAString(BinaryWriter writer, string value) {
+            WriteCAString (writer, value, Encoding.Unicode);
         }
-        public static void writeCAString(BinaryWriter writer, string value, Encoding encoding) {
+        /*
+         * Writer the given string to the given writer in the given encoding.
+         * First writes out 2 bytes containing the string length, then the string
+         * (not zero-terminated).
+         */
+        public static void WriteCAString(BinaryWriter writer, string value, Encoding encoding) {
             writer.Write((ushort) value.Length);
             writer.Write(encoding.GetBytes(value));
         }
-
-        public static void writeStringContainer(BinaryWriter writer, string value)
-        {
+        /*
+         * Write the given string to the given writer in unicode (zero-terminated).
+         */
+        public static void WriteZeroTerminatedUnicode(BinaryWriter writer, string value) {
             byte[] array = new byte[0x200];
             Encoding.Unicode.GetBytes(value).CopyTo(array, 0);
             writer.Write(array);
         }
-
+  
+        /*
+         * Fills the given list from the given reader with data created by the given item reader.
+         */
         public static void FillList<T>(List<T> toFill, ItemReader<T> readItem, BinaryReader reader, 
                                           bool skipIndex = true, int itemCount = -1) {
             try {
@@ -89,7 +115,9 @@
                                          reader.BaseStream.Position, ex);
             }
         }
-        
+        /*
+         * Delegate for methods reading data from a reader.
+         */
         public delegate T ItemReader<T>(BinaryReader reader);
     }
 }

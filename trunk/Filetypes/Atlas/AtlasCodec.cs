@@ -16,8 +16,8 @@ namespace Filetypes {
                 AtlasFile result = new AtlasFile();
                 for (int i = 0; i < numEntries; i++) {
                     AtlasObject item = new AtlasObject {
-                        Container1 = IOFunctions.readStringContainer(reader),
-                        Container2 = IOFunctions.readStringContainer(reader),
+                        Container1 = IOFunctions.ReadZeroTerminatedUnicode(reader),
+                        Container2 = IOFunctions.ReadZeroTerminatedUnicode(reader),
                         X1 = reader.ReadSingle(),
                         Y1 = reader.ReadSingle(),
                         X2 = reader.ReadSingle(),
@@ -37,8 +37,8 @@ namespace Filetypes {
                 int numEntries = toEncode.Entries.Count;
                 writer.Write(numEntries);
                 for (int i = 0; i < numEntries; i++) {
-                    IOFunctions.writeStringContainer(writer, toEncode.Entries[i].Container1);
-                    IOFunctions.writeStringContainer(writer, toEncode.Entries[i].Container2);
+                    IOFunctions.WriteZeroTerminatedUnicode(writer, toEncode.Entries[i].Container1);
+                    IOFunctions.WriteZeroTerminatedUnicode(writer, toEncode.Entries[i].Container2);
                     writer.Write(toEncode.Entries[i].X1);
                     writer.Write(toEncode.Entries[i].Y1);
                     writer.Write(toEncode.Entries[i].X2);

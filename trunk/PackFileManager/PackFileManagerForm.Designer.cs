@@ -134,7 +134,6 @@ namespace PackFileManager
             this.tsvToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchForUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.fromXsdFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateDBFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -1030,7 +1029,6 @@ namespace PackFileManager
             // 
             this.updateToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.searchForUpdateToolStripMenuItem,
-            this.fromXsdFileToolStripMenuItem,
             this.reloadToolStripMenuItem,
             this.saveToDirectoryToolStripMenuItem,
             this.updateDBFilesToolStripMenuItem});
@@ -1044,15 +1042,6 @@ namespace PackFileManager
             this.searchForUpdateToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.searchForUpdateToolStripMenuItem.Text = "Search for Update";
             this.searchForUpdateToolStripMenuItem.Click += new System.EventHandler(this.updateToolStripMenuItem_Click);
-            // 
-            // fromXsdFileToolStripMenuItem
-            // 
-            this.fromXsdFileToolStripMenuItem.Enabled = false;
-            this.fromXsdFileToolStripMenuItem.Name = "fromXsdFileToolStripMenuItem";
-            this.fromXsdFileToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.fromXsdFileToolStripMenuItem.Text = "Load from xsd File";
-            this.fromXsdFileToolStripMenuItem.Visible = false;
-            this.fromXsdFileToolStripMenuItem.Click += new System.EventHandler(this.fromXsdFileToolStripMenuItem_Click);
             // 
             // reloadToolStripMenuItem
             // 
@@ -1226,7 +1215,6 @@ namespace PackFileManager
         private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem updateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem searchForUpdateToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem fromXsdFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem reloadToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToDirectoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem filesMenu;

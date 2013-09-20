@@ -6,6 +6,9 @@ using System.IO;
 using System.Text;
 
 namespace Common {
+    /*
+     * A Pack file containing data in form of PackedFile entries from the Warscape engine.
+     */
     [DebuggerDisplay("Filepath = {Filepath}")]
     public class PackFile : IEnumerable<PackedFile> {
         public delegate void ModifyEvent();
@@ -54,17 +57,25 @@ namespace Common {
             }
         }
         #endregion
-
+  
+        /*
+         * Create pack file at the given path with the given header.
+         */
         public PackFile(string path, PFHeader h) {
             header = h;
             Filepath = path;
             Root = new VirtualDirectory() { Name = Path.GetFileName(path) };
             DirAdded(Root);
         }
+        /*
+         * Create PackFile at the given path with a default header of type Mod and type PFH3.
+         */
         public PackFile(string path) : this(path, new PFHeader("PFH3") {
             Type = PackType.Mod
         }) {}
-
+        /*
+         * Add the given file to this pack.
+         */
         public void Add(PackedFile file, bool replace = false) {
             Root.Add(file.FullPath, file, replace);
         }
@@ -151,11 +162,18 @@ namespace Common {
             ReplacedPackFileNames = new List<string>();
         }
         
+        /*
+         * Create a header from the given one.
+         */
         public PFHeader(PFHeader toCopy) : this(toCopy.identifier) {
             Type = toCopy.Type;
             ReplacedPackFileNames.AddRange(toCopy.ReplacedPackFileNames);
         }
-
+  
+        /*
+         * The lenght in bytes of the entry containing the filenames
+         * replaced by this pack file.
+         */
         public int ReplacedFileNamesLength {
             get {
                 // start with 0 byte for each name
@@ -226,7 +244,10 @@ namespace Common {
             get; set;
         }
     }
-
+ 
+    /*
+     * Types of pack files.
+     */
     public enum PackType {
         // up to movie, ids are sequential
         Boot,
