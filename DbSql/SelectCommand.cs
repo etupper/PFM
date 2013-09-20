@@ -6,11 +6,18 @@ using System.Text.RegularExpressions;
 
 namespace DbSql {
     using QueryResult = List<FieldInstance>;
+    /*
+     * Retrieve data from a table; can include a where clause to limit the rows to output.
+     */
     public class SelectCommand : FieldCommand {
+        // form of the select statement
         public static Regex SELECT_RE = new Regex("select (.*) from (.*)( *where .*)?", RegexOptions.RightToLeft);
         
         private WhereClause whereClause;
-
+  
+        /*
+         * Parse given string to create select command.
+         */
         public SelectCommand(string toParse) {
             Match match = SELECT_RE.Match(toParse);
             ParseFields (match.Groups[1].Value);
@@ -19,7 +26,11 @@ namespace DbSql {
                 whereClause = new WhereClause(match.Groups[3].Value);
             }
         }
-
+  
+        /*
+         * Output the selected fields from the table from rows matching the given where clause,
+         * or from all rows if none was given.
+         */
         public override void Execute() {
             Console.WriteLine("selecting {0} from {1}", string.Join(",", Fields), string.Join(",", tables));
             List<QueryResult> result = new List<QueryResult>();
@@ -44,10 +55,6 @@ namespace DbSql {
             foreach(QueryResult r in result) {
                 Console.WriteLine(string.Join(",", r));
             }
-        }
-
-        public static SelectCommand FromString(string toParse) {
-            return new SelectCommand(toParse);
         }
     }
 }

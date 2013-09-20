@@ -818,7 +818,7 @@ namespace PackFileManager
                 DecodeTool.DecodeTool decoder = null;
                 // best used if a db file...
                 try {
-                    string key = DBFile.typename(packedFile.FullPath);
+                    string key = DBFile.Typename(packedFile.FullPath);
                     bool unicode = GameManager.Instance.CurrentGame != Game.R2TW;
                     decoder = new DecodeTool.DecodeTool(unicode) { TypeName = key, Bytes = packedFile.Data };
                     decoder.ShowDialog();
@@ -993,13 +993,6 @@ namespace PackFileManager
         #endregion
         
         #region DB Descriptions Menu
-        private void fromXsdFileToolStripMenuItem_Click(object sender, EventArgs e) {
-            var open = new OpenFileDialog {InitialDirectory = Path.GetDirectoryName(Application.ExecutablePath)};
-            if (open.ShowDialog() == DialogResult.OK) {
-                DBTypeMap.Instance.loadFromXsd(open.FileName);
-            }
-        }
-
         private void saveToDirectoryToolStripMenuItem_Click(object sender, EventArgs e) {
             try {
                 DBTypeMap.Instance.SaveToFile(Path.GetDirectoryName(Application.ExecutablePath), 

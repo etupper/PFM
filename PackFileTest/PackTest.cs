@@ -205,7 +205,7 @@ namespace PackFileTest {
         void DumpAllGuids(PackFile pack, List<string> tables) {
             foreach(PackedFile file in pack) {
                 if (file.FullPath.StartsWith("db")) {
-                    string table = DBFile.typename(file.FullPath);
+                    string table = DBFile.Typename(file.FullPath);
                     if (tables.Contains(table)) {
                         DBFileHeader header = PackedFileDbCodec.readHeader(file);
                         Console.WriteLine("{0} - {1}", table, header.GUID);

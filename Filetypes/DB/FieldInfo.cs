@@ -5,8 +5,10 @@ using System.Diagnostics;
 using System.Text;
 using Common;
 
-namespace Filetypes
-{
+namespace Filetypes {
+    /*
+     * A collection of types that can be decoded from the db.
+     */
 	public class Types {
 		public static FieldInfo FromTypeName(string typeName) {
 			switch (typeName) {
@@ -55,19 +57,31 @@ namespace Filetypes
         public static FieldInfo ByteType() { return new VarBytesType(1) { Name = "unknown" }; }
         public static FieldInfo ListType() { return new ListType() { Name = "unknown" }; }
     }
-
+ 
+    /*
+     * A reference to a field in a specific table.
+     */
     public class FieldReference {
         static char[] SEPARATOR = { '.' };
-
+  
+        /*
+         * Create reference to given table and field.
+         */
         public FieldReference(string table, string field) {
             Table = table;
             Field = field;
         }
+        /*
+         * Parse encoded reference (see #FormatReference).
+         */
         public FieldReference(string encoded) {
             string[] parts = encoded.Split(SEPARATOR);
             Table = parts[0];
             Field = parts[1];
         }
+        /*
+         * Create an empty reference.
+         */
         public FieldReference() {
         }
 
@@ -82,22 +96,49 @@ namespace Filetypes
             return result;
         }
 
+        /*
+         * Encode given table and field to format "table.field".
+         */
         public static string FormatReference(string table, string field) {
             return string.Format("{0}.{1}", table, field);
         }
     }
 	
+    /*
+     * The info determining a column of a db table.
+     */
 	[System.Diagnostics.DebuggerDisplay("{Name} - {TypeName}; {Optional}")]
     public abstract class FieldInfo {
+        /*
+         * The column name.
+         */
 		public string Name {
 			get;
 			set;
 		}
+        public virtual string TypeName { get; set; }
+        public TypeCode TypeCode { get; set; }
+
+        /*
+         * Primary keys have to be unique amonst a given table data set.
+         * There may be more than one primary key, in which case the combination
+         * of their values has to be unique.
+         */
         public bool PrimaryKey { get; set; }
+        /*
+         * There are string fields which do not need to contain data, in which
+         * case they will only contain a "0" in the packed file.
+         * This attribute is true for those fields.
+         */
         public bool Optional { get; set; }
-
+  
+        /*
+         * The first table version in which this field is used (added in this version).
+         */
         public int StartVersion { get; set; }
-
+        /*
+         * The last table version in which this field is used (removed after this version).
+         */
         int lastVersion = int.MaxValue;
         public int LastVersion {
             set {
@@ -107,7 +148,10 @@ namespace Filetypes
                 return lastVersion;
             }
         }
-
+        #region Reference
+        /*
+         * The referenced table/field containing the valid values for this column.
+         */
         FieldReference reference;
         public FieldReference FieldReference {
             get {
@@ -117,6 +161,9 @@ namespace Filetypes
                 reference = value;
             }
         }
+        /*
+         * The referenced table/field as a string.
+         */
         public string ForeignReference {
             get {
                 return reference != null ? reference.ToString() : "";
@@ -126,11 +173,13 @@ namespace Filetypes
             }
         }
 
+        // The referenced table; empty string if no reference
         public string ReferencedTable {
             get {
                 return reference != null ? reference.Table : "";
             }
         }
+        // The referenced field in the referenced table; empty string if no reference
         public string ReferencedField {
             get {
                 return reference != null ? reference.Field : "";
@@ -139,17 +188,14 @@ namespace Filetypes
                 reference.Field = value;
             }
         }
+        #endregion
 
-
-		public virtual string TypeName { get; set; }
-		public TypeCode TypeCode { get; set; }
-
-		// public abstract int Length(string str);
-        
+        /*
+         * Create an instance valid for this field.
+         */
         public abstract FieldInstance CreateInstance();
-//		public abstract void Encode(BinaryWriter writer, string val);
-//		public abstract string Decode(BinaryReader reader);
-		
+
+        #region Framework Overrides
         public override bool Equals(object other) {
             bool result = false;
             if (other is FieldInfo) {
@@ -168,6 +214,7 @@ namespace Filetypes
         public override string ToString() {
             return string.Format("{0}:{1}", Name, TypeName);
         }
+        #endregion
 	}
 
 	class StringType : FieldInfo {
@@ -383,9 +430,5 @@ namespace Filetypes
         public override int GetHashCode() {
             return 2*Name.GetHashCode() + 3*Infos.GetHashCode();
         }
-        
-//        public override string ToString() {
-//            return string.Format("list ({0} fields)", Infos.Count);
-//        }
     }
 }

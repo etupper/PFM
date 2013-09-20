@@ -18,6 +18,9 @@ namespace Common {
         public event PackedFileLoadedEvent PackedFileLoaded;
         public event PackFileLoadedEvent PackFileLoaded;
 		
+        /*
+         * Decode pack file at the given path.
+         */
         public PackFile Open(string packFullPath) {
 			PackFile file;
 			long sizes = 0;
@@ -39,7 +42,7 @@ namespace Common {
                         default:
                             break;
                     }
-                    string packedFileName = IOFunctions.readZeroTerminatedAscii(reader);
+                    string packedFileName = IOFunctions.ReadZeroTerminatedAscii(reader);
                     // this is easier because we can use the Path methods
                     // under both Windows and Unix
                     packedFileName = packedFileName.Replace('\\', Path.DirectorySeparatorChar);
@@ -54,13 +57,17 @@ namespace Common {
 			file.IsModified = false;
 			return file;
 		}
-
+        /*
+         * Reads pack header from the given file.
+         */
         public static PFHeader ReadHeader(string filename) {
             using (var reader = new BinaryReader(File.OpenRead(filename))) {
                 return ReadHeader(reader);
             }
         }
-		
+        /*
+         * Reads pack header from the given reader.
+         */
 		public static PFHeader ReadHeader(BinaryReader reader) {
 			PFHeader header;
 			string packIdentifier = new string (reader.ReadChars (4));
@@ -91,12 +98,14 @@ namespace Common {
 			// go to correct position
 			reader.BaseStream.Seek (header.Length, SeekOrigin.Begin);
             for (int i = 0; i < header.Version; i++) {
-                header.ReplacedPackFileNames.Add(IOFunctions.readZeroTerminatedAscii(reader));
+                header.ReplacedPackFileNames.Add(IOFunctions.ReadZeroTerminatedAscii(reader));
             }
             header.DataStart += replacedPackFilenameLength;
 			return header;
 		}
-
+        /*
+         * Encodes given pack file to given path.
+         */
         public void WriteToFile(string FullPath, PackFile packFile) {
             using (BinaryWriter writer = new BinaryWriter(new FileStream(FullPath, FileMode.Create), Encoding.ASCII)) {
                 writer.Write (packFile.Header.PackIdentifier.ToCharArray ());
@@ -182,17 +191,25 @@ namespace Common {
             }
             File.Move(tempFile, packFile.Filepath);
         }
-
+        /*
+         * Notify pack header having been decoded.
+         */
         private void OnHeaderLoaded(PFHeader header) {
             if (this.HeaderLoaded != null) {
                 this.HeaderLoaded(header);
             }
         }
+        /*
+         * Notify pack fully decoded.
+         */
         private void OnFinishedLoading(PackFile pack) {
             if (this.PackFileLoaded != null) {
                 this.PackFileLoaded(pack);
             }
         }
+        /*
+         * Notify single pack file having been loaded.
+         */
         private void OnPackedFileLoaded(PackedFile packed) {
             if (this.PackedFileLoaded != null) {
                 this.PackedFileLoaded(packed);

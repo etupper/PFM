@@ -6,6 +6,13 @@ using System.Text.RegularExpressions;
 using Common;
 
 namespace Filetypes {
+    /*
+     * A class caching all data for a given db column; used to handle fields referencing data in
+     * columns of other tables, possibly other files.
+     * The map will always load data from the game packs (because references to the vanilla entries
+     * need always be possible), but can be set to also read from an additional pack file
+     * (namely, the mod pack the user is working on).
+     */
     public class DBReferenceMap {
         public static readonly DBReferenceMap Instance = new DBReferenceMap();
         Dictionary<string, SortedSet<string>> valueCache = new Dictionary<string, SortedSet<string>>();
@@ -15,7 +22,10 @@ namespace Filetypes {
 
         private DBReferenceMap() {
         }
-
+  
+        /*
+         * The current pack to load data from besides the vanilla data.
+         */
         public PackFile CurrentPack {
             get { return lastPack; }
             set {
@@ -28,6 +38,9 @@ namespace Filetypes {
                 lastPack = value;
             }
         }
+        /*
+         * The game to load the basic reference data for.
+         */
         List<string> gamePacks = new List<string>();
         public List<string> GamePacks {
             get { return gamePacks; }
@@ -42,8 +55,10 @@ namespace Filetypes {
                 return valueCache[key];
             }
         }
-
-        SortedSet<string> collectValues(string tableName, string fieldName, IEnumerable<PackedFile> packedFiles) {
+        /*
+         * Retrieve data for the given field in the given table, using the given packed files.
+         */
+        SortedSet<string> CollectValues(string tableName, string fieldName, IEnumerable<PackedFile> packedFiles) {
             SortedSet<string> result = null;
 #if DEBUG
             Console.WriteLine("Looking for {0}:{1} in {2}", tableName, fieldName, packedFiles);
@@ -51,7 +66,7 @@ namespace Filetypes {
             // enable load from multiple files
             bool found = false;
             foreach (PackedFile packed in packedFiles) {
-                string currentTable = DBFile.typename(packed.FullPath);
+                string currentTable = DBFile.Typename(packed.FullPath);
                 if (!packed.FullPath.StartsWith("db")) {
                     continue;
                 }
@@ -83,11 +98,12 @@ namespace Filetypes {
             }
             return result;
         }
-
+        /*
+         * Fills the given string collection with data from the field in the given packed file.
+         */
         public static void FillFromPacked(SortedSet<string> result, PackedFile packed, string fieldName) {
             DBFile dbFile = PackedFileDbCodec.Decode(packed);
             int index = -1;
-//            List<PackedFile> loadedFrom = new List<PackedFile>();
             for (int i = 0; i < dbFile.CurrentType.Fields.Count; i++) {
                 if (dbFile.CurrentType.Fields[i].Name.Equals(fieldName)) {
                     index = i;
@@ -106,8 +122,11 @@ namespace Filetypes {
                 }
             }
         }
-
-        public SortedSet<string> resolveReference(string key) {
+        /*
+         * Retrieve the values for the given reference table/field, with the parameter key
+         * encoded as "table_name.field_name".
+         */
+        public SortedSet<string> ResolveReference(string key) {
             if (key.Length == 0) {
                 return null;
             }
@@ -121,7 +140,7 @@ namespace Filetypes {
             List<string> result = new List<string>();
             SortedSet<string> fromPack = new SortedSet<string>();
             if (!valueCache.TryGetValue(key, out fromPack)) {
-                fromPack = collectValues(tableName, fieldName, CurrentPack);
+                fromPack = CollectValues(tableName, fieldName, CurrentPack);
                 valueCache.Add(key, fromPack);
             }
             if (fromPack != null) {
@@ -136,7 +155,7 @@ namespace Filetypes {
                 } else {
                     packedFiles = new MultiPackEnumerable(gamePacks);
                 }
-                fromGame = collectValues(tableName, fieldName, packedFiles);
+                fromGame = CollectValues(tableName, fieldName, packedFiles);
                 if (fromGame != null) {
                     gamePackCache.Add(key, fromGame);
                 }
@@ -148,29 +167,5 @@ namespace Filetypes {
             SortedSet<string> resultSet = new SortedSet<string>(result);
             return resultSet;
         }
-
-        /*
-        public void validateReferences(string directory, PackFile pack) {
-            LastPack = pack;
-            // verify dependencies
-            foreach (string fromMap in references.Keys) {
-                foreach (TableReference reference in references[fromMap]) {
-                    if (reference.fromMap == "ancillary_to_effects") {
-                        Console.WriteLine("ok");
-                    }
-                    SortedSet<string> values = collectValues (reference.fromMap, pack);
-                    SortedSet<string> allowed = collectValues (reference.toMap, pack);
-                    if (values != null && allowed != null) {
-                        foreach (string val in values) {
-                            if (val != "" && !allowed.Contains (val)) {
-                                Console.WriteLine("value '{0}' in {1}:{2} does not fulfil reference {3}:{4}",
-                                    val, reference.fromMap, reference.fromIndex, reference.toMap, reference.toIndex);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-         * */
     }
 }

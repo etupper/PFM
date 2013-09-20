@@ -5,24 +5,19 @@ using System.Diagnostics;
 using System.Text;
 using Common;
 
-namespace Filetypes
-{
+namespace Filetypes {
+    /*
+     * A single item of data in a db table.
+     * These can be encoded/decoded to and from a string.
+     */
     [DebuggerDisplay("{Value}:{Info}; ")]
-    public abstract class FieldInstance
-    {
-        public FieldInstance(FieldInfo fieldInfo, string value)
-        {
+    public abstract class FieldInstance {
+        public FieldInstance(FieldInfo fieldInfo, string value = "") {
             Info = fieldInfo;
             Value = value;
         }
-        
-        public FieldInstance(FieldInfo info) {
-            Info = info;
-            Value = "";
-        }
 
         public FieldInfo Info { get; private set; }
-        
         public string Name {
             get { 
                 return Info.Name; 
@@ -32,6 +27,11 @@ namespace Filetypes
             }
         }
   
+        /*
+         * The encoded value of this instance.
+         * Subclasses can override the Value member to provide own decoding/encoding
+         * to their actual data type.
+         */
         string val;
         public virtual string Value { 
             get { 
@@ -39,12 +39,20 @@ namespace Filetypes
             }
             set { val = value; }
         }
-        
+        /*
+         * Query the decoded data's length in bytes for this field value.
+         */
         public virtual int Length {
             get; protected set;
         }
+        /*
+         * Only provided in CA xml files, not needed for binary decoding.
+         */
         public bool RequiresTranslation { get; set; }
-
+  
+        /*
+         * Create a copy of this field value.
+         */
         public virtual FieldInstance CreateCopy() {
             FieldInstance copy = Info.CreateInstance();
             copy.Value = Value;
@@ -85,10 +93,10 @@ namespace Filetypes
             }
         }
         public override void Decode(BinaryReader reader) {
-            Value = IOFunctions.readCAString (reader, stringEncoding);
+            Value = IOFunctions.ReadCAString (reader, stringEncoding);
         }
         public override void Encode(BinaryWriter writer) {
-            IOFunctions.writeCAString (writer, Value.Trim(), stringEncoding);
+            IOFunctions.WriteCAString (writer, Value.Trim(), stringEncoding);
         }
     }
     
@@ -216,7 +224,7 @@ namespace Filetypes
             string result = "";
             byte b = reader.ReadByte ();
             if (b == 1) {
-                result = IOFunctions.readCAString (reader, stringEncoding);
+                result = IOFunctions.ReadCAString (reader, stringEncoding);
             } else if (b != 0) {
                 throw new InvalidDataException (string.Format("- invalid - ({0:x2})", b));
             }
@@ -235,7 +243,7 @@ namespace Filetypes
         public override void Encode(BinaryWriter writer) {
             writer.Write (Value.Length > 0);
             if (Value.Length > 0) {
-                IOFunctions.writeCAString (writer, Value.Trim(), stringEncoding);
+                IOFunctions.WriteCAString (writer, Value.Trim(), stringEncoding);
             }
         }
     }

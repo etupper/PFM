@@ -141,7 +141,7 @@ namespace Filetypes {
 
         private void AddFromPacked(Dictionary<GuidTypeInfo, PackedFile> infos, PackedFile packed) {
             if (packed.Size != 0) {
-                string type = DBFile.typename(packed.FullPath);
+                string type = DBFile.Typename(packed.FullPath);
                 DBFileHeader header = PackedFileDbCodec.readHeader(packed);
                 infos[new GuidTypeInfo(header.GUID, type, header.Version)] = packed;
                 if (string.IsNullOrEmpty(header.GUID)) {

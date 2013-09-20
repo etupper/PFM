@@ -40,8 +40,8 @@ namespace Filetypes {
 				int numEntries = reader.ReadInt32 ();
 				// file.entries = new List<LocEntry> ();
 				for (int i = 0; i < numEntries; i++) {
-					string tag = IOFunctions.readCAString (reader);
-					string localised = IOFunctions.readCAString (reader);
+					string tag = IOFunctions.ReadCAString (reader);
+					string localised = IOFunctions.ReadCAString (reader);
 					bool tooltip = reader.ReadBoolean ();
 					file.Entries.Add (new LocEntry (tag, localised, tooltip));
 				}
@@ -59,8 +59,8 @@ namespace Filetypes {
 				writer.Write (1);
 				writer.Write (file.NumEntries);
 				for (int i = 0; i < file.NumEntries; i++) {
-					IOFunctions.writeCAString (writer, file.Entries [i].Tag);
-					IOFunctions.writeCAString (writer, file.Entries [i].Localised);
+					IOFunctions.WriteCAString (writer, file.Entries [i].Tag);
+					IOFunctions.WriteCAString (writer, file.Entries [i].Localised);
 					writer.Write (file.Entries [i].Tooltip);
 				}
 				writer.Flush ();

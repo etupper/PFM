@@ -63,7 +63,7 @@ namespace DbSql {
                     if (!file.FullPath.StartsWith("db")) {
                         continue;
                     }
-                    string tableType = DBFile.typename(file.FullPath);
+                    string tableType = DBFile.Typename(file.FullPath);
                     if (AllTables || tables.Contains(tableType)) {
                         filtered.Add(file);
                     }

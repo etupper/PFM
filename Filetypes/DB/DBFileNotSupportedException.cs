@@ -1,24 +1,36 @@
-﻿namespace Filetypes
-{
-    using System;
+﻿using System;
 
-    public class DBFileNotSupportedException : Exception
-    {
+namespace Filetypes {
+    /*
+     * Exception having to do with the pack file database.
+     */
+    public class DbException : Exception {
         public DBFile DbFile { get; set; }
 
+        public DbException(string message) : base(message) {
+        }
+
+        public DbException (string message, Exception x) : base(message, x) {
+        }
+
+        public DbException(string message, DBFile file) : base(message) {
+            DbFile = file;
+        }
+    }
+    
+    /*
+     * An exception being thrown when trying to read a db file that fails to be decoded.
+     */
+    public class DBFileNotSupportedException : DbException {
         public DBFileNotSupportedException(string message) : base(message) {
         }
 
-        public DBFileNotSupportedException(DBFile file)
-            : this("DB File not supported", file) {}
+        public DBFileNotSupportedException(DBFile file) : this("DB File not supported", file) {}
 
-		public DBFileNotSupportedException (string message, Exception x)
-            : base(message, x) {
+		public DBFileNotSupportedException (string message, Exception x) : base(message, x) {
 		}
 
-        public DBFileNotSupportedException(string message, DBFile file)
-            : base(message)
-        {
+        public DBFileNotSupportedException(string message, DBFile file) : base(message) {
             DbFile = file;
         }
     }

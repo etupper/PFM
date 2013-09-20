@@ -13,7 +13,10 @@ namespace CommonDialogs {
             AcceptButton = okButton;
             CancelButton = cancelButton;
         }
-
+        /*
+         * The text entered in the input box.
+         * Can be used before showing the dialog to set initial input.
+         */
         public string Input {
             get {
                 return valueField.Text;

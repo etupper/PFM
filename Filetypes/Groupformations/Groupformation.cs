@@ -13,12 +13,12 @@ namespace Filetypes {
                 formations = new List<Groupformation>((int) formationCount);
                 for (int j = 0; j < formationCount; j++) {
                     Groupformation formation = new Groupformation();
-                    formation.Name = IOFunctions.readCAString(reader);
+                    formation.Name = IOFunctions.ReadCAString(reader);
                     formation.Priority = reader.ReadSingle();
                     formation.Purpose = reader.ReadUInt32();
                     // Console.WriteLine("reading formation {0}, purpose {1}", formation.Name, formation.Purpose);
                     formation.Minima = ReadList<Minimum>(reader, ReadMinimum);
-                    formation.Factions = ReadList<string>(reader, IOFunctions.readCAString);
+                    formation.Factions = ReadList<string>(reader, IOFunctions.ReadCAString);
                     formation.Lines = ReadList<Line>(reader, ReadLine);
                     formations.Add(formation);
                 }
@@ -32,11 +32,11 @@ namespace Filetypes {
             using (BinaryWriter writer = new BinaryWriter(encodeTo)) {
                 writer.Write ((uint) file.Formations.Count);
                 foreach(Groupformation formation in file.Formations) {
-                    IOFunctions.writeCAString(writer, formation.Name);
+                    IOFunctions.WriteCAString(writer, formation.Name);
                     writer.Write (formation.Priority);
                     writer.Write((uint) formation.Purpose);
                     WriteList(writer, formation.Minima, WriteMinimum);
-                    WriteList(writer, formation.Factions, IOFunctions.writeCAString);
+                    WriteList(writer, formation.Factions, IOFunctions.WriteCAString);
                     WriteList(writer, formation.Lines, WriteLine);
                     ///////
                 }

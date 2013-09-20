@@ -51,7 +51,7 @@ namespace Filetypes {
 
 		private static UnitVariantObject readObject(BinaryReader reader) {
 			UnitVariantObject item = new UnitVariantObject {
-                ModelPart = IOFunctions.readStringContainer (reader),
+                ModelPart = IOFunctions.ReadZeroTerminatedUnicode (reader),
                 Index = reader.ReadUInt32 (),
                 Num2 = reader.ReadUInt32 (),
 				StoredEntryCount = reader.ReadUInt32 (),
@@ -62,8 +62,8 @@ namespace Filetypes {
 		
 		private static MeshTextureObject ReadMTO(BinaryReader reader) {
 			MeshTextureObject obj3 = new MeshTextureObject {
-			                  Mesh = IOFunctions.readStringContainer (reader),
-			                  Texture = IOFunctions.readStringContainer (reader),
+			                  Mesh = IOFunctions.ReadZeroTerminatedUnicode (reader),
+			                  Texture = IOFunctions.ReadZeroTerminatedUnicode (reader),
 			                  Bool1 = reader.ReadBoolean (),
 			                  Bool2 = reader.ReadBoolean ()
 			              };
@@ -83,7 +83,7 @@ namespace Filetypes {
 				}
 				int mtoStartIndex = 0;
 				foreach (UnitVariantObject uvo in file.UnitVariantObjects) {
-					IOFunctions.writeStringContainer (writer, uvo.ModelPart);
+					IOFunctions.WriteZeroTerminatedUnicode (writer, uvo.ModelPart);
 					if (uvo.Index == 0) {
 						mtoStartIndex = 0;
 					}
@@ -96,8 +96,8 @@ namespace Filetypes {
 				for (int j = 0; j < file.NumEntries; j++) {
 					if (file.UnitVariantObjects [j].EntryCount != 0) {
 						for (int k = 0; k < file.UnitVariantObjects[j].EntryCount; k++) {
-							IOFunctions.writeStringContainer (writer, file.UnitVariantObjects [j].MeshTextureList [k].Mesh);
-							IOFunctions.writeStringContainer (writer, file.UnitVariantObjects [j].MeshTextureList [k].Texture);
+							IOFunctions.WriteZeroTerminatedUnicode (writer, file.UnitVariantObjects [j].MeshTextureList [k].Mesh);
+							IOFunctions.WriteZeroTerminatedUnicode (writer, file.UnitVariantObjects [j].MeshTextureList [k].Texture);
 							writer.Write (file.UnitVariantObjects [j].MeshTextureList [k].Bool1);
 							writer.Write (file.UnitVariantObjects [j].MeshTextureList [k].Bool2);
 						}
