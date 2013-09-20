@@ -3,7 +3,14 @@ using System.IO;
 using System.Collections.Generic;
 
 namespace Common {
+    /*
+     * Class sorting the packs in a directory in the order they are loaded.
+     */
     public class PackLoadSequence {
+        /*
+         * Predicate function that can decide whether or not to ignore a given
+         * pack file altogether.
+         */
         private Predicate<string> ignore;
         public Predicate<string> IgnorePack {
             get { 
@@ -13,7 +20,9 @@ namespace Common {
                 ignore = (value != null) ? value : Keep;
             }
         }
-
+        /*
+         * Retrieve the packs loaded from the given directory.
+         */
         public List<string> GetPacksLoadedFrom(string directory) {
             directory = Path.Combine(directory, "data");
             List<string> paths = new List<string>();
@@ -62,23 +71,35 @@ namespace Common {
         }
         
         #region Pack filtering
+        // Don't ignore any packs.
         static bool Keep(string f) { return false; }
         static readonly string[] EXCLUDE_PREFIXES = { 
                                                         "local", "models", "sound", "terrain", 
                                                         "anim", "ui", "voices" };
+        /*
+         * Query if a pack file is provided by CA.
+         */
         public static bool IsDbCaPack(string filename) {
             foreach (string exclude in EXCLUDE_PREFIXES) {
                 if (Path.GetFileName(filename).StartsWith(exclude)) {
                     return true;
                 }
             }
-            PFHeader pack = PackFileCodec.ReadHeader(filename);
-            bool result = (pack.Type != PackType.Patch) && (pack.Type != PackType.Release);
+            bool result = false;
+            try {
+                PFHeader pack = PackFileCodec.ReadHeader(filename);
+                result = (pack.Type != PackType.Patch) && (pack.Type != PackType.Release);
+            } catch {} // not a valid pack: not a CA pack
             return result;
         }
         #endregion
     }
-
+    /*
+     * Sorts pack files in the order they are loaded in
+     * (roughly Boot->Release->Patch->Mod->Movie).
+     * Amongst packs of the same type, they are ordered by checking the obsoletion path
+     * (packs may contain a list of packs they override).
+     */
     public class PackLoadOrder : Comparer<string> {
         private static List<PackType> Ordered = new List<PackType>(new PackType[] {
             PackType.Boot, PackType.BootX, PackType.Shader1, PackType.Shader2,
@@ -92,16 +113,25 @@ namespace Common {
         Dictionary<string, string> nameToPath = new Dictionary<string, string>();
         public PackLoadOrder(ICollection<string> files) {
             foreach (string file in files) {
-                nameToPath.Add(Path.GetFileName(file), file);
-                nameToHeader.Add(file, PackFileCodec.ReadHeader(file));
+                try {
+                    PFHeader header = PackFileCodec.ReadHeader(file);
+                    nameToHeader.Add(file, header);
+                    nameToPath.Add(Path.GetFileName(file), file);
+                } catch { } // couldn't read header probably; just ignore the file
             }
         }
+        /*
+         * Compare the two strings by interpreting them as pack file paths and
+         * establishing the load order between those.
+         */
         public override int Compare(string p1, string p2) {
+            // sort by type
             PFHeader p1Header = nameToHeader[p1];
             PFHeader p2Header = nameToHeader[p2];
             int index1 = Ordered.IndexOf(p1Header.Type);
             int index2 = Ordered.IndexOf(p2Header.Type);
             int result = index2 - index1;
+            // same type? Check obsoletion path
             if (result == 0) {
                 if (Obsoletes(p1, p2)) {
                     result = -1;
@@ -111,6 +141,11 @@ namespace Common {
             }
             return result;
         }
+        /*
+         * Query if p2 obsoletes p1.
+         * Will return true if p1 is contained in any obsoleted file list in a pack obsoleted by p2, 
+         * otherwise false.
+         */
         bool Obsoletes(string p1, string p2) {
             PFHeader p1Header = nameToHeader[p1];
             if (p1Header.ReplacedPackFileNames.Count == 0) {
@@ -128,11 +163,6 @@ namespace Common {
                     }
                 }
             }
-#if DEBUG
-            //if (result) {
-            //    Console.WriteLine("{0} obsoletes {1}", Path.GetFileName(p1), Path.GetFileName(p2));
-            //}
-#endif
             return result;
         }
     }
