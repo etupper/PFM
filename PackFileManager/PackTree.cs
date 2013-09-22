@@ -17,17 +17,17 @@ namespace PackFileManager {
             get { return added; }
             set {
                 added = value;
-                changeColor();
+                ChangeColor();
             }
         }
         public PackEntryNode(PackEntry entry)
             : base(entry.Name) {
             Tag = entry;
-            entry.ModifiedEvent += delegate(PackEntry p) { changeColor(); };
-            entry.RenameEvent += (e, name) => { renamed = true; changeColor(); };
-            changeColor();
+            entry.ModifiedEvent += delegate(PackEntry p) { ChangeColor(); };
+            entry.RenameEvent += (e, name) => { renamed = true; ChangeColor(); };
+            ChangeColor();
         }
-        public virtual void changeColor() {
+        public virtual void ChangeColor() {
             PackEntry e = Tag as PackEntry;
             ForeColor = Color.Black;
             if (added) {
@@ -40,11 +40,11 @@ namespace PackFileManager {
                 ForeColor = Color.Red;
             }
         }
-        public void reset() {
+        public void Reset() {
             renamed = added = false;
             foreach (TreeNode node in Nodes) {
                 PackEntryNode packNode = node as PackEntryNode;
-                packNode.reset();
+                packNode.Reset();
             }
         }
     }
@@ -66,8 +66,8 @@ namespace PackFileManager {
         /*
          * Overridden to adjust to color depending on we have DB type information.
          */
-        public override void changeColor() {
-            base.changeColor();
+        public override void ChangeColor() {
+            base.ChangeColor();
 
             PackedFile packedFile = Tag as PackedFile;
             string text = Path.GetFileName(packedFile.Name);
@@ -124,10 +124,10 @@ namespace PackFileManager {
             foreach (PackedFile file in nodeDir.Files) {
                 PackEntryNode node = new PackedFileNode(file);
                 Nodes.Add(node);
-                node.changeColor();
+                node.ChangeColor();
             }
-            nodeDir.DirectoryAdded += insertNew;
-            nodeDir.FileAdded += insertNew;
+            nodeDir.DirectoryAdded += InsertNew;
+            nodeDir.FileAdded += InsertNew;
             nodeDir.FileRemoved += removeEntry;
         }
         private void removeEntry(PackEntry entry) {
@@ -142,7 +142,7 @@ namespace PackFileManager {
                 Nodes.Remove(remove);
             }
         }
-        private void insertNew(PackEntry entry) {
+        private void InsertNew(PackEntry entry) {
             PackEntryNode node = null;
             if (entry is PackedFile) {
                 node = new PackedFileNode(entry as PackedFile);
@@ -158,12 +158,12 @@ namespace PackFileManager {
                 }
             }
             Nodes.Insert(index, node);
-            node.changeColor();
+            node.ChangeColor();
 
-            changeColor();
+            ChangeColor();
             PackEntryNode parent = Parent as PackEntryNode;
             while (parent != null) {
-                parent.changeColor();
+                parent.ChangeColor();
                 parent = parent.Parent as PackEntryNode;
             }
 
