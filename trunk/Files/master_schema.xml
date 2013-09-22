@@ -4506,10 +4506,10 @@
     <field name='precedence' type='int' />
     <field name='start_date' type='int' />
     <field name='end_date' type='int' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown11' type='boolean' />
-    <field name='unknown12' type='boolean' />
-    <field name='unknown13' type='boolean' />
+    <field name='explanation_text' type='optstring_ascii' />
+    <field name='exclusion_text' type='optstring_ascii' />
+    <field name='avatar_skill' type='optstring_ascii' />
+    <field name='avatar_special_ability' type='optstring_ascii' />
     <field name='is_wife_ancillary' type='boolean' />
   </table>
   <table table_name='ancillaries_tables'
