@@ -32,7 +32,7 @@ namespace DbSql {
          * or from all rows if none was given.
          */
         public override void Execute() {
-            Console.WriteLine("selecting {0} from {1}", string.Join(",", Fields), string.Join(",", tables));
+            // Console.WriteLine("selecting {0} from {1}", string.Join(",", Fields), string.Join(",", tables));
             List<QueryResult> result = new List<QueryResult>();
             foreach(DBFile db in DbFiles) {
                 foreach(QueryResult row in db.Entries) {
