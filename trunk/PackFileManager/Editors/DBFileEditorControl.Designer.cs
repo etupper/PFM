@@ -17,7 +17,6 @@ namespace PackFileManager
         private ToolStripButton importButton;
         private ToolStripButton pasteToolStripButton;
         private ToolStrip toolStrip;
-        private ToolStripButton applyValueExpressionToolStripButton;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripSeparator toolStripSeparator2;
         private TextBox unsupportedDBErrorTextBox;
@@ -40,7 +39,6 @@ namespace PackFileManager
             this.cloneRowsButton = new System.Windows.Forms.ToolStripButton();
             this.copyToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.pasteToolStripButton = new System.Windows.Forms.ToolStripButton();
-            applyValueExpressionToolStripButton = new ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exportButton = new System.Windows.Forms.ToolStripButton();
             this.importButton = new System.Windows.Forms.ToolStripButton();
@@ -64,9 +62,7 @@ namespace PackFileManager
             this.toolStripSeparator1,
             this.exportButton,
             this.importButton,
-            this.toolStripSeparator2,
-                applyValueExpressionToolStripButton
-            });
+            this.toolStripSeparator2});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(876, 25);
@@ -115,17 +111,6 @@ namespace PackFileManager
             this.pasteToolStripButton.Text = "&Paste";
             this.pasteToolStripButton.ToolTipText = "Paste Row from Clipboard";
             this.pasteToolStripButton.Click += new System.EventHandler(this.pasteToolStripButton_Click);
-            // 
-            // applyValueExpressionToolStripButton
-            // 
-            this.applyValueExpressionToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.applyValueExpressionToolStripButton.Enabled = true;
-            this.applyValueExpressionToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.applyValueExpressionToolStripButton.Name = "applyValueExpressionToolStripButton";
-            this.applyValueExpressionToolStripButton.Size = new System.Drawing.Size(39, 22);
-            this.applyValueExpressionToolStripButton.Text = "&Expression";
-            this.applyValueExpressionToolStripButton.ToolTipText = "Apply expression to column";
-            this.applyValueExpressionToolStripButton.Click += new System.EventHandler(this.ApplyValueExpression);
             // 
             // toolStripSeparator1
             // 

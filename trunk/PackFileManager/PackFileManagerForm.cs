@@ -253,7 +253,7 @@ namespace PackFileManager
         }
         #endregion
 
-        private void exportFileListToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void ExportFileList(object sender, EventArgs e) {
             SaveFileDialog fileListDialog = new SaveFileDialog {
                 InitialDirectory = ImportExportDirectory,
                 FileName = Path.GetFileNameWithoutExtension(currentPackFile.Filepath) + ".pack-file-list.txt"
@@ -268,7 +268,7 @@ namespace PackFileManager
             }
         }
 
-        private void minimizeToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void MinimizeDbFiles(object sender, EventArgs e) {
             if (QuerySaveModifiedFile() == DialogResult.Cancel) {
                 return;
             }
@@ -503,7 +503,7 @@ namespace PackFileManager
         }
         #endregion
 
-        private void packTypeToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void PackTypeItemSelected(object sender, EventArgs e) {
             foreach (ToolStripMenuItem item in changePackTypeToolStripMenuItem.DropDownItems) {
                 item.Checked = (sender == item);
                 if (item.Checked) {
