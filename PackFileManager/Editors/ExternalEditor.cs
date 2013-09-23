@@ -5,6 +5,12 @@ using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace PackFileManager {
+    /*
+     * An editor implementation that Opens a selected file in an external editor.
+     * This is done by exporting the file to a temporary directory, then
+     * invoking the Shell's "Open As" dialog and then waits for the started 
+     * external process to finish to re-import the file.
+     */
     public class ExternalEditor : IPackedFileEditor {
         private FileSystemWatcher openFileWatcher;
         string openFilePath;

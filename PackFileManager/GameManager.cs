@@ -9,6 +9,9 @@ using System.Windows.Forms;
 using CommonDialogs;
 
 namespace PackFileManager {
+    /*
+     * Manager for the available games.
+     */
     public class GameManager {
 
         public delegate void GameChange();

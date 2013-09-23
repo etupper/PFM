@@ -21,8 +21,8 @@ namespace PackFileTest {
 
         public override bool CanTest(PackedFile packed) {
             bool result = packed.FullPath.StartsWith("db");
-            result &= !DBFile.typename(packed.FullPath).Equals ("models_building_tables");
-            result &= !DBFile.typename(packed.FullPath).Equals ("models_naval_tables");
+            result &= !DBFile.Typename(packed.FullPath).Equals ("models_building_tables");
+            result &= !DBFile.Typename(packed.FullPath).Equals ("models_naval_tables");
             return result;
         }
 

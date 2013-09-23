@@ -42,7 +42,7 @@ namespace PackFileTest {
         #endregion
         
         public override bool CanTest(PackedFile file) {
-            return DBFile.typename(file.FullPath).Equals (ValidTypes);
+            return DBFile.Typename(file.FullPath).Equals (ValidTypes);
         }
         
         public override void TestFile(PackedFile packed) {

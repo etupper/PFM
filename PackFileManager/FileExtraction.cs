@@ -10,6 +10,9 @@ using PackFileManager.Properties;
 using CommonDialogs;
 
 namespace PackFileManager {
+    /*
+     * Class extracting a number of packed files, possibly processing them on the way.
+     */
     public class FileExtractor {
         private ToolStripStatusLabel packStatusLabel;
         private ToolStripProgressBar packActionProgressBar;
@@ -28,7 +31,12 @@ namespace PackFileManager {
             Preprocessor = new IdentityPreprocessor();
         }
 
-        public void extractFiles(ICollection<PackedFile> packedFiles) {
+        /*
+         * Extract the given files to the export directory, maintaing their relative path.
+         * If a file exists already, the user is queried what to do, with the options
+         * to not extract, overwrite, or rename; also to keep the answer for the remaining conflicts.
+         */
+        public void ExtractFiles(ICollection<PackedFile> packedFiles) {
             if (!string.IsNullOrEmpty(exportDirectory)) {
                 FileAlreadyExistsDialog.Action action = FileAlreadyExistsDialog.Action.Ask;
                 FileAlreadyExistsDialog.Action defaultAction = FileAlreadyExistsDialog.Action.Ask;
@@ -49,6 +57,7 @@ namespace PackFileManager {
                     }
                     string path = Path.Combine(exportDirectory, Preprocessor.GetFileName(file));
                     if (File.Exists(path)) {
+                        // file with that name already present: ask user what to do
                         string renamedFilename;
                         if (defaultAction == FileAlreadyExistsDialog.Action.Ask) {
                             FileAlreadyExistsDialog dialog = new FileAlreadyExistsDialog(path);
@@ -56,52 +65,64 @@ namespace PackFileManager {
                             action = dialog.ChosenAction;
                             defaultAction = dialog.NextAction;
                         } else {
+                            // we already asked, and the user chose for all conflicts
                             action = defaultAction;
                         }
                         switch (action) {
-                            case FileAlreadyExistsDialog.Action.Skip: {
-                                    skippedCount++;
-                                    SetStatus(file.FullPath, extractedCount, packedFiles.Count, skippedCount);
-                                    if (packActionProgressBar != null) {
-                                        packActionProgressBar.PerformStep();
-                                    }
-                                    Application.DoEvents();
-                                    continue;
-                                }
-                            case FileAlreadyExistsDialog.Action.RenameExisting:
-                                renamedFilename = path + ".bak";
-                                while (File.Exists(renamedFilename)) {
-                                    renamedFilename = renamedFilename + ".bak";
-                                }
-                                File.Move(path, renamedFilename);
-                                break;
+                        case FileAlreadyExistsDialog.Action.Skip:
 
-                            case FileAlreadyExistsDialog.Action.RenameNew:
-                                do {
-                                    path = path + ".new";
-                                }
-                                while (File.Exists(path));
-                                break;
+                            // don't extract
+                            skippedCount++;
+                            SetStatus(file.FullPath, extractedCount, packedFiles.Count, skippedCount);
+                            if (packActionProgressBar != null) {
+                                packActionProgressBar.PerformStep();
+                            }
+                            Application.DoEvents();
+                            continue;
 
-                            case FileAlreadyExistsDialog.Action.Cancel:
-                                SetStatusText("Extraction cancelled.");
-                                if (packActionProgressBar != null) {
-                                    packActionProgressBar.Visible = false;
-                                }
-                                return;
+                        case FileAlreadyExistsDialog.Action.RenameExisting:
+                            
+                            // extract after copying the existing file
+                            renamedFilename = path + ".bak";
+                            while (File.Exists(renamedFilename)) {
+                                renamedFilename = renamedFilename + ".bak";
+                            }
+                            File.Move(path, renamedFilename);
+                            break;
+                            
+                        case FileAlreadyExistsDialog.Action.RenameNew:
+                            
+                            // extract to new name
+                            do {
+                                path = path + ".new";
+                            }
+                            while (File.Exists(path));
+                            break;
+                            
+                        case FileAlreadyExistsDialog.Action.Cancel:
+                            
+                            // cancel extraction altogether
+                            SetStatusText("Extraction cancelled.");
+                            if (packActionProgressBar != null) {
+                                packActionProgressBar.Visible = false;
+                            }
+                            return;
                         }
                     } else {
                         Directory.CreateDirectory(Path.GetDirectoryName(path));
                     }
                     SetStatus(file.FullPath, extractedCount, packedFiles.Count, skippedCount);
                     Application.DoEvents();
+
                     try {
+                        // perform the extraction, through the preprocessor
                         File.WriteAllBytes(path, Preprocessor.Process(file));
                         extractedCount++;
                     } catch (Exception e) {
                         MessageBox.Show(string.Format("Failed to export {0}: {1}", file.FullPath, e.Message));
                         skippedCount++;
                     }
+
                     SetStatus(file.FullPath, extractedCount, packedFiles.Count, skippedCount);
                     if (packActionProgressBar != null) {
                         packActionProgressBar.PerformStep();
@@ -120,18 +141,28 @@ namespace PackFileManager {
             }
         }
     }
+    
+    /*
+     * An interface for classes performing processing before a file is extracted.
+     */
     public interface IExtractionPreprocessor {
         bool CanExtract(PackedFile file);
         string GetFileName(PackedFile file);
         byte[] Process(PackedFile file);
     }
-
+ 
+    /*
+     * Processor doing nothing.
+     */
     public class IdentityPreprocessor : IExtractionPreprocessor {
         public bool CanExtract(PackedFile file) { return true; }
         public string GetFileName(PackedFile path) { return path.FullPath; }
         public byte[] Process(PackedFile file) { return file.Data; }
     }
     
+    /*
+     * Processor encoding extracted DB and LOC files into TSV.
+     */
     public class TsvExtractionPreprocessor : IExtractionPreprocessor {
         List<IExtractionPreprocessor> processors = new List<IExtractionPreprocessor>();
         public TsvExtractionPreprocessor() {
@@ -158,7 +189,10 @@ namespace PackFileManager {
             return GetExtractor(file).Process(file);
         }
     }
-
+ 
+    /*
+     * Processor encoding DB files to TSV.
+     */
     public class DbTsvExtractor : IExtractionPreprocessor {
         public bool CanExtract(PackedFile file) {
             return file.FullPath.StartsWith("db");
@@ -177,6 +211,9 @@ namespace PackFileManager {
         }
     }
     
+    /*
+     * Processor encoding LOC files to TSV.
+     */
     public class LocTsvPreprocessor : IExtractionPreprocessor {
         public bool CanExtract(PackedFile file) {
             return file.FullPath.EndsWith(".loc");

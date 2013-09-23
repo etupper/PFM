@@ -6,24 +6,43 @@ using Common;
 using Filetypes;
 
 namespace PackFileManager {
+    /*
+     * An interface for classes able to edit a file type contained in a pack file.
+     */
     public interface IPackedFileEditor {
+        /*
+         * Get and set the current file being edited.
+         */
         PackedFile CurrentPackedFile {
             get; set;
         }
+
+        /* Query if this editor can edit the given packed file. */
         bool CanEdit(PackedFile file);
+
+        /* Write back changes after finished editing. */
         void Commit();
     }
     
+    /*
+     * An abstract implementation of the IPackedFileEditor interface, able to edit type T.
+     */
     public abstract class PackedFileEditor<T> : UserControl, IPackedFileEditor {
         protected readonly Codec<T> codec;
         public virtual T EditedFile { get; set; }
         PackedFile currentPacked;
-
+  
+        /*
+         * True if editor has changed data in the current file.
+         */
         protected virtual bool DataChanged {
             get;
             set;
         }
-
+  
+        /*
+         * Use the given codec to decode files.
+         */
         protected PackedFileEditor(Codec<T> c) {
             codec = c;
         }
@@ -82,7 +101,10 @@ namespace PackFileManager {
                 }
             }
         }
-
+  
+        /*
+         * Utility method to determine if the given file has one of the given extensions.
+         */
         public static bool HasExtension(PackedFile file, IEnumerable<string> extensions) {
             bool result = false;
             if (file != null) {

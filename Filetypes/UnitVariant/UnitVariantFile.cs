@@ -32,64 +32,20 @@
 			}
 		}
 
-        public void add(UnitVariantObject newEntry)
-        {
+        public void Add(UnitVariantObject newEntry) {
             this.unitVariantObjects.Add(newEntry);
         }
 
-        public void addMTO(UnitVariantObject entry, MeshTextureObject mTO)
-        {
-            UnitVariantObject obj2 = this.unitVariantObjects[(int) entry.Index];
-            // obj2.EntryCount++;
-            obj2.MeshTextureList.Add(mTO);
-            int count = this.unitVariantObjects.Count;
-            for (int i = ((int) obj2.Index) + 1; i < count; i++)
-            {
-                this.unitVariantObjects[i].MeshStartIndex = this.unitVariantObjects[i - 1].EntryCount + this.unitVariantObjects[i - 1].MeshStartIndex;
-            }
-        }
-
-        public void insertUVO(UnitVariantObject entry, int index)
-        {
+        public void InsertUVO(UnitVariantObject entry, int index) {
             this.unitVariantObjects.Insert(index, entry);
-            if (index < (this.unitVariantObjects.Count - 1))
-            {
-                for (int i = index + 1; i < this.unitVariantObjects.Count; i++)
-                {
-                    this.unitVariantObjects[i].Index = this.unitVariantObjects[i - 1].Index + 1;
-                    this.unitVariantObjects[i].MeshStartIndex = this.unitVariantObjects[i - 1].EntryCount + this.unitVariantObjects[i - 1].MeshStartIndex;
-                }
-            }
         }
 
-        public void removeAt(int index)
-        {
+        public void RemoveAt(int index) {
             this.unitVariantObjects.RemoveAt(index);
         }
 
-        public void removeMTO(UnitVariantObject entry, MeshTextureObject mTO, int index) {
-			UnitVariantObject obj2 = this.unitVariantObjects [(int)entry.Index];
-			// obj2.EntryCount--;
-			obj2.MeshTextureList.RemoveAt (index - 1);
-			int count = this.unitVariantObjects.Count;
-			for (int i = (int) entry.Index; i < count; i++) {
-				// adjust mesh indices of the following UVOs
-				// isn't really neccessary because the codec corrects these when writing
-				this.unitVariantObjects [i].MeshStartIndex = this.unitVariantObjects [i - 1].EntryCount + this.unitVariantObjects [i - 1].MeshStartIndex;
-			}
-		}
-
-        public void removeUVO(int index) {
-			this.unitVariantObjects.RemoveAt (index);
-			if (index < (this.unitVariantObjects.Count - 1)) {
-				for (int i = index; i < this.unitVariantObjects.Count; i++) {
-					// adjust mesh indices in all previous and following UVOs
-					// again, not really neccessary
-					this.unitVariantObjects [i].Index = this.unitVariantObjects [i - 1].Index + 1;
-					this.unitVariantObjects [i].MeshStartIndex = 
-					this.unitVariantObjects [i - 1].EntryCount + this.unitVariantObjects [i - 1].MeshStartIndex;
-				}
-			}
+        public void RemoveUVO(UnitVariantObject uvo) {
+			this.unitVariantObjects.Remove (uvo);
 		}
     }
 }

@@ -76,7 +76,7 @@
             this.linkLabel1.Size = new Size(0x124, 13);
             this.linkLabel1.TabIndex = 3;
             this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "http://www.twcenter.net/forums/showthread.php?t=340047";
+            this.linkLabel1.Text = "http://www.twcenter.net/forums/showthread.php?t=620537";
             this.linkLabel1.LinkClicked += new LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             this.label2.ImageAlign = ContentAlignment.MiddleLeft;
             this.label2.Location = new Point(0x19, 0x58);

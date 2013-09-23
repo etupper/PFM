@@ -54,6 +54,7 @@ namespace PackFileManager
             this.emptyDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addFromPackToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importTSVToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
@@ -345,6 +346,7 @@ namespace PackFileManager
             this.addToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.emptyDirectoryToolStripMenuItem,
             this.addDirectoryToolStripMenuItem,
+                this.addFromPackToolStripMenuItem,
             this.addFileToolStripMenuItem,
             this.importTSVToolStripMenuItem});
             this.addToolStripMenuItem.Name = "addToolStripMenuItem";
@@ -373,6 +375,13 @@ namespace PackFileManager
             this.addFileToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.addFileToolStripMenuItem.Text = "&File(s)...";
             this.addFileToolStripMenuItem.Click += new System.EventHandler(this.addFileToolStripMenuItem_Click);
+            // 
+            // addFromPackToolStripMenuItem
+            // 
+            this.addFromPackToolStripMenuItem.Name = "addFromPackToolStripMenuItem";
+            this.addFromPackToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.addFromPackToolStripMenuItem.Text = "From &Pack...";
+            this.addFromPackToolStripMenuItem.Click += new System.EventHandler(this.AddFromPack);
             // 
             // importTSVToolStripMenuItem
             // 
@@ -1229,6 +1238,7 @@ namespace PackFileManager
         private System.Windows.Forms.ToolStripMenuItem shader2ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addFromPackToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addDirectoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem replaceFileToolStripMenuItem;

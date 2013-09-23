@@ -31,7 +31,7 @@ namespace PackFileTest {
             foreach(PackedFile contained in pack.Files) {
                 if (contained.FullPath.StartsWith("db")) {
                     // no need to resolve if it's done already...
-                    string tableName = DBFile.typename(contained.FullPath).Replace("_tables", "");
+                    string tableName = DBFile.Typename(contained.FullPath).Replace("_tables", "");
                     try {
                         PackedFileDbCodec codec = PackedFileDbCodec.GetCodec(contained);
                         codec.AutoadjustGuid = false;
