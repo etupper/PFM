@@ -9,7 +9,9 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace PackFileManager {
-
+    /*
+     * A simple integrated text editor.
+     */
     public class TextFileEditorControl : PackedFileEditor<string> {
         
         #region file extensions for text files
@@ -41,7 +43,10 @@ namespace PackFileManager {
                 textExtensions.AddRange(DEFAULT_EXTENSIONS);
             }
         }
-
+  
+        /*
+         * Since when doesn't the text box have copy/paste on its own?
+         */
         void HandleRichTextBoxKeyUp (object sender, KeyEventArgs e) {
             if (e.Control) {
                 if (e.KeyCode == Keys.C) {
@@ -58,7 +63,7 @@ namespace PackFileManager {
         public override bool CanEdit(PackedFile file) {
             return HasExtension(file, DEFAULT_EXTENSIONS);
         }
-        
+
         public override string EditedFile {
             get {
                 return richTextBox.Text;
@@ -69,13 +74,7 @@ namespace PackFileManager {
             }
         }
 
-        public void CloseTextFileEditorControl()
-        {
-            base.Dispose();
-        }
-
-        protected override void Dispose(bool disposing)
-        {
+        protected override void Dispose(bool disposing) {
             if (disposing && (this.components != null))
             {
                 Utilities.DisposeHandlers(this);
@@ -84,8 +83,7 @@ namespace PackFileManager {
             base.Dispose(disposing);
         }
 
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             this.richTextBox = new RichTextBox();
             base.SuspendLayout();
             this.richTextBox.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Top;

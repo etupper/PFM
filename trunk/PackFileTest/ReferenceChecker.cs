@@ -73,7 +73,7 @@ namespace PackFileTest {
             Dictionary<PackedFile, List<string>> referencing = new Dictionary<PackedFile, List<string>>();
             foreach (PackedFile packed in pack) {
                 if (packed.FullPath.StartsWith("db")) {
-                    if (DBFile.typename(packed.FullPath).Equals(ReferencedTable)) {
+                    if (DBFile.Typename(packed.FullPath).Equals(ReferencedTable)) {
                         referenced = packed;
                     }
                     foreach (string referenceFrom in referencesFrom) {

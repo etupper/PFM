@@ -36,7 +36,7 @@ namespace Filetypes {
 				}
 				file.UnitVariantObjects = new List<UnitVariantObject> (entries);
 				for (int i = 0; i < entries; i++) {
-					UnitVariantObject item = readObject (reader);
+					UnitVariantObject item = ReadObject (reader);
 					file.UnitVariantObjects.Add (item);
 				}
 				for (int j = 0; j < file.UnitVariantObjects.Count; j++) {
@@ -49,24 +49,29 @@ namespace Filetypes {
 			return file;
 		}
 
-		private static UnitVariantObject readObject(BinaryReader reader) {
+		private static UnitVariantObject ReadObject(BinaryReader reader) {
+            string modelName = IOFunctions.ReadZeroTerminatedUnicode (reader);
+            // ignore index
+            reader.ReadUInt32();
+            uint num2 = reader.ReadUInt32();
+            uint entries = reader.ReadUInt32();
+            // ignore mesh start
+            reader.ReadUInt32();
 			UnitVariantObject item = new UnitVariantObject {
-                ModelPart = IOFunctions.ReadZeroTerminatedUnicode (reader),
-                Index = reader.ReadUInt32 (),
-                Num2 = reader.ReadUInt32 (),
-				StoredEntryCount = reader.ReadUInt32 (),
-				MeshStartIndex = reader.ReadUInt32 ()
+                ModelPart = modelName,
+                Num2 = num2,
+				StoredEntryCount = entries
 			};
 			return item;
 		}
 		
 		private static MeshTextureObject ReadMTO(BinaryReader reader) {
 			MeshTextureObject obj3 = new MeshTextureObject {
-			                  Mesh = IOFunctions.ReadZeroTerminatedUnicode (reader),
-			                  Texture = IOFunctions.ReadZeroTerminatedUnicode (reader),
-			                  Bool1 = reader.ReadBoolean (),
-			                  Bool2 = reader.ReadBoolean ()
-			              };
+                Mesh = IOFunctions.ReadZeroTerminatedUnicode (reader),
+                Texture = IOFunctions.ReadZeroTerminatedUnicode (reader),
+                Bool1 = reader.ReadBoolean (),
+                Bool2 = reader.ReadBoolean ()
+            };
 			return obj3;
 		}
 		
@@ -81,28 +86,26 @@ namespace Filetypes {
 				if (file.Version == 2) {
 					writer.Write (file.Unknown3);
 				}
+                // write all unit variant entries
 				int mtoStartIndex = 0;
-				foreach (UnitVariantObject uvo in file.UnitVariantObjects) {
-					IOFunctions.WriteZeroTerminatedUnicode (writer, uvo.ModelPart);
-					if (uvo.Index == 0) {
-						mtoStartIndex = 0;
-					}
-					writer.Write (uvo.Index);
-					writer.Write (uvo.Num2);  // always 0 afaict
-					writer.Write ((uint)uvo.EntryCount);
-					writer.Write (mtoStartIndex);
-					mtoStartIndex += (int) uvo.EntryCount;
-				}
-				for (int j = 0; j < file.NumEntries; j++) {
-					if (file.UnitVariantObjects [j].EntryCount != 0) {
-						for (int k = 0; k < file.UnitVariantObjects[j].EntryCount; k++) {
-							IOFunctions.WriteZeroTerminatedUnicode (writer, file.UnitVariantObjects [j].MeshTextureList [k].Mesh);
-							IOFunctions.WriteZeroTerminatedUnicode (writer, file.UnitVariantObjects [j].MeshTextureList [k].Texture);
-							writer.Write (file.UnitVariantObjects [j].MeshTextureList [k].Bool1);
-							writer.Write (file.UnitVariantObjects [j].MeshTextureList [k].Bool2);
-						}
-					}
-				}
+                for (int i = 0; i < file.UnitVariantObjects.Count; i++) {
+                    UnitVariantObject uvo = file.UnitVariantObjects[i];
+                    IOFunctions.WriteZeroTerminatedUnicode(writer, uvo.ModelPart);
+                    writer.Write((uint) i);    // index
+                    writer.Write(uvo.Num2);    // always 0 afaict
+                    writer.Write(uvo.EntryCount);
+                    writer.Write(mtoStartIndex);
+                    mtoStartIndex += (int) uvo.EntryCount;
+                }
+                // write all meshes
+                foreach(UnitVariantObject uvo in file.UnitVariantObjects) {
+                    foreach(MeshTextureObject mto in uvo.MeshTextureList) {
+                        IOFunctions.WriteZeroTerminatedUnicode (writer, mto.Mesh);
+                        IOFunctions.WriteZeroTerminatedUnicode (writer, mto.Texture);
+                        writer.Write (mto.Bool1);
+                        writer.Write (mto.Bool2);
+                    }
+                }
 				writer.Flush ();
 			}
 		}

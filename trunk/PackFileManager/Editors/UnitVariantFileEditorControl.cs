@@ -77,14 +77,14 @@
         }
 
         private void addReference_Click(object sender, EventArgs e) {
-            UnitVariantObject entry = new UnitVariantObject();
+            UnitVariantObject entry = null;
             if (this.treeListView1.SelectedObject is MeshTextureObject) {
                 entry = (UnitVariantObject) this.treeListView1.GetParent(this.treeListView1.SelectedObject);
             } else {
                 entry = (UnitVariantObject) this.treeListView1.SelectedObject;
             }
             MeshTextureObject mTO = new MeshTextureObject("NEW_ENTRY", "NEW_ENTRY", false, false);
-            this.EditedFile.addMTO(entry, mTO);
+            entry.AddMesh(mTO);
             this.treeListView1.RefreshObjects(this.EditedFile.UnitVariantObjects);
             this.DataChanged = true;
             this.Refresh();
@@ -104,9 +104,8 @@
                 OLVListItem item = (OLVListItem) this.treeListView1.Items[i];
                 if (item.RowObject is UnitVariantObject) {
                     UnitVariantObject rowObject = (UnitVariantObject) item.RowObject;
-                    strings.Add(rowObject.ModelPart.ToString() + "\t" + rowObject.Index.ToString() + "\t" + 
-                                rowObject.Num2.ToString() + "\t" + rowObject.EntryCount.ToString() + "\t" + 
-                                rowObject.MeshStartIndex.ToString());
+                    strings.Add(rowObject.ModelPart.ToString() + "\t" + 
+                                rowObject.Num2.ToString() + "\t" + rowObject.EntryCount.ToString() + "\t" );
                     if (rowObject.MeshTextureList != null) {
                         foreach (MeshTextureObject obj3 in rowObject.MeshTextureList) {
                             strings.Add("\t\t\t\t\t" + obj3.Mesh + "\t" + obj3.Texture + "\t" + obj3.Bool1.ToString() + "\t" + 
@@ -313,9 +312,8 @@
                 parent = (UnitVariantObject) this.treeListView1.SelectedObject;
             }
             entry.ModelPart = "NEW_ENTRY";
-            entry.Index = parent.Index + 1;
-            entry.MeshStartIndex = parent.MeshStartIndex + parent.EntryCount;
-            this.EditedFile.insertUVO(entry, (int) entry.Index);
+            int insertIndex = EditedFile.UnitVariantObjects.IndexOf(parent) + 1;
+            this.EditedFile.InsertUVO(entry, insertIndex);
             this.treeListView1.AddObject(entry);
             this.treeListView1.RefreshObjects(this.EditedFile.UnitVariantObjects);
             this.richTextBox6.Text = this.EditedFile.NumEntries.ToString();
@@ -330,7 +328,7 @@
             } else {
                 parent = (UnitVariantObject) this.treeListView1.SelectedObject;
             }
-            this.EditedFile.removeUVO((int) parent.Index);
+            this.EditedFile.RemoveUVO(parent);
             this.treeListView1.RemoveObject(this.treeListView1.SelectedObject);
             this.treeListView1.RefreshObjects(this.EditedFile.UnitVariantObjects);
             this.richTextBox6.Text = this.EditedFile.NumEntries.ToString();
@@ -341,9 +339,7 @@
         private void removeReference_Click(object sender, EventArgs e) {
             MeshTextureObject selectedObject = (MeshTextureObject) this.treeListView1.SelectedObject;
             UnitVariantObject parent = (UnitVariantObject) this.treeListView1.GetParent(this.treeListView1.SelectedObject);
-            int index = this.treeListView1.IndexOf(this.treeListView1.SelectedObject) - 
-                this.treeListView1.IndexOf(this.treeListView1.GetParent(this.treeListView1.SelectedObject));
-            this.EditedFile.removeMTO(parent, selectedObject, index);
+            parent.RemoveMesh(selectedObject);
             this.treeListView1.RemoveObject(this.treeListView1.SelectedObject);
             this.treeListView1.RefreshObjects(this.EditedFile.UnitVariantObjects);
             this.DataChanged = true;
@@ -434,123 +430,60 @@
         }
 
         private void treeListView1_CellEditFinishing(object sender, CellEditEventArgs e) {
-            AspectPutterDelegate delegate2 = null;
-            AspectPutterDelegate delegate3 = null;
-            AspectPutterDelegate delegate4 = null;
-            AspectPutterDelegate delegate5 = null;
-            AspectPutterDelegate delegate6 = null;
-            AspectPutterDelegate delegate7 = null;
-            AspectPutterDelegate delegate8 = null;
-            AspectPutterDelegate delegate9 = null;
-            AspectPutterDelegate delegate10 = null;
             switch ((e.Column.Index + 1)) {
-                case 1:
-                    if (delegate2 == null) {
-                        delegate2 = delegate (object x, object newValue) {
-                            if (x is UnitVariantObject) {
-                                ((UnitVariantObject) x).ModelPart = (string) newValue;
-                            }
-                            this.DataChanged = true;
-                        };
+            case 1:
+                this.olvColumn1.AspectPutter = delegate (object x, object newValue) {
+                    if (x is UnitVariantObject) {
+                        ((UnitVariantObject) x).ModelPart = (string) newValue;
                     }
-                    this.olvColumn1.AspectPutter = delegate2;
-                    break;
+                    this.DataChanged = true;
+                };
+                break;
+                
+            case 2:
+                this.olvColumn3.AspectPutter = delegate (object x, object newValue) {
+                    if (x is UnitVariantObject) {
+                        ((UnitVariantObject) x).Num2 = (uint) newValue;
+                    }
+                    this.DataChanged = true;
+                };
+                break;
 
-                case 2:
-                    if (delegate3 == null) {
-                        delegate3 = delegate (object x, object newValue) {
-                            if (x is UnitVariantObject) {
-                                ((UnitVariantObject) x).Index = (uint) newValue;
-                            }
-                            this.DataChanged = true;
-                        };
+            case 3:
+                this.olvColumn6.AspectPutter = delegate (object x, object newValue) {
+                    if (x is MeshTextureObject) {
+                        ((MeshTextureObject) x).Mesh = (string) newValue;
                     }
-                    this.olvColumn2.AspectPutter = delegate3;
-                    break;
+                    this.DataChanged = true;
+                };
+                break;
 
-                case 3:
-                    if (delegate4 == null) {
-                        delegate4 = delegate (object x, object newValue) {
-                            if (x is UnitVariantObject) {
-                                ((UnitVariantObject) x).Num2 = (uint) newValue;
-                            }
-                            this.DataChanged = true;
-                        };
+            case 4:
+                this.olvColumn7.AspectPutter = delegate (object x, object newValue) {
+                    if (x is MeshTextureObject) {
+                        ((MeshTextureObject) x).Texture = (string) newValue;
                     }
-                    this.olvColumn3.AspectPutter = delegate4;
-                    break;
+                    this.DataChanged = true;
+                };
+                break;
 
-                case 4:
-                    if (delegate5 == null) {
-                        delegate5 = delegate (object x, object newValue) {
-//                            if (x is UnitVariantObject) {
-//                                ((UnitVariantObject) x).EntryCount = (uint) newValue;
-//                            }
-//                            this.dataChanged = true;
-                        };
+            case 5:
+                this.olvColumn8.AspectPutter = delegate (object x, object newValue) {
+                    if (x is MeshTextureObject) {
+                        ((MeshTextureObject) x).Bool1 = (bool) newValue;
                     }
-                    this.olvColumn4.AspectPutter = delegate5;
-                    break;
+                    this.DataChanged = true;
+                };
+                break;
 
-                case 5:
-                    if (delegate6 == null) {
-                        delegate6 = delegate (object x, object newValue) {
-                            if (x is UnitVariantObject) {
-                                ((UnitVariantObject) x).MeshStartIndex = (uint) newValue;
-                            }
-                            this.DataChanged = true;
-                        };
+            case 6:
+                this.olvColumn9.AspectPutter = delegate (object x, object newValue) {
+                    if (x is MeshTextureObject) {
+                        ((MeshTextureObject) x).Bool2 = (bool) newValue;
                     }
-                    this.olvColumn5.AspectPutter = delegate6;
-                    break;
-
-                case 6:
-                    if (delegate7 == null) {
-                        delegate7 = delegate (object x, object newValue) {
-                            if (x is MeshTextureObject) {
-                                ((MeshTextureObject) x).Mesh = (string) newValue;
-                            }
-                            this.DataChanged = true;
-                        };
-                    }
-                    this.olvColumn6.AspectPutter = delegate7;
-                    break;
-
-                case 7:
-                    if (delegate8 == null) {
-                        delegate8 = delegate (object x, object newValue) {
-                            if (x is MeshTextureObject) {
-                                ((MeshTextureObject) x).Texture = (string) newValue;
-                            }
-                            this.DataChanged = true;
-                        };
-                    }
-                    this.olvColumn7.AspectPutter = delegate8;
-                    break;
-
-                case 8:
-                    if (delegate9 == null) {
-                        delegate9 = delegate (object x, object newValue) {
-                            if (x is MeshTextureObject) {
-                                ((MeshTextureObject) x).Bool1 = (bool) newValue;
-                            }
-                            this.DataChanged = true;
-                        };
-                    }
-                    this.olvColumn8.AspectPutter = delegate9;
-                    break;
-
-                case 9:
-                    if (delegate10 == null) {
-                        delegate10 = delegate (object x, object newValue) {
-                            if (x is MeshTextureObject) {
-                                ((MeshTextureObject) x).Bool2 = (bool) newValue;
-                            }
-                            this.DataChanged = true;
-                        };
-                    }
-                    this.olvColumn9.AspectPutter = delegate10;
-                    break;
+                    this.DataChanged = true;
+                };
+                break;
             }
             this.Refresh();
         }

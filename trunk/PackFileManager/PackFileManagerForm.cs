@@ -659,6 +659,28 @@ namespace PackFileManager
                 }
             }
         }
+        
+        private void AddFromPack(object sender, EventArgs args) {
+            OpenFileDialog openDialog = new OpenFileDialog {
+                InitialDirectory = GameManager.Instance.CurrentGame.DataDirectory,
+                Filter = IOFunctions.PACKAGE_FILTER
+            };
+            if (openDialog.ShowDialog() == DialogResult.OK) {
+                try {
+                    PackFile importFrom = new PackFileCodec().Open(openDialog.FileName);
+                    PackBrowseDialog packBrowser = new PackBrowseDialog {
+                        PackFile = importFrom
+                    };
+                    if (packBrowser.ShowDialog() == DialogResult.OK) {
+                        foreach(PackedFile file in packBrowser.SelectedFiles) {
+                            currentPackFile.Add(file, true);
+                        }
+                    }
+                } catch (Exception e) {
+                    MessageBox.Show(string.Format ("Failed to open pack: {0}", e));
+                }
+            }
+        }
 
         private void deleteFileToolStripMenuItem_Click(object sender, EventArgs e) {
             if (packTreeView.SelectedNode == null) {
@@ -941,20 +963,20 @@ namespace PackFileManager
                 FileExtractor extractor = new FileExtractor(packStatusLabel, packActionProgressBar, extractTo) {
                     Preprocessor = tsvExport
                 };
-                extractor.extractFiles(files);
+                extractor.ExtractFiles(files);
             }
         }
 
         private void extractAllToolStripMenuItem_Click(object sender, EventArgs e) {
             string extractTo = ExportDirectory;
             if (!string.IsNullOrEmpty(extractTo)) {
-                new FileExtractor(packStatusLabel, packActionProgressBar, extractTo).extractFiles(AllFiles);
+                new FileExtractor(packStatusLabel, packActionProgressBar, extractTo).ExtractFiles(AllFiles);
             }
         }        
         private void extractSelectedToolStripMenuItem_Click(object sender, EventArgs e) {
             string extractTo = ExportDirectory;
             if (!string.IsNullOrEmpty(extractTo)) {
-                new FileExtractor(packStatusLabel, packActionProgressBar, extractTo).extractFiles(FilesInSelection);
+                new FileExtractor(packStatusLabel, packActionProgressBar, extractTo).ExtractFiles(FilesInSelection);
             }
         }
 
@@ -981,7 +1003,7 @@ namespace PackFileManager
             if (!string.IsNullOrEmpty(extractTo)) {
                 var packedFiles = new List<PackedFile>();
                 CurrentPackFile.Files.ForEach(f => { if (unknownDbFormat(f)) { packedFiles.Add(f); } });
-                new FileExtractor(packStatusLabel, packActionProgressBar, extractTo).extractFiles(packedFiles);
+                new FileExtractor(packStatusLabel, packActionProgressBar, extractTo).ExtractFiles(packedFiles);
             }
         }
         private bool unknownDbFormat(PackedFile file) {

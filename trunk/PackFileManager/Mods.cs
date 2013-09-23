@@ -9,12 +9,22 @@ using PackFileManager.Properties;
 using CommonDialogs;
 
 namespace PackFileManager {
+    /*
+     * Class representing a Warscape mod.
+     */
     public class Mod {
+        /* 
+         * Name of the mod.
+         * Also expected to be the name of the pack file containing it.
+         */
         public string Name { get; set; }
-        private string dir;
         public delegate void Notification();
         public event Notification GameChanged;
 
+        /*
+         * Directory to save mod pack and extract/import data to and from.
+         */
+        private string dir;
         public string BaseDirectory { 
             get {
                 return dir;
@@ -23,6 +33,10 @@ namespace PackFileManager {
                 dir = value;
             }
         }
+        
+        /*
+         * The game to which this mod belongs.
+         */
         private Game game;
         public Game Game { 
             get {
@@ -36,16 +50,25 @@ namespace PackFileManager {
             }
         }
 
+        /*
+         * Name of the pack file.
+         */
         public string PackName {
             get {
                 return string.Format("{0}.pack", Name);
             }
         }
+        /*
+         * Line to put into the game script file to tell game to load this mod.
+         */
         public string ModScriptFileEntry {
             get {
                 return string.Format("mod \"{0}\";", PackName);
             }
         }
+        /*
+         * Full path of the working pack file of this mod.
+         */
         public string FullModPath {
             get {
                 return Path.Combine(BaseDirectory, PackName);
@@ -65,18 +88,33 @@ namespace PackFileManager {
         }
         #endregion
     }
-
+ 
+    /*
+     * Manager for all mods of a user.
+     */
     public class ModManager {
+        // singleton
         public static readonly ModManager Instance = new ModManager();
+        
+        /*
+         * Allow other code to react to a user changing the current mod.
+         */
         public delegate void ModChangeEvent();
         public event ModChangeEvent CurrentModChanged;
-
+  
+        /*
+         * Read mod list from current settings.
+         */
         private ModManager() {
             mods = DecodeMods(Settings.Default.ModList);
             GameManager.Instance.GameChanged += SetModGame;
             SetCurrentMod(Settings.Default.CurrentMod);
         }
-
+  
+        /*
+         * When the user selects a different game with a mod being worked on,
+         * offer to set the mod's game to the newly selected game.
+         */
         private void SetModGame() {
             Game currentGame = GameManager.Instance.CurrentGame;
             if (CurrentModSet && !CurrentMod.Game.Id.Equals(currentGame.Id)) {
@@ -90,6 +128,9 @@ namespace PackFileManager {
             }
         }
         
+        /*
+         * Query if any mod is active at all right now.
+         */
         public bool CurrentModSet {
             get {
                 return CurrentMod != null;
@@ -97,6 +138,17 @@ namespace PackFileManager {
         }
 
         private List<Mod> mods;
+        public List<string> ModNames {
+            get {
+                List<string> result = new List<string>();
+                foreach (var entry in DecodeMods(Settings.Default.ModList)) {
+                    result.Add(entry.Name);
+                }
+                return result;
+            }
+        }
+  
+        #region Add, Deletion, Change of Mods
         public string AddMod() {
             string result = null;
             InputBox box = new InputBox { Text = "Enter Mod Name:", Input = "my_mod" };
@@ -137,25 +189,18 @@ namespace PackFileManager {
             }
             return result;
         }
-        public List<string> ModNames {
-            get {
-                List<string> result = new List<string>();
-                foreach (var entry in DecodeMods(Settings.Default.ModList)) {
-                    result.Add(entry.Name);
-                }
-                return result;
-            }
-        }
-  
-        #region Add, Deletion, Change of Mods
         public void AddMod(Mod mod) {
             mods.Add(mod);
             mod.GameChanged += delegate { EncodeMods(); };
             StoreToSettings ();
             CurrentMod = mod;
         }
+        /*
+         * Retrieve the currently active mod.
+         */
         public Mod CurrentMod {
             get {
+                // the current mod is stored in the settings
                 return FindByName(Settings.Default.CurrentMod);
             }
             set {
@@ -169,15 +214,22 @@ namespace PackFileManager {
                 }
             }
         }
+        /*
+         * Change currently selected mod by its mod name.
+         */
+        public void SetCurrentMod(string modname) {
+            CurrentMod = FindByName(modname);
+        }
+        
+        /*
+         * Delete the currently active mod.
+         */
         public void DeleteCurrentMod() {
             if (CurrentMod != null) {
                 mods.Remove(CurrentMod);
                 StoreToSettings ();
                 SetCurrentMod("");
             }
-        }
-        public void SetCurrentMod(string modname) {
-            CurrentMod = FindByName(modname);
         }
         void StoreToSettings() {
             Settings.Default.ModList = EncodeMods();
@@ -303,7 +355,10 @@ namespace PackFileManager {
         }
         #endregion
     }
-
+ 
+    /*
+     * A menu item representing a mod for the user to select.
+     */
     public class ModMenuItem : ToolStripMenuItem {
         public ModMenuItem(string title, string modName)
             : base(title) {
@@ -312,9 +367,11 @@ namespace PackFileManager {
             ModManager.Instance.CurrentModChanged += CheckSelection;
             Tag = modName;
         }
+        // select this item's mod as current mod in manager when clicked
         protected override void OnClick(EventArgs e) {
             ModManager.Instance.SetCurrentMod(Tag as string);
         }
+        // check if the new selected mod is the one referred to by this item
         private void CheckSelection() {
             Checked = Settings.Default.CurrentMod.Equals(Tag as string);
         }

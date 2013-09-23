@@ -29,6 +29,9 @@ namespace PackFileManager
         }
     }
     
+    /*
+     * A class checking for available updates to software and schema file.
+     */
 	class DBFileTypesUpdater {
         static string VERSION_FILE = "xmlversion";
         
@@ -40,6 +43,9 @@ namespace PackFileManager
         }
         
         #region Query Update Neccessary
+        /*
+         * Query if a new schema update is available.
+         */
         public bool NeedsSchemaUpdate {
             get {
                 int currentVersion, latestVersion;
@@ -57,6 +63,9 @@ namespace PackFileManager
             }
         }
         
+        /*
+         * Query if a new software version is available.
+         */
         public bool NeedsPfmUpdate {
             get {
                 return BuildVersionComparator.Instance.Compare(versions.LatestPfmVersion, CurrentPfmVersion) > 0;
@@ -95,12 +104,20 @@ namespace PackFileManager
             }
         }
         #endregion
-        
+
+        /*
+         * Download and unzip the schema file.
+         */
         public void UpdateSchema() {
             Updater.DownloadFile(versions.SchemaUrl, Util.PfmDirectory, SchemaZipname);
             Updater.Unzip(Path.Combine(Util.PfmDirectory, SchemaZipname));
         }
         
+        /*
+         * Download software, then start the AutoUpdater as an external process;
+         * this is needed to be able to extract the downloaded zip containing the PFM exe
+         * which is still running.
+         */
         public void UpdatePfm(string openPack = null) {
             Process myProcess = Process.GetCurrentProcess();
             string currentPackPath = openPack == null ? "" : string.Format(" \"{0}\"", openPack);
@@ -152,8 +169,6 @@ namespace PackFileManager
         }
         #endregion
         
-        //static readonly char[] SEPARATOR = { ':' };
-
         static Regex schema_file_re = new Regex("schema_([0-9]*).zip");
         static Regex pfm_file_re = new Regex("Pack File Manager (.*).zip");
         public SourceforgeVersionRetriever() {
@@ -258,13 +273,18 @@ namespace PackFileManager
 #endif
         }
     }
-
+ 
+    /*
+     * A class looking for a regular expression on a web page.
+     * The Regex needs to contain a group, the match against which will be available after parsing.
+     */
     class FindOnPage {
         public Regex ToFind { get; set; }
         public string Url { get; set; }
         public string Result { get; private set; }
 
         public void Search() {
+            // can't find stuff like this
             if (Url == null || ToFind == null) {
                 return;
             }
@@ -275,6 +295,8 @@ namespace PackFileManager
                     string line = stream.ReadLine();
                     while (line != null) {
                         if (ToFind.IsMatch(line)) {
+                            // found the expression: store the group,
+                            // then we can stop reading data
                             Match match = ToFind.Match(line);
                             Result = match.Groups[1].Value;
                             break;

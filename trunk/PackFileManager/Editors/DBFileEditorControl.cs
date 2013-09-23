@@ -86,6 +86,12 @@ namespace PackFileManager {
 
             dataGridView.SelectionChanged += new EventHandler(delegate(object sender, EventArgs args) 
                 { cloneRowsButton.Enabled = dataGridView.SelectedRows.Count > 0; });
+            dataGridView.SelectionChanged += new EventHandler(delegate(object sender, EventArgs args) {
+                bool enableExpression = dataGridView.SelectedCells.Count == 1;
+                DataGridViewCell cell = dataGridView.SelectedCells[0];
+                Console.WriteLine("selected column {0}, type {1}", cell.ColumnIndex, EditedFile.CurrentType.Fields[cell.ColumnIndex].TypeName);
+                applyValueExpressionToolStripButton.Enabled = enableExpression;
+            });
 
             dataGridView.DataError += new DataGridViewDataErrorEventHandler(CellErrorHandler);
             this.useComboBoxCells.CheckedChanged += new System.EventHandler(this.useComboBoxCells_CheckedChanged);            
@@ -168,7 +174,7 @@ namespace PackFileManager {
             currentDataTable = new DataTable(info.Name + "_DataTable");
 
             for (int columnIndex = 0; columnIndex < info.Fields.Count; columnIndex++) {
-                string columnName = columnIndex.ToString();
+                string columnName = info.Fields[columnIndex].Name; // columnIndex.ToString();
                 var column = new DataColumn(columnName) {
                     DataType =
                         info.Fields[columnIndex].TypeCode == TypeCode.Empty
@@ -178,8 +184,8 @@ namespace PackFileManager {
                 currentDataTable.Columns.Add(column);
             }
 
-            currentDataTable.ColumnChanged += currentDataTable_ColumnChanged;
-            currentDataTable.RowDeleting += currentDataTable_RowDeleted;
+            currentDataTable.ColumnChanged += ColumnChanged;
+            currentDataTable.RowDeleting += RowDeleted;
 
 #if DEBUG
             Console.WriteLine("Filling data rows ({0} entries)", EditedFile.Entries.Count);
@@ -235,10 +241,11 @@ namespace PackFileManager {
             if (column == null) {
                 column = new DataGridViewAutoFilterTextBoxColumn();
             }
+            column.Name = fieldInfo.Name;
             column.SortMode = DataGridViewColumnSortMode.Programmatic;
             column.HeaderText = fieldInfo.Name + (Settings.Default.IsColumnIgnored(CurrentPackedFile.FullPath, fieldInfo.Name) ? "*" : "");
             column.Tag = fieldInfo;
-            column.DataPropertyName = columnIndex.ToString();
+            column.DataPropertyName = fieldInfo.Name; //columnIndex.ToString();
             column.Visible = !Settings.Default.IsColumnIgnored(CurrentPackedFile.FullPath, fieldInfo.Name);
             
             if (column.Visible) {
@@ -391,7 +398,7 @@ namespace PackFileManager {
             copyPaste.PasteEvent();
         }
         #endregion
-  
+ 
         #region Copy/Paste within GridView Cell
         void CellCopyPaste(object s, DataGridViewEditingControlShowingEventArgs args) {
             Console.WriteLine("editing control showing: {0}", args.Control);
@@ -419,14 +426,22 @@ namespace PackFileManager {
         #endregion
 
         #region Data Table change handlers
-        private void currentDataTable_ColumnChanged(object sender, DataColumnChangeEventArgs e) 
+        private void ColumnChanged(object sender, DataColumnChangeEventArgs e) 
         {
-            if (((dataGridView.DataSource != null) && (e.Row.RowState != DataRowState.Detached)) && (Convert.ToInt32(e.Column.ColumnName) != -1)) 
-            {
+            if ((dataGridView.DataSource != null) && (e.Row.RowState != DataRowState.Detached)) {
                 object proposedValue = e.ProposedValue;
-                int num = Convert.ToInt32(e.Column.ColumnName);
+                string fieldName = e.Column.ColumnName;
                 List<FieldInstance> list = EditedFile.Entries[currentDataTable.Rows.IndexOf(e.Row)];
-                FieldInstance instance = list[num];
+                FieldInstance instance = null;
+                foreach(FieldInstance candidate in list) {
+                    if (candidate.Info.Name.Equals(fieldName)) {
+                        instance = candidate;
+                        break;
+                    }
+                }
+                if (instance == null) {
+                    return;
+                }
                 string str = (proposedValue == null) ? "" : proposedValue.ToString();
                 instance.Value = str;
 #if DEBUG
@@ -436,7 +451,7 @@ namespace PackFileManager {
             }
         }
 
-        private void currentDataTable_RowDeleted(object sender, DataRowChangeEventArgs e) {
+        private void RowDeleted(object sender, DataRowChangeEventArgs e) {
             if (e.Action != DataRowAction.Delete) {
                 throw new InvalidDataException("wtf?");
             }
@@ -448,7 +463,7 @@ namespace PackFileManager {
         #endregion
 
         #region File Import/Export
-        private void exportButton_Click(object sender, EventArgs e) {
+        private void ExportData(object sender, EventArgs e) {
             string extractTo = ModManager.Instance.CurrentModSet ? ModManager.Instance.CurrentModDirectory : null;
             if (extractTo == null) {
                 DirectoryDialog dialog = new DirectoryDialog {
@@ -461,12 +476,12 @@ namespace PackFileManager {
                 List<PackedFile> files = new List<PackedFile>();
                 files.Add(CurrentPackedFile);
                 FileExtractor extractor = new FileExtractor(null, null, extractTo) { Preprocessor = new TsvExtractionPreprocessor() };
-                extractor.extractFiles(files);
+                extractor.ExtractFiles(files);
                 MessageBox.Show(string.Format("File exported to TSV."));
             }
         }
 
-        private void importButton_Click(object sender, EventArgs e) {
+        private void ImportData(object sender, EventArgs e) {
             OpenFileDialog openDBFileDialog = new OpenFileDialog {
                 InitialDirectory = Settings.Default.ImportExportDirectory,
                 FileName = Settings.Default.TsvFile(EditedFile.CurrentType.Name)
@@ -678,7 +693,38 @@ namespace PackFileManager {
                 }
             }
         }
+        private void ApplyValueExpression(object sender, EventArgs args) {
+            InputBox input = new InputBox {
+                Input = "value",
+                Text = "Enter column name"
+            };
+            if (input.ShowDialog() == DialogResult.OK) {
+                string fieldName = input.Input;
+                int index = -1;
+                for(int i = 0; i < EditedFile.CurrentType.Fields.Count; i++) {
+                    if (fieldName.Equals(EditedFile.CurrentType.Fields[i].Name)) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index != -1) {
+                    input.Text = "Enter expression (use \"x\" for current field value)";
+                    input.Input = "expression";
+                    if (input.ShowDialog() == DialogResult.OK) {
+                        try {
+                            for(int rowIndex = 0; rowIndex < currentDataTable.Rows.Count; rowIndex++) {
+                                string fieldValue = currentDataTable.Rows[rowIndex][fieldName].ToString();
+                                string expression = input.Input.Replace("x", fieldValue);
+                                string result = currentDataTable.Compute(expression, "").ToString();
+                                currentDataTable.Rows[rowIndex][fieldName] = result;
+                            }
+                        } catch (Exception e) {
+                            MessageBox.Show(string.Format("Failed to apply expression: {0}", e));
+                        }
+                    }
+                }
+            }
+        }
         #endregion
-
     }
 }

@@ -128,9 +128,9 @@ namespace PackFileManager {
             }
             nodeDir.DirectoryAdded += InsertNew;
             nodeDir.FileAdded += InsertNew;
-            nodeDir.FileRemoved += removeEntry;
+            nodeDir.FileRemoved += RemoveEntry;
         }
-        private void removeEntry(PackEntry entry) {
+        private void RemoveEntry(PackEntry entry) {
             TreeNode remove = null;
             foreach (TreeNode node in Nodes) {
                 if (node.Tag == entry) {
