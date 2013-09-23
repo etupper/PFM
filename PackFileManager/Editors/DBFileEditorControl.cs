@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using System.Globalization;
 using System.Windows.Forms;
 using CommonDialogs;
 
@@ -74,7 +75,7 @@ namespace PackFileManager {
         public DBFileEditorControl () {
             InitializeComponent ();
             dataGridView.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            dataGridView.ColumnHeaderMouseClick += dataGridView1_ColumnHeaderMouseClick;
+            dataGridView.ColumnHeaderMouseClick += CreateColumnHeaderPopup;
             copyPaste = new GridViewCopyPaste(dataGridView);
             copyPaste.Copied += delegate() {
                 pasteToolStripButton.Enabled = true;
@@ -86,12 +87,6 @@ namespace PackFileManager {
 
             dataGridView.SelectionChanged += new EventHandler(delegate(object sender, EventArgs args) 
                 { cloneRowsButton.Enabled = dataGridView.SelectedRows.Count > 0; });
-            dataGridView.SelectionChanged += new EventHandler(delegate(object sender, EventArgs args) {
-                bool enableExpression = dataGridView.SelectedCells.Count == 1;
-                DataGridViewCell cell = dataGridView.SelectedCells[0];
-                Console.WriteLine("selected column {0}, type {1}", cell.ColumnIndex, EditedFile.CurrentType.Fields[cell.ColumnIndex].TypeName);
-                applyValueExpressionToolStripButton.Enabled = enableExpression;
-            });
 
             dataGridView.DataError += new DataGridViewDataErrorEventHandler(CellErrorHandler);
             this.useComboBoxCells.CheckedChanged += new System.EventHandler(this.useComboBoxCells_CheckedChanged);            
@@ -114,7 +109,7 @@ namespace PackFileManager {
             string key = DBFile.Typename(CurrentPackedFile.FullPath);
 
             if (!DBTypeMap.Instance.IsSupported(key)) {
-                showDBFileNotSupportedMessage("Sorry, this db file isn't supported yet.\r\n\r\nCurrently supported files:\r\n");
+                ShowDBFileNotSupportedMessage("Sorry, this db file isn't supported yet.\r\n\r\nCurrently supported files:\r\n");
                 if (Settings.Default.ShowDecodeToolOnError) {
                     var decoder = new DecodeTool.DecodeTool { TypeName = key, Bytes = CurrentPackedFile.Data };
                     decoder.ShowDialog();
@@ -172,6 +167,7 @@ namespace PackFileManager {
         void CreateDataTable() {
             TypeInfo info = EditedFile.CurrentType;
             currentDataTable = new DataTable(info.Name + "_DataTable");
+            //currentDataTable.Locale = CultureInfo.InvariantCulture;
 
             for (int columnIndex = 0; columnIndex < info.Fields.Count; columnIndex++) {
                 string columnName = info.Fields[columnIndex].Name; // columnIndex.ToString();
@@ -203,12 +199,10 @@ namespace PackFileManager {
                 this.dataGridView.Rows[i].HeaderCell.Value = (i + offset + 1).ToString();
             }
         }
-        private void showDBFileNotSupportedMessage(string message) 
-        {
+        private void ShowDBFileNotSupportedMessage(string message) {
             dataGridView.Visible = false;
             unsupportedDBErrorTextBox.Visible = true;
             unsupportedDBErrorTextBox.Text = string.Format("{0}{1}", message, string.Join("\r\n", DBTypeMap.Instance.DBFileTypes));
-            // unsupportedDBErrorTextBox.Text = message;
             addNewRowButton.Enabled = false;
             importButton.Enabled = false;
             exportButton.Enabled = false;
@@ -509,7 +503,7 @@ namespace PackFileManager {
                                 EditedFile.Import(imported);
                             }
                         } catch (DBFileNotSupportedException exception) {
-                            showDBFileNotSupportedMessage(exception.Message);
+                            ShowDBFileNotSupportedMessage(exception.Message);
                         }
 
                         CurrentPackedFile.Data = (Codec.Encode(EditedFile));
@@ -559,7 +553,7 @@ namespace PackFileManager {
             // rebuild table to see combo boxes if applicable
             Open();
         }
-        private void dataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
+        private void CreateColumnHeaderPopup(object sender, DataGridViewCellMouseEventArgs e) {
             DataGridViewColumn newColumn = dataGridView.Columns[e.ColumnIndex];
 
             if (e.Button == MouseButtons.Right) {
@@ -579,6 +573,9 @@ namespace PackFileManager {
                     }));
                     item.MenuItems.Add(new MenuItem("Renumber...", delegate {
                         RenumberFrom(e.ColumnIndex);
+                    }));
+                    item.MenuItems.Add(new MenuItem("Apply Expression", delegate {
+                        ApplyValueExpression(e.ColumnIndex);
                     }));
                     menu.MenuItems.Add(item);
                 }
@@ -693,36 +690,25 @@ namespace PackFileManager {
                 }
             }
         }
-        private void ApplyValueExpression(object sender, EventArgs args) {
-            InputBox input = new InputBox {
-                Input = "value",
-                Text = "Enter column name"
-            };
-            if (input.ShowDialog() == DialogResult.OK) {
-                string fieldName = input.Input;
-                int index = -1;
-                for(int i = 0; i < EditedFile.CurrentType.Fields.Count; i++) {
-                    if (fieldName.Equals(EditedFile.CurrentType.Fields[i].Name)) {
-                        index = i;
-                        break;
-                    }
-                }
+        private void ApplyValueExpression(int index) {
+            try {
+                string fieldName = EditedFile.CurrentType.Fields[index].Name;
                 if (index != -1) {
-                    input.Text = "Enter expression (use \"x\" for current field value)";
-                    input.Input = "expression";
+                    InputBox input = new InputBox {
+                        Text = "Enter expression (use \"x\" for current field value)",
+                        Input = "expression"
+                    };
                     if (input.ShowDialog() == DialogResult.OK) {
-                        try {
-                            for(int rowIndex = 0; rowIndex < currentDataTable.Rows.Count; rowIndex++) {
-                                string fieldValue = currentDataTable.Rows[rowIndex][fieldName].ToString();
-                                string expression = input.Input.Replace("x", fieldValue);
-                                string result = currentDataTable.Compute(expression, "").ToString();
-                                currentDataTable.Rows[rowIndex][fieldName] = result;
-                            }
-                        } catch (Exception e) {
-                            MessageBox.Show(string.Format("Failed to apply expression: {0}", e));
+                        for (int rowIndex = 0; rowIndex < currentDataTable.Rows.Count; rowIndex++) {
+                            string fieldValue = Convert.ToString(currentDataTable.Rows[rowIndex][fieldName], CultureInfo.InvariantCulture);
+                            string expression = input.Input.Replace("x", fieldValue);
+                            string result = currentDataTable.Compute(expression, "").ToString();
+                            currentDataTable.Rows[rowIndex][fieldName] = result;
                         }
                     }
                 }
+            } catch (Exception e) {
+                MessageBox.Show(string.Format("Failed to apply expression: {0}", e));
             }
         }
         #endregion
