@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Common;
@@ -11,40 +12,72 @@ namespace DbSql {
     class MainClass {
 
         public static void Main(string[] args) {
-            SqlCommand command = null;
-            PackFile pack = null;
-            string sql = null;
+            Script script = new Script();
             foreach(string arg in args) {
                 if (arg.StartsWith("-p")) {
-                    pack = new PackFileCodec().Open(arg.Substring(2));
+                    script.Pack = new PackFileCodec().Open(arg.Substring(2));
                 } else if (arg.StartsWith("-tm")) {
-                    DBTypeMap.Instance.initializeFromFile(arg.Substring(3));
+                    script.TypeMapFile = arg.Substring(3);
                 } else if (arg.StartsWith("-s")) {
-                    sql = arg.Substring(2);
-                    if (SelectCommand.SELECT_RE.IsMatch(sql)) {
-                        command = new SelectCommand(sql);
-                    } else if (InsertCommand.INSERT_RE.IsMatch(sql)) {
-                        command = new InsertCommand(sql) {
-                            ToSave = pack
-                        };
-                    } else if (UpdateCommand.UPDATE_RE.IsMatch(sql)) {
-                        command = new UpdateCommand(sql) {
-                            ToSave = pack
-                        };
-                    } else if (DeleteCommand.DELETE_RE.IsMatch(sql)) {
-                        command = new DeleteCommand(sql) {
-                            ToSave = pack
-                        };
-                    } else if (HelpCommand.HELP_RE.IsMatch(sql)) {
-                        command = new HelpCommand(sql);
+                    script.ExecuteLine(arg.Substring(2));
+                } else if (arg.StartsWith("-f")) {
+                    string file = arg.Substring(2);
+                    foreach(string line in File.ReadLines(file)) {
+                        script.ExecuteLine(line);
                     }
                 }
             }
-            if (pack != null && command != null) {
-                command.PackedFiles = pack;
+        }
+    }
+    
+    public class Script {
+        public PackFile Pack { 
+            get; 
+            set; 
+        }
+        public string TypeMapFile {
+            set {
+                DBTypeMap.Instance.initializeFromFile(value);
+            }
+        }
+        public void ExecuteLine(string line) {
+            if (line.StartsWith("pack")) {
+                Pack = new PackFileCodec().Open(line.Substring(5));
+            } else if (line.StartsWith("schema")) {
+                TypeMapFile = line.Substring(7);
+            } else {
+                SqlCommand command = ParseCommand(line);
                 command.Execute();
                 command.Commit();
             }
+        }
+        public SqlCommand ParseCommand(string sql) {
+            SqlCommand command = null;
+            if (SelectCommand.SELECT_RE.IsMatch(sql)) {
+                command = new SelectCommand(sql) {
+                    PackedFiles = Pack
+                };
+            } else if (InsertCommand.INSERT_RE.IsMatch(sql)) {
+                command = new InsertCommand(sql) {
+                    ToSave = Pack,
+                    PackedFiles = Pack
+                };
+            } else if (UpdateCommand.UPDATE_RE.IsMatch(sql)) {
+                command = new UpdateCommand(sql) {
+                    ToSave = Pack,
+                    PackedFiles = Pack
+                };
+            } else if (DeleteCommand.DELETE_RE.IsMatch(sql)) {
+                command = new DeleteCommand(sql) {
+                    ToSave = Pack,
+                    PackedFiles = Pack
+                };
+            } else if (HelpCommand.HELP_RE.IsMatch(sql)) {
+                command = new HelpCommand(sql) {
+                    PackedFiles = Pack
+                };
+            }
+            return command;
         }
     }
     
