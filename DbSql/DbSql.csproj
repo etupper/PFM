@@ -42,6 +42,9 @@
     <Compile Include="UpdateCommand.cs" />
     <Compile Include="DeleteCommand.cs" />
     <Compile Include="HelpCommand.cs" />
+    <Compile Include="SqlCommand.cs" />
+    <Compile Include="AddTableCommand.cs" />
+    <Compile Include="DeleteTableCommand.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

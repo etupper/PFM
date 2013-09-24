@@ -12,12 +12,10 @@ namespace DbSql {
      */
     public class DeleteCommand : SqlCommand {
         // format of this command
-        public static Regex DELETE_RE = new Regex("delete from (.*)( where .*)", RegexOptions.RightToLeft);
+        public static Regex DELETE_RE = new Regex("delete from (.*)(? where .*)", RegexOptions.RightToLeft);
         
         // the where clause
         private WhereClause whereClause;
-        // the pack file to store upon commit
-        public PackFile ToSave { get; set; }
   
         /*
          * Create delete command from given string.
@@ -52,8 +50,8 @@ namespace DbSql {
          * If the ToSave pack file was set, store its data.
          */
         public override void Commit() {
-            if (ToSave != null) {
-                new PackFileCodec().Save(ToSave);
+            if (SaveTo != null) {
+                new PackFileCodec().Save(SaveTo);
             }
         }
     }

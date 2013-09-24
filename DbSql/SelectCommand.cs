@@ -6,19 +6,23 @@ using System.Text.RegularExpressions;
 
 namespace DbSql {
     using QueryResult = List<FieldInstance>;
+    using RowValues = List<string>;
+    
     /*
      * Retrieve data from a table; can include a where clause to limit the rows to output.
      */
-    public class SelectCommand : FieldCommand {
+    public class SelectCommand : FieldCommand, IValueSource {
         // form of the select statement
         public static Regex SELECT_RE = new Regex("select (.*) from (.*)( *where .*)?", RegexOptions.RightToLeft);
         
         private WhereClause whereClause;
+        public List<RowValues> Values { get; private set; }
   
         /*
          * Parse given string to create select command.
          */
         public SelectCommand(string toParse) {
+            Values = new List<RowValues>();
             Match match = SELECT_RE.Match(toParse);
             ParseFields (match.Groups[1].Value);
             ParseTables (match.Groups[2].Value);
@@ -39,22 +43,32 @@ namespace DbSql {
                     if (whereClause != null && !whereClause.Accept(row)) {
                         continue;
                     }
+                    RowValues fieldValues = new RowValues();
                     if (AllFields) {
                         result.Add(row);
+                        row.ForEach(v => { fieldValues.Add(v.Value); });
                     } else {
                         QueryResult rowResult = new QueryResult();
                         foreach(FieldInstance instance in row) {
                             if (Fields.Contains(instance.Info.Name)) {
                                 rowResult.Add(instance);
+                                fieldValues.Add(instance.Value);
                             }
                         }
                         result.Add(rowResult);
                     }
+                    Values.Add(fieldValues);
                 }
             }
-            foreach(QueryResult r in result) {
+        }
+        
+        /*
+         * Commit outputs all retrieved data on the console.
+         */
+        public override void Commit() {
+            Values.ForEach(r => {
                 Console.WriteLine(string.Join(",", r));
-            }
+            });
         }
     }
 }

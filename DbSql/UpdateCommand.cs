@@ -16,7 +16,6 @@ namespace DbSql {
         private WhereClause whereClause;
         
         List<string> assignedValues = new List<string>();
-        public PackFile ToSave { get; set; }
   
         /*
          * Parse the given string to create an update command.
@@ -26,8 +25,8 @@ namespace DbSql {
             ParseTables(m.Groups[1].Value);
             foreach(string fieldAssignment in m.Groups[2].Value.Split(',')) {
                 string[] assignment = fieldAssignment.Split('=');
-                Fields.Add(assignment[0]);
-                assignedValues.Add(assignment[1]);
+                Fields.Add(assignment[0].Trim());
+                assignedValues.Add(assignment[1].Trim());
             }
             if (m.Groups.Count > 3) {
                 whereClause = new WhereClause(m.Groups[3].Value);
@@ -55,8 +54,8 @@ namespace DbSql {
          * Save the pack file if one was set.
          */
         public override void Commit() {
-            if (ToSave != null) {
-                new PackFileCodec().Save(ToSave);
+            if (SaveTo != null) {
+                new PackFileCodec().Save(SaveTo);
             }
         }
         /*
