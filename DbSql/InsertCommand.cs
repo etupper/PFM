@@ -26,10 +26,11 @@ namespace DbSql {
             }
             set {
                 base.PackedFiles = value;
+                // if we have a select statement as our value provider,
+                // update its source pack too
                 SelectCommand selectCommand = Source as SelectCommand;
                 if (selectCommand != null) {
                     selectCommand.PackedFiles = value;
-                    selectCommand.Execute();
                 }
             }
         }
@@ -52,48 +53,59 @@ namespace DbSql {
          */
         public override void Execute() {
             // insert always into packed files at the save to file
-            PackedFiles = SaveTo;
             foreach(PackedFile packed in PackedFiles) {
-                DBFile file = PackedFileDbCodec.Decode(packed);
+                // we'll read from packed, but that is in the source pack;
+                // get or create the db file in the target pack
+                DBFile targetFile = GetTargetFile (packed);
                 foreach(RowValues insertValues in Source.Values) {
-                    if (file.CurrentType.Fields.Count == insertValues.Count) {
-                        List<FieldInstance> newRow = file.GetNewEntry();
+                    if (targetFile.CurrentType.Fields.Count == insertValues.Count) {
+                        List<FieldInstance> newRow = targetFile.GetNewEntry();
                         for (int i = 0; i < newRow.Count; i++) {
                             newRow[i].Value = insertValues[i];
                         }
-                        file.Entries.Add (newRow);
-                        packed.Data = PackedFileDbCodec.GetCodec(packed).Encode(file);
+                        targetFile.Entries.Add (newRow);
                     } else {
                         Console.WriteLine("Cannot insert: was given {0} values, expecting {1} in {2}", 
-                                          insertValues.Count, file.CurrentType.Fields.Count, packed.FullPath);
+                                          insertValues.Count, targetFile.CurrentType.Fields.Count, packed.FullPath);
                         Console.WriteLine("Values: {0}", string.Join(",", insertValues));
                     }
                 }
+                // encode and store in target pack
+                PackedFile newPacked = new PackedFile(packed.FullPath, false);
+                newPacked.Data = PackedFileDbCodec.GetCodec(newPacked).Encode(targetFile);
+                SaveTo.Add(newPacked, true);
             }
         }
-
+  
         /*
-         * Save the pack file.
+         * Open or create db file in the target pack file.
          */
-        public override void Commit() {
-            if (SaveTo != null) {
-                Console.WriteLine("committing {0}", SaveTo.Filepath);
-                foreach(PackedFile packed in PackedFiles) {
-                    SaveTo.Add(packed, true);
-                }
-                new PackFileCodec().Save(SaveTo);
+        DBFile GetTargetFile(PackedFile packed) {
+            DBFile targetFile = null;
+            PackedFile existingPack = SaveTo[packed.FullPath];
+            if (existingPack != null) {
+                targetFile = PackedFileDbCodec.Decode(existingPack);
             }
+            if (targetFile == null) {
+                DBFile file = PackedFileDbCodec.Decode(packed);
+                targetFile = new DBFile(file.Header, file.CurrentType);
+            }
+            return targetFile;
         }
         
+        /*
+         * Create a value source from the given string (single row fixed values
+         * or select command providing the data).
+         */
         IValueSource ParseValueSource(string toParse) {
             IValueSource source = null;
             if (FixedValues.VALUES_RE.IsMatch(toParse)) {
                 source = new FixedValues(toParse);
             } else if (SelectCommand.SELECT_RE.IsMatch(toParse)) {
                 SelectCommand selectCommand = new SelectCommand(toParse) {
-                    PackedFiles = this.PackedFiles
+                    PackedFiles = this.PackedFiles,
+                    Silent = true
                 };
-                selectCommand.Execute();
                 source = selectCommand;
             }
             return source;

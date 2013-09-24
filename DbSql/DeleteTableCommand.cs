@@ -16,12 +16,6 @@ namespace DbSql {
                 packed.Deleted = true;
             }
         }
-        
-        public override void Commit() {
-            if (SaveTo != null) {
-                new PackFileCodec().Save(SaveTo);
-            }
-        }
     }
 }
 

@@ -77,7 +77,6 @@ namespace DbSql {
             }
         }
         public void Commit() {
-            commands.ForEach(c => c.Commit());
             if (TargetPack != null) {
                 new PackFileCodec().Save(TargetPack);
             }
