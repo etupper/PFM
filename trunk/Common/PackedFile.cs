@@ -146,10 +146,14 @@ namespace Common {
 
         #region Constructors
         public PackedFile() { }
-        public PackedFile(string filename) {
+        public PackedFile(string filename, bool fileSource = true) {
             fullPath = filename;
             Name = Path.GetFileName(filename);
-            Source = new FileSystemSource(filename);
+            if (fileSource) {
+                Source = new FileSystemSource(filename);
+            } else {
+                Source = new MemorySource(new byte[0]);
+            }
             Modified = false;
             EditTime = File.GetLastWriteTime(filename);
         }
