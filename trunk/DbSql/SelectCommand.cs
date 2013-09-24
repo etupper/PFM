@@ -15,14 +15,33 @@ namespace DbSql {
         // form of the select statement
         public static Regex SELECT_RE = new Regex("select (.*) from (.*)( *where .*)?", RegexOptions.RightToLeft);
         
+        public bool Silent { get; set; }
+        
         private WhereClause whereClause;
-        public List<RowValues> Values { get; private set; }
+        private List<RowValues> values = null;
+        public List<RowValues> Values { 
+            get {
+                if (values == null) {
+                    Execute();
+                }
+                return values;
+            }
+        }
+        
+        public override IEnumerable<PackedFile> PackedFiles {
+            protected get {
+                return base.PackedFiles;
+            }
+            set {
+                base.PackedFiles = value;
+                values = null;
+            }
+        }
   
         /*
          * Parse given string to create select command.
          */
         public SelectCommand(string toParse) {
-            Values = new List<RowValues>();
             Match match = SELECT_RE.Match(toParse);
             ParseFields (match.Groups[1].Value);
             ParseTables (match.Groups[2].Value);
@@ -36,8 +55,8 @@ namespace DbSql {
          * or from all rows if none was given.
          */
         public override void Execute() {
-            // Console.WriteLine("selecting {0} from {1}", string.Join(",", Fields), string.Join(",", tables));
             List<QueryResult> result = new List<QueryResult>();
+            values = new List<RowValues>();
             foreach(DBFile db in DbFiles) {
                 foreach(QueryResult row in db.Entries) {
                     if (whereClause != null && !whereClause.Accept(row)) {
@@ -57,18 +76,17 @@ namespace DbSql {
                         }
                         result.Add(rowResult);
                     }
-                    Values.Add(fieldValues);
+                    values.Add(fieldValues);
                 }
             }
-        }
-        
-        /*
-         * Commit outputs all retrieved data on the console.
-         */
-        public override void Commit() {
-            Values.ForEach(r => {
-                Console.WriteLine(string.Join(",", r));
-            });
+#if DEBUG
+            Console.WriteLine("{0} lines selected", values.Count);
+#endif
+            if (!Silent) {
+                Values.ForEach(r => {
+                    Console.WriteLine(string.Join(",", r));
+                });
+            }
         }
     }
 }

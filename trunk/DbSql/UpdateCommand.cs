@@ -51,14 +51,6 @@ namespace DbSql {
             }
         }
         /*
-         * Save the pack file if one was set.
-         */
-        public override void Commit() {
-            if (SaveTo != null) {
-                new PackFileCodec().Save(SaveTo);
-            }
-        }
-        /*
          * Set the given values to the appropriate fields for the given list.
          */
         private void AdjustValues(List<FieldInstance> fields) {
