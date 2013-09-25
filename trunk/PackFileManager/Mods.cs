@@ -149,6 +149,10 @@ namespace PackFileManager {
         }
   
         #region Add, Deletion, Change of Mods
+        /*
+         * Query user for new mod name and its directory; then opens existing mod pack there
+         * or lets user import initial data from a game pack.
+         */
         public string AddMod() {
             string result = null;
             InputBox box = new InputBox { Text = "Enter Mod Name:", Input = "my_mod" };
@@ -167,27 +171,45 @@ namespace PackFileManager {
                     result = Path.Combine(mod.BaseDirectory, string.Format("{0}.pack", modName));
                     if (Directory.Exists(mod.BaseDirectory) && !File.Exists(result)) {
                         PackFile newFile = new PackFile(result, new PFHeader(GameManager.Instance.CurrentGame.DefaultPfhType));
+                        ImportDataFromGame(newFile);
                         new PackFileCodec().WriteToFile(result, newFile);
                     }
      
                     mod.Game = GameManager.Instance.CurrentGame;
                     AddMod(mod);
-
-                    // open existing CA pack or create new pack
-                    string shogunPath = GameManager.Instance.CurrentGame.GameDirectory;
-                    if (shogunPath != null && Directory.Exists(shogunPath)) {
-                        OpenFileDialog packOpenFileDialog = new OpenFileDialog {
-                            InitialDirectory = Path.Combine(shogunPath, "data"),
-                            Filter = IOFunctions.PACKAGE_FILTER,
-                            Title = "Open pack to extract basic data from"
-                        };
-                        if (packOpenFileDialog.ShowDialog() == DialogResult.OK) {
-                            result = packOpenFileDialog.FileName;
-                        }
-                    }
                 }
             }
             return result;
+        }
+        /*
+         * Query user for a pack to open to import data from, then open pack browser to
+         * let user select the packed files he wants to start off with.
+         * Selected packed files will be added to given pack.
+         */
+        private void ImportDataFromGame(PackFile newFile) {
+            // open existing CA pack or create new pack
+            string gamePath = GameManager.Instance.CurrentGame.GameDirectory;
+            if (gamePath != null && Directory.Exists(gamePath)) {
+                OpenFileDialog packOpenFileDialog = new OpenFileDialog {
+                    InitialDirectory = Path.Combine(gamePath, "data"),
+                    Filter = IOFunctions.PACKAGE_FILTER,
+                    Title = "Open pack to extract basic data from"
+                };
+                if (packOpenFileDialog.ShowDialog() == DialogResult.OK) {
+                    try {
+                        PackBrowseDialog browser = new PackBrowseDialog {
+                            PackFile = new PackFileCodec().Open(packOpenFileDialog.FileName)
+                        };
+                        if (browser.ShowDialog() == DialogResult.OK) {
+                            foreach(PackedFile packed in browser.SelectedFiles) {
+                                newFile.Add(packed, false);
+                            }
+                        }
+                    } catch (Exception e) {
+                        MessageBox.Show(string.Format("Failed to import data: {0}", e));
+                    }
+                }
+            }
         }
         public void AddMod(Mod mod) {
             mods.Add(mod);
