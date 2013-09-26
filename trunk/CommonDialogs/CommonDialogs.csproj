@@ -40,6 +40,9 @@
     <Compile Include="DirectoryDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="FileAlreadyExistsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="InputBox.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -11,6 +11,7 @@ using System.IO;
 using System.Globalization;
 using System.Windows.Forms;
 using CommonDialogs;
+using CommonUtilities;
 
 namespace PackFileManager {
     public partial class DBFileEditorControl : UserControl, IPackedFileEditor {

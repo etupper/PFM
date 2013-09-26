@@ -1,4 +1,4 @@
-﻿namespace PackFileManager
+﻿namespace CommonDialogs
 {
     using System;
     using System.ComponentModel;

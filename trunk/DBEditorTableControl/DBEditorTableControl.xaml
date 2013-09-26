@@ -1,0 +1,163 @@
+﻿<UserControl x:Class="DBTableControl.DBEditorTableControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DBTableControl"
+             mc:Ignorable="d" MinHeight="300" MinWidth="780" Name="TableControl" >
+    <UserControl.Resources>
+        <local:BackgroundConverter x:Key="BackgroundConverter" />
+        <local:BoolConverter x:Key="BooleanFlipConverter" />
+        
+        <Style x:Key="GridCellStyle" TargetType="{x:Type DataGridCell}">
+            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="dbDataGridCell_PreviewMouseLeftButtonDown" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Background">
+                <Setter.Value>
+                    <MultiBinding Converter="{StaticResource BackgroundConverter}" >
+                        <MultiBinding.Bindings>
+                            <Binding RelativeSource="{RelativeSource Self}" />
+                            <Binding Path="Row" />
+                        </MultiBinding.Bindings>
+                    </MultiBinding>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Padding" Value="4,3" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridCell}">
+                        <Border Padding="{TemplateBinding Padding}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                Background="{TemplateBinding Background}" 
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="LightBlue" />
+                    <Setter Property="Foreground" Value="Black" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <ContextMenu x:Key="ColumnHeaderContextMenu" Opened="ColumnHeaderContextMenu_Opened">
+            <MenuItem Header="Select Column" Click="SelectColumnMenuItem_Click" />
+            <MenuItem Header="Remove Sorting" Click="RemoveSortingMenuItem_Click" />
+            <Separator/>
+            <MenuItem Header="Apply Expression" Click="ColumnApplyExpressionMenuItem_Click" />
+            <MenuItem Header="Renumber Cells" Click="RenumberMenuItem_Click" />
+            <Separator/>
+            <MenuItem Header="Hide Column" Click="HideColumnMenuItem_Click"/>
+            <MenuItem Header="Edit Visible List" Click="EditVisibleListMenuItem_Click" />
+            <MenuItem Header="Clear Table Hidden Columns" Click="ClearTableHiddenMenuItem_Click" />
+            <MenuItem Header="Clear All Hidden Columns" Click="ClearAllHiddenMenuItem_Click" />
+        </ContextMenu>
+        <Style x:Key="GridHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="ContextMenu" Value="{StaticResource ColumnHeaderContextMenu}" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+        
+        <Style x:Key="RowHeaderStyle" TargetType="{x:Type DataGridRowHeader}">
+            <Setter Property="HorizontalContentAlignment" Value="Right" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+        
+        <DataTemplate x:Key="MyRowHeaderTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="38"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGridRowHeader}}, Path=Content}" 
+                           HorizontalAlignment="Right" Grid.Column="0"/>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+    
+    <Grid>
+        <DockPanel Name="dbcontrolDockPanel" >
+            <ToolBar Name="dbeditControlToobar" DockPanel.Dock="Top" Background="Transparent">
+                <Button Name="addRowButton" Content="Add Row" Padding="3,4" Click="AddRowButton_Clicked" IsEnabled="{Binding TableReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}" />
+                <Button Name="cloneRowButton" Content="Clone Row(s)" Padding="3,4" Click="CloneRowButton_Clicked" IsEnabled="{Binding TableReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}" />
+                <Button Name="copyButton" Content="Copy" Padding="3,4" Command="Copy" />
+                <Button Name="pasteButton" Content="Paste" Padding="3,4" Command="Paste" />
+                <Separator Margin="3,0,3,0" />
+                <Button Name="exportAsButton" Content="Export As" Padding="3,4" Click="ExportAsButton_Clicked">
+                    <Button.ContextMenu>
+                        <ContextMenu x:Name="ExportContextMenu">
+                            <MenuItem Header="TSV" Click="ExportTSVMenuItem_Click" />
+                            <MenuItem Header="CSV" Click="ExportCSVMenuItem_Click" />
+                            <MenuItem Header="Binary" Click="ExportBinaryMenuItem_Click" />
+                            <MenuItem Header="CA Xml" Click="ExportCAXmlMenuItem_Click" Visibility="Collapsed" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+                <Button Name="importFromButton" Content="Import From" Padding="3,4" Click="ImportFromButton_Clicked" IsEnabled="{Binding TableReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}" >
+                    <Button.ContextMenu>
+                        <ContextMenu x:Name="ImportContextMenu">
+                            <MenuItem Header="TSV" Click="ImportTSVMenuItem_Click" />
+                            <MenuItem Header="CSV" Click="ImportCSVMenuItem_Click" />
+                            <MenuItem Header="Binary" Click="ImportBinaryMenuItem_Click" />
+                            <MenuItem Header="CA Xml" Click="ImportCAXmlMenuItem_Click" Visibility="Collapsed" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+                <Separator Margin="3,0,0,0" />
+                <StackPanel Name="freezeStackPanel" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                    <CheckBox Name="freezeKeysCheckBox" 
+                              Content="Freeze Key Columns" 
+                              IsChecked="{Binding ElementName=TableControl, Path=FreezeKeyColumns}" 
+                              VerticalAlignment="Center" 
+                              Margin="30,0,0,0" />
+                </StackPanel>
+                <StackPanel Name="useComboBoxesStackPanel" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                    <CheckBox Name="useComboBoxesCheckBox" 
+                              Content="Use Combo Boxes" 
+                              IsChecked="{Binding ElementName=TableControl, Path=UseComboBoxes}" 
+                              VerticalAlignment="Center" 
+                              Margin="20,0,0,0" />
+                </StackPanel>
+                <StackPanel Name="showAllColumnsStackPanel" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                    <CheckBox Name="showAllColumnsCheckBox" 
+                              Content="Show All Columns" 
+                              IsChecked="{Binding ElementName=TableControl, Path=ShowAllColumns}" 
+                              VerticalAlignment="Center" 
+                              Margin="20,0,0,0" />
+                </StackPanel>
+            </ToolBar>
+            <DataGrid Name="dbDataGrid"
+                      AutoGenerateColumns="False"
+                      DockPanel.Dock="Bottom"
+                      ItemsSource="{Binding Path=CurrentTable.DefaultView, ElementName=TableControl, UpdateSourceTrigger=PropertyChanged}"
+                      FrozenColumnCount="{Binding NumKeyColumns, ElementName=TableControl}"
+                      CellStyle="{StaticResource GridCellStyle}"
+                      SelectionUnit="CellOrRowHeader"
+                      SelectionMode="Extended"
+                      RowHeaderWidth="50"
+                      RowHeaderStyle="{StaticResource RowHeaderStyle}"
+                      RowHeaderTemplate="{StaticResource MyRowHeaderTemplate}"
+                      VirtualizingStackPanel.IsVirtualizing="True"
+                      VirtualizingStackPanel.VirtualizationMode="Recycling"
+                      EnableColumnVirtualization="True"
+                      Background="#FFAAAAAA"
+                      CanUserResizeRows="False"
+                      CanUserAddRows="{Binding TableReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}"
+                      CanUserReorderColumns="False"
+                      CellEditEnding="dbDataGrid_CellEditEnding"
+                      PreviewMouseLeftButtonDown="dbDataGrid_PreviewMouseLeftButtonDown"
+                      SelectionChanged="dbDataGrid_SelectionChanged"
+                      LoadingRow="dbDataGrid_LoadingRow">
+            </DataGrid>
+        </DockPanel>
+        <TextBox Name="unsupportedDBErrorTextBox" 
+                     Visibility="Hidden" 
+                     HorizontalAlignment="Center" 
+                     VerticalAlignment="Center"
+                     Text="Testing"
+                     DockPanel.Dock="Bottom" />
+    </Grid>
+</UserControl>

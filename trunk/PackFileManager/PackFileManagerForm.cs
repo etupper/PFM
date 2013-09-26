@@ -9,6 +9,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -46,6 +47,7 @@ namespace PackFileManager
         DBFileUpdate dbUpdater = new DBFileUpdate();
         
         #region Editors
+
         private readonly DBFileEditorControl dbFileEditorControl = new DBFileEditorControl {
             Dock = DockStyle.Fill
         };
@@ -53,28 +55,34 @@ namespace PackFileManager
             Dock = DockStyle.Fill };
         ExternalEditor externalEditor = new ExternalEditor();
 
-        private IPackedFileEditor[] editors;
-        private IPackedFileEditor[] Editors {
-            get { return editors; }
-        }
-
-        private IPackedFileEditor[] CreateEditors() {
-            return new IPackedFileEditor[] {
+        private void CreateEditors()
+        {  
 #if __MonoCS__
 #else
-                    // relies on win32 dll, so can't use it on Linux
-                    new AtlasFileEditorControl { Dock = DockStyle.Fill },
+            // relies on win32 dll, so can't use it on Linux
+            PackedFileEditorRegistry.Editors.Add(new AtlasFileEditorControl { Dock = DockStyle.Fill });
+            try
+            {
+                Assembly dbeAssembly = Assembly.LoadFrom("DBEditorTableControl.dll");
+                Type dbeType = dbeAssembly.GetType("DBTableControl.DBEditorTableControl");
+                MethodInfo registerMethodInfo = dbeType.GetMethod("RegisterDbEditor", BindingFlags.Public | BindingFlags.Static);
+                registerMethodInfo.Invoke(null, null);
+            }
+            catch (Exception e)
+            {
+                // PackedFileEditorRegistry.Editors.Add(dbTableEditorControl);
+                MessageBox.Show(string.Format("failed to load dbe: {0}", e.Message));
+            }
 #endif
-                new ImageViewerControl { Dock = DockStyle.Fill },
-                new LocFileEditorControl { Dock = DockStyle.Fill },
-                new GroupformationEditor { Dock = DockStyle.Fill },
-                new UnitVariantFileEditorControl { Dock = DockStyle.Fill },
-                new PackedEsfEditor { Dock = DockStyle.Fill },
-                dbFileEditorControl,
-                new DBFileEditorTree { Dock = DockStyle.Fill },
-                // new ReadmeEditorControl { Dock = DockStyle.Fill },
-                textFileEditorControl
-            };
+            PackedFileEditorRegistry.Editors.Add(dbFileEditorControl);
+            PackedFileEditorRegistry.Editors.Add(new ImageViewerControl { Dock = DockStyle.Fill });
+            PackedFileEditorRegistry.Editors.Add(new LocFileEditorControl { Dock = DockStyle.Fill });
+            PackedFileEditorRegistry.Editors.Add(new GroupformationEditor { Dock = DockStyle.Fill });
+            PackedFileEditorRegistry.Editors.Add(new UnitVariantFileEditorControl { Dock = DockStyle.Fill });
+            PackedFileEditorRegistry.Editors.Add(new PackedEsfEditor { Dock = DockStyle.Fill });
+            PackedFileEditorRegistry.Editors.Add(new DBFileEditorTree { Dock = DockStyle.Fill });
+            // new ReadmeEditorControl { Dock = DockStyle.Fill });
+            PackedFileEditorRegistry.Editors.Add(textFileEditorControl);
         }
         #endregion
 
@@ -83,7 +91,7 @@ namespace PackFileManager
 
             InitializeComponent();
 
-            editors = CreateEditors();
+            CreateEditors();
             dbUpdater.DetermineGuid = QueryGuid;
 
             try {
@@ -865,7 +873,7 @@ namespace PackFileManager
             packStatusLabel.Text = String.Format("Viewing {0} ({1})", packedFile.Name, sourceInfo);
 
             IPackedFileEditor editor = null;
-            foreach(IPackedFileEditor e in Editors) {
+            foreach(IPackedFileEditor e in PackedFileEditorRegistry.Editors) {
                 if (e.CanEdit(packedFile)) {
                     editor = e;
                     break;
@@ -879,8 +887,8 @@ namespace PackFileManager
             if (editor != null) {
                 try {
                     editor.CurrentPackedFile = packedFile;
-                    if (!splitContainer1.Panel2.Controls.Contains(editor as UserControl)) {
-                        splitContainer1.Panel2.Controls.Add(editor as UserControl);
+                    if (!splitContainer1.Panel2.Controls.Contains(editor as Control)) {
+                        splitContainer1.Panel2.Controls.Add(editor as Control);
                     }
                 } catch (Exception ex) {
                     MessageBox.Show(string.Format("Failed to open {0}: {1}", Path.GetFileName(packedFile.FullPath), ex));
@@ -889,7 +897,7 @@ namespace PackFileManager
         }
 
         private void CloseEditors() {
-            foreach(IPackedFileEditor editor in Editors) {
+            foreach(IPackedFileEditor editor in PackedFileEditorRegistry.Editors) {
                 editor.Commit();
             }
 
@@ -1041,9 +1049,12 @@ namespace PackFileManager
         }
 
         private void updateCurrentToolStripMenuItem_Click(object sender, EventArgs e) {
+#if __MonoCS__
             if (dbFileEditorControl.CurrentPackedFile != null) {
                 UpdatePackedFile(dbFileEditorControl.CurrentPackedFile);
             }
+#else
+#endif
         }
 
         private void reloadToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -1090,9 +1101,13 @@ namespace PackFileManager
         private void UpdatePackedFile(PackedFile packedFile) {
             try {
                 dbUpdater.UpdatePackedFile(packedFile);
+#if __MonoCS__
                 if (dbFileEditorControl.CurrentPackedFile == packedFile) {
                     dbFileEditorControl.Open();
                 }
+#else
+                // Any need to update new editors packed file?
+#endif
             } catch (Exception x) {
                 MessageBox.Show(string.Format("Could not update {0}: {1}", Path.GetFileName(packedFile.FullPath), x.Message));
             }

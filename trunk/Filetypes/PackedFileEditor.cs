@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using Common;
-using Filetypes;
 
-namespace PackFileManager {
+namespace Filetypes {
     /*
      * An interface for classes able to edit a file type contained in a pack file.
      */
@@ -22,6 +21,18 @@ namespace PackFileManager {
 
         /* Write back changes after finished editing. */
         void Commit();
+    }
+
+    public class PackedFileEditorRegistry
+    {
+        static List<IPackedFileEditor> editors = new List<IPackedFileEditor>();
+        public static List<IPackedFileEditor> Editors
+        {
+            get
+            {
+                return editors;
+            }
+        }
     }
     
     /*

@@ -3,6 +3,7 @@ using System.IO;
 using Common;
 using System.Diagnostics;
 using System.Windows.Forms;
+using Filetypes;
 
 namespace PackFileManager {
     /*

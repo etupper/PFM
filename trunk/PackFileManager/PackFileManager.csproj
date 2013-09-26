@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
   <PropertyGroup>
     <ProjectType>local</ProjectType>
@@ -69,9 +69,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="DBFileTypesUpdater.cs" />
-    <Compile Include="Dialogs\FileAlreadyExistsDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Editors\AtlasFileEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -112,7 +109,6 @@
     <Compile Include="Editors\UnitVariantFileEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="FileExtraction.cs" />
     <Compile Include="Mods.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -121,9 +117,6 @@
     </Compile>
     <Compile Include="PackBrowseDialog.Designer.cs">
       <DependentUpon>PackBrowseDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PackedFileEditor.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PackFileManagerForm.cs">
       <SubType>Form</SubType>
@@ -287,5 +280,4 @@ copy "$(SolutionDir)Files\schema_models.xml" "$(TargetDir)"
 if exist "$(SolutionDir)PackFileTest\bin\schema_*" copy "$(SolutionDir)PackFileTest\bin\schema_*" "$(TargetDir)"
 </PreBuildEvent>
   </PropertyGroup>
-  <ItemGroup />
 </Project>
