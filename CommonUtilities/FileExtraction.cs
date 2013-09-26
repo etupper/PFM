@@ -6,10 +6,10 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using PackFileManager.Properties;
 using CommonDialogs;
 
-namespace PackFileManager {
+namespace CommonUtilities
+{
     /*
      * Class extracting a number of packed files, possibly processing them on the way.
      */
@@ -27,6 +27,13 @@ namespace PackFileManager {
         public FileExtractor(ToolStripStatusLabel l, ToolStripProgressBar b, string exportTo) {
             packStatusLabel = l;
             packActionProgressBar = b;
+            exportDirectory = exportTo;
+            Preprocessor = new IdentityPreprocessor();
+        }
+
+        // Constructor for new DBEditorTableControl
+        public FileExtractor(string exportTo)
+        {
             exportDirectory = exportTo;
             Preprocessor = new IdentityPreprocessor();
         }
@@ -198,7 +205,7 @@ namespace PackFileManager {
             return file.FullPath.StartsWith("db");
         }
         public string GetFileName(PackedFile path) {
-            return Settings.Default.TsvFile(path.FullPath);
+            return string.Format("{0}.tsv", path.FullPath);
         }
         public byte[] Process(PackedFile file) {
             byte[] result = file.Data;
@@ -219,7 +226,7 @@ namespace PackFileManager {
             return file.FullPath.EndsWith(".loc");
         }
         public string GetFileName(PackedFile path) {
-            return Settings.Default.TsvFile(path.FullPath);
+            return string.Format("{0}.tsv", path.FullPath);
         }
         public byte[] Process(PackedFile file) {
             byte[] result;

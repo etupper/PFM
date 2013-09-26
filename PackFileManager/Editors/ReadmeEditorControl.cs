@@ -8,6 +8,7 @@
     using System.Text;
     using System.Windows.Forms;
     using Common;
+    using Filetypes;
 
     public class ReadmeEditorControl : UserControl, IPackedFileEditor {
         private ToolStripButton addEntryButton;

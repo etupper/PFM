@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{32F411D6-4EB1-41EA-9071-FC4B3FB62E65}</ProjectGuid>
+    <ProjectGuid>{3B928C9E-A55F-4912-9880-FF134E68AFCA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CommonUtilities</RootNamespace>
-    <AssemblyName>CommonUtilities</AssemblyName>
+    <RootNamespace>DBEditorTableControl</RootNamespace>
+    <AssemblyName>DBEditorTableControl</AssemblyName>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -29,26 +29,67 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug Linux|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DbFileOptimizer.cs" />
-    <Compile Include="FileExtraction.cs" />
-    <Compile Include="PackedFileRenamer.cs" />
+    <Compile Include="ApplyExpressionWindow.xaml.cs">
+      <DependentUpon>ApplyExpressionWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DBEditorConverters.cs" />
+    <Compile Include="DBEditorTableControl.xaml.cs">
+      <DependentUpon>DBEditorTableControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DBTableEditorConfig.cs" />
+    <Compile Include="ErrorDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ErrorDialog.Designer.cs">
+      <DependentUpon>ErrorDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DBEditorTableHost.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="ApplyExpressionWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DBEditorTableControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CommonDialogs\CommonDialogs.csproj">
       <Project>{1B2FA4F4-C320-496F-9365-636D9180BE03}</Project>
       <Name>CommonDialogs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CommonUtilities\CommonUtilities.csproj">
+      <Project>{32F411D6-4EB1-41EA-9071-FC4B3FB62E65}</Project>
+      <Name>CommonUtilities</Name>
     </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{6D23F5FB-04D4-4D7E-BDFF-FCA718309298}</Project>
