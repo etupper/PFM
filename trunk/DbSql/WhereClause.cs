@@ -11,7 +11,7 @@ namespace DbSql {
      */
     public class WhereClause {
         // form  of the where clause
-        public static Regex WHERE_RE = new Regex("where (.*)");
+        public static Regex WHERE_RE = new Regex("where (.*)", RegexOptions.RightToLeft);
         
         Predicate<QueryResult> Accepts;
         
@@ -24,8 +24,10 @@ namespace DbSql {
                 Accepts = new OrWherePart(toParse).Accept;
             } else if (AndWherePart.AND_RE.IsMatch(toParse)) {
                 Accepts = new AndWherePart(toParse).Accept;
-            } else {
+            } else if (!string.IsNullOrEmpty(toParse)) {
                 Accepts = new FieldWherePart(toParse).Accept;
+            } else {
+                Accepts = r => { return true; };
             }
         }
         /*
@@ -40,7 +42,7 @@ namespace DbSql {
      */
     class OrWherePart {
         private List<Predicate<QueryResult>> parts = new List<Predicate<QueryResult>>();
-        public static Regex OR_RE = new Regex("or");
+        public static Regex OR_RE = new Regex(" or ");
         public OrWherePart(string toParse) {
             string[] split = OR_RE.Split(toParse);
             foreach(string part in split) {
@@ -67,7 +69,7 @@ namespace DbSql {
      */
     class AndWherePart {
         private List<Predicate<QueryResult>> parts = new List<Predicate<QueryResult>>();
-        public static Regex AND_RE = new Regex("and");
+        public static Regex AND_RE = new Regex(" and ");
         public AndWherePart(string toParse) {
             string[] split = AND_RE.Split(toParse);
             foreach(string part in split) {
@@ -91,7 +93,7 @@ namespace DbSql {
     class FieldWherePart {
         private string fieldName;
         private Predicate<string> valueMatches;
-        static Regex LIKE_RE = new Regex("like");
+        static Regex LIKE_RE = new Regex(" like ");
         public FieldWherePart(string toParse) {
             if (toParse.Contains("=")) {
                 string[] split = toParse.Split('=');

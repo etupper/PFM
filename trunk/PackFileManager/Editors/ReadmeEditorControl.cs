@@ -52,6 +52,17 @@
             this.nodeRowLinks = new Dictionary<TreeNode, DataRow>();
             this.nodeRowIndex = new Dictionary<TreeNode, int>();
         }
+        
+        bool readOnly = true;
+        public bool ReadOnly {
+            get {
+                return readOnly;
+            }
+            set {
+                readOnly = value;
+                textEditorBox.ReadOnly = !value;
+            }
+        }
 
         public bool CanEdit(PackedFile file) {
             return file.Name.Equals("readme.xml");

@@ -15,6 +15,11 @@ namespace Filetypes {
         PackedFile CurrentPackedFile {
             get; set;
         }
+        
+        bool ReadOnly {
+            get;
+            set;
+        }
 
         /* Query if this editor can edit the given packed file. */
         bool CanEdit(PackedFile file);
@@ -58,6 +63,16 @@ namespace Filetypes {
             codec = c;
         }
         
+        bool readOnly = true;
+        public virtual bool ReadOnly {
+            get {
+                return readOnly;
+            }
+            set {
+                readOnly = value;
+            }
+        }
+        
         // interface method to give the editor something to edit
         public virtual PackedFile CurrentPackedFile {
             set {
@@ -85,7 +100,7 @@ namespace Filetypes {
 
         // interface method to save to pack if data has changed in this editor
         public void Commit() {
-            if (DataChanged) {
+            if (DataChanged && !ReadOnly) {
                 SetData();
                 DataChanged = false;
             }

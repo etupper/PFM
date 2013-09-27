@@ -6,19 +6,19 @@ using System.Text.RegularExpressions;
 using Common;
 
 namespace Filetypes {
-	/*
-	 * A class parsing dbfiles from and to data streams in packed file format.
-	 */
+    /*
+     * A class parsing dbfiles from and to data streams in packed file format.
+     */
     public class PackedFileDbCodec : Codec<DBFile> {
         string typeName;
-		
+
         /*
          * Notification events.
          */
-		public delegate void EntryLoaded(FieldInfo info, string value);
-		public delegate void HeaderLoaded(DBFileHeader header);
-		public delegate void LoadingPackedFile(PackedFile packed);
-  
+        public delegate void EntryLoaded(FieldInfo info, string value);
+        public delegate void HeaderLoaded(DBFileHeader header);
+        public delegate void LoadingPackedFile(PackedFile packed);
+
         /*
          * If set to true (default), codec will add the GUID of a
          * successfully decoded db file to the list of GUIDs
@@ -26,12 +26,12 @@ namespace Filetypes {
          */
         public bool AutoadjustGuid { get; set; }
 
-		#region Internal
-		// header markers
-		static UInt32 GUID_MARKER = BitConverter.ToUInt32 (new byte[] { 0xFD, 0xFE, 0xFC, 0xFF}, 0);
-		static UInt32 VERSION_MARKER = BitConverter.ToUInt32 (new byte[] { 0xFC, 0xFD, 0xFE, 0xFF}, 0);
-		#endregion
-  
+        #region Internal
+        // header markers
+        static UInt32 GUID_MARKER = BitConverter.ToUInt32(new byte[] { 0xFD, 0xFE, 0xFC, 0xFF }, 0);
+        static UInt32 VERSION_MARKER = BitConverter.ToUInt32(new byte[] { 0xFC, 0xFD, 0xFE, 0xFF }, 0);
+        #endregion
+
         /*
          * Retrieve codec for the given PackedFile.
          */
@@ -59,15 +59,15 @@ namespace Filetypes {
             AutoadjustGuid = true;
         }
 
-		#region Read
-		/*
+        #region Read
+        /*
 		 * Reads a db file from stream, using the version information
 		 * contained in the header read from it.
 		 */
-		public DBFile Decode(Stream stream) {
-			BinaryReader reader = new BinaryReader (stream);
-			reader.BaseStream.Position = 0;
-			DBFileHeader header = readHeader (reader);
+        public DBFile Decode(Stream stream) {
+            BinaryReader reader = new BinaryReader(stream);
+            reader.BaseStream.Position = 0;
+            DBFileHeader header = readHeader(reader);
             List<TypeInfo> infos = DBTypeMap.Instance.GetVersionedInfos(typeName, header.Version);
             if (!string.IsNullOrEmpty(header.GUID)) {
                 List<FieldInfo> byGuid = DBTypeMap.Instance.GetInfoByGuid(header.GUID);
@@ -84,40 +84,40 @@ namespace Filetypes {
             if (infos.Count == 0) {
                 infos.AddRange(DBTypeMap.Instance.GetAllInfos(typeName));
             }
-            foreach(TypeInfo realInfo in infos) {
+            foreach (TypeInfo realInfo in infos) {
                 try {
 #if DEBUG
                     // Console.WriteLine("Parsing version {1} with info {0}", string.Join(",", realInfo.Fields), header.Version);
-#endif  
+#endif
                     DBFile result = ReadFile(reader, header, realInfo);
                     return result;
-                } catch (Exception) {}
+                } catch (Exception) { }
             }
             return null;
             // throw new DBFileNotSupportedException(string.Format("No applicable type definition found"));
-		}
+        }
         public DBFile ReadFile(BinaryReader reader, DBFileHeader header, TypeInfo info) {
             reader.BaseStream.Position = header.Length;
-            DBFile file = new DBFile (header, info);
+            DBFile file = new DBFile(header, info);
             int i = 0;
             while (reader.BaseStream.Position < reader.BaseStream.Length) {
                 try {
-                    file.Entries.Add (ReadFields (reader, info));
+                    file.Entries.Add(ReadFields(reader, info));
                     i++;
                 } catch (Exception x) {
-                    string message = string.Format ("{2} at entry {0}, db version {1}", i, file.Header.Version, x.Message);
-                    throw new DBFileNotSupportedException (message, x);
+                    string message = string.Format("{2} at entry {0}, db version {1}", i, file.Header.Version, x.Message);
+                    throw new DBFileNotSupportedException(message, x);
                 }
             }
             if (file.Entries.Count != header.EntryCount) {
-                throw new DBFileNotSupportedException (string.Format ("Expected {0} entries, got {1}", header.EntryCount, file.Entries.Count));
+                throw new DBFileNotSupportedException(string.Format("Expected {0} entries, got {1}", header.EntryCount, file.Entries.Count));
             }
             // auto-adjust header guid
             if (AutoadjustGuid && !info.ApplicableGuids.Contains(header.GUID)) {
 #if DEBUG
                 Console.WriteLine("adding guid {0} to valid guids for current info", header.GUID);
 #endif
-                info.ApplicableGuids.Add (header.GUID);
+                info.ApplicableGuids.Add(header.GUID);
             }
             return file;
         }
@@ -129,8 +129,8 @@ namespace Filetypes {
                 return Decode(stream);
             }
         }
-		#endregion
-  
+        #endregion
+
         /*
          * Query if given packed file can be deccoded.
          * Is not entirely reliable because it only reads the header and checks if a 
@@ -164,83 +164,83 @@ namespace Filetypes {
 
         #region Read Header
         public static DBFileHeader readHeader(PackedFile file) {
-            using (MemoryStream stream = new MemoryStream(file.Data, (int) 0, (int) file.Size)) {
+            using (MemoryStream stream = new MemoryStream(file.Data, (int)0, (int)file.Size)) {
                 return readHeader(stream);
             }
         }
-		public static DBFileHeader readHeader(Stream stream) {
-			return readHeader (new BinaryReader (stream));
-		}
+        public static DBFileHeader readHeader(Stream stream) {
+            return readHeader(new BinaryReader(stream));
+        }
         public static DBFileHeader readHeader(BinaryReader reader) {
-			byte index = reader.ReadByte ();
-			int version = 0;
-			string guid = "";
-			bool hasMarker = false;
-			uint entryCount = 0;
-			
-			try {
-				if (index != 1) {
-					// I don't think those can actually occur more than once per file
-					while (index == 0xFC || index == 0xFD) {
-						var bytes = new List<byte> (4);
-						bytes.Add (index);
-						bytes.AddRange (reader.ReadBytes (3));
-						UInt32 marker = BitConverter.ToUInt32 (bytes.ToArray (), 0);
-						if (marker == GUID_MARKER) {
-							guid = IOFunctions.ReadCAString (reader, Encoding.Unicode);
-							index = reader.ReadByte ();
-						} else if (marker == VERSION_MARKER) {
-							hasMarker = true;
-							version = reader.ReadInt32 ();
-							index = reader.ReadByte ();
-							// break;
-						} else {
-							throw new DBFileNotSupportedException (string.Format ("could not interpret {0}", marker));
-						}
-					}
-				}
-				entryCount = reader.ReadUInt32 ();
-			} catch {
-			}
-			DBFileHeader header = new DBFileHeader (guid, version, entryCount, hasMarker);
-			return header;
-		}
+            byte index = reader.ReadByte();
+            int version = 0;
+            string guid = "";
+            bool hasMarker = false;
+            uint entryCount = 0;
+
+            try {
+                if (index != 1) {
+                    // I don't think those can actually occur more than once per file
+                    while (index == 0xFC || index == 0xFD) {
+                        var bytes = new List<byte>(4);
+                        bytes.Add(index);
+                        bytes.AddRange(reader.ReadBytes(3));
+                        UInt32 marker = BitConverter.ToUInt32(bytes.ToArray(), 0);
+                        if (marker == GUID_MARKER) {
+                            guid = IOFunctions.ReadCAString(reader, Encoding.Unicode);
+                            index = reader.ReadByte();
+                        } else if (marker == VERSION_MARKER) {
+                            hasMarker = true;
+                            version = reader.ReadInt32();
+                            index = reader.ReadByte();
+                            // break;
+                        } else {
+                            throw new DBFileNotSupportedException(string.Format("could not interpret {0}", marker));
+                        }
+                    }
+                }
+                entryCount = reader.ReadUInt32();
+            } catch {
+            }
+            DBFileHeader header = new DBFileHeader(guid, version, entryCount, hasMarker);
+            return header;
+        }
         #endregion
 
         // creates a list of field values from the given type.
         // stream needs to be positioned at the beginning of the entry.
         private List<FieldInstance> ReadFields(BinaryReader reader, TypeInfo ttype, bool skipHeader = true) {
-			if (!skipHeader) {
-				readHeader (reader);
-			}
-			List<FieldInstance> entry = new List<FieldInstance> ();
-			for (int i = 0; i < ttype.Fields.Count; ++i) {
-				FieldInfo field = ttype.Fields [i];
+            if (!skipHeader) {
+                readHeader(reader);
+            }
+            List<FieldInstance> entry = new List<FieldInstance>();
+            for (int i = 0; i < ttype.Fields.Count; ++i) {
+                FieldInfo field = ttype.Fields[i];
 
                 FieldInstance instance = null;
-				try {
+                try {
                     instance = field.CreateInstance();
                     instance.Decode(reader);
-					entry.Add (instance);
-				} catch (Exception x) {
-					throw new InvalidDataException (string.Format 
+                    entry.Add(instance);
+                } catch (Exception x) {
+                    throw new InvalidDataException(string.Format
                         ("Failed to read field {0}/{1}, type {3} ({2})", i, ttype.Fields.Count, x.Message, instance.Info.TypeName));
-				}
-			}
-			return entry;
-		}
+                }
+            }
+            return entry;
+        }
 
         #region Write
         /*
          * Encodes db file to the given stream.
          */
         public void Encode(Stream stream, DBFile file) {
-			BinaryWriter writer = new BinaryWriter (stream);
-            file.Header.EntryCount = (uint) file.Entries.Count;
-			WriteHeader (writer, file.Header);
+            BinaryWriter writer = new BinaryWriter(stream);
+            file.Header.EntryCount = (uint)file.Entries.Count;
+            WriteHeader(writer, file.Header);
             file.Entries.ForEach(delegate(List<FieldInstance> e) { WriteEntry(writer, e); });
-			writer.Flush ();
-		}
+            writer.Flush();
+        }
         /*
          * Encode db file to memory and return it as a byte array.
          */
@@ -254,17 +254,17 @@ namespace Filetypes {
          * Writes the given header to the given writer.
          */
         public static void WriteHeader(BinaryWriter writer, DBFileHeader header) {
-			if (header.GUID != "") {
-				writer.Write (GUID_MARKER);
-				IOFunctions.WriteCAString (writer, header.GUID, Encoding.Unicode);
-			}
-			if (header.Version != 0) {
-				writer.Write (VERSION_MARKER);
-				writer.Write (header.Version);
-			}
-			writer.Write ((byte)1);
-			writer.Write (header.EntryCount);
-		}
+            if (header.GUID != "") {
+                writer.Write(GUID_MARKER);
+                IOFunctions.WriteCAString(writer, header.GUID, Encoding.Unicode);
+            }
+            if (header.Version != 0) {
+                writer.Write(VERSION_MARKER);
+                writer.Write(header.Version);
+            }
+            writer.Write((byte)1);
+            writer.Write(header.EntryCount);
+        }
         /*
          * Write the given entry to the given writer.
          */
@@ -279,11 +279,10 @@ namespace Filetypes {
                     throw x;
                 }
             }
-		}
 #else
-        fields.ForEach(delegate(FieldInstance field) { field.Encode(writer); } );
+            fields.ForEach(delegate(FieldInstance field) { field.Encode(writer); });
 #endif
+        }
         #endregion
     }
-	
 }

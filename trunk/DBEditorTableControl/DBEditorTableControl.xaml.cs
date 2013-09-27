@@ -178,11 +178,11 @@ namespace DBTableControl
             }
         }
 
-        bool tableReadOnly;
-        public bool TableReadOnly
+        bool readOnly;
+        public bool ReadOnly
         {
-            get { return tableReadOnly; }
-            set { tableReadOnly = value; NotifyPropertyChanged(this, "TableReadOnly"); }
+            get { return readOnly; }
+            set { readOnly = value; NotifyPropertyChanged(this, "TableReadOnly"); }
         }
 
         // PFM needed Properties
@@ -597,7 +597,7 @@ namespace DBTableControl
                 constructionColumn = new DataColumn(columnInfo.Name, GetTypeFromCode(columnInfo.TypeCode));
                 constructionColumn.AllowDBNull = columnInfo.Optional;
                 constructionColumn.Unique = false;
-                constructionColumn.ReadOnly = tableReadOnly;
+                constructionColumn.ReadOnly = readOnly;
 
                 // Save the FKey if it exists
                 if (!String.IsNullOrEmpty(columnInfo.ForeignReference))
@@ -1727,7 +1727,7 @@ namespace DBTableControl
 
             // Modify controls accordingly
             // Most controls useability are bound by TableReadOnly, so set it.
-            TableReadOnly = true;
+            ReadOnly = true;
             // Modify the remaining controls manually.
             exportAsButton.IsEnabled = false;
         }

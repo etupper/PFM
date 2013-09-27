@@ -128,15 +128,16 @@ namespace PackFileManager
             if (!"tsv".Equals(Settings.Default.TsvExtension) && !"csv".Equals(Settings.Default.TsvExtension)) {
                 Settings.Default.TsvExtension = "csv";
             }
-   
-            bootToolStripMenuItem.Tag = PackType.Boot;
-            bootXToolStripMenuItem.Tag = PackType.BootX;
-            releaseToolStripMenuItem.Tag = PackType.Release;
-            patchToolStripMenuItem.Tag = PackType.Patch;
-            movieToolStripMenuItem.Tag = PackType.Movie;
-            modToolStripMenuItem.Tag = PackType.Mod;
-            shaderToolStripMenuItem.Tag = PackType.Shader1;
-            shader2ToolStripMenuItem.Tag = PackType.Shader2;
+
+            foreach(PackType type in Enum.GetValues(typeof(PackType))) {
+                ToolStripMenuItem item = new ToolStripMenuItem(type.ToString()) {
+                    Tag = type,
+                    CheckOnClick = true,
+                    Name = string.Format("{0}ToolStripMenuItem", type.ToString().ToLower())
+                };
+                item.Click += PackTypeItemSelected;
+                changePackTypeToolStripMenuItem.DropDownItems.Add(item);
+            }
 
             InitializeBrowseDialogs (args);
 
@@ -438,6 +439,10 @@ namespace PackFileManager
                 MessageBox.Show(exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 packTreeView.Enabled = true;
             }
+#if DEBUG
+            Console.WriteLine("{0}allowing label edit", (CanWriteCurrentPack ? "" : "dis"));
+#endif
+            packTreeView.LabelEdit = CanWriteCurrentPack;
         }
         #endregion
 
@@ -887,6 +892,7 @@ namespace PackFileManager
             if (editor != null) {
                 try {
                     editor.CurrentPackedFile = packedFile;
+                    editor.ReadOnly = !CanWriteCurrentPack;
                     if (!splitContainer1.Panel2.Controls.Contains(editor as Control)) {
                         splitContainer1.Panel2.Controls.Add(editor as Control);
                     }
@@ -1122,6 +1128,11 @@ namespace PackFileManager
                     (advisory.DialogResult == DialogResult.Yes) ? CheckState.Unchecked : CheckState.Checked;
             }
             EnableMenuItems();
+            
+            if (packTreeView.SelectedNode != null) {
+                OpenPackedFile(packTreeView.SelectedNode.Tag);
+            }
+            packTreeView.LabelEdit = CanWriteCurrentPack;
         }
 
         private void updateOnStartupToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -1171,13 +1182,15 @@ namespace PackFileManager
         #region Tree Handler
         static readonly Regex versionedRegex = new Regex("(.*) - version.*");
         private void packTreeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e) {
-            PackEntry entry = e.Node.Tag as PackEntry;
-            if ((e.Label != null) && (e.Label != e.Node.Text) && (entry != null))             {
-                string newName = e.Label;
-                if (versionedRegex.IsMatch(newName)) {
-                    newName = versionedRegex.Match(newName).Groups[1].Value;
+            if (CanWriteCurrentPack) {
+                PackEntry entry = e.Node.Tag as PackEntry;
+                if ((e.Label != null) && (e.Label != e.Node.Text) && (entry != null)) {
+                    string newName = e.Label;
+                    if (versionedRegex.IsMatch(newName)) {
+                        newName = versionedRegex.Match(newName).Groups[1].Value;
+                    }
+                    entry.Name = newName;
                 }
-                entry.Name = newName;
             }
             e.CancelEdit = true;
         }

@@ -46,14 +46,18 @@ namespace Common {
 #if DEBUG
                     DateTime start = DateTime.Now;
 #endif
-                    // more efficient to use the enumerable class instead of instantiating an actual PackFile
-                    // prevents having to parse all contained file names
-                    PackedFileEnumerable packedFiles = new PackedFileEnumerable(p);
-                    foreach (PackedFile file in packedFiles) {
-                        if (file.FullPath.StartsWith("db")) {
-                            result.Add(p);
-                            break;
+                    try {
+                        // more efficient to use the enumerable class instead of instantiating an actual PackFile
+                        // prevents having to parse all contained file names
+                        PackedFileEnumerable packedFiles = new PackedFileEnumerable(p);
+                        foreach (PackedFile file in packedFiles) {
+                            if (file.FullPath.StartsWith("db")) {
+                                result.Add(p);
+                                break;
+                            }
                         }
+                    } catch {
+                        // invalid pack file probably... ignore it
                     }
 #if DEBUG
                     Console.WriteLine("{0} for {1}", DateTime.Now.Subtract(start), Path.GetFileName(p));

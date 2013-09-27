@@ -8,6 +8,9 @@ using CommonDialogs;
 
 namespace EsfControl {
     public partial class EditEsfComponent : UserControl {
+        public delegate void Selected(EsfNode node);
+        public event Selected NodeSelected;
+
         TreeEventHandler treeEventHandler;
 
         EsfTreeNode rootNode;
@@ -43,9 +46,9 @@ namespace EsfControl {
             InitializeComponent();
             nodeValueGridView.Rows.Clear();
 
-            treeEventHandler = new TreeEventHandler(nodeValueGridView);
+            treeEventHandler = new TreeEventHandler(nodeValueGridView, this);
             esfNodeTree.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(treeEventHandler.FillNode);
-            esfNodeTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(treeEventHandler.NodeSelected);
+            esfNodeTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(treeEventHandler.TreeNodeSelected);
 
             nodeValueGridView.CellValidating += new DataGridViewCellValidatingEventHandler(validateCell);
             nodeValueGridView.CellEndEdit += new DataGridViewCellEventHandler(cellEdited);
@@ -73,6 +76,38 @@ namespace EsfControl {
         }
         private void cellEdited(object sender, DataGridViewCellEventArgs args) {
             nodeValueGridView.Rows[args.RowIndex].ErrorText = String.Empty;
+        }
+        
+        public void NotifySelection(EsfNode node) {
+            if (NodeSelected != null) {
+                NodeSelected(node);
+            }
+        }
+        
+        public void SelectPath(string path) {
+            string[] nodes = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            TreeNode currentNode = rootNode;
+            rootNode.Expand();
+            for (int i = 1; i < nodes.Length; i++) {
+                currentNode = FindNode(currentNode.Nodes, nodes[i]);
+                if (currentNode != null) {
+                    currentNode.Expand();
+                } else {
+                    Console.WriteLine("Cannot find {0} in {1}", nodes[i], nodes[i-1]);
+                    break;
+                }
+            };
+            if (currentNode != null) {
+                esfNodeTree.SelectedNode = currentNode;
+            }
+        }
+        private TreeNode FindNode(TreeNodeCollection collection, string pathSegment) {
+            foreach(TreeNode node in collection) {
+                if (node.Text.Equals(pathSegment)) {
+                    return node;
+                }
+            }
+            return null;
         }
     }
 
@@ -244,10 +279,12 @@ namespace EsfControl {
 
     public class TreeEventHandler {
         private List<ModificationColorizer> registeredEvents = new List<ModificationColorizer>();
+        private EditEsfComponent component;
         
         DataGridView nodeValueGridView;
-        public TreeEventHandler(DataGridView view) {
+        public TreeEventHandler(DataGridView view, EditEsfComponent c) {
             nodeValueGridView = view;
+            component = c;
         }
         /*
          * Fill the event's target tree node's children with their children
@@ -265,7 +302,7 @@ namespace EsfControl {
         /*
          * Render the data cell view, preparing the red color for modified entries.
          */
-        public void NodeSelected(object sender, TreeViewEventArgs args) {
+        public void TreeNodeSelected(object sender, TreeViewEventArgs args) {
             ParentNode node = args.Node.Tag as ParentNode;
             try {
                 nodeValueGridView.Rows.Clear();
@@ -283,10 +320,12 @@ namespace EsfControl {
                     
                     newRow.Tag = value;
                 }
+                component.NotifySelection(node);
             } catch {
             }
         }
     }
+    
     
     public class ModificationColorizer {
         public DataGridViewRow row;
