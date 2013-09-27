@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonDialogs;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using EsfControl;
 using EsfLibrary;
 
 namespace EditSF {
@@ -47,8 +49,18 @@ namespace EditSF {
             updater = new ProgressUpdater(progressBar);
 
             Text = string.Format("EditSF {0}", Application.ProductVersion);
+            
+            editEsfComponent.NodeSelected += NodeSelected;
+            
+            if (File.Exists(BookmarkPath)) {
+                foreach (string line in File.ReadAllLines(BookmarkPath)) {
+                    string[] bm = line.Split(Path.PathSeparator);
+                    AddBookmark(bm[0], bm[1], false);
+                }
+                editBookmarkToolStripMenuItem.Enabled = bookmarks.Count > 0;
+            }
         }
-
+        
         private void promptOpenFile() {
             OpenFileDialog dialog = new OpenFileDialog {
                 RestoreDirectory = true
@@ -85,6 +97,12 @@ namespace EditSF {
                     //codec.Log -= logger.WriteLogEntry;
                 }
                 Text = string.Format("{0} - EditSF {1}", Path.GetFileName(openFilename), Application.ProductVersion);
+                
+                foreach(ToolStripItem item in bookmarksToolStripMenuItem.DropDownItems) {
+                    if (item is BookmarkItem) {
+                        item.Enabled = true;
+                    }
+                }
             } catch (Exception exception) {
                 statusLabel.Text = oldStatus;
                 Console.WriteLine(exception);
@@ -103,6 +121,85 @@ namespace EditSF {
                 FileName = dialog.FileName;
             }
         }
+        
+        #region Bookmarks
+        private EsfNode currentSelection = null;
+        private void NodeSelected(EsfNode node) {
+            bookmarksToolStripMenuItem.Enabled = (node != null);
+            addBookmarkToolStripMenuItem.Enabled = (node != null);
+            currentSelection = node;
+        }
+        List<string> bookmarks = new List<string>();
+        Dictionary<string, string> bookmarkToPath = new Dictionary<string, string>();
+        private void AddBookmark(object sender, EventArgs args) {
+            EsfNode node = currentSelection as ParentNode;
+            string selectedPath = "";
+            while (node != null) {
+                INamedNode named = node as INamedNode;
+                if (named is CompressedNode) {
+                    selectedPath = selectedPath.Substring (selectedPath.IndexOf('/') + 1);
+                } 
+                if (!(named is MemoryMappedRecordNode) || string.IsNullOrEmpty(selectedPath)) {
+                    selectedPath = string.Format("{0}/{1}", named.GetName(), selectedPath);
+                    Console.WriteLine("node {0} - {1}", named.GetName(), node.GetType());
+                }
+                node = node.Parent;
+            }
+            
+            Console.WriteLine("adding bookmark for node {0}", selectedPath);
+            InputBox box = new InputBox {
+                Text = "Enter bookmark name",
+                Input = selectedPath
+            };
+            if (box.ShowDialog() == DialogResult.OK && !bookmarks.Contains(box.Input)) {
+                AddBookmark(box.Input, selectedPath);
+                SaveBookmarks();
+            }
+        }
+        public void EditBookmarks(object sender, EventArgs args) {
+            List<string> bm = new List<string>(bookmarks);
+            List<string> delete = new List<string>();
+            ListEditor editor = new ListEditor {
+                LeftLabel = "Current Bookmarks",
+                LeftList = bm,
+                RightLabel = "Delete Bookmarks",
+                RightList = delete
+            };
+            if (editor.ShowDialog() == DialogResult.OK) {
+                foreach(string toDelete in editor.RightList) {
+                    bookmarks.Remove(toDelete);
+                    bookmarkToPath.Remove(toDelete);
+                    foreach(ToolStripItem item in bookmarksToolStripMenuItem.DropDownItems) {
+                        if (item is BookmarkItem && item.Text.Equals (toDelete)) {
+                            bookmarksToolStripMenuItem.DropDownItems.Remove(item);
+                            break;
+                        }
+                    }
+                }
+                SaveBookmarks();
+            }
+        }
+        string BookmarkPath {
+            get {
+                return Path.Combine(Application.UserAppDataPath, BOOKMARKS_FILE_NAME);
+            }
+        }
+        private void SaveBookmarks() {
+            using (var stream = File.CreateText(BookmarkPath)) {
+                foreach(string bookmark in bookmarks) {
+                    stream.WriteLine("{0}{1}{2}", bookmark, Path.PathSeparator, bookmarkToPath[bookmark]);
+                }
+            }
+        }
+        static string BOOKMARKS_FILE_NAME = "bookmarks.txt";
+        void AddBookmark(string label, string path, bool enable = true) {
+            bookmarks.Add(label);
+            bookmarkToPath[label] = path;
+            bookmarksToolStripMenuItem.DropDownItems.Add (new BookmarkItem(label, path, editEsfComponent) {
+                Enabled = enable
+            });
+        }
+        #endregion
 
         #region Menu handlers
         private void openToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -165,6 +262,19 @@ namespace EditSF {
 
         private void showNodeTypeToolStripMenuItem_Click(object sender, EventArgs e) {
             editEsfComponent.ShowCode = true;
+        }
+    }
+    
+    public class BookmarkItem : ToolStripMenuItem {
+        string openPath;
+        EditEsfComponent component;
+        public BookmarkItem(string label, string path, EditEsfComponent c) : base(label) {
+            openPath = path;
+            component = c;
+            Click += OpenPath;
+        }
+        private void OpenPath(object sender, EventArgs args) {
+            component.SelectPath(openPath);
         }
     }
 

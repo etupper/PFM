@@ -32,12 +32,12 @@ namespace DBTableControl {
         }
         
         // one... more... property...
-        public bool TableReadOnly {
+        public bool ReadOnly {
             get {
-                return DbeChild.TableReadOnly;
+                return DbeChild.ReadOnly;
             }
             set {
-                DbeChild.TableReadOnly = value;
+                DbeChild.ReadOnly = value;
             }
         }
 

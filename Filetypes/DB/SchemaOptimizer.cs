@@ -49,14 +49,18 @@ namespace Filetypes {
                 List<GuidTypeInfo> allUsed = new List<GuidTypeInfo>();
                 Dictionary<GuidTypeInfo, PackedFile> infos = new Dictionary<GuidTypeInfo, PackedFile>();
                 foreach (string path in Directory.EnumerateFiles(PackDirectory, "*.pack")) {
-                    PackFile pack = new PackFileCodec().Open (path);
-                    GetUsedTypes(pack, infos);
+                    try {
+                        PackFile pack = new PackFileCodec().Open(path);
+                        GetUsedTypes(pack, infos);
 
-                    // add all infos we don't have yet
-                    foreach(GuidTypeInfo info in infos.Keys) {
-                        if (!allUsed.Contains(info)) { 
-                            allUsed.Add(info); 
+                        // add all infos we don't have yet
+                        foreach (GuidTypeInfo info in infos.Keys) {
+                            if (!allUsed.Contains(info)) {
+                                allUsed.Add(info);
+                            }
                         }
+                    } catch (Exception e) {
+                        Console.WriteLine("Not able to include {0} into schema: {1}", path, e);
                     }
                 }
                 

@@ -59,6 +59,20 @@ namespace PackFileManager
         public override bool CanEdit(PackedFile file) {
             return HasExtension(file, EXTENSIONS);
         }
+        
+        public override bool ReadOnly {
+            get {
+                return base.ReadOnly;
+            }
+            set {
+                base.ReadOnly = value;
+                foreach (DataGridViewRow row in dataGridView.Rows) {
+                    foreach(DataGridViewCell cell in row.Cells) {
+                        cell.ReadOnly = value;
+                    }
+                }
+            }
+        }
 
         private void addNewRowButton_Click(object sender, EventArgs e) {
 			DataRow row = this.currentDataTable.NewRow ();

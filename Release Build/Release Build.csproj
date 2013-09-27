@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DBEditorTableControl\DBEditorTableControl.csproj">
+      <Project>{3B928C9E-A55F-4912-9880-FF134E68AFCA}</Project>
+      <Name>DBEditorTableControl</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PackFileTest\PackFileTest.csproj">
       <Project>{C3A9D2C3-E35C-4160-9ED9-68B8A5BF5F9C}</Project>
       <Name>PackFileTest</Name>

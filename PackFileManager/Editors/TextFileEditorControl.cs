@@ -64,6 +64,16 @@ namespace PackFileManager {
             return HasExtension(file, DEFAULT_EXTENSIONS);
         }
 
+        public override bool ReadOnly {
+            get {
+                return base.ReadOnly;
+            }
+            set {
+                base.ReadOnly = value;
+                richTextBox.ReadOnly = value;
+            }
+        }
+        
         public override string EditedFile {
             get {
                 return richTextBox.Text;

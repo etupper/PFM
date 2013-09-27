@@ -73,13 +73,37 @@ namespace PackFileManager {
 
         private GridViewCopyPaste copyPaste;
 
+        bool readOnly = true;
+        public bool ReadOnly {
+            get {
+                return readOnly;
+            }
+            set {
+                readOnly = value;
+                pasteToolStripButton.Enabled = !value;
+                cloneRowsButton.Enabled = !value;
+                addNewRowButton.Enabled = !value;
+                dataGridView.ReadOnly = value;
+                Color cellBgColor = value ? Color.LightGray : Color.White;
+                foreach (DataGridViewRow row in dataGridView.Rows) {
+                    foreach(DataGridViewCell cell in row.Cells) {
+                        cell.ReadOnly = value;
+                        cell.Style.BackColor = cellBgColor;
+                    }
+                }
+                foreach (DataGridViewColumn column in dataGridView.Columns) {
+                    column.DefaultCellStyle.BackColor = cellBgColor;
+                }
+            }
+        }
+
         public DBFileEditorControl () {
             InitializeComponent ();
             dataGridView.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             dataGridView.ColumnHeaderMouseClick += CreateColumnHeaderPopup;
             copyPaste = new GridViewCopyPaste(dataGridView);
             copyPaste.Copied += delegate() {
-                pasteToolStripButton.Enabled = true;
+                pasteToolStripButton.Enabled = !ReadOnly;
             };
             copyPaste.Pasted += delegate() {
                 CurrentPackedFile.Data = Codec.Encode(EditedFile);
@@ -242,6 +266,7 @@ namespace PackFileManager {
             column.Tag = fieldInfo;
             column.DataPropertyName = fieldInfo.Name; //columnIndex.ToString();
             column.Visible = !Settings.Default.IsColumnIgnored(CurrentPackedFile.FullPath, fieldInfo.Name);
+            column.DefaultCellStyle.BackColor = ReadOnly ? Color.LightGray : Color.White;
             
             if (column.Visible) {
                 int visibleColumnCount = Math.Min(EditedFile.CurrentType.Fields.Count, 10);
@@ -411,6 +436,9 @@ namespace PackFileManager {
                     args.Handled = true;
                     break;
                 case Keys.V:
+                    if (ReadOnly) {
+                        break;
+                    }
                     Console.WriteLine("pasting {0}", Clipboard.GetText());
                     editor.Text = Clipboard.GetText();
                     args.Handled = true;
@@ -477,6 +505,9 @@ namespace PackFileManager {
         }
 
         private void ImportData(object sender, EventArgs e) {
+#if DEBUG
+            Console.WriteLine("Importing into file with {0} entries", EditedFile.Entries.Count);
+#endif
             OpenFileDialog openDBFileDialog = new OpenFileDialog {
                 InitialDirectory = Settings.Default.ImportExportDirectory,
                 FileName = Settings.Default.TsvFile(EditedFile.CurrentType.Name)
@@ -496,7 +527,6 @@ namespace PackFileManager {
                         try {
                             using (var stream = new MemoryStream(File.ReadAllBytes(openDBFileDialog.FileName))) {
                                 imported = new TextDbCodec().Decode(stream);
-                                EditedFile = imported;
                             }
                             if (question == DialogResult.Yes) {
                                 EditedFile = imported;

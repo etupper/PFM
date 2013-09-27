@@ -30,8 +30,12 @@
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bookmarksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.writeLogFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showNodeTypeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addBookmarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editBookmarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            bookmarkSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runSingleTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runTestsStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,6 +53,7 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+                this.bookmarksToolStripMenuItem,
             this.optionsToolStripMenuItem,
             this.testToolStripMenuItem,
             this.helpToolStripMenuItem});
@@ -99,11 +104,39 @@
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
+            // bookmarksToolStripMenuItem
+            // 
+            this.bookmarksToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+                this.addBookmarkToolStripMenuItem,
+                this.editBookmarkToolStripMenuItem,
+                this.bookmarkSeparator
+            });
+            this.bookmarksToolStripMenuItem.Name = "bookmarksToolStripMenuItem";
+            this.bookmarksToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.bookmarksToolStripMenuItem.Text = "Bookmarks";
+            // 
+            // addBookmarkToolStripMenuItem
+            // 
+            this.addBookmarkToolStripMenuItem.Enabled = false;
+            this.addBookmarkToolStripMenuItem.Name = "addBookmarkToolStripMenuItem";
+            this.addBookmarkToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.addBookmarkToolStripMenuItem.Text = "Add Bookmark";
+            this.addBookmarkToolStripMenuItem.Click += new System.EventHandler(this.AddBookmark);
+            // 
+            // editBookmarkToolStripMenuItem
+            // 
+            this.editBookmarkToolStripMenuItem.Enabled = true;
+            this.editBookmarkToolStripMenuItem.Name = "editBookmarkToolStripMenuItem";
+            this.editBookmarkToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.editBookmarkToolStripMenuItem.Text = "Edit Bookmarks";
+            this.editBookmarkToolStripMenuItem.Click += new System.EventHandler(this.EditBookmarks);
+            // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.writeLogFileToolStripMenuItem,
-            this.showNodeTypeToolStripMenuItem});
+                this.writeLogFileToolStripMenuItem,
+                this.showNodeTypeToolStripMenuItem
+            });
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.optionsToolStripMenuItem.Text = "Options";
@@ -221,11 +254,13 @@
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem bookmarksToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem writeLogFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem runTestsStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem runSingleTestToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator bookmarkSeparator;
         private System.Windows.Forms.StatusStrip statusBar;
         private System.Windows.Forms.ToolStripProgressBar progressBar;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
@@ -233,6 +268,8 @@
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addBookmarkToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editBookmarkToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showNodeTypeToolStripMenuItem;
         private EsfControl.EditEsfComponent editEsfComponent;
     }

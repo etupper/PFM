@@ -77,14 +77,6 @@ namespace PackFileManager
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.changePackTypeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bootToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bootXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.releaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.patchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.modToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.movieToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.shaderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.shader2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.exportFileListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
@@ -576,82 +568,11 @@ namespace PackFileManager
             // 
             // changePackTypeToolStripMenuItem
             // 
-            this.changePackTypeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.bootToolStripMenuItem,
-            this.bootXToolStripMenuItem,
-            this.releaseToolStripMenuItem,
-            this.patchToolStripMenuItem,
-            this.modToolStripMenuItem,
-            this.movieToolStripMenuItem,
-            this.shaderToolStripMenuItem,
-            this.shader2ToolStripMenuItem});
+            this.changePackTypeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {});
             this.changePackTypeToolStripMenuItem.Enabled = false;
             this.changePackTypeToolStripMenuItem.Name = "changePackTypeToolStripMenuItem";
             this.changePackTypeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.changePackTypeToolStripMenuItem.Text = "Change Pack &Type";
-            // 
-            // bootToolStripMenuItem
-            // 
-            this.bootToolStripMenuItem.CheckOnClick = true;
-            this.bootToolStripMenuItem.Name = "bootToolStripMenuItem";
-            this.bootToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
-            this.bootToolStripMenuItem.Text = "Boot";
-            this.bootToolStripMenuItem.Click += new System.EventHandler(this.PackTypeItemSelected);
-            // 
-            // bootXToolStripMenuItem
-            // 
-            this.bootXToolStripMenuItem.CheckOnClick = true;
-            this.bootXToolStripMenuItem.Name = "bootXToolStripMenuItem";
-            this.bootXToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
-            this.bootXToolStripMenuItem.Text = "BootX";
-            this.bootXToolStripMenuItem.Click += new System.EventHandler(this.PackTypeItemSelected);
-            // 
-            // releaseToolStripMenuItem
-            // 
-            this.releaseToolStripMenuItem.CheckOnClick = true;
-            this.releaseToolStripMenuItem.Name = "releaseToolStripMenuItem";
-            this.releaseToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
-            this.releaseToolStripMenuItem.Text = "Release";
-            this.releaseToolStripMenuItem.Click += new System.EventHandler(this.PackTypeItemSelected);
-            // 
-            // patchToolStripMenuItem
-            // 
-            this.patchToolStripMenuItem.CheckOnClick = true;
-            this.patchToolStripMenuItem.Name = "patchToolStripMenuItem";
-            this.patchToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
-            this.patchToolStripMenuItem.Text = "Patch";
-            this.patchToolStripMenuItem.Click += new System.EventHandler(this.PackTypeItemSelected);
-            // 
-            // modToolStripMenuItem
-            // 
-            this.modToolStripMenuItem.Name = "modToolStripMenuItem";
-            this.modToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
-            this.modToolStripMenuItem.Text = "Mod";
-            this.modToolStripMenuItem.Click += new System.EventHandler(this.PackTypeItemSelected);
-            // 
-            // movieToolStripMenuItem
-            // 
-            this.movieToolStripMenuItem.CheckOnClick = true;
-            this.movieToolStripMenuItem.Name = "movieToolStripMenuItem";
-            this.movieToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
-            this.movieToolStripMenuItem.Text = "Movie";
-            this.movieToolStripMenuItem.Click += new System.EventHandler(this.PackTypeItemSelected);
-            // 
-            // shaderToolStripMenuItem
-            // 
-            this.shaderToolStripMenuItem.CheckOnClick = true;
-            this.shaderToolStripMenuItem.Name = "shaderToolStripMenuItem";
-            this.shaderToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
-            this.shaderToolStripMenuItem.Text = "Shader";
-            this.shaderToolStripMenuItem.Click += new System.EventHandler(this.PackTypeItemSelected);
-            // 
-            // shader2ToolStripMenuItem
-            // 
-            this.shader2ToolStripMenuItem.CheckOnClick = true;
-            this.shader2ToolStripMenuItem.Name = "shader2ToolStripMenuItem";
-            this.shader2ToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
-            this.shader2ToolStripMenuItem.Text = "Shader2";
-            this.shader2ToolStripMenuItem.Click += new System.EventHandler(this.PackTypeItemSelected);
             // 
             // toolStripSeparator9
             // 
@@ -1044,7 +965,6 @@ namespace PackFileManager
             // updateToolStripMenuItem
             // 
             this.updateToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.searchForUpdateToolStripMenuItem,
             this.reloadToolStripMenuItem,
             this.saveToDirectoryToolStripMenuItem,
             this.updateDBFilesToolStripMenuItem});
@@ -1102,6 +1022,7 @@ namespace PackFileManager
             this.contentsToolStripMenuItem,
             this.indexToolStripMenuItem,
             this.searchToolStripMenuItem,
+            this.searchForUpdateToolStripMenuItem,
             this.toolStripSeparator5,
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
@@ -1235,14 +1156,6 @@ namespace PackFileManager
         private System.Windows.Forms.ToolStripMenuItem saveToDirectoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem filesMenu;
         private System.Windows.Forms.ToolStripMenuItem changePackTypeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem bootToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem bootXToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem releaseToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem patchToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem modToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem movieToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem shaderToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem shader2ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addFromPackToolStripMenuItem;

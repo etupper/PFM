@@ -30,6 +30,9 @@ namespace PackFileManager {
                 modified = value; 
             }
         }
+        public bool ReadOnly {
+            get; set;
+        }
         PackedFile packedFile;
         public PackedFile CurrentPackedFile {
             get { 
@@ -38,6 +41,15 @@ namespace PackFileManager {
             set {
                 if (ExternalProcess != null) {
                     throw new InvalidOperationException("External editor already open.");
+                }
+                if (ReadOnly) {
+                    if (MessageBox.Show("The current pack file is read-only.\n" +
+                                        "You can open it, but changes you make will not get applied.\n" +
+                                        "Continue?",
+                                        "Opening read-only file in external editor.",
+                                        MessageBoxButtons.OKCancel) == DialogResult.Cancel) {
+                        return;
+                    }
                 }
                 Modified = false;
                 packedFile = value;

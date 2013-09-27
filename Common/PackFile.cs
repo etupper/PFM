@@ -262,7 +262,7 @@ namespace Common {
         Sound1 = 0x17,
         Music1 = 0x18,
         BootX = 0x40,
-        Shader2 = 0x41,
-        Shader1 = 0x42
+        Shader1 = 0x41,
+        Shader2 = 0x42
     }
 }
