@@ -36,6 +36,10 @@
       <Project>{3B928C9E-A55F-4912-9880-FF134E68AFCA}</Project>
       <Name>DBEditorTableControl</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DbSql\DbSql.csproj">
+      <Project>{7CB586B7-A10B-4540-899B-671B9383605E}</Project>
+      <Name>DbSql</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PackFileTest\PackFileTest.csproj">
       <Project>{C3A9D2C3-E35C-4160-9ED9-68B8A5BF5F9C}</Project>
       <Name>PackFileTest</Name>

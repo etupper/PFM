@@ -81,8 +81,8 @@
     <Grid>
         <DockPanel Name="dbcontrolDockPanel" >
             <ToolBar Name="dbeditControlToobar" DockPanel.Dock="Top" Background="Transparent">
-                <Button Name="addRowButton" Content="Add Row" Padding="3,4" Click="AddRowButton_Clicked" IsEnabled="{Binding TableReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}" />
-                <Button Name="cloneRowButton" Content="Clone Row(s)" Padding="3,4" Click="CloneRowButton_Clicked" IsEnabled="{Binding TableReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}" />
+                <Button Name="addRowButton" Content="Add Row" Padding="3,4" Click="AddRowButton_Clicked" IsEnabled="{Binding ReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}" />
+                <Button Name="cloneRowButton" Content="Clone Row(s)" Padding="3,4" Click="CloneRowButton_Clicked" IsEnabled="{Binding ReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}" />
                 <Button Name="copyButton" Content="Copy" Padding="3,4" Command="Copy" />
                 <Button Name="pasteButton" Content="Paste" Padding="3,4" Command="Paste" />
                 <Separator Margin="3,0,3,0" />
@@ -90,17 +90,17 @@
                     <Button.ContextMenu>
                         <ContextMenu x:Name="ExportContextMenu">
                             <MenuItem Header="TSV" Click="ExportTSVMenuItem_Click" />
-                            <MenuItem Header="CSV" Click="ExportCSVMenuItem_Click" />
+                            <MenuItem Header="CSV" Click="ExportCSVMenuItem_Click" Visibility="Collapsed" />
                             <MenuItem Header="Binary" Click="ExportBinaryMenuItem_Click" />
                             <MenuItem Header="CA Xml" Click="ExportCAXmlMenuItem_Click" Visibility="Collapsed" />
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>
-                <Button Name="importFromButton" Content="Import From" Padding="3,4" Click="ImportFromButton_Clicked" IsEnabled="{Binding TableReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}" >
+                <Button Name="importFromButton" Content="Import From" Padding="3,4" Click="ImportFromButton_Clicked" IsEnabled="{Binding ReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}" >
                     <Button.ContextMenu>
                         <ContextMenu x:Name="ImportContextMenu">
                             <MenuItem Header="TSV" Click="ImportTSVMenuItem_Click" />
-                            <MenuItem Header="CSV" Click="ImportCSVMenuItem_Click" />
+                            <MenuItem Header="CSV" Click="ImportCSVMenuItem_Click" Visibility="Collapsed" />
                             <MenuItem Header="Binary" Click="ImportBinaryMenuItem_Click" />
                             <MenuItem Header="CA Xml" Click="ImportCAXmlMenuItem_Click" Visibility="Collapsed" />
                         </ContextMenu>
@@ -145,7 +145,7 @@
                       EnableColumnVirtualization="True"
                       Background="#FFAAAAAA"
                       CanUserResizeRows="False"
-                      CanUserAddRows="{Binding TableReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}"
+                      CanUserAddRows="{Binding ReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}"
                       CanUserReorderColumns="False"
                       CellEditEnding="dbDataGrid_CellEditEnding"
                       PreviewMouseLeftButtonDown="dbDataGrid_PreviewMouseLeftButtonDown"

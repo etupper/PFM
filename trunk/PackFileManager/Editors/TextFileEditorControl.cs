@@ -73,7 +73,7 @@ namespace PackFileManager {
                 richTextBox.ReadOnly = value;
             }
         }
-        
+
         public override string EditedFile {
             get {
                 return richTextBox.Text;

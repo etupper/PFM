@@ -94,7 +94,7 @@ namespace Filetypes {
                         typeToPackedCache.Add(currentTable, cacheFiles);
                     }
                     cacheFiles.Add(packed);
-                }
+                } 
             }
             return result;
         }

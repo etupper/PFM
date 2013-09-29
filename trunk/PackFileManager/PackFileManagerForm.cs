@@ -66,7 +66,14 @@ namespace PackFileManager
                 Assembly dbeAssembly = Assembly.LoadFrom("DBEditorTableControl.dll");
                 Type dbeType = dbeAssembly.GetType("DBTableControl.DBEditorTableControl");
                 MethodInfo registerMethodInfo = dbeType.GetMethod("RegisterDbEditor", BindingFlags.Public | BindingFlags.Static);
-                registerMethodInfo.Invoke(null, null);
+                object registered = registerMethodInfo.Invoke(null, null);
+                string newDir = ModManager.Instance.CurrentModDirectory;
+                PropertyInfo modDirProperty = dbeType.GetProperty("ModDirectory");
+                modDirProperty.SetValue(registered, newDir, null);
+                ModManager.Instance.CurrentModChanged += delegate() {
+                    newDir = ModManager.Instance.CurrentModDirectory;
+                    modDirProperty.SetValue(registered, newDir, null);
+                };
             }
             catch (Exception e)
             {
@@ -891,6 +898,7 @@ namespace PackFileManager
         private void OpenPackedFile(IPackedFileEditor editor, PackedFile packedFile) {
             if (editor != null) {
                 try {
+                    editor.ReadOnly = !CanWriteCurrentPack;
                     editor.CurrentPackedFile = packedFile;
                     editor.ReadOnly = !CanWriteCurrentPack;
                     if (!splitContainer1.Panel2.Controls.Contains(editor as Control)) {

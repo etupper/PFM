@@ -21,7 +21,10 @@ namespace DBTableControl
         public FakeDictionary<string, List<string>> HiddenColumns { get; set; }
 
         [XmlElement]
-        public string ImportExportDirectory { get; set; }
+        public string ImportDirectory { get; set; }
+
+        [XmlElement]
+        public string ExportDirectory { get; set; }
 
         public DBTableEditorConfig()
         {
@@ -29,7 +32,8 @@ namespace DBTableControl
             UseComboBoxes = true;
             ShowAllColumns = false;
             HiddenColumns = new FakeDictionary<string, List<string>>();
-            ImportExportDirectory = "";
+            ImportDirectory = "";
+            ExportDirectory = "";
         }
 
         public void Load(string file = "Config\\DBTableEditorConfig.xml")
@@ -50,7 +54,8 @@ namespace DBTableControl
             UseComboBoxes = loadedconfig.UseComboBoxes;
             ShowAllColumns = loadedconfig.ShowAllColumns;
             HiddenColumns = loadedconfig.HiddenColumns;
-            ImportExportDirectory = loadedconfig.ImportExportDirectory;
+            ImportDirectory = loadedconfig.ImportDirectory;
+            ExportDirectory = loadedconfig.ExportDirectory;
         }
 
         public void Save(string file = "Config\\DBTableEditorConfig.xml")
