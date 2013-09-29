@@ -107,13 +107,6 @@
                     </Button.ContextMenu>
                 </Button>
                 <Separator Margin="3,0,0,0" />
-                <StackPanel Name="freezeStackPanel" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
-                    <CheckBox Name="freezeKeysCheckBox" 
-                              Content="Freeze Key Columns" 
-                              IsChecked="{Binding ElementName=TableControl, Path=FreezeKeyColumns}" 
-                              VerticalAlignment="Center" 
-                              Margin="30,0,0,0" />
-                </StackPanel>
                 <StackPanel Name="useComboBoxesStackPanel" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
                     <CheckBox Name="useComboBoxesCheckBox" 
                               Content="Use Combo Boxes" 
@@ -133,7 +126,6 @@
                       AutoGenerateColumns="False"
                       DockPanel.Dock="Bottom"
                       ItemsSource="{Binding Path=CurrentTable.DefaultView, ElementName=TableControl, UpdateSourceTrigger=PropertyChanged}"
-                      FrozenColumnCount="{Binding NumKeyColumns, ElementName=TableControl}"
                       CellStyle="{StaticResource GridCellStyle}"
                       SelectionUnit="CellOrRowHeader"
                       SelectionMode="Extended"
