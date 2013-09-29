@@ -30,7 +30,7 @@ namespace DBTableControl
                 Dock = System.Windows.Forms.DockStyle.Fill
             };
             PackedFileEditorRegistry.Editors.Add(host);
-            return control;
+			return control;
         }
         
         DataSet loadedDataSet;
@@ -82,16 +82,6 @@ namespace DBTableControl
                 // Generate a new table format for the new table.
                 GenerateColumns();
 
-                // Assign frozen columns
-                if (FreezeKeyColumns)
-                {
-                    NumKeyColumns = value.PrimaryKey.Length;
-                }
-                else
-                {
-                    NumKeyColumns = 0;
-                }
-
                 // Re-enable export control if it was disabled
                 exportAsButton.IsEnabled = true;
 
@@ -99,35 +89,6 @@ namespace DBTableControl
                 NotifyPropertyChanged(this, "CurrentTable");
 
                 dbDataGrid.ItemsSource = CurrentTable.DefaultView;
-            }
-        }
-
-        int numKeyColumns;
-        public int NumKeyColumns
-        {
-            get { return numKeyColumns; }
-            set { numKeyColumns = value; NotifyPropertyChanged(this, "NumKeyColumns"); }
-        }
-
-        bool freezeKeyColumns;
-        public bool FreezeKeyColumns
-        {
-            get { return freezeKeyColumns; }
-            set 
-            { 
-                freezeKeyColumns = value; 
-                NotifyPropertyChanged(this, "FreezeKeyColumns");
-                UpdateConfig();
-
-                // Modify associated attribute.
-                if (freezeKeyColumns)
-                {
-                    NumKeyColumns = CurrentTable.PrimaryKey.Length;
-                }
-                else
-                {
-                    NumKeyColumns = 0;
-                }
             }
         }
 
@@ -195,7 +156,7 @@ namespace DBTableControl
                 dbDataGrid.CanUserDeleteRows = !readOnly;
 
                 BuiltTablesSetReadOnly(readOnly);
-        }
+            }
         }
 
         // PFM needed Properties
@@ -251,7 +212,7 @@ namespace DBTableControl
         public bool DataChanged { get { return dataChanged; } }
 
         // Import Export default directory
-        public string ModDirectory {
+		public string ModDirectory {
             get;
             set;
         }
@@ -297,14 +258,12 @@ namespace DBTableControl
             loadedDataSet.EnforceConstraints = false;
 
             // Transfer saved settings.
-            freezeKeyColumns = savedconfig.FreezeKeyColumns;
             useComboBoxes = savedconfig.UseComboBoxes;
             showAllColumns = savedconfig.ShowAllColumns;
             importDirectory = savedconfig.ImportDirectory;
             exportDirectory = savedconfig.ExportDirectory;
 
             // Set Initial checked status.
-            freezeKeysCheckBox.IsChecked = freezeKeyColumns;
             useComboBoxesCheckBox.IsChecked = useComboBoxes;
             showAllColumnsCheckBox.IsChecked = showAllColumns;
 
@@ -313,7 +272,7 @@ namespace DBTableControl
             CurrentTable.RowDeleting += new DataRowChangeEventHandler(CurrentTable_RowDeleting);
             CurrentTable.RowDeleted += new DataRowChangeEventHandler(CurrentTable_RowDeleted);
             CurrentTable.TableNewRow += new DataTableNewRowEventHandler(CurrentTable_TableNewRow);
-            
+
             // Default the clonerowButton to false for all tables.
             cloneRowButton.IsEnabled = false;
 
@@ -322,8 +281,6 @@ namespace DBTableControl
                 new CommandBinding(ApplicationCommands.Paste, 
                     new ExecutedRoutedEventHandler(OnExecutedPaste), 
                     new CanExecuteRoutedEventHandler(OnCanExecutePaste)));
-
-            NumKeyColumns = 0;
         }
 
         #region IPackedFileEditor Implementation
@@ -726,7 +683,7 @@ namespace DBTableControl
             dbDataGrid.ItemsSource = null;
             currentTable.BeginLoadData();
 
-            MessageBoxResult question = MessageBox.Show("Replace the current data?", "Replace data?", 
+			MessageBoxResult question = MessageBox.Show("Replace the current data?", "Replace data?", 
                                                     MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
             if (question == MessageBoxResult.Cancel) {
                 return;
@@ -765,7 +722,7 @@ namespace DBTableControl
         {
             DataRow row = CurrentTable.NewRow();
             CurrentTable.Rows.Add(row);
-            
+
             dataChanged = true;
         }
 
@@ -888,7 +845,7 @@ namespace DBTableControl
 
         private void ImportTSVMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            string initialDirectory = ModDirectory != null ? ModDirectory : exportDirectory;
+			string initialDirectory = ModDirectory != null ? ModDirectory : exportDirectory;
             System.Windows.Forms.OpenFileDialog openDBFileDialog = new System.Windows.Forms.OpenFileDialog
             {
                 InitialDirectory = initialDirectory,
@@ -1076,8 +1033,8 @@ namespace DBTableControl
             // Enable/Disable Clone Row button based on current selection.
             if (!readOnly)
             {
-            cloneRowButton.IsEnabled = dbDataGrid.SelectedItems.Count > 0;
-        }
+                cloneRowButton.IsEnabled = dbDataGrid.SelectedItems.Count > 0;
+            }
         }
 
         private void dbDataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
@@ -1122,6 +1079,7 @@ namespace DBTableControl
                     }
 
                     CurrentTable.Rows[rowIndex].EndEdit();
+                    RefreshCell(rowIndex, columnIndex);
                 }
             }
             else if (!ClipboardContainsOnlyRows())
@@ -1213,6 +1171,7 @@ namespace DBTableControl
                         }
 
                         CurrentTable.Rows[rowIndex].EndEdit();
+                        RefreshCell(rowIndex, columnIndex);
 
                         dataChanged = true;
                         columnIndex++;
@@ -1260,6 +1219,8 @@ namespace DBTableControl
                         currentTable.Rows[indiciesToPaste[rowIndex]].ItemArray = line.Split('\t').ToArray<object>();
                         rowIndex++;
                     }
+
+                    Refresh(true);
                 }
                 else
                 {
@@ -1268,8 +1229,6 @@ namespace DBTableControl
                                     "Selection Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
-
-            Refresh(true);
         }
 
         protected virtual void OnCanExecutePaste(object sender, CanExecuteRoutedEventArgs args)
@@ -1465,8 +1424,8 @@ namespace DBTableControl
 
             if (showAllColumns)
             {
-            Refresh();
-        }
+                Refresh();
+            }
         }
 
         private void EditVisibleListMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1518,9 +1477,9 @@ namespace DBTableControl
 
                 if (showAllColumns)
                 {
-                Refresh();
+                    Refresh();
+                }
             }
-        }
         }
 
         private void ClearTableHiddenMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1544,8 +1503,8 @@ namespace DBTableControl
 
             if (showAllColumns)
             {
-            Refresh();
-        }
+                Refresh();
+            }
         }
 
         private void ClearAllHiddenMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1570,8 +1529,8 @@ namespace DBTableControl
 
             if (showAllColumns)
             {
-            Refresh();
-        }
+                Refresh();
+            }
         }
 
         #endregion
@@ -1638,7 +1597,7 @@ namespace DBTableControl
 
         public DataGridCell GetCell(int row, int column, bool onlyvisible = false)
         {
-            DataGridRow rowContainer = GetRow(row);
+            DataGridRow rowContainer = GetRow(row, onlyvisible);
 
             if (rowContainer != null)
             {
@@ -1653,7 +1612,7 @@ namespace DBTableControl
                         return null;
                     }
 
-                    dbDataGrid.ScrollIntoView(rowContainer, dbDataGrid.Columns[column]);
+                    //dbDataGrid.ScrollIntoView(rowContainer, dbDataGrid.Columns[column]);
                     presenter = GetVisualChild<DataGridCellsPresenter>(rowContainer);
                 }
 
@@ -1668,7 +1627,7 @@ namespace DBTableControl
                     }
 
                     // now try to bring into view and retreive the cell
-                    dbDataGrid.ScrollIntoView(rowContainer, dbDataGrid.Columns[column]);
+                    //dbDataGrid.ScrollIntoView(rowContainer, dbDataGrid.Columns[column]);
                     cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(column);
                 }
                 return cell;
@@ -1676,13 +1635,13 @@ namespace DBTableControl
             return null;
         }
 
-        public DataGridRow GetRow(int index)
+        public DataGridRow GetRow(int index, bool onlyvisible = false)
         {
             DataGridRow row = (DataGridRow)dbDataGrid.ItemContainerGenerator.ContainerFromIndex(index);
-            if (row == null)
+            if (row == null && !onlyvisible)
             {
                 // may be virtualized, bring into view and try again
-                dbDataGrid.ScrollIntoView(dbDataGrid.Items[index]);
+                //dbDataGrid.ScrollIntoView(dbDataGrid.Items[index]);
                 row = (DataGridRow)dbDataGrid.ItemContainerGenerator.ContainerFromIndex(index);
             }
             return row;
@@ -1781,28 +1740,28 @@ namespace DBTableControl
         {
             if (!onlyvisible)
             {
-            // TODO: Try to find another way to force refresh the screen.
-            var selectedItems = dbDataGrid.SelectedItems;
-            List<DataGridCellInfo> selectedCells = dbDataGrid.SelectedCells.ToList();
-            List<int> selectedItemsIndicies = dbDataGrid.SelectedItems.OfType<DataRowView>().Select(n => dbDataGrid.Items.IndexOf(n)).ToList();
+                // TODO: Try to find another way to force refresh the screen.
+                var selectedItems = dbDataGrid.SelectedItems;
+                List<DataGridCellInfo> selectedCells = dbDataGrid.SelectedCells.ToList();
+                List<int> selectedItemsIndicies = dbDataGrid.SelectedItems.OfType<DataRowView>().Select(n => dbDataGrid.Items.IndexOf(n)).ToList();
 
-            dbDataGrid.ItemsSource = null;
-            dbDataGrid.ItemsSource = CurrentTable.DefaultView;
+                dbDataGrid.ItemsSource = null;
+                dbDataGrid.ItemsSource = CurrentTable.DefaultView;
 
-            foreach (int index in selectedItemsIndicies)
-            {
-                dbDataGrid.SelectedItems.Add(dbDataGrid.Items[index]);
-            }
-
-            foreach (DataGridCellInfo cellinfo in selectedCells)
-            {
-                DataGridCellInfo cellToAdd = new DataGridCellInfo(cellinfo.Item, cellinfo.Column);
-                if (!dbDataGrid.SelectedCells.Contains(cellToAdd))
+                foreach (int index in selectedItemsIndicies)
                 {
-                    dbDataGrid.SelectedCells.Add(cellToAdd);
+                    dbDataGrid.SelectedItems.Add(dbDataGrid.Items[index]);
+                }
+
+                foreach (DataGridCellInfo cellinfo in selectedCells)
+                {
+                    DataGridCellInfo cellToAdd = new DataGridCellInfo(cellinfo.Item, cellinfo.Column);
+                    if (!dbDataGrid.SelectedCells.Contains(cellToAdd))
+                    {
+                        dbDataGrid.SelectedCells.Add(cellToAdd);
+                    }
                 }
             }
-        }
             else // Refresh only visible elements, column by column.
             {
                 for (int i = 0; i < currentTable.Columns.Count; i++)
@@ -1871,7 +1830,6 @@ namespace DBTableControl
             }
 
             // Save off any required information before changing anything.
-            savedconfig.FreezeKeyColumns = freezeKeyColumns;
             savedconfig.UseComboBoxes = useComboBoxes;
             savedconfig.ShowAllColumns = showAllColumns;
             savedconfig.ImportDirectory = importDirectory;
@@ -2154,7 +2112,7 @@ namespace DBTableControl
             MessageBox.Show(error, "Paste Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-		private void BuiltTablesSetReadOnly(bool tablesreadonly)
+        private void BuiltTablesSetReadOnly(bool tablesreadonly)
         {
             foreach (DataTable table in loadedDataSet.Tables)
             {
