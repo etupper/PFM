@@ -193,6 +193,8 @@ namespace DBTableControl
                 importFromButton.IsEnabled = !readOnly;
                 dbDataGrid.CanUserAddRows = !readOnly;
                 dbDataGrid.CanUserDeleteRows = !readOnly;
+
+                BuiltTablesSetReadOnly(readOnly);
         }
         }
 
@@ -2150,6 +2152,17 @@ namespace DBTableControl
         private void PasteError(string error)
         {
             MessageBox.Show(error, "Paste Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+		private void BuiltTablesSetReadOnly(bool tablesreadonly)
+        {
+            foreach (DataTable table in loadedDataSet.Tables)
+            {
+                foreach (DataColumn column in table.Columns)
+                {
+                    column.ReadOnly = tablesreadonly;
+                }
+            }
         }
 
         #endregion
