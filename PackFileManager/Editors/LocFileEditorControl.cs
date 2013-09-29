@@ -73,7 +73,7 @@ namespace PackFileManager
                 }
             }
         }
-
+		
         private void addNewRowButton_Click(object sender, EventArgs e) {
 			DataRow row = this.currentDataTable.NewRow ();
 			row [0] = "tag";

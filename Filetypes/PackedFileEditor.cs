@@ -21,6 +21,7 @@ namespace Filetypes {
             set;
         }
 
+		
         /* Query if this editor can edit the given packed file. */
         bool CanEdit(PackedFile file);
 

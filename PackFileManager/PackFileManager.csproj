@@ -278,6 +278,7 @@
     <PreBuildEvent>copy "$(SolutionDir)Files\master_schema.xml" "$(TargetDir)"
 copy "$(SolutionDir)Files\schema_models.xml" "$(TargetDir)"
 if exist "$(SolutionDir)PackFileTest\bin\schema_*" copy "$(SolutionDir)PackFileTest\bin\schema_*" "$(TargetDir)"
-if exist "$(SolutionDir)\DBEditorTableControl\bin\DBEditorTableControl.dll" copy "$(SolutionDir)\DBEditorTableControl\bin\DBEditorTableControl.dll" "$(TargetDir)"</PreBuildEvent>
+if exist "$(SolutionDir)\DBEditorTableControl\bin\DBEditorTableControl.dll" copy "$(SolutionDir)\DBEditorTableControl\bin\DBEditorTableControl.dll" "$(TargetDir)"
+if exist "$(SolutionDir)\DBEditorTableControl\bin\DBEditorTableControl.pdb" copy "$(SolutionDir)\DBEditorTableControl\bin\DBEditorTableControl.pdb" "$(TargetDir)"</PreBuildEvent>
   </PropertyGroup>
 </Project>

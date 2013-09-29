@@ -124,6 +124,9 @@ namespace PackFileManager {
             } catch {
                 // TODO: Should not need to swallow an exception.
             }
+
+            // Double buffer the control to reduce flickering.
+            dataGridView.DoubleBuffered(true);
         }
 
         #region Open/Fill with Data
@@ -743,5 +746,18 @@ namespace PackFileManager {
             }
         }
         #endregion
+    }
+}
+namespace System.Data
+{
+    public static class Extensions
+    {
+        public static void DoubleBuffered(this DataGridView dgv, bool setting)
+        {
+            Type dgvType = dgv.GetType();
+            System.Reflection.PropertyInfo pi = dgvType.GetProperty("DoubleBuffered",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            pi.SetValue(dgv, setting, null);
+        }
     }
 }

@@ -23,13 +23,14 @@ namespace DBTableControl
     /// </summary>
     public partial class DBEditorTableControl : UserControl, INotifyPropertyChanged, IPackedFileEditor
     {
-        public static void RegisterDbEditor() {
+        public static DBEditorTableControl RegisterDbEditor() {
             DBEditorTableControl control = new DBEditorTableControl();
             DBEditorTableHost host = new DBEditorTableHost {
                 Child = control,
                 Dock = System.Windows.Forms.DockStyle.Fill
             };
             PackedFileEditorRegistry.Editors.Add(host);
+            return control;
         }
         
         DataSet loadedDataSet;
@@ -182,7 +183,17 @@ namespace DBTableControl
         public bool ReadOnly
         {
             get { return readOnly; }
-            set { readOnly = value; NotifyPropertyChanged(this, "TableReadOnly"); }
+            set 
+            { 
+                readOnly = value; 
+                NotifyPropertyChanged(this, "TableReadOnly");
+
+                // Set whether we can add rows via button based on readonly.
+                addRowButton.IsEnabled = !readOnly;
+                importFromButton.IsEnabled = !readOnly;
+                dbDataGrid.CanUserAddRows = !readOnly;
+                dbDataGrid.CanUserDeleteRows = !readOnly;
+        }
         }
 
         // PFM needed Properties
@@ -194,7 +205,7 @@ namespace DBTableControl
             {
                 if (currentPackedFile != null && DataChanged)
                 {
-                    TryCommit();
+                    Commit();
                 }
 
                 if (editedFile != null)
@@ -223,6 +234,9 @@ namespace DBTableControl
                 CurrentTable = CreateTable(editedFile);
 
                 NotifyPropertyChanged(this, "CurrentPackedFile");
+
+                // Disabled until a better solution can be devised.
+                //SetColumnSizes();
             }
         }
 
@@ -235,15 +249,30 @@ namespace DBTableControl
         public bool DataChanged { get { return dataChanged; } }
 
         // Import Export default directory
-        string importExportDirectory;
-        public string ImportExportDirectory 
+        public string ModDirectory {
+            get;
+            set;
+        }
+        string importDirectory;
+        public string ImportDirectory 
         { 
-            get { return importExportDirectory; } 
+            get { return importDirectory; } 
             set 
             { 
-                importExportDirectory = value; 
+                importDirectory = value; 
                 UpdateConfig(); 
             } 
+        }
+
+        string exportDirectory;
+        public string ExportDirectory
+        {
+            get { return exportDirectory; }
+            set
+            {
+                exportDirectory = value;
+                UpdateConfig();
+            }
         }
 
         // Configuration data
@@ -269,7 +298,8 @@ namespace DBTableControl
             freezeKeyColumns = savedconfig.FreezeKeyColumns;
             useComboBoxes = savedconfig.UseComboBoxes;
             showAllColumns = savedconfig.ShowAllColumns;
-            importExportDirectory = savedconfig.ImportExportDirectory;
+            importDirectory = savedconfig.ImportDirectory;
+            exportDirectory = savedconfig.ExportDirectory;
 
             // Set Initial checked status.
             freezeKeysCheckBox.IsChecked = freezeKeyColumns;
@@ -282,6 +312,8 @@ namespace DBTableControl
             CurrentTable.RowDeleted += new DataRowChangeEventHandler(CurrentTable_RowDeleted);
             CurrentTable.TableNewRow += new DataTableNewRowEventHandler(CurrentTable_TableNewRow);
             
+            // Default the clonerowButton to false for all tables.
+            cloneRowButton.IsEnabled = false;
 
             // Route the Paste event here so we can do it ourselves.
             CommandManager.RegisterClassCommandBinding(typeof(DataGrid), 
@@ -328,7 +360,9 @@ namespace DBTableControl
 
         public void Commit()
         {
-            if (EditedFile == null || currentTable.GetChanges() == null)
+            // Ignore Commit call if there is nothing to commit, or if the user simply wandered to another table.
+            DataTable test = currentTable.GetChanges();
+            if (EditedFile == null || (currentTable.GetChanges() == null && !dataChanged))
             {
                 return;
             }
@@ -342,7 +376,10 @@ namespace DBTableControl
             {
                 try
                 {
-                    CurrentTable.AcceptChanges();
+                    // Since the data in CurrentTable aren't actually bound to the packed file we are editing
+                    // we don't have to save any changes, this way if a user navigates away from the the current
+                    // db file, all his changes don't look like they have been saved, aka all the red coloring stays.
+                    //CurrentTable.AcceptChanges();
                 }
                 catch (Exception e)
                 {
@@ -475,8 +512,10 @@ namespace DBTableControl
                 }
 
                 // Determine relations as assigned by PFM
-                if (column.ExtendedProperties.ContainsKey("FKey"))
+                if (column.ExtendedProperties.ContainsKey("FKey") && useComboBoxes)
                 {
+                    SortedSet<string> testset = new SortedSet<string>();
+                    testset = DBReferenceMap.Instance.ResolveReference(column.ExtendedProperties["FKey"].ToString());
                     referencevalues = DBReferenceMap.Instance.ResolveReference(column.ExtendedProperties["FKey"].ToString()).ToList();
 
                     if (referencevalues.Count() > 0 && ReferenceContainsAllValues(referencevalues, column))
@@ -579,11 +618,14 @@ namespace DBTableControl
         {
             DataTable constructionTable = new DataTable(currentPackedFile.Name);
 
-            // Add the new table to the DataSet, if it exists already remove it since the table may have been edited with 
-            // another control between then and now.
+            // If the table already exists just re-load it.
+            // 
+            // OLD: Add the new table to the DataSet, if it exists already remove it since the table may have been edited with 
+            // OLD: another control between then and now.
             if (loadedDataSet.Tables.Contains(constructionTable.TableName))
             {
-                loadedDataSet.Tables.Remove(constructionTable.TableName);
+                return loadedDataSet.Tables[currentPackedFile.Name];
+                //loadedDataSet.Tables.Remove(constructionTable.TableName);
             }
             loadedDataSet.Tables.Add(constructionTable);
 
@@ -632,6 +674,46 @@ namespace DBTableControl
             return constructionTable;
         }
 
+        public void SetColumnSizes()
+        {
+            Dictionary<DataGridColumn, double> desiredsizes = new Dictionary<DataGridColumn,double>();
+
+            foreach (DataGridColumn column in dbDataGrid.Columns.Reverse())
+            {
+                double maxdesiredwidth = 0;
+
+                for (int i = 0; i < dbDataGrid.Items.Count; i++)
+                {
+                    DataGridCell cell = GetCell(i, column.DisplayIndex);
+
+                    if (cell == null)
+                    {
+                        continue;
+                    }
+
+                    maxdesiredwidth = Math.Max(maxdesiredwidth, cell.DesiredSize.Width);
+                }
+
+                maxdesiredwidth = Math.Max(maxdesiredwidth, column.Width.DesiredValue);
+                desiredsizes.Add(column, maxdesiredwidth);
+            }
+
+            dbDataGrid.ColumnWidth = DataGridLength.Auto;
+
+            foreach (DataGridColumn column in desiredsizes.Keys)
+            {
+                if (desiredsizes[column] > 1)
+                {
+
+                    column.Width = desiredsizes[column];
+                }
+                else
+                {
+                    column.Width = DataGridLength.Auto;
+                }
+            }
+        }
+        
         private void Import(DBFile importfile)
         {
             // If we are here, then importfile has already been imported into editfile, so no need to do any type checking.
@@ -641,6 +723,14 @@ namespace DBTableControl
             // Unbind the GUI datasource, and tell currentTable to get ready for new data.
             dbDataGrid.ItemsSource = null;
             currentTable.BeginLoadData();
+
+            MessageBoxResult question = MessageBox.Show("Replace the current data?", "Replace data?", 
+                                                    MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+            if (question == MessageBoxResult.Cancel) {
+                return;
+            } else if (question == MessageBoxResult.Yes) {
+                currentTable.Clear();
+            }
 
             // Since Data.Rows lacks an AddRange method, enumerate through the entries manually.
             foreach (List<FieldInstance> entry in importfile.Entries)
@@ -674,8 +764,6 @@ namespace DBTableControl
             DataRow row = CurrentTable.NewRow();
             CurrentTable.Rows.Add(row);
             
-            Refresh();
-
             dataChanged = true;
         }
 
@@ -691,8 +779,6 @@ namespace DBTableControl
                     CurrentTable.Rows.Add(row);
                 }
             }
-
-            Refresh();
 
             dataChanged = true;
         }
@@ -711,7 +797,7 @@ namespace DBTableControl
 
         private void ExportTSVMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            string extractTo = null;
+            string extractTo = ModDirectory;
             // TODO: Add support for ModManager
             //extractTo = ModManager.Instance.CurrentModSet ? ModManager.Instance.CurrentModDirectory : null;
             if (extractTo == null)
@@ -719,12 +805,12 @@ namespace DBTableControl
                 DirectoryDialog dialog = new DirectoryDialog
                 {
                     Description = "Please point to folder to extract to",
-                    SelectedPath = String.IsNullOrEmpty(importExportDirectory)
+                    SelectedPath = String.IsNullOrEmpty(exportDirectory)
                                     ? System.IO.Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName)
-                                    : importExportDirectory
+                                    : exportDirectory
                 };
                 extractTo = dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK ? dialog.SelectedPath : null;
-                importExportDirectory = dialog.SelectedPath;
+                exportDirectory = dialog.SelectedPath;
             }
             if (!string.IsNullOrEmpty(extractTo))
             {
@@ -775,12 +861,12 @@ namespace DBTableControl
                 DirectoryDialog dialog = new DirectoryDialog
                 {
                     Description = "Please point to folder to extract to",
-                    SelectedPath = String.IsNullOrEmpty(importExportDirectory) 
+                    SelectedPath = String.IsNullOrEmpty(exportDirectory) 
                                     ? System.IO.Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName) 
-                                    : importExportDirectory
+                                    : exportDirectory
                 };
                 extractTo = dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK ? dialog.SelectedPath : null;
-                importExportDirectory = dialog.SelectedPath;
+                exportDirectory = dialog.SelectedPath;
             }
             if (!string.IsNullOrEmpty(extractTo))
             {
@@ -800,9 +886,10 @@ namespace DBTableControl
 
         private void ImportTSVMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            string initialDirectory = ModDirectory != null ? ModDirectory : exportDirectory;
             System.Windows.Forms.OpenFileDialog openDBFileDialog = new System.Windows.Forms.OpenFileDialog
             {
-                InitialDirectory = ImportExportDirectory,
+                InitialDirectory = initialDirectory,
                 FileName = String.Format("{0}.tsv", EditedFile.CurrentType.Name)
             };
 
@@ -810,7 +897,7 @@ namespace DBTableControl
             bool tryAgain = false;
             if (openDBFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                ImportExportDirectory = System.IO.Path.GetDirectoryName(openDBFileDialog.FileName);
+                importDirectory = System.IO.Path.GetDirectoryName(openDBFileDialog.FileName);
                 do
                 {
                     try
@@ -820,7 +907,9 @@ namespace DBTableControl
                             using (var stream = new MemoryStream(File.ReadAllBytes(openDBFileDialog.FileName)))
                             {
                                 loadedfile = new TextDbCodec().Decode(stream);
-                                editedFile.Import(loadedfile);
+                                // No need to import to editedFile directly, since it will be handled in the 
+                                // CurrentTable_TableNewRow event handler.
+                                //editedFile.Import(loadedfile);
                                 Import(loadedfile);
                             }
 
@@ -847,7 +936,7 @@ namespace DBTableControl
         {
             System.Windows.Forms.OpenFileDialog openDBFileDialog = new System.Windows.Forms.OpenFileDialog
             {
-                InitialDirectory = ImportExportDirectory,
+                InitialDirectory = exportDirectory,
                 FileName = String.Format("{0}.csv", EditedFile.CurrentType.Name)
             };
 
@@ -855,7 +944,7 @@ namespace DBTableControl
             bool tryAgain = false;
             if (openDBFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                ImportExportDirectory = System.IO.Path.GetDirectoryName(openDBFileDialog.FileName);
+                importDirectory = System.IO.Path.GetDirectoryName(openDBFileDialog.FileName);
                 do
                 {
                     try
@@ -865,6 +954,8 @@ namespace DBTableControl
                             using (var stream = new MemoryStream(File.ReadAllBytes(openDBFileDialog.FileName)))
                             {
                                 loadedfile = new TextDbCodec().Decode(stream);
+                                // No need to import to editedFile directly, since it will be handled in the 
+                                // CurrentTable_TableNewRow event handler.
                                 //editedFile.Import(loadedfile);
                                 Import(loadedfile);
                             }
@@ -892,7 +983,7 @@ namespace DBTableControl
         {
             System.Windows.Forms.OpenFileDialog openDBFileDialog = new System.Windows.Forms.OpenFileDialog
             {
-                InitialDirectory = ImportExportDirectory,
+                InitialDirectory = exportDirectory,
                 FileName = EditedFile.CurrentType.Name
             };
 
@@ -900,7 +991,7 @@ namespace DBTableControl
             bool tryAgain = false;
             if (openDBFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                ImportExportDirectory = System.IO.Path.GetDirectoryName(openDBFileDialog.FileName);
+                importDirectory = System.IO.Path.GetDirectoryName(openDBFileDialog.FileName);
                 do
                 {
                     try
@@ -910,7 +1001,9 @@ namespace DBTableControl
                             using (var stream = new MemoryStream(File.ReadAllBytes(openDBFileDialog.FileName)))
                             {
                                 loadedfile = codec.Decode(stream);
-                                editedFile.Import(loadedfile);
+                                // No need to import to editedFile directly, since it will be handled in the 
+                                // CurrentTable_TableNewRow event handler.
+                                //editedFile.Import(loadedfile);
                                 Import(loadedfile);
                             }
 
@@ -979,7 +1072,10 @@ namespace DBTableControl
         private void dbDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // Enable/Disable Clone Row button based on current selection.
+            if (!readOnly)
+            {
             cloneRowButton.IsEnabled = dbDataGrid.SelectedItems.Count > 0;
+        }
         }
 
         private void dbDataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
@@ -1017,7 +1113,12 @@ namespace DBTableControl
                     columnIndex = cellinfo.Column.DisplayIndex;
 
                     CurrentTable.Rows[rowIndex].BeginEdit();
-                    TryPasteValue(rowIndex, columnIndex, pastevalue);
+
+                    if (!TryPasteValue(rowIndex, columnIndex, pastevalue))
+                    {
+                        // Paste Error
+                    }
+
                     CurrentTable.Rows[rowIndex].EndEdit();
                 }
             }
@@ -1103,7 +1204,12 @@ namespace DBTableControl
                         }
 
                         CurrentTable.Rows[rowIndex].BeginEdit();
-                        TryPasteValue(rowIndex, columnIndex, cell.Trim());
+
+                        if (!TryPasteValue(rowIndex, columnIndex, cell.Trim()))
+                        {
+                            // Paste Error
+                        }
+
                         CurrentTable.Rows[rowIndex].EndEdit();
 
                         dataChanged = true;
@@ -1161,12 +1267,13 @@ namespace DBTableControl
                 }
             }
 
-            Refresh();
+            Refresh(true);
         }
 
         protected virtual void OnCanExecutePaste(object sender, CanExecuteRoutedEventArgs args)
         {
             args.CanExecute = dbDataGrid.CurrentCell != null;
+            args.CanExecute = !readOnly;
             args.Handled = true;
         }
 
@@ -1261,7 +1368,7 @@ namespace DBTableControl
                 }
             }
 
-            Refresh();
+            RefreshColumn(col.DisplayIndex);
         }
 
         private void RenumberMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1293,7 +1400,7 @@ namespace DBTableControl
                 }
             }
 
-            Refresh();
+            RefreshColumn(col.DisplayIndex);
         }
 
         private void HideColumnMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1353,7 +1460,11 @@ namespace DBTableControl
             }
 
             UpdateConfig();
+
+            if (showAllColumns)
+            {
             Refresh();
+        }
         }
 
         private void EditVisibleListMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1402,8 +1513,12 @@ namespace DBTableControl
                 }
 
                 UpdateConfig();
+
+                if (showAllColumns)
+                {
                 Refresh();
             }
+        }
         }
 
         private void ClearTableHiddenMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1424,7 +1539,11 @@ namespace DBTableControl
             // Clear the internal hidden columns list.
             hiddenColumns.Clear();
             UpdateConfig();
+
+            if (showAllColumns)
+            {
             Refresh();
+        }
         }
 
         private void ClearAllHiddenMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1446,7 +1565,11 @@ namespace DBTableControl
                 savedconfig.HiddenColumns.Clear();
             }
             UpdateConfig();
+
+            if (showAllColumns)
+            {
             Refresh();
+        }
         }
 
         #endregion
@@ -1473,8 +1596,6 @@ namespace DBTableControl
             editedFile.Entries.RemoveAt(removalindex);
 
             dataChanged = true;
-
-            Refresh();
         }
 
         void CurrentTable_RowDeleted(object sender, DataRowChangeEventArgs e)
@@ -1486,8 +1607,6 @@ namespace DBTableControl
             }
 
             dataChanged = true;
-
-            Refresh();
         }
 
         void CurrentTable_ColumnChanged(object sender, DataColumnChangeEventArgs e)
@@ -1515,7 +1634,7 @@ namespace DBTableControl
 
         #region UI Helper Methods
 
-        public DataGridCell GetCell(int row, int column)
+        public DataGridCell GetCell(int row, int column, bool onlyvisible = false)
         {
             DataGridRow rowContainer = GetRow(row);
 
@@ -1526,6 +1645,12 @@ namespace DBTableControl
                 // UI Virtualization may interfere with the presenter, so scroll to the item and try again.
                 if (presenter == null)
                 {
+                    // If vitrualized and not in view, ignore based on optional paramater.
+                    if (onlyvisible)
+                    {
+                        return null;
+                    }
+
                     dbDataGrid.ScrollIntoView(rowContainer, dbDataGrid.Columns[column]);
                     presenter = GetVisualChild<DataGridCellsPresenter>(rowContainer);
                 }
@@ -1534,6 +1659,12 @@ namespace DBTableControl
                 DataGridCell cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(column);
                 if (cell == null)
                 {
+                    // If virtualized possibly ignore
+                    if (onlyvisible)
+                    {
+                        return null;
+                    }
+
                     // now try to bring into view and retreive the cell
                     dbDataGrid.ScrollIntoView(rowContainer, dbDataGrid.Columns[column]);
                     cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(column);
@@ -1644,8 +1775,10 @@ namespace DBTableControl
             yield break;
         }
 
-        private void Refresh()
+        private void Refresh(bool onlyvisible = false)
         {
+            if (!onlyvisible)
+            {
             // TODO: Try to find another way to force refresh the screen.
             var selectedItems = dbDataGrid.SelectedItems;
             List<DataGridCellInfo> selectedCells = dbDataGrid.SelectedCells.ToList();
@@ -1666,6 +1799,49 @@ namespace DBTableControl
                 {
                     dbDataGrid.SelectedCells.Add(cellToAdd);
                 }
+            }
+        }
+            else // Refresh only visible elements, column by column.
+            {
+                for (int i = 0; i < currentTable.Columns.Count; i++)
+                {
+                    RefreshColumn(i);
+                }
+            }
+        }
+
+        private void RefreshColumn(int column)
+        {
+            for (int i = 0; i < dbDataGrid.Items.Count; i++)
+            {
+                DataGridCell cell = GetCell(i, column, true);
+
+                if (cell != null)
+                {
+                    // Resetting the cell's Style forces a UI ReDraw to occur without disturbing the rest of the datagrid.
+                    Style TempStyle = cell.Style;
+                    cell.Style = null;
+                    cell.Style = TempStyle;
+                }
+#if DEBUG
+                else
+                {
+                    string breakpointstring = "";
+                }
+#endif
+            }
+        }
+
+        private void RefreshCell(int row, int column)
+        {
+            DataGridCell cell = GetCell(row, column, true);
+
+            if (cell != null)
+            {
+                // Resetting the cell's Style forces a UI ReDraw to occur without disturbing the rest of the datagrid.
+                Style TempStyle = cell.Style;
+                cell.Style = null;
+                cell.Style = TempStyle;
             }
         }
 
@@ -1696,7 +1872,8 @@ namespace DBTableControl
             savedconfig.FreezeKeyColumns = freezeKeyColumns;
             savedconfig.UseComboBoxes = useComboBoxes;
             savedconfig.ShowAllColumns = showAllColumns;
-            savedconfig.ImportExportDirectory = ImportExportDirectory;
+            savedconfig.ImportDirectory = importDirectory;
+            savedconfig.ExportDirectory = exportDirectory;
 
             if (editedFile != null)
             {
@@ -1727,7 +1904,7 @@ namespace DBTableControl
 
             // Modify controls accordingly
             // Most controls useability are bound by TableReadOnly, so set it.
-            ReadOnly = true;
+            readOnly = true;
             // Modify the remaining controls manually.
             exportAsButton.IsEnabled = false;
         }
@@ -1867,18 +2044,19 @@ namespace DBTableControl
         {
             // Paste Event
             Type celltype = CurrentTable.Columns[columnIndex].DataType;
+            bool retval = false;
 
             if (celltype.Name == "String")
             {
                 CurrentTable.Rows[rowIndex][columnIndex] = value.Trim();
-                return true;
+                retval = true;
             }
             else if (celltype.Name == "Single")
             {
                 try
                 {
                     CurrentTable.Rows[rowIndex][columnIndex] = float.Parse(value.Trim());
-                    return true;
+                    retval = true;
                 }
                 catch(Exception e)
                 {
@@ -1890,7 +2068,7 @@ namespace DBTableControl
                 try
                 {
                     CurrentTable.Rows[rowIndex][columnIndex] = bool.Parse(value.Trim());
-                    return true;
+                    retval = true;
                 }
                 catch (Exception e)
                 {
@@ -1902,7 +2080,7 @@ namespace DBTableControl
                 try
                 {
                     CurrentTable.Rows[rowIndex][columnIndex] = int.Parse(value.Trim());
-                    return true;
+                    retval = true;
                 }
                 catch (Exception e)
                 {
@@ -1914,7 +2092,7 @@ namespace DBTableControl
                 try
                 {
                     CurrentTable.Rows[rowIndex][columnIndex] = short.Parse(value.Trim());
-                    return true;
+                    retval = true;
                 }
                 catch (Exception e)
                 {
@@ -1922,7 +2100,7 @@ namespace DBTableControl
                 }
             }
 
-            return false;
+            return retval;
         }
 
         private bool PasteMatchesSelection(string clipboardData)

@@ -107,7 +107,7 @@ namespace DBTableControl
 
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            SolidColorBrush newColor = new SolidColorBrush(Colors.WhiteSmoke);
+            SolidColorBrush newColor = new SolidColorBrush(Color.FromArgb(255, 250, 250, 250));
             //NewColor = null;
             DataGridCell cell = null;
             DataRow row = null;
@@ -138,7 +138,7 @@ namespace DBTableControl
 
             if (column.ReadOnly)
             {
-                newColor = new SolidColorBrush(Colors.LightGray);
+                newColor = new SolidColorBrush(Color.FromArgb(255, 210, 210, 210));
             }
 
             if (IsKeyColumn(row.Table, columnName))

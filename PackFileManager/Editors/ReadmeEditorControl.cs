@@ -64,6 +64,7 @@
             }
         }
 
+
         public bool CanEdit(PackedFile file) {
             return file.Name.Equals("readme.xml");
         }
