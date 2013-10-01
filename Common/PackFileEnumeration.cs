@@ -67,14 +67,8 @@ namespace Common {
                 return false;
             } 
             uint size = reader.ReadUInt32();
-            switch (Header.Type) {
-                case PackType.BootX:
-                case PackType.Shader1:
-                case PackType.Shader2:
-                    header.AdditionalInfo = reader.ReadInt64();
-                    break;
-                default:
-                    break;
+            if (Header.HasAdditionalInfo) {
+                header.AdditionalInfo = reader.ReadInt64();
             }
             try {
                 string packedFileName = IOFunctions.ReadZeroTerminatedAscii(reader);

@@ -106,9 +106,43 @@ namespace PackFileManager {
          * Read mod list from current settings.
          */
         private ModManager() {
-            mods = DecodeMods(Settings.Default.ModList);
+            if (File.Exists(ModListSaveFile)) {
+                foreach(string line in File.ReadAllLines(ModListSaveFile)) {
+                    Mod decoded = DecodeMod(line);
+                    if (decoded != null) {
+                        mods.Add(decoded);
+                    }
+                }
+            }
             GameManager.Instance.GameChanged += SetModGame;
-            SetCurrentMod(Settings.Default.CurrentMod);
+            if (File.Exists(CurrentModSaveFile)) {
+                string lastSetMod = File.ReadAllText(CurrentModSaveFile).Trim();
+                SetCurrentMod(lastSetMod);
+            }
+            // before 3.1.1, the mod list was saved in the settings;
+            // try to restore those.
+            RestoreLegacyModList();
+        }
+        
+        private void RestoreLegacyModList() {
+            try {
+                string encodedList = Settings.Default["ModList"] as string;
+                if (!string.IsNullOrEmpty(encodedList)) {
+                    foreach(string encodedMod in encodedList.Split(new string[] {"@@@"}, StringSplitOptions.RemoveEmptyEntries)) {
+                        Mod toAdd = DecodeMod(encodedMod);
+                        if (toAdd != null) {
+                            mods.Add(toAdd);
+                        }
+                    }
+                    Settings.Default["ModList"] = null;
+                }
+                string currentInSettings = Settings.Default["CurrentMod"] as string;
+                if (!string.IsNullOrEmpty(currentInSettings)) {
+                    SetCurrentMod(currentInSettings);
+                    Settings.Default["CurrentMod"] = null;
+                }
+                Settings.Default.Save();
+            } catch {}
         }
   
         /*
@@ -137,13 +171,11 @@ namespace PackFileManager {
             }
         }
 
-        private List<Mod> mods;
+        private List<Mod> mods = new List<Mod>();
         public List<string> ModNames {
             get {
                 List<string> result = new List<string>();
-                foreach (var entry in DecodeMods(Settings.Default.ModList)) {
-                    result.Add(entry.Name);
-                }
+                mods.ForEach(m => result.Add(m.Name));
                 return result;
             }
         }
@@ -181,6 +213,7 @@ namespace PackFileManager {
             }
             return result;
         }
+
         /*
          * Query user for a pack to open to import data from, then open pack browser to
          * let user select the packed files he wants to start off with.
@@ -213,27 +246,48 @@ namespace PackFileManager {
         }
         public void AddMod(Mod mod) {
             mods.Add(mod);
-            mod.GameChanged += delegate { EncodeMods(); };
+            mod.GameChanged += delegate { StoreToSettings(); };
             StoreToSettings ();
             CurrentMod = mod;
         }
+
+        void StoreToSettings() {
+            // Settings.Default.ModList = EncodeMods();
+            using(var writer = File.CreateText(ModListSaveFile)) {
+                foreach(Mod mod in mods) {
+                    writer.WriteLine(EncodeMod(mod));
+                }
+            }
+        }
+        string ModListSaveFile {
+            get {
+                return Path.Combine(Program.ApplicationFolder, "modlist.txt");
+            }
+        }
+        #endregion
+  
+        #region Current Mod
         /*
          * Retrieve the currently active mod.
          */
+        string currentMod = "";
         public Mod CurrentMod {
             get {
                 // the current mod is stored in the settings
-                return FindByName(Settings.Default.CurrentMod);
+                return FindByName(currentMod);
             }
             set {
-                string modName = (value != null) ? value.Name : "";
-                Settings.Default.CurrentMod = modName;
-                if (!string.IsNullOrEmpty(modName)) {
+                currentMod = (value != null) ? value.Name : "";
+                if (!string.IsNullOrEmpty(currentMod)) {
                     GameManager.Instance.CurrentGame = CurrentMod.Game;
                 }
                 if (CurrentModChanged != null) {
                     CurrentModChanged();
                 }
+                using (var writer = File.CreateText(CurrentModSaveFile)) {
+                    writer.WriteLine(currentMod);
+                }
+                Console.WriteLine("Current mod now {0}", currentMod);
             }
         }
         /*
@@ -242,7 +296,6 @@ namespace PackFileManager {
         public void SetCurrentMod(string modname) {
             CurrentMod = FindByName(modname);
         }
-        
         /*
          * Delete the currently active mod.
          */
@@ -253,16 +306,15 @@ namespace PackFileManager {
                 SetCurrentMod("");
             }
         }
-        void StoreToSettings() {
-            Settings.Default.ModList = EncodeMods();
-        }
-        #endregion
-  
-        #region Current Mod properties
         public string CurrentModDirectory {
             get {
                 string result = (CurrentMod != null) ? CurrentMod.BaseDirectory : null;
                 return result;
+            }
+        }
+        static string CurrentModSaveFile {
+            get {
+                return Path.Combine(Program.ApplicationFolder, "currentMod.txt");
             }
         }
         #endregion
@@ -349,31 +401,23 @@ namespace PackFileManager {
         #endregion
         
         #region Helpers to Encode/Decode to Settings string 
-        static List<Mod> DecodeMods(string encoded) {
-            List<Mod> result = new List<Mod>();
-            string[] entries = encoded.Split(new string[] { "@@@" }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (string entry in entries) {
-                string[] nameDirTuple = entry.Split(Path.PathSeparator);
-                try {
-                    Game game = (nameDirTuple.Length > 2)?
-                        Game.ById(nameDirTuple[2]) :
-                        Game.STW;
-                    Mod newMod = new Mod {
-                        Name = nameDirTuple[0],
-                        BaseDirectory = nameDirTuple[1],
-                        Game = game
-                    };
-                    result.Add(newMod);
-                } catch { }
-            }
+        static Mod DecodeMod(string encoded) {
+            Mod result = null;
+            string[] nameDirTuple = encoded.Split(Path.PathSeparator);
+            try {
+                Game game = (nameDirTuple.Length > 2)?
+                    Game.ById(nameDirTuple[2]) :
+                    Game.STW;
+                result = new Mod {
+                    Name = nameDirTuple[0],
+                    BaseDirectory = nameDirTuple[1],
+                    Game = game
+                };
+            } catch { }
             return result;
         }
-        static string EncodeMods() {
-            string result = "";
-            foreach (var mod in Instance.mods) {
-                result += string.Format("{0}{1}{2}{1}{3}{4}", mod.Name, Path.PathSeparator, mod.BaseDirectory, mod.Game.Id, "@@@");
-            }
-            return result;
+        static string EncodeMod(Mod mod) {
+            return string.Format("{0}{1}{2}{1}{3}", mod.Name, Path.PathSeparator, mod.BaseDirectory, mod.Game.Id);
         }
         #endregion
     }
@@ -384,8 +428,10 @@ namespace PackFileManager {
     public class ModMenuItem : ToolStripMenuItem {
         public ModMenuItem(string title, string modName)
             : base(title) {
-            string currentMod = Settings.Default.CurrentMod;
-            Checked = currentMod == modName;
+            if (ModManager.Instance.CurrentModSet) {
+            string currentMod = ModManager.Instance.CurrentMod.Name;
+                Checked = currentMod == modName;
+            }
             ModManager.Instance.CurrentModChanged += CheckSelection;
             Tag = modName;
         }
@@ -395,7 +441,7 @@ namespace PackFileManager {
         }
         // check if the new selected mod is the one referred to by this item
         private void CheckSelection() {
-            Checked = Settings.Default.CurrentMod.Equals(Tag as string);
+            Checked = (Tag as string).Equals(ModManager.Instance.CurrentMod.Name);
         }
     }
 }

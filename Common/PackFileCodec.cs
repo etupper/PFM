@@ -33,14 +33,8 @@ namespace Common {
 				for (int i = 0; i < file.Header.FileCount; i++) {
 					uint size = reader.ReadUInt32 ();
 					sizes += size;
-                    switch (file.Header.Type) {
-                        case PackType.BootX:
-                        case PackType.Shader1:
-                        case PackType.Shader2:
-                            header.AdditionalInfo = reader.ReadInt64();
-                            break;
-                        default:
-                            break;
+                    if (file.Header.HasAdditionalInfo) {
+                        header.AdditionalInfo = reader.ReadInt64();
                     }
                     string packedFileName = IOFunctions.ReadZeroTerminatedAscii(reader);
                     // this is easier because we can use the Path methods
@@ -73,17 +67,8 @@ namespace Common {
 			string packIdentifier = new string (reader.ReadChars (4));
 			header = new PFHeader (packIdentifier);
 			int packType = reader.ReadInt32 ();
-            bool validType = false;
-            foreach(PackType type in Enum.GetValues(typeof(PackType))) {
-                if (packType == (int) type) {
-                    validType = true;
-                    break;
-                }
-            }
-            if (!validType) {
-                    throw new InvalidDataException("Unknown pack type " + packType);
-            }
-			header.Type = (PackType)packType;
+            header.PrecedenceByte = (byte) packType;
+            // header.Type = (PackType)packType;
 			header.Version = reader.ReadInt32 ();
 			int replacedPackFilenameLength = reader.ReadInt32 ();
 			reader.BaseStream.Seek (0x10L, SeekOrigin.Begin);
@@ -117,14 +102,8 @@ namespace Common {
                 foreach (PackedFile file in packFile.Files) {
                     if (!file.Deleted) {
                         indexSize += (uint)file.FullPath.Length + 5;
-                        switch (packFile.Header.Type) {
-                        case PackType.BootX:
-                        case PackType.Shader1:
-                        case PackType.Shader2:
+                        if (packFile.Header.HasAdditionalInfo) {
                             indexSize += 8;
-                            break;
-                        default:
-                            break;
                         }
                         toWrite.Add (file);
                     }
@@ -154,14 +133,8 @@ namespace Common {
                 string separatorString = "" + Path.DirectorySeparatorChar;
                 foreach (PackedFile file in toWrite) {
                     writer.Write ((int)file.Size);
-                    switch (packFile.Header.Type) {
-                    case PackType.BootX:
-                    case PackType.Shader1:
-                    case PackType.Shader2:
+                    if (packFile.Header.HasAdditionalInfo) {
                         writer.Write(packFile.Header.AdditionalInfo);
-                        break;
-                    default:
-                        break;
                     }
                     // pack pathes use backslash, we replaced when reading
                     string packPath = file.FullPath.Replace (separatorString, "\\");
