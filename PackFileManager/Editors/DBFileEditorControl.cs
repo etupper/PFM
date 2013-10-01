@@ -316,9 +316,14 @@ namespace PackFileManager {
             var row = currentDataTable.NewRow();
             for (int i = 0; i < currentDataTable.Columns.Count; i++) 
             {
-                int num2 = Convert.ToInt32(currentDataTable.Columns[i].ColumnName);
-                row[i] = Convert.ChangeType(newEntry[num2].Value, currentDataTable.Columns[i].DataType);
+                foreach(FieldInstance instance in newEntry) {
+                    if (instance.Name.Equals(currentDataTable.Columns[i].ColumnName)) {
+                        row[i] = Convert.ChangeType(instance.Value, currentDataTable.Columns[i].DataType);
+                        break;
+                    }
+                }
             }
+            
             EditedFile.Entries.Insert(index, newEntry);
             currentDataTable.Rows.InsertAt(row, index);
             FillRowHeaders();
