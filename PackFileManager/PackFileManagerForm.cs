@@ -912,7 +912,6 @@ namespace PackFileManager
                 try {
                     editor.ReadOnly = !CanWriteCurrentPack;
                     editor.CurrentPackedFile = packedFile;
-                    editor.ReadOnly = !CanWriteCurrentPack;
                     if (!splitContainer1.Panel2.Controls.Contains(editor as Control)) {
                         splitContainer1.Panel2.Controls.Add(editor as Control);
                     }
