@@ -153,7 +153,7 @@ namespace Common {
         string identifier;
 
         public PFHeader(string id) {
-            Type = PackType.Mod;
+            PrecedenceByte = 3;
             // Rome II headers are longer
             DataStart = "PFH4".Equals(id) ? 0x28 : 0x20;
             PackIdentifier = id;
@@ -204,7 +204,45 @@ namespace Common {
             }
         }
         // query/set pack type
-        public PackType Type { get; set; }
+        private byte precedenceByte;
+        public PackType Type { 
+            get {
+                // filter three lsbs
+                byte typeBits = (byte) LoadOrder;
+                if (typeBits < 5) {
+                    return (PackType) typeBits;
+                } else {
+                    return PackType.Other;
+                }
+            }
+            set {
+                // avoid setting invalid value
+                int typeBits = (int) value & 7;
+                // remove 3 lsbs from precedence
+                precedenceByte &= byte.MaxValue - 7;
+                // set bits
+                precedenceByte |= (byte) typeBits;
+            }
+        }
+        public byte PrecedenceByte {
+            get {
+                return precedenceByte;
+            }
+            set {
+                precedenceByte = value;
+            }
+        }
+        public int LoadOrder {
+            get {
+                return precedenceByte & 7;
+            }
+        }
+        public bool HasAdditionalInfo {
+            get {
+                // bit 1000000 set?
+                return (PrecedenceByte & 0x40) != 0;
+            }
+        }
         // query/set version
         public int Version { get; set; }
         // query/set offset for data in file
@@ -250,11 +288,13 @@ namespace Common {
      */
     public enum PackType {
         // up to movie, ids are sequential
-        Boot,
-        Release,
-        Patch,
-        Mod,
-        Movie,
+        Boot,    // 000
+        Release, // 001
+        Patch,   // 010
+        Mod,     // 011
+        Movie,   // 100
+        Other
+        /* ,
         // have to force id value for boot; there are more of those special ones,
         // but we can't handle them yet
         Sound = 17,
@@ -264,5 +304,6 @@ namespace Common {
         BootX = 0x40,
         Shader1 = 0x41,
         Shader2 = 0x42
+        */
     }
 }

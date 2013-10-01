@@ -66,7 +66,7 @@
         public string ImportExportDirectory {
             get {
                 string result = (string)this["ImportExportDirectory"];
-                if (CurrentMod != "") {
+                if (ModManager.Instance.CurrentModSet) {
                     try {
                         result = ModManager.Instance.CurrentModDirectory;
                     } catch { }
@@ -82,7 +82,7 @@
         public string LastPackDirectory {
             get {
                 string result = (string)this["LastPackDirectory"];
-                if (CurrentMod != "") {
+                if (ModManager.Instance.CurrentModSet) {
                     try {
                         result = ModManager.Instance.CurrentModDirectory;
                     } catch { }
@@ -244,42 +244,6 @@
             }
             set {
                 this["ShowDecodeToolOnError"] = value;
-                Save();
-            }
-        }
-
-        [DebuggerNonUserCode, DefaultSettingValue("10595000"), UserScopedSetting]
-        public string TwcThreadId
-        {
-            get
-            {
-                return (string)this["TwcThreadId"];
-            }
-            set
-            {
-                this["TwcThreadId"] = value;
-                Save();
-            }
-        }
-
-        [DefaultSettingValue(""), UserScopedSetting]
-        public string ModList {
-            get {
-                return (string)this["ModList"];
-            }
-            set {
-                this["ModList"] = value;
-                Save();
-            }
-        }
-
-        [DebuggerNonUserCode, DefaultSettingValue(""), UserScopedSetting]
-        public string CurrentMod {
-            get {
-                return (string)this["CurrentMod"];
-            }
-            set {
-                this["CurrentMod"] = value;
                 Save();
             }
         }

@@ -84,21 +84,39 @@ namespace EsfControl {
             }
         }
         
-        public void SelectPath(string path) {
-            string[] nodes = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            TreeNode currentNode = rootNode;
-            rootNode.Expand();
-            for (int i = 1; i < nodes.Length; i++) {
-                currentNode = FindNode(currentNode.Nodes, nodes[i]);
-                if (currentNode != null) {
-                    currentNode.Expand();
-                } else {
-                    Console.WriteLine("Cannot find {0} in {1}", nodes[i], nodes[i-1]);
-                    break;
+        public string SelectedPath {
+            get {
+                string selectedPath = "";
+                EsfNode node = esfNodeTree.SelectedNode.Tag as EsfNode;
+                while (node != null) {
+                    INamedNode named = node as INamedNode;
+                    if (named is CompressedNode) {
+                        selectedPath = selectedPath.Substring (selectedPath.IndexOf('/') + 1);
+                    } 
+                    if (!(named is MemoryMappedRecordNode) || string.IsNullOrEmpty(selectedPath)) {
+                        selectedPath = string.Format("{0}/{1}", named.GetName(), selectedPath);
+                        Console.WriteLine("node {0} - {1}", named.GetName(), node.GetType());
+                    }
+                    node = node.Parent;
                 }
-            };
-            if (currentNode != null) {
-                esfNodeTree.SelectedNode = currentNode;
+                return selectedPath;
+            }
+            set {
+                string[] nodes = value.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                TreeNode currentNode = rootNode;
+                rootNode.Expand();
+                for (int i = 1; i < nodes.Length; i++) {
+                    currentNode = FindNode(currentNode.Nodes, nodes[i]);
+                    if (currentNode != null) {
+                        currentNode.Expand();
+                    } else {
+                        Console.WriteLine("Cannot find {0} in {1}", nodes[i], nodes[i-1]);
+                        break;
+                    }
+                };
+                if (currentNode != null) {
+                    esfNodeTree.SelectedNode = currentNode;
+                }
             }
         }
         private TreeNode FindNode(TreeNodeCollection collection, string pathSegment) {
@@ -324,8 +342,7 @@ namespace EsfControl {
             } catch {
             }
         }
-    }
-    
+    }    
     
     public class ModificationColorizer {
         public DataGridViewRow row;
@@ -336,6 +353,19 @@ namespace EsfControl {
             foreach (DataGridViewCell cell in row.Cells) {
                 cell.Style.ForeColor = node.Modified ? Color.Red : Color.Black;
             }
+        }
+    }
+
+    public class BookmarkItem : ToolStripMenuItem {
+        string openPath;
+        EditEsfComponent component;
+        public BookmarkItem(string label, string path, EditEsfComponent c) : base(label) {
+            openPath = path;
+            component = c;
+            Click += OpenPath;
+        }
+        private void OpenPath(object sender, EventArgs args) {
+            component.SelectedPath = openPath;
         }
     }
 }

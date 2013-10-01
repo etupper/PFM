@@ -123,36 +123,22 @@ namespace EditSF {
         }
         
         #region Bookmarks
-        private EsfNode currentSelection = null;
         private void NodeSelected(EsfNode node) {
             bookmarksToolStripMenuItem.Enabled = (node != null);
             addBookmarkToolStripMenuItem.Enabled = (node != null);
-            currentSelection = node;
         }
         List<string> bookmarks = new List<string>();
         Dictionary<string, string> bookmarkToPath = new Dictionary<string, string>();
         private void AddBookmark(object sender, EventArgs args) {
-            EsfNode node = currentSelection as ParentNode;
-            string selectedPath = "";
-            while (node != null) {
-                INamedNode named = node as INamedNode;
-                if (named is CompressedNode) {
-                    selectedPath = selectedPath.Substring (selectedPath.IndexOf('/') + 1);
-                } 
-                if (!(named is MemoryMappedRecordNode) || string.IsNullOrEmpty(selectedPath)) {
-                    selectedPath = string.Format("{0}/{1}", named.GetName(), selectedPath);
-                    Console.WriteLine("node {0} - {1}", named.GetName(), node.GetType());
-                }
-                node = node.Parent;
-            }
-            
-            Console.WriteLine("adding bookmark for node {0}", selectedPath);
+#if DEBUG            
+            Console.WriteLine("adding bookmark for node {0}", editEsfComponent.SelectedPath);
+#endif
             InputBox box = new InputBox {
                 Text = "Enter bookmark name",
-                Input = selectedPath
+                Input = editEsfComponent.SelectedPath
             };
             if (box.ShowDialog() == DialogResult.OK && !bookmarks.Contains(box.Input)) {
-                AddBookmark(box.Input, selectedPath);
+                AddBookmark(box.Input, editEsfComponent.SelectedPath);
                 SaveBookmarks();
             }
         }
@@ -265,19 +251,6 @@ namespace EditSF {
         }
     }
     
-    public class BookmarkItem : ToolStripMenuItem {
-        string openPath;
-        EditEsfComponent component;
-        public BookmarkItem(string label, string path, EditEsfComponent c) : base(label) {
-            openPath = path;
-            component = c;
-            Click += OpenPath;
-        }
-        private void OpenPath(object sender, EventArgs args) {
-            component.SelectPath(openPath);
-        }
-    }
-
     public class LogFileWriter {
         private TextWriter writer;
         public LogFileWriter(string logFileName) {

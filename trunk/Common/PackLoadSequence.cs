@@ -11,15 +11,31 @@ namespace Common {
          * Predicate function that can decide whether or not to ignore a given
          * pack file altogether.
          */
-        private Predicate<string> ignore;
+        private Predicate<string> ignorePack;
         public Predicate<string> IgnorePack {
             get { 
-                return ignore != null ? ignore : Keep;
+                return ignorePack ?? Keep;
             }
             set {
-                ignore = (value != null) ? value : Keep;
+                ignorePack = value ?? Keep;
             }
         }
+        
+        /*
+         * Predicate function that can decide whether or not a pack
+         * will be included in the result depending on a specific file it contains.
+         * Default is including all packs containing db files.
+         */
+        private Predicate<string> keepPacksContaining;
+        public Predicate<string> IncludePacksContaining {
+            get {
+                return keepPacksContaining ?? KeepDbFiles;
+            }
+            set {
+                keepPacksContaining = value ?? KeepDbFiles;
+            }
+        }
+        
         /*
          * Retrieve the packs loaded from the given directory.
          */
@@ -51,7 +67,7 @@ namespace Common {
                         // prevents having to parse all contained file names
                         PackedFileEnumerable packedFiles = new PackedFileEnumerable(p);
                         foreach (PackedFile file in packedFiles) {
-                            if (file.FullPath.StartsWith("db")) {
+                            if (IncludePacksContaining(file.FullPath)) {
                                 result.Add(p);
                                 break;
                             }
@@ -77,6 +93,7 @@ namespace Common {
         #region Pack filtering
         // Don't ignore any packs.
         static bool Keep(string f) { return false; }
+        static bool KeepDbFiles(string f) { return f.StartsWith("db"); }
         static readonly string[] EXCLUDE_PREFIXES = { 
                                                         "local", "models", "sound", "terrain", 
                                                         "anim", "ui", "voices" };
@@ -105,13 +122,13 @@ namespace Common {
      * (packs may contain a list of packs they override).
      */
     public class PackLoadOrder : Comparer<string> {
-        private static List<PackType> Ordered = new List<PackType>(new PackType[] {
+        /*private static List<PackType> Ordered = new List<PackType>(new PackType[] {
             PackType.Boot, PackType.BootX, PackType.Shader1, PackType.Shader2,
             PackType.Release, PackType.Patch,
             PackType.Mod, PackType.Movie, 
             PackType.Music, PackType.Music1, 
             PackType.Sound, PackType.Sound1
-        });
+        });*/
 
         Dictionary<string, PFHeader> nameToHeader = new Dictionary<string, PFHeader>();
         Dictionary<string, string> nameToPath = new Dictionary<string, string>();
@@ -132,8 +149,8 @@ namespace Common {
             // sort by type
             PFHeader p1Header = nameToHeader[p1];
             PFHeader p2Header = nameToHeader[p2];
-            int index1 = Ordered.IndexOf(p1Header.Type);
-            int index2 = Ordered.IndexOf(p2Header.Type);
+            int index1 = p1Header.LoadOrder; // Ordered.IndexOf(p1Header.Type);
+            int index2 = p2Header.LoadOrder; // Ordered.IndexOf(p2Header.Type);
             int result = index2 - index1;
             // same type? Check obsoletion path
             if (result == 0) {

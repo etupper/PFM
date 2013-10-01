@@ -378,16 +378,25 @@ namespace PackFileManager
                 currentPackFile.IsModified;
             
             // enable and check correct type selection item
-            if (CanWriteCurrentPack) {
+            if (currentPackFile == null) {
+                changePackTypeToolStripMenuItem.Enabled = false;
+            } else {
+                changePackTypeToolStripMenuItem.Enabled = true;
                 foreach(ToolStripMenuItem item in changePackTypeToolStripMenuItem.DropDownItems) {
-                    if (currentPackFile == null) {
-                        item.Checked = false;
-                    } else {
-                        item.Checked = (item.Tag.Equals(currentPackFile.Type));
+                    item.Checked = (item.Tag.Equals(currentPackFile.Type));
+                    switch ((PackType) item.Tag) {
+                    case PackType.Mod:
+                    case PackType.Movie:
+                        item.Enabled = true;
+                        break;
+                    case PackType.Other:
+                        item.Enabled = false;
+                        break;
+                    default:
+                        item.Enabled = CanWriteCurrentPack;
+                        break;
                     }
                 }
-            } else {
-                changePackTypeToolStripMenuItem.Enabled = false;
             }
             
             addToolStripMenuItem.Enabled = CanWriteCurrentPack;
@@ -542,7 +551,10 @@ namespace PackFileManager
                 return;
             }
             packStatusLabel.Text = "Collecting Game files";
-            List<string> packPaths = new PackLoadSequence().GetPacksLoadedFrom(GameManager.Instance.CurrentGame.GameDirectory);
+            PackLoadSequence allFiles = new PackLoadSequence {
+                IncludePacksContaining = delegate(string s) { return true; }
+            };
+            List<string> packPaths = allFiles.GetPacksLoadedFrom(GameManager.Instance.CurrentGame.GameDirectory);
             packPaths.Reverse();
             PackFile file = new PackFile("All Packs");
             PackFileCodec codec = new PackFileCodec();
@@ -564,7 +576,7 @@ namespace PackFileManager
             if (packFileName != null) {
                 // add mod entry to menu
                 if (ModManager.Instance.CurrentModSet) {
-                    if (!oldMods.Contains(Settings.Default.CurrentMod)) {
+                    if (!oldMods.Contains(ModManager.Instance.CurrentMod.Name)) {
                         modsToolStripMenuItem.DropDownItems.Insert(1, new ModMenuItem(ModManager.Instance.CurrentMod.Name, 
                                                                                       ModManager.Instance.CurrentMod.Name));
                     }

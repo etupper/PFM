@@ -1,7 +1,9 @@
-﻿namespace PackFileManager
+﻿using System;
+using System.IO;
+using System.Windows.Forms;
+
+namespace PackFileManager
 {
-    using System;
-    using System.Windows.Forms;
 
     public class Program
     {
@@ -25,6 +27,20 @@
             catch (Exception exception)
             {
                 MessageBox.Show(exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+            }
+        }
+        
+        /*
+         * Get path to PFM setting folder; creates it if neccessary.
+         */
+        public static string ApplicationFolder {
+            get {
+                string localAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                localAppDir = Path.Combine(localAppDir, "PackFileManager");
+                if (!Directory.Exists(localAppDir)) {
+                    Directory.CreateDirectory(localAppDir);
+                }
+                return localAppDir;
             }
         }
     }
