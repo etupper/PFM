@@ -25,6 +25,10 @@ namespace DBTableControl
         public ApplyExpressionWindow()
         {
             InitializeComponent();
+
+            // Force move the initial focus to the next element, i.e. the input textbox.
+            Loaded += (sender, e) => MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+            
         }
 
         private void ApplyExpButton_Click(object sender, RoutedEventArgs e)

@@ -155,6 +155,11 @@ namespace DBTableControl
                 dbDataGrid.CanUserAddRows = !readOnly;
                 dbDataGrid.CanUserDeleteRows = !readOnly;
 
+                if (findButton.IsEnabled)
+                {
+                    replaceButton.IsEnabled = !readOnly;
+                }
+
                 BuiltTablesSetReadOnly(readOnly);
             }
         }
@@ -243,6 +248,8 @@ namespace DBTableControl
 
         private List<string> hiddenColumns;
 
+        FindAndReplaceWindow findReplaceWindow;
+
         public DBEditorTableControl()
         {
             InitializeComponent();
@@ -273,8 +280,20 @@ namespace DBTableControl
             CurrentTable.RowDeleted += new DataRowChangeEventHandler(CurrentTable_RowDeleted);
             CurrentTable.TableNewRow += new DataTableNewRowEventHandler(CurrentTable_TableNewRow);
 
-            // Default the clonerowButton to false for all tables.
+            // Register for FindAndReplaceWindowEvents
+            findReplaceWindow = new FindAndReplaceWindow();
+            findReplaceWindow.FindNext += new EventHandler(findWindow_FindNext);
+            findReplaceWindow.FindAll += new EventHandler(findReplaceWindow_FindAll);
+            findReplaceWindow.Replace += new EventHandler(replaceWindow_Replace);
+            findReplaceWindow.ReplaceAll += new EventHandler(replaceWindow_ReplaceAll);
+
+            // Enable keyboard interop for the findReplaceWindow, otherwise WinForms will intercept all keyboard input.
+            System.Windows.Forms.Integration.ElementHost.EnableModelessKeyboardInterop(findReplaceWindow);
+
+            // Default the below buttons to false for all tables.
             cloneRowButton.IsEnabled = false;
+            findButton.IsEnabled = false;
+            replaceButton.IsEnabled = false; ;
 
             // Route the Paste event here so we can do it ourselves.
             CommandManager.RegisterClassCommandBinding(typeof(DataGrid), 
@@ -717,6 +736,12 @@ namespace DBTableControl
             return true;
         }
 
+        #region UserControl Events
+
+        
+
+        #endregion
+
         #region Toolbar Events
         private void AddRowButton_Clicked(object sender, RoutedEventArgs e)
         {
@@ -731,7 +756,7 @@ namespace DBTableControl
             // Only do anything if atleast 1 row is selected.
             if (dbDataGrid.SelectedItems.Count > 0)
             {
-                foreach (DataRowView rowview in dbDataGrid.SelectedItems)
+                foreach (DataRowView rowview in dbDataGrid.SelectedItems.OfType<DataRowView>())
                 {
                     DataRow row = CurrentTable.NewRow();
                     row.ItemArray = rowview.Row.ItemArray.ToArray();
@@ -740,6 +765,16 @@ namespace DBTableControl
             }
 
             dataChanged = true;
+        }
+
+        private void findButton_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.SendKeys.Send("^f");
+        }
+
+        private void replaceButton_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.SendKeys.Send("^h");
         }
 
         private void ExportAsButton_Clicked(object sender, RoutedEventArgs e)
@@ -1016,6 +1051,13 @@ namespace DBTableControl
                     cell.IsEditing = true;
                 }
             }
+
+            // Set the find and replace button IsEnabled, once user clicks on grid.
+            if (!findButton.IsEnabled)
+            {
+                findButton.IsEnabled = true;
+                replaceButton.IsEnabled = !readOnly;
+            }
         }
 
         private void dbDataGrid_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -1049,6 +1091,202 @@ namespace DBTableControl
             {
                 e.Row.Header = CurrentTable.Rows.IndexOf((e.Row.Item as DataRowView).Row) + 1;
             }
+        }
+
+        private void dbDataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            // Look for Ctrl-F, for Find shortcut.
+            if (e.Key == Key.F && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
+            {
+                if (dbDataGrid.SelectedCells.Count == 1 && dbDataGrid.SelectedCells.First().Item is DataRowView)
+                {
+                    findReplaceWindow.UpdateFindText(currentTable.Rows[dbDataGrid.Items.IndexOf(dbDataGrid.SelectedCells.First().Item)]
+                                                                      [dbDataGrid.SelectedCells.First().Column.Header.ToString()].ToString());
+                }
+
+                findReplaceWindow.CurrentMode = FindAndReplaceWindow.FindReplaceMode.FindMode;
+                findReplaceWindow.ReadOnly = readOnly;
+                findReplaceWindow.Show();
+            }
+
+            // Look for Ctrl-H, for Replace shortcut.
+            if (e.Key == Key.H && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)) && !readOnly)
+            {
+                findReplaceWindow.CurrentMode = FindAndReplaceWindow.FindReplaceMode.ReplaceMode;
+                findReplaceWindow.Show();
+            }
+
+            // Look for F3, shortcut for Find Next.
+            if (e.Key == Key.F3)
+            {
+                FindNext(findReplaceWindow.FindValue);
+            }
+        }
+
+        private void findWindow_FindNext(object sender, EventArgs e)
+        {
+            FindNext(findReplaceWindow.FindValue);
+        }
+
+        private void findReplaceWindow_FindAll(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void replaceWindow_Replace(object sender, EventArgs e)
+        {
+            // If nothing is selected, then find something to replace first.
+            if (dbDataGrid.SelectedCells.Count == 0)
+            {
+                // If we fail to find a match, return.
+                if (!FindNext(findReplaceWindow.FindValue))
+                {
+                    return;
+                }
+            }
+
+            // If nothing is STILL selected, then we found nothing to replace.
+            // Or, if more than 1 cell is selected, we have a problem.
+            if (dbDataGrid.SelectedCells.Count == 0 || dbDataGrid.SelectedCells.Count > 1)
+            {
+                return;
+            }
+
+            int rowindex = dbDataGrid.Items.IndexOf(dbDataGrid.SelectedCells.First().Item);
+            int colindex = dbDataGrid.Columns.IndexOf(dbDataGrid.SelectedCells.First().Column);
+
+            while (findReplaceWindow.ReplaceValue.Equals(currentTable.Rows[rowindex][colindex].ToString()))
+            {
+                // If what is selected has already been replaced, move on to the next match, returning if we fail.
+                if (!FindNext(findReplaceWindow.FindValue))
+                {
+                    return;
+                }
+
+                // Update current coordinates.
+                rowindex = dbDataGrid.Items.IndexOf(dbDataGrid.SelectedCells.First().Item);
+                colindex = dbDataGrid.Columns.IndexOf(dbDataGrid.SelectedCells.First().Column);
+            }
+            
+            if (findReplaceWindow.FindValue.Equals(currentTable.Rows[rowindex][colindex].ToString()))
+            {
+                // Test for a combobox comlumn.
+                if (dbDataGrid.Columns[colindex] is DataGridComboBoxColumn)
+                {
+                    if (ComboBoxColumnContainsValue((DataGridComboBoxColumn)dbDataGrid.Columns[colindex], findReplaceWindow.ReplaceValue))
+                    {
+                        // The value in the Replace field is not valid for this column, alert user and return.
+                        MessageBox.Show(String.Format("The value '{0}', is not a valid value for Column '{1}'", 
+                                                      findReplaceWindow.ReplaceValue, 
+                                                      dbDataGrid.Columns[colindex].Header.ToString()));
+
+                        return;
+                    }
+                }
+
+                // Assign the value, and update the UI
+                currentTable.Rows[rowindex][colindex] = findReplaceWindow.ReplaceValue;
+                RefreshCell(rowindex, colindex);
+            }
+        }
+
+        private void replaceWindow_ReplaceAll(object sender, EventArgs e)
+        {
+            // Clear selection, so that FindNext() starts at the beginning of the table.
+            dbDataGrid.SelectedCells.Clear();
+
+            int rowindex;
+            int colindex;
+
+            while (FindNext(findReplaceWindow.FindValue))
+            {
+                // Update current coordinates.
+                rowindex = dbDataGrid.Items.IndexOf(dbDataGrid.SelectedCells.First().Item);
+                colindex = dbDataGrid.Columns.IndexOf(dbDataGrid.SelectedCells.First().Column);
+
+                if (dbDataGrid.Columns[colindex] is DataGridComboBoxColumn)
+                {
+                    if (ComboBoxColumnContainsValue((DataGridComboBoxColumn)dbDataGrid.Columns[colindex], findReplaceWindow.ReplaceValue))
+                    {
+                        // The value in the Replace field is not valid for this column, alert user and continue.
+                        MessageBox.Show(String.Format("The value '{0}', is not a valid value for Column '{1}'",
+                                                      findReplaceWindow.ReplaceValue,
+                                                      dbDataGrid.Columns[colindex].Header.ToString()));
+                        continue;
+                    }
+                }
+
+                // Assign the value, and update the UI
+                currentTable.Rows[rowindex][colindex] = findReplaceWindow.ReplaceValue;
+                RefreshCell(rowindex, colindex);
+            }
+        }
+
+        private bool FindNext(string findthis)
+        {
+            if (String.IsNullOrEmpty(findthis))
+            {
+                MessageBox.Show("Nothing entered in Find bar!");
+                return false;
+            }
+
+            // Set starting point at table upper left.
+            int rowstartindex = 0;
+            int colstartindex = 0;
+
+            // If the user has a single cell selected, assume this as starting point.
+            if (dbDataGrid.SelectedCells.Count == 1)
+            {
+                rowstartindex = currentTable.Rows.IndexOf((dbDataGrid.SelectedCells.First().Item as DataRowView).Row);
+                colstartindex = currentTable.Columns.IndexOf(dbDataGrid.SelectedCells.First().Column.Header.ToString());
+            }
+
+            bool foundmatch = false;
+            bool atstart = true;
+            for (int i = rowstartindex; i < dbDataGrid.Items.Count; i++)
+            {
+                if (!(dbDataGrid.Items[i] is DataRowView))
+                {
+                    continue;
+                }
+
+                for (int j = 0; j < dbDataGrid.Columns.Count; j++)
+                {
+                    if (atstart)
+                    {
+                        j = colstartindex;
+                        atstart = false;
+                    }
+
+                    // Skip current cell.
+                    if (i == rowstartindex && j == colstartindex)
+                    {
+                        continue;
+                    }
+
+                    foundmatch = DBUtil.isMatch(currentTable.Rows[i][j].ToString(), findthis);
+
+                    if (foundmatch)
+                    {
+                        // Clears current selection for new selection.
+                        dbDataGrid.SelectedCells.Clear();
+                        SelectCell(i, j, true);
+                        break;
+                    }
+                }
+
+                if (foundmatch)
+                {
+                    break;
+                }
+            }
+
+            if (!foundmatch)
+            {
+                MessageBox.Show("No More Matches Found.");
+            }
+
+            return foundmatch;
         }
 
         protected virtual void OnExecutedPaste(object sender, ExecutedRoutedEventArgs args)
@@ -1581,6 +1819,91 @@ namespace DBTableControl
             dataChanged = true;
         }
 
+        void DataGridContextMenu_Opened(object sender, RoutedEventArgs e)
+        {
+            bool cellsselected = false;
+
+            if (dbDataGrid.SelectedCells.Count > 0)
+            {
+                cellsselected = true;
+            }
+
+            ContextMenu menu = (ContextMenu)sender;
+
+            foreach (MenuItem item in menu.Items.OfType<MenuItem>())
+            {
+                if (item.Header.Equals("Copy"))
+                {
+                    item.IsEnabled = cellsselected;
+                }
+                else if (item.Header.Equals("Paste"))
+                {
+                    if (readOnly)
+                    {
+                        item.IsEnabled = false;
+                    }
+                    else
+                    {
+                        item.IsEnabled = cellsselected;
+                    }
+                }
+                else if (item.Header.Equals("Apply Expression to Selected Cells"))
+                {
+                    item.IsEnabled = cellsselected;
+                    if (cellsselected)
+                    {
+                        Type columntype;
+                        foreach (DataGridCellInfo cellinfo in dbDataGrid.SelectedCells)
+                        {
+                            columntype = currentTable.Columns[(string)cellinfo.Column.Header].DataType;
+                            if (readOnly || !(columntype.Name.Equals("Single") || columntype.Name.Equals("Int32") || columntype.Name.Equals("Int16")))
+                            {
+                                item.IsEnabled = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void DataGridCopyMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            // Programmatically send a copy shortcut key event.
+            System.Windows.Forms.SendKeys.Send("^c");
+        }
+
+        private void DataGridPasteMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            // Programmatically send a paste shortcut key event.
+            System.Windows.Forms.SendKeys.Send("^v");
+        }
+
+        private void DataGridApplyExpressionMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ApplyExpressionWindow getexpwindow = new ApplyExpressionWindow();
+            getexpwindow.ShowDialog();
+
+            if (getexpwindow.DialogResult != null && (bool)getexpwindow.DialogResult)
+            {
+                foreach (DataGridCellInfo cellinfo in dbDataGrid.SelectedCells)
+                {
+                    // Determine current cells indecies, row and column
+                    int columnindex = currentTable.Columns.IndexOf(cellinfo.Column.Header.ToString());
+                    int rowindex = currentTable.Rows.IndexOf((cellinfo.Item as DataRowView).Row);
+
+                    // Get the expression, replacing x for the current cell's value.
+                    string expression = getexpwindow.EnteredExpression.Replace("x", string.Format("{0}", currentTable.Rows[rowindex][columnindex]));
+
+                    // Compute spits out the new value after the current value is applied to the expression given.
+                    currentTable.Rows[rowindex][columnindex] = currentTable.Compute(expression, "");
+
+                    // Refresh the cell in the UI
+                    RefreshCell(rowindex, columnindex);
+                }
+            }
+        }
+
         #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -1612,7 +1935,7 @@ namespace DBTableControl
                         return null;
                     }
 
-                    //dbDataGrid.ScrollIntoView(rowContainer, dbDataGrid.Columns[column]);
+                    dbDataGrid.ScrollIntoView(rowContainer, dbDataGrid.Columns[column]);
                     presenter = GetVisualChild<DataGridCellsPresenter>(rowContainer);
                 }
 
@@ -1627,7 +1950,7 @@ namespace DBTableControl
                     }
 
                     // now try to bring into view and retreive the cell
-                    //dbDataGrid.ScrollIntoView(rowContainer, dbDataGrid.Columns[column]);
+                    dbDataGrid.ScrollIntoView(rowContainer, dbDataGrid.Columns[column]);
                     cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(column);
                 }
                 return cell;
@@ -1641,7 +1964,7 @@ namespace DBTableControl
             if (row == null && !onlyvisible)
             {
                 // may be virtualized, bring into view and try again
-                //dbDataGrid.ScrollIntoView(dbDataGrid.Items[index]);
+                dbDataGrid.ScrollIntoView(dbDataGrid.Items[index]);
                 row = (DataGridRow)dbDataGrid.ItemContainerGenerator.ContainerFromIndex(index);
             }
             return row;
@@ -1784,12 +2107,6 @@ namespace DBTableControl
                     cell.Style = null;
                     cell.Style = TempStyle;
                 }
-#if DEBUG
-                else
-                {
-                    string breakpointstring = "";
-                }
-#endif
             }
         }
 
@@ -1803,6 +2120,22 @@ namespace DBTableControl
                 Style TempStyle = cell.Style;
                 cell.Style = null;
                 cell.Style = TempStyle;
+            }
+        }
+
+        private void SelectCell(int rowindex, int colindex, bool scrollview = false)
+        {
+            // Add the cell to the selected cells list.
+            DataGridCellInfo cellinfo = new DataGridCellInfo(dbDataGrid.Items[rowindex], dbDataGrid.Columns[colindex]);
+            if (!dbDataGrid.SelectedCells.Contains(cellinfo))
+            {
+                dbDataGrid.SelectedCells.Add(cellinfo);
+            }
+
+            // Scroll cell into view if asked.
+            if (scrollview)
+            {
+                dbDataGrid.ScrollIntoView(dbDataGrid.Items[rowindex], dbDataGrid.Columns[colindex]);
             }
         }
 
@@ -2020,7 +2353,15 @@ namespace DBTableControl
                 }
                 catch(Exception e)
                 {
-                    ErrorDialog.ShowDialog(e);
+                    if (e is FormatException)
+                    {
+                        MessageBox.Show(String.Format("Could not paste '{0}' in column '{1}', row {2}, this cell requires an float!",
+                                                        value.ToString(), dbDataGrid.Columns[columnIndex].Header.ToString(), rowIndex));
+                    }
+                    else
+                    {
+                        ErrorDialog.ShowDialog(e);
+                    }
                 }
             }
             else if (celltype.Name == "Boolean")
@@ -2032,7 +2373,15 @@ namespace DBTableControl
                 }
                 catch (Exception e)
                 {
-                    ErrorDialog.ShowDialog(e);
+                    if (e is FormatException)
+                    {
+                        MessageBox.Show(String.Format("Could not paste '{0}' in column '{1}', row {2}, this cell requires True/False!",
+                                                        value.ToString(), dbDataGrid.Columns[columnIndex].Header.ToString(), rowIndex));
+                    }
+                    else
+                    {
+                        ErrorDialog.ShowDialog(e);
+                    }
                 }
             }
             else if (celltype.Name == "Int32")
@@ -2044,7 +2393,15 @@ namespace DBTableControl
                 }
                 catch (Exception e)
                 {
-                    ErrorDialog.ShowDialog(e);
+                    if (e is FormatException)
+                    {
+                        MessageBox.Show(String.Format("Could not paste '{0}' in column '{1}', row {2}, this cell requires an integer value!",
+                                                        value.ToString(), dbDataGrid.Columns[columnIndex].Header.ToString(), rowIndex));
+                    }
+                    else
+                    {
+                        ErrorDialog.ShowDialog(e);
+                    }
                 }
             }
             else if (celltype.Name == "Int16")
@@ -2056,7 +2413,15 @@ namespace DBTableControl
                 }
                 catch (Exception e)
                 {
-                    ErrorDialog.ShowDialog(e);
+                    if (e is FormatException)
+                    {
+                        MessageBox.Show(String.Format("Could not paste '{0}' in column '{1}', row {2}, this cell requires an integer value!",
+                                                        value.ToString(), dbDataGrid.Columns[columnIndex].Header.ToString(), rowIndex));
+                    }
+                    else
+                    {
+                        ErrorDialog.ShowDialog(e);
+                    }
                 }
             }
 
@@ -2121,6 +2486,16 @@ namespace DBTableControl
                     column.ReadOnly = tablesreadonly;
                 }
             }
+        }
+
+        private bool ComboBoxColumnContainsValue(DataGridComboBoxColumn column, string tocheck)
+        {
+            if (column.ItemsSource.OfType<object>().Count(n => n.ToString().Equals(tocheck)) != 0)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         #endregion

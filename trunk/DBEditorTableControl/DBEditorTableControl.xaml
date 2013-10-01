@@ -4,7 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DBTableControl"
-             mc:Ignorable="d" MinHeight="300" MinWidth="780" Name="TableControl" >
+             mc:Ignorable="d" 
+             MinHeight="300" MinWidth="780" 
+             Name="TableControl" >
     <UserControl.Resources>
         <local:BackgroundConverter x:Key="BackgroundConverter" />
         <local:BoolConverter x:Key="BooleanFlipConverter" />
@@ -57,6 +59,14 @@
             <MenuItem Header="Clear Table Hidden Columns" Click="ClearTableHiddenMenuItem_Click" />
             <MenuItem Header="Clear All Hidden Columns" Click="ClearAllHiddenMenuItem_Click" />
         </ContextMenu>
+
+        <ContextMenu x:Key="DataGridContextMenu" Opened="DataGridContextMenu_Opened">
+            <MenuItem Header="Copy" Click="DataGridCopyMenuItem_Click"/>
+            <MenuItem Header="Paste" Click="DataGridPasteMenuItem_Click"/>
+            <Separator/>
+            <MenuItem Header="Apply Expression to Selected Cells" Click="DataGridApplyExpressionMenuItem_Click"/>
+        </ContextMenu>
+        
         <Style x:Key="GridHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
             <Setter Property="ContextMenu" Value="{StaticResource ColumnHeaderContextMenu}" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -85,6 +95,8 @@
                 <Button Name="cloneRowButton" Content="Clone Row(s)" Padding="3,4" Click="CloneRowButton_Clicked" IsEnabled="{Binding ReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}" />
                 <Button Name="copyButton" Content="Copy" Padding="3,4" Command="Copy" />
                 <Button Name="pasteButton" Content="Paste" Padding="3,4" Command="Paste" />
+                <Button Name="findButton" Content="Find" Padding="3,4" Click="findButton_Click" />
+                <Button Name="replaceButton" Content="Replace" Padding="3,4" Click="replaceButton_Click" />
                 <Separator Margin="3,0,3,0" />
                 <Button Name="exportAsButton" Content="Export As" Padding="3,4" Click="ExportAsButton_Clicked">
                     <Button.ContextMenu>
@@ -139,8 +151,10 @@
                       CanUserResizeRows="False"
                       CanUserAddRows="{Binding ReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}"
                       CanUserReorderColumns="False"
+                      ContextMenu="{StaticResource DataGridContextMenu}"
                       CellEditEnding="dbDataGrid_CellEditEnding"
                       PreviewMouseLeftButtonDown="dbDataGrid_PreviewMouseLeftButtonDown"
+                      PreviewKeyDown="dbDataGrid_PreviewKeyDown"
                       SelectionChanged="dbDataGrid_SelectionChanged"
                       LoadingRow="dbDataGrid_LoadingRow">
             </DataGrid>
