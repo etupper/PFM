@@ -429,6 +429,7 @@ namespace PackFileManager
             if (QuerySaveModifiedFile() == System.Windows.Forms.DialogResult.No) {
                 NewMod("Untitled.pack");
             }
+            PackedFileEditorRegistry.NotifyDBE(NotificationReason.PackFileOpening);
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -446,6 +447,8 @@ namespace PackFileManager
             if (querySaveCurrent && QuerySaveModifiedFile() == DialogResult.Cancel) {
                 return;
             }
+            PackedFileEditorRegistry.NotifyDBE(NotificationReason.PackFileOpening);
+
             Settings.Default.LastPackDirectory = Path.GetDirectoryName(filepath);
             try {
                 var codec = new PackFileCodec();
@@ -511,6 +514,8 @@ namespace PackFileManager
                 QueryNameAndSave(null, null);
             } else {
                 CloseEditors();
+                PackedFileEditorRegistry.NotifyDBE(NotificationReason.PackFileSaving);
+
                 new PackFileCodec().Save(currentPackFile);
                 OpenExistingPackFile(currentPackFile.Filepath);
             }
@@ -521,6 +526,8 @@ namespace PackFileManager
                 MessageBox.Show(CA_FILE_WARNING);
             } else {
                 CloseEditors ();
+                PackedFileEditorRegistry.NotifyDBE(NotificationReason.PackFileSaving);
+
                 string tempFile = Path.GetTempFileName ();
                 new PackFileCodec ().WriteToFile (tempFile, currentPackFile);
                 if (File.Exists (filename)) {
@@ -928,7 +935,7 @@ namespace PackFileManager
 
             splitContainer1.Panel2.Controls.Clear();
         }
-        
+
         private void OpenExternal() {
             PackedFile packed = packTreeView.SelectedNode.Tag as PackedFile;
             if (externalEditor.CanEdit(packed)) {

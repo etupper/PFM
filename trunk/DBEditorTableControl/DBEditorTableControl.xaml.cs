@@ -32,6 +32,40 @@ namespace DBTableControl
             PackedFileEditorRegistry.Editors.Add(host);
 			return control;
         }
+
+        public static void DbEditorCommitTables()
+        {
+            // Make sure the editor is actually loaded.
+            if (PackedFileEditorRegistry.Editors.OfType<DBEditorTableHost>().Count() == 1)
+            {
+                (PackedFileEditorRegistry.Editors.OfType<DBEditorTableHost>().First().Child as DBEditorTableControl).PFMSaving();
+            }
+        }
+
+        public static void DbEditorClearCache()
+        {
+            // Make sure the editor is actually loaded.
+            if (PackedFileEditorRegistry.Editors.OfType<DBEditorTableHost>().Count() == 1)
+            {
+                (PackedFileEditorRegistry.Editors.OfType<DBEditorTableHost>().First().Child as DBEditorTableControl).ClearTableCache();
+            }
+        }
+
+        public void PFMSaving()
+        {
+            // This method is invoked when the user tries to save a pack file, committing changes to all tables currently loaded.
+            foreach (DataTable table in loadedDataSet.Tables)
+            {
+                table.AcceptChanges();
+            }
+            currentTable.AcceptChanges();
+        }
+
+        public void ClearTableCache()
+        {
+            // Clears the data cache, for when a user opens a new pack file.
+            loadedDataSet.Tables.Clear();
+        }
         
         DataSet loadedDataSet;
 
@@ -749,6 +783,7 @@ namespace DBTableControl
             CurrentTable.Rows.Add(row);
 
             dataChanged = true;
+            SendDataChanged();
         }
 
         private void CloneRowButton_Clicked(object sender, RoutedEventArgs e)
@@ -765,6 +800,7 @@ namespace DBTableControl
             }
 
             dataChanged = true;
+            SendDataChanged();
         }
 
         private void findButton_Click(object sender, RoutedEventArgs e)
@@ -1412,6 +1448,7 @@ namespace DBTableControl
                         RefreshCell(rowIndex, columnIndex);
 
                         dataChanged = true;
+                        SendDataChanged();
                         columnIndex++;
                     }
 
@@ -1787,6 +1824,7 @@ namespace DBTableControl
             editedFile.Entries.Add(dbfileconstructionRow);
 
             dataChanged = true;
+            SendDataChanged();
         }
 
         void CurrentTable_RowDeleting(object sender, DataRowChangeEventArgs e)
@@ -1795,6 +1833,7 @@ namespace DBTableControl
             editedFile.Entries.RemoveAt(removalindex);
 
             dataChanged = true;
+            SendDataChanged();
         }
 
         void CurrentTable_RowDeleted(object sender, DataRowChangeEventArgs e)
@@ -1806,6 +1845,7 @@ namespace DBTableControl
             }
 
             dataChanged = true;
+            SendDataChanged();
         }
 
         void CurrentTable_ColumnChanged(object sender, DataColumnChangeEventArgs e)
@@ -1817,6 +1857,7 @@ namespace DBTableControl
             editedFile.Entries[rowIndex][colIndex].Value = e.ProposedValue.ToString();
 
             dataChanged = true;
+            SendDataChanged();
         }
 
         void DataGridContextMenu_Opened(object sender, RoutedEventArgs e)
@@ -1913,6 +1954,16 @@ namespace DBTableControl
             if (PropertyChanged != null)
             {
                 PropertyChanged(sender, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private void SendDataChanged()
+        {
+            // This method is used to trip the packedFile's data changed notification, so that the PFM tree list updates
+            // when data is changed, instead of once a user navigates away.
+            if (dataChanged)
+            {
+                currentPackedFile.Modified = true;
             }
         }
 
