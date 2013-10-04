@@ -70,10 +70,29 @@ namespace DbSql {
                         Type = PackType.Mod
                     });
                 }
-            } else if (!line.StartsWith("#")) {
-                SqlCommand command = ParseCommand(line);
-                command.Execute();
-                commands.Add(command);
+            } else if (line.StartsWith("script")) {
+                string filename = line.Substring(7);
+                if (File.Exists(filename)) {
+                    Script included = new Script {
+                        SourcePack = this.SourcePack,
+                        TargetPack = this.TargetPack
+                    };
+                    included.commands.AddRange(commands);
+                    foreach (string fileLine in File.ReadAllLines(filename)) {
+                        included.ExecuteLine(fileLine);
+                    }
+                    SourcePack = included.SourcePack;
+                    TargetPack = included.TargetPack;
+                    commands = included.commands;
+                }
+            } else if (!line.StartsWith("#") && !string.IsNullOrEmpty(line.Trim())) {
+                try {
+                    SqlCommand command = ParseCommand(line);
+                    command.Execute();
+                    commands.Add(command);
+                } catch (Exception e) {
+                    Console.WriteLine("Failed to execute '{0}': {1}", line, e);
+                }
             }
         }
         public void Commit() {

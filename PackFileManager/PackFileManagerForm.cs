@@ -77,8 +77,21 @@ namespace PackFileManager
             }
             catch (Exception e)
             {
-                // PackedFileEditorRegistry.Editors.Add(dbTableEditorControl);
-                MessageBox.Show(string.Format("failed to load dbe: {0}", e.Message));
+                string message = string.Format("Failed to load DBE: {0}", e.Message);
+                if (e.Message.Contains("80131515")) {
+                    message += "For a workaround:\n" +
+                        "- right-click the DBEditorTableControl.dll\n" +
+                            "- select Properties\n" +
+                            "- click the \"Unblock\" button.\n\n" +
+                            "- Do you want to go to the install directory now?";
+                    string dllPath = Path.Combine(Assembly.GetExecutingAssembly().Location, "DBEditorTableControl.dll");
+                    if (MessageBox.Show(message, "Failed to load dll", MessageBoxButtons.YesNo) == DialogResult.Yes) {
+                        string arguments = string.Format("/select {0}", dllPath);
+                        Process.Start("explorer.exe", arguments);
+                    }
+                } else {
+                    MessageBox.Show(string.Format("failed to load DBE: {0}", e.Message));
+                }
             }
 #endif
             PackedFileEditorRegistry.Editors.Add(dbFileEditorControl);
