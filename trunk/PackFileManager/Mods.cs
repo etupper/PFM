@@ -441,7 +441,8 @@ namespace PackFileManager {
         }
         // check if the new selected mod is the one referred to by this item
         private void CheckSelection() {
-            Checked = (Tag as string).Equals(ModManager.Instance.CurrentMod.Name);
+            string selected = ModManager.Instance.CurrentMod != null ? ModManager.Instance.CurrentMod.Name : "";
+            Checked = (Tag as string).Equals(selected);
         }
     }
 }

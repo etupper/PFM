@@ -40,8 +40,11 @@ namespace DbSql {
                 }
             } else {
                 foreach (DBFile dbFile in DbFiles) {
+                    Console.WriteLine("{0}:", dbFile.CurrentType.Name);
                     foreach(FieldInfo info in dbFile.CurrentType.Fields) {
-                        Console.WriteLine("{0} : {1}{2}", info.Name, info.TypeName, info.PrimaryKey ? "*" : "");
+                        string reference = info.FieldReference != null 
+                            ? string.Format(" -> {0}:{1}", info.ReferencedTable, info.ReferencedField) : "";
+                        Console.WriteLine("{0} : {1}{2}{3}", info.Name, info.TypeName, info.PrimaryKey ? "*" : "", reference);
                     }
                 }
             }
