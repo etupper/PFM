@@ -68,6 +68,8 @@ namespace DBTableControl
         {
             // Clears the data cache, for when a user opens a new pack file.
             loadedDataSet.Tables.Clear();
+
+            UpdateConfig();
         }
         
         DataSet loadedDataSet;

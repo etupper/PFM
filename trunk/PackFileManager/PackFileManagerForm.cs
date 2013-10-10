@@ -527,10 +527,10 @@ namespace PackFileManager
                 QueryNameAndSave(null, null);
             } else {
                 CloseEditors();
-                PackedFileEditorRegistry.NotifyDBE(NotificationReason.PackFileSaving);
 
                 new PackFileCodec().Save(currentPackFile);
                 OpenExistingPackFile(currentPackFile.Filepath);
+                PackedFileEditorRegistry.NotifyDBE(NotificationReason.PackFileOpening);
             }
         }
 
@@ -539,7 +539,6 @@ namespace PackFileManager
                 MessageBox.Show(CA_FILE_WARNING);
             } else {
                 CloseEditors ();
-                PackedFileEditorRegistry.NotifyDBE(NotificationReason.PackFileSaving);
 
                 string tempFile = Path.GetTempFileName ();
                 new PackFileCodec ().WriteToFile (tempFile, currentPackFile);
@@ -548,6 +547,7 @@ namespace PackFileManager
                 }
                 File.Move (tempFile, filename);
                 OpenExistingPackFile (filename);
+                PackedFileEditorRegistry.NotifyDBE(NotificationReason.PackFileOpening);
             }
         }
         #endregion

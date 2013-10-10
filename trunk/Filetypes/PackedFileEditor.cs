@@ -179,6 +179,6 @@ namespace Filetypes {
         PackFileSaving,
         PackFileOpening,
         NewPackFile,
-        PFMCloding
+        PFMClosing
     }
 }
