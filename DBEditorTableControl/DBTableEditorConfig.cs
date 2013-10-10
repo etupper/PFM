@@ -26,6 +26,11 @@ namespace DBTableControl
         [XmlElement]
         public string ExportDirectory { get; set; }
 
+        [XmlElement]
+        public bool ShowFilters { get; set; }
+
+        public FakeDictionary<string, List<DBFilter>> Filters { get; set; }
+
         public DBTableEditorConfig()
         {
             FreezeKeyColumns = true;
@@ -34,6 +39,8 @@ namespace DBTableControl
             HiddenColumns = new FakeDictionary<string, List<string>>();
             ImportDirectory = "";
             ExportDirectory = "";
+            ShowFilters = false;
+            Filters = new FakeDictionary<string, List<DBFilter>>();
         }
 
         public void Load(string file = "Config\\DBTableEditorConfig.xml")
@@ -56,6 +63,8 @@ namespace DBTableControl
             HiddenColumns = loadedconfig.HiddenColumns;
             ImportDirectory = loadedconfig.ImportDirectory;
             ExportDirectory = loadedconfig.ExportDirectory;
+            ShowFilters = loadedconfig.ShowFilters;
+            Filters = loadedconfig.Filters;
         }
 
         public void Save(string file = "Config\\DBTableEditorConfig.xml")

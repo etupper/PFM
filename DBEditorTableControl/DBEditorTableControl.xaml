@@ -5,8 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DBTableControl"
              mc:Ignorable="d" 
-             MinHeight="300" MinWidth="780" 
-             Name="TableControl" >
+             MinHeight="200" MinWidth="400" 
+             Name="TableControl"
+             PreviewKeyDown="dbeControl_PreviewKeyDown"
+             Unloaded="TableControl_Unloaded">
     <UserControl.Resources>
         <local:BackgroundConverter x:Key="BackgroundConverter" />
         <local:BoolConverter x:Key="BooleanFlipConverter" />
@@ -67,12 +69,18 @@
             <MenuItem Header="Apply Expression to Selected Cells" Click="DataGridApplyExpressionMenuItem_Click"/>
         </ContextMenu>
         
+        <ContextMenu x:Key="RowHeaderContextMenu" Opened="RowHeaderContextMenu_Opened">
+            <MenuItem Header="Insert Row" Click="RowHeaderInsertRow_Click" />
+            <MenuItem Header="Insert Multiple Rows" Click="RowHeaderInsertManyRows_Click" />
+        </ContextMenu>
+        
         <Style x:Key="GridHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
             <Setter Property="ContextMenu" Value="{StaticResource ColumnHeaderContextMenu}" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
         </Style>
         
         <Style x:Key="RowHeaderStyle" TargetType="{x:Type DataGridRowHeader}">
+            <Setter Property="ContextMenu" Value="{StaticResource RowHeaderContextMenu}" />
             <Setter Property="HorizontalContentAlignment" Value="Right" />
             <Setter Property="HorizontalAlignment" Value="Stretch" />
         </Style>
@@ -89,7 +97,7 @@
     </UserControl.Resources>
     
     <Grid>
-        <DockPanel Name="dbcontrolDockPanel" >
+        <DockPanel Name="dbcontrolDockPanel" LastChildFill="True" >
             <ToolBar Name="dbeditControlToobar" DockPanel.Dock="Top" Background="Transparent">
                 <Button Name="addRowButton" Content="Add Row" Padding="3,4" Click="AddRowButton_Clicked" IsEnabled="{Binding ReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}" />
                 <Button Name="cloneRowButton" Content="Clone Row(s)" Padding="3,4" Click="CloneRowButton_Clicked" IsEnabled="{Binding ReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}" />
@@ -133,10 +141,60 @@
                               VerticalAlignment="Center" 
                               Margin="20,0,0,0" />
                 </StackPanel>
+                <Separator Margin="10,0,3,0" />
+                <Button Name="manageFiltersButton" Content="Manage Filters" Padding="3,4" Click="manageFiltersButton_Click" Visibility="Collapsed" />
+                <StackPanel Name="showfiltersStackPanel" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <CheckBox Name="showfilterlistCheckBox"
+                              Content="Show Filter List"
+                              IsChecked="{Binding ElementName=TableControl, Path=ShowFilters}"
+                              VerticalAlignment="Center"
+                              Margin="20,0,0,0" />
+                </StackPanel>
             </ToolBar>
+            <DockPanel Name="filterDockPanel" DockPanel.Dock="Right" >
+                <Grid Name="filterButtonGrid" DockPanel.Dock="Top" MaxHeight="70">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Button Name="editFilterButton" Content="Edit Filter" Grid.Column="0" Grid.Row="0" Margin="5" Click="editFilterButton_Click" IsEnabled="False" />
+                    <Button Name="addFilterButton" Content="Add Filter" Grid.Column="1" Grid.Row="0" Margin="5" Click="addFilterButton_Click" />
+                    <Button Name="deleteFilterButton" Content="Delete Filter" Grid.Column="1" Grid.Row="1" Margin="5" Click="deleteFilterButton_Click" IsEnabled="False" />
+                </Grid>
+                <ListView Name="filterListView"
+                          DockPanel.Dock="Bottom"
+                          AllowDrop="True"
+                          SelectionMode="Single"
+                          SelectionChanged="filterListView_SelectionChanged" 
+                          PreviewMouseDoubleClick="filterListView_PreviewMouseDoubleClick"
+                          PreviewKeyDown="filterListView_PreviewKeyDown">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Enabled" >
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding Path=IsActive}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Filter Name" Width="125" DisplayMemberBinding="{Binding Path=Name}" />
+                        </GridView>
+                    </ListView.View>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <EventSetter Event="PreviewMouseMove" Handler="filterListView_PreviewMouseMove" />
+                            <EventSetter Event="Drop" Handler="filterListView_Drop" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+            </DockPanel>
             <DataGrid Name="dbDataGrid"
                       AutoGenerateColumns="False"
-                      DockPanel.Dock="Bottom"
+                      DockPanel.Dock="Left"
                       ItemsSource="{Binding Path=CurrentTable.DefaultView, ElementName=TableControl, UpdateSourceTrigger=PropertyChanged}"
                       CellStyle="{StaticResource GridCellStyle}"
                       SelectionUnit="CellOrRowHeader"
@@ -146,7 +204,6 @@
                       RowHeaderTemplate="{StaticResource MyRowHeaderTemplate}"
                       VirtualizingStackPanel.IsVirtualizing="True"
                       VirtualizingStackPanel.VirtualizationMode="Recycling"
-                      EnableColumnVirtualization="True"
                       Background="#FFAAAAAA"
                       CanUserResizeRows="False"
                       CanUserAddRows="{Binding ReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}"
@@ -156,7 +213,8 @@
                       PreviewMouseLeftButtonDown="dbDataGrid_PreviewMouseLeftButtonDown"
                       PreviewKeyDown="dbDataGrid_PreviewKeyDown"
                       SelectionChanged="dbDataGrid_SelectionChanged"
-                      LoadingRow="dbDataGrid_LoadingRow">
+                      LoadingRow="dbDataGrid_LoadingRow"
+                      CopyingRowClipboardContent="dbDataGrid_CopyingRowClipboardContent">
             </DataGrid>
         </DockPanel>
         <TextBox Name="unsupportedDBErrorTextBox" 

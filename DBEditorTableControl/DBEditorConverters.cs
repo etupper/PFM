@@ -118,6 +118,7 @@ namespace DBTableControl
             if (values[1] is DataRow)
             {
                 cell = (DataGridCell)values[0];
+                cell.ToolTip = null;
                 row = (DataRow)values[1];
 
                 // Skip deleted rows, since they disappear.
@@ -149,6 +150,7 @@ namespace DBTableControl
             if (row.RowState == DataRowState.Modified && !row[column, DataRowVersion.Current].Equals(row[column, DataRowVersion.Original]))
             {
                 newColor = new SolidColorBrush(Colors.LightPink);
+                cell.ToolTip = String.Format("Original Value: {0}", row[column, DataRowVersion.Original]);
             }
 
             if (column.ExtendedProperties.ContainsKey("Hidden") && (bool)column.ExtendedProperties["Hidden"])
