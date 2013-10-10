@@ -232,12 +232,11 @@ namespace EsfLibrary {
                 long position = reader.BaseStream.Position;
                 EsfType typeCode = (EsfType) code;
                 // writeDebug = reader.BaseStream.Position > 0xd80000;
-                if (typeCode < EsfType.BOOL_ARRAY) {
+                if (code < (byte) EsfType.BOOL_ARRAY) {
                     result = ReadValueNode(reader, typeCode);
                     // if (Log != null) { Log(result.ToXml()); };
                 } else if (typeCode < EsfType.RECORD) {
                     result = ReadArrayNode(reader, typeCode);
-                    // if (Log != null) { Log(result.ToXml()); };
                 } else if (typeCode == EsfType.RECORD) {
                     result = ReadRecordNode(reader, code);
                 } else if (typeCode == EsfType.RECORD_BLOCK) {
@@ -293,8 +292,8 @@ namespace EsfLibrary {
         }
 
         #region Value Nodes
-        // read
-        public virtual EsfNode ReadValueNode(BinaryReader reader, EsfType typeCode) {
+        // create
+        public virtual EsfNode CreateValueNode(EsfType typeCode, bool optimize = true) {
             EsfNode result = null;
             switch (typeCode) {
             case EsfType.BOOL:
@@ -346,11 +345,21 @@ namespace EsfLibrary {
                 result = new UShortNode();
                 break;
             default:
-                throw new InvalidDataException(string.Format("Invalid type code {0:x} at {1:x}", typeCode, reader.BaseStream.Position));
+                throw new InvalidDataException(string.Format("Invalid type code {0:x}", typeCode));
             }
-            (result as ICodecNode).Decode(reader, typeCode);
             result.TypeCode = typeCode;
             return result;
+        }
+        // read
+        public EsfNode ReadValueNode(BinaryReader reader, EsfType typeCode) {
+            try {
+                EsfNode result = CreateValueNode(typeCode);
+                (result as ICodecNode).Decode(reader, typeCode);
+                result.TypeCode = typeCode;
+                return result;
+            } catch (Exception e) {
+                throw new InvalidDataException(string.Format("{0} at {1:x}", e.Message, reader.BaseStream.Position));
+            }
         }
 
         public virtual void WriteValueNode(BinaryWriter writer, EsfNode node) {
@@ -363,63 +372,76 @@ namespace EsfLibrary {
         #endregion
 
         #region Array Nodes
-        protected virtual EsfNode ReadArrayNode(BinaryReader reader, EsfType typeCode) {
+        protected virtual EsfNode CreateArrayNode(EsfType typeCode) {
             EsfNode result = null;
             switch (typeCode) {
             case EsfType.BOOL_ARRAY:
-                result = new BoolArrayNode(this);
+                result = new EsfArrayNode<bool>(this, typeCode);
                     // CreateArrayNode<bool>(reader), ItemReader = ReadBool);
                 break;
             case EsfType.INT8_ARRAY:
-                result = new SByteArrayNode(this);
+                result = new EsfArrayNode<sbyte>(this, typeCode);
                 break;
             case EsfType.INT16_ARRAY:
-                result = new ShortArrayNode(this);
+                result = new EsfArrayNode<short>(this, typeCode);
                 break;
             case EsfType.INT32_ARRAY:
-                result = new IntArrayNode(this);
+                result = new EsfArrayNode<int>(this, typeCode);
                 break;
             case EsfType.INT64_ARRAY:
-                result = new LongArrayNode(this);
+                result = new EsfArrayNode<long>(this, typeCode);
                 break;
             case EsfType.UINT8_ARRAY:
-                result = new ByteArrayNode(this);
+                result = new EsfArrayNode<byte>(this, typeCode);
                 break;
             case EsfType.UINT16_ARRAY:
-                result = new UShortArrayNode(this);
+                result = new EsfArrayNode<ushort>(this, typeCode);
                 break;
             case EsfType.UINT32_ARRAY:
-                result = new UIntArrayNode(this);
+                result = new EsfArrayNode<uint>(this, typeCode);
                 break;
             case EsfType.UINT64_ARRAY:
-                result = new ULongArrayNode(this);
+                result = new EsfArrayNode<ulong>(this, typeCode);
                 break;
             case EsfType.SINGLE_ARRAY:
-                result = new FloatArrayNode(this);
+                result = new EsfArrayNode<float>(this, typeCode);
                 break;
             case EsfType.DOUBLE_ARRAY:
-                result = new DoubleArrayNode(this);
+                result = new EsfArrayNode<double>(this, typeCode);
                 break;
             case EsfType.COORD2D_ARRAY:
-                result = new Coordinate2DArrayNode(this);
+                result = new EsfArrayNode<Coordinates2D>(this, typeCode) {
+                    Separator = "-"
+                };
                 break;
             case EsfType.COORD3D_ARRAY:
-                result = new Coordinates3DArrayNode(this);
+                result = new EsfArrayNode<Coordinates2D>(this, typeCode) {
+                    Separator = "-"
+                };
                 break;
             case EsfType.UTF16_ARRAY:
-                result = new StringArrayNode(this);
+                result = new EsfArrayNode<string>(this, EsfType.UTF16_ARRAY);
                 break;
             case EsfType.ASCII_ARRAY:
-                result = new StringArrayNode(this);
+                result = new EsfArrayNode<string>(this, EsfType.ASCII_ARRAY);
                 break;
             case EsfType.ANGLE_ARRAY:
-                result = new UShortArrayNode(this);
+                result = new EsfArrayNode<ushort>(this, typeCode);
                 break;
             default:
-                throw new InvalidDataException(string.Format("Unknown array type code {0} at {1:x}", typeCode, reader.BaseStream.Position));
+                throw new InvalidDataException(string.Format("Unknown array type code {0}", typeCode));
+            }
+            result.TypeCode = typeCode;
+            return result;
+        }
+        protected virtual EsfNode ReadArrayNode(BinaryReader reader, EsfType typeCode) {
+            EsfNode result;
+            try {
+                result = CreateArrayNode(typeCode);
+            } catch (Exception) {
+                throw new InvalidDataException(string.Format("{0} at {1:x}", reader.BaseStream.Position));
             }
             (result as ICodecNode).Decode(reader, typeCode);
-            result.TypeCode = typeCode;
             return result;
         }
         protected virtual byte[] ReadArray(BinaryReader reader) {
@@ -438,6 +460,9 @@ namespace EsfLibrary {
 
         protected void WriteArrayNode(BinaryWriter writer, EsfNode arrayNode) {
             // writer.Write((byte) arrayNode.TypeCode);
+#if DEBUG
+            Console.WriteLine("writing array node type {0} at {1}", arrayNode.TypeCode, writer.BaseStream.Position);
+#endif
             (arrayNode as ICodecNode).Encode(writer);
         }
 //        protected byte[] EncodeArrayNode<T>(T[] array, ValueWriter<T> WriteItem) {

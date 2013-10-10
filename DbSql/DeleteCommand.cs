@@ -39,8 +39,8 @@ namespace DbSql {
             foreach(PackedFile packed in PackedFiles) {
                 PackedFile result = new PackedFile(packed.FullPath, false);
                 DBFile dbFile = PackedFileDbCodec.Decode(packed);
-                List<List<FieldInstance>> kept = new List<List<FieldInstance>>();
-                foreach(List<FieldInstance> field in dbFile.Entries) {
+                List<DBRow> kept = new List<DBRow>();
+                foreach(DBRow field in dbFile.Entries) {
                     if (whereClause != null && !whereClause.Accept(field)) {
                         kept.Add(field);
                     }

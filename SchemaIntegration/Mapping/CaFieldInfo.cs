@@ -6,7 +6,7 @@ using System.Text;
 using System.Xml;
 using Filetypes;
 
-namespace PackFileTest.Mapping {
+namespace SchemaIntegration.Mapping {
     class CaFieldInfo {
         public CaFieldInfo(string name, string type) {
             if (name == null || type == null) {

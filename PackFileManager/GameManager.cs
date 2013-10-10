@@ -21,7 +21,15 @@ namespace PackFileManager {
         bool createdGameSchemata = false;
 #endif
         
-        public static readonly GameManager Instance = new GameManager();
+        private static GameManager instance;
+        public static GameManager Instance {
+            get {
+                if (instance == null) {
+                    instance = new GameManager();
+                }
+                return instance;
+            }
+        }
         private GameManager() {
             if (!DBTypeMap.Instance.Initialized) {
                 DBTypeMap.Instance.InitializeTypeMap(InstallationPath);

@@ -13,31 +13,6 @@ namespace EsfLibrary {
         static byte LONG_INFO = 0x20; // 00100000
         #endregion
 
-        #region Added Readers
-        static ValueReader<int> IntByteReader = delegate(BinaryReader reader) { return reader.ReadSByte(); };
-        static ValueReader<int> Int16Reader = delegate(BinaryReader reader) { return reader.ReadInt16(); };
-        static ValueReader<uint> UIntByteReader = delegate(BinaryReader reader) { return reader.ReadByte(); };
-        static ValueReader<uint> UInt16Reader = delegate(BinaryReader reader) { return reader.ReadUInt16(); };
-        static uint UInt24Reader(BinaryReader reader) {
-            uint value = 0;
-            for(int i = 0; i < 3; i++) {
-                value = (value << 8) + reader.ReadByte();
-            }
-            return value;
-        }
-        static ValueReader<int> Int24Reader = delegate(BinaryReader reader) { 
-            int value = reader.ReadByte();
-            bool sign = (value & 0x80) != 0;
-            value = value & 0x7f;
-            for (int i = 0; i < 2; i++) {
-                value = (value << 8) + reader.ReadByte();
-            }
-            if (sign) {
-                value = -value;
-            }
-            return value;
-        };
-        #endregion
         #region Added Writers
         protected void WriteBoolNoop(BinaryWriter writer, bool value) { }
         protected void WriteFloatNoop(BinaryWriter writer, float value) { }
@@ -81,87 +56,93 @@ namespace EsfLibrary {
         }
 
         // Adds readers for optimized values
-        public override EsfNode ReadValueNode(BinaryReader reader, EsfType typeCode) {
+        public override EsfNode CreateValueNode(EsfType typeCode, bool optimize = true) {
             EsfNode result;
             switch (typeCode) {
             case EsfType.BOOL:
             case EsfType.BOOL_TRUE:
             case EsfType.BOOL_FALSE:
-                result = new OptimizedBoolNode();
+                if (optimize) {
+                    result = new OptimizedBoolNode();
+                } else {
+                    result = new BoolNode();
+                }
                 break;
+            case EsfType.UINT32:
             case EsfType.UINT32_ZERO:
             case EsfType.UINT32_ONE:
             case EsfType.UINT32_BYTE:
             case EsfType.UINT32_SHORT:
             case EsfType.UINT32_24BIT:
-            case EsfType.UINT32:
-                result = new OptimizedUIntNode();
+                result = new OptimizedUIntNode {
+                    SingleByteMin = !optimize
+                };
                 break;
+            case EsfType.INT32:
             case EsfType.INT32_ZERO:
             case EsfType.INT32_BYTE:
             case EsfType.INT32_SHORT:
             case EsfType.INT32_24BIT:
-            case EsfType.INT32:
-                result = new OptimizedIntNode();
+                result = new OptimizedIntNode {
+                    SingleByteMin = !optimize
+                };
                 break;
-            case EsfType.SINGLE_ZERO:
             case EsfType.SINGLE:
-                result = new OptimizedFloatNode();
+            case EsfType.SINGLE_ZERO:
+                if (optimize) {
+                    result = new OptimizedFloatNode();
+                } else {
+                    result = new FloatNode();
+                }
                 break;
             default:
-                return base.ReadValueNode(reader, typeCode);
+                return base.CreateValueNode(typeCode);
             }
-            (result as ICodecNode).Decode(reader, typeCode);
+            result.TypeCode = typeCode;
             return result;
         }
 
         #region Array Nodes
-        protected override EsfNode ReadArrayNode(BinaryReader reader, EsfType typeCode) {
+        protected override EsfNode CreateArrayNode(EsfType typeCode) {
             EsfNode result;
             // support array types for new primitives
             // this sets the type code of the base type to later have an easier time
             switch (typeCode) {
-                case EsfType.BOOL_TRUE_ARRAY:
-                case EsfType.BOOL_FALSE_ARRAY:
-                case EsfType.UINT_ZERO_ARRAY:
-                case EsfType.UINT_ONE_ARRAY:
-                case EsfType.INT32_ZERO_ARRAY:
-                case EsfType.SINGLE_ZERO_ARRAY:
+            case EsfType.BOOL_TRUE_ARRAY:
+            case EsfType.BOOL_FALSE_ARRAY:
+            case EsfType.UINT_ZERO_ARRAY:
+            case EsfType.UINT_ONE_ARRAY:
+            case EsfType.INT32_ZERO_ARRAY:
+            case EsfType.SINGLE_ZERO_ARRAY:
                 // trying to read this should result in an infinite loop
                 throw new InvalidDataException(string.Format("Array {0:x} of zero-byte entries makes no sense", typeCode));
-                case EsfType.UINT32_BYTE_ARRAY:
-                    result = new UIntArrayNode(this) { ItemReader = UIntByteReader };
-                    // typeCode = EsfType.UINT32_ARRAY;
-                    break;
-                case EsfType.UINT32_SHORT_ARRAY:
-                    result = new UIntArrayNode(this) { ItemReader = UInt16Reader };
-                    // typeCode = EsfType.UINT32_ARRAY;
-                    break;
-                case EsfType.UINT32_24BIT_ARRAY:
-                    result = new UIntArrayNode(this) { ItemReader = UInt24Reader };
-                    // typeCode = EsfType.UINT32_ARRAY;
-                    break;
-                case EsfType.INT32_BYTE_ARRAY:
-                    result = new IntArrayNode(this) { ItemReader = IntByteReader };
-                    // typeCode = EsfType.INT32_ARRAY;
-                    break;
-                case EsfType.INT32_SHORT_ARRAY:
-                    result = new IntArrayNode(this) { ItemReader = Int16Reader };
-                    // typeCode = EsfType.INT32_ARRAY;
-                    break;
-                case EsfType.INT32_24BIT_ARRAY:
-                    result = new IntArrayNode(this) { ItemReader = Int24Reader };
-                    // typeCode = EsfType.INT32_ARRAY;
-                    break;
-                default:
-                    result = base.ReadArrayNode(reader, typeCode);
-                    return result;
+            case EsfType.UINT32_BYTE_ARRAY:
+            case EsfType.UINT32_SHORT_ARRAY:
+            case EsfType.UINT32_24BIT_ARRAY:
+                result = new OptimizedArrayNode<uint>(this, typeCode, delegate(uint val) {
+                    return new OptimizedUIntNode {
+                        Value = val,
+                        SingleByteMin = true
+                    };
+                });
+                break;
+            case EsfType.INT32_BYTE_ARRAY:
+            case EsfType.INT32_SHORT_ARRAY:
+                result = new OptimizedArrayNode<int>(this, typeCode, delegate(int val) {
+                    return new OptimizedIntNode {
+                        Value = val,
+                        SingleByteMin = true
+                    };
+                });
+                break;
+            default:
+                result = base.CreateArrayNode(typeCode);
+                return result;
             }
-            (result as ICodecNode).Decode(reader, typeCode);
             result.TypeCode = (EsfType) typeCode;
             return result;
         }
-        
+
         protected override byte[] ReadArray(BinaryReader reader) {
             //long targetOffset = ReadSize(reader) + reader.BaseStream.Position;
             long size = ReadSize(reader);

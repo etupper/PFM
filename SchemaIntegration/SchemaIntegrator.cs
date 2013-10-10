@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using Common;
 using Filetypes;
 
-namespace PackFileTest {
+namespace SchemaIntegration {
     /**
      * Reads a schema file and integrates it into the currently loaded definitions
      * by renaming all applicable fields to the names contained in the new file.
@@ -359,7 +359,7 @@ namespace PackFileTest {
         // that takes really long
         public bool CheckAllFields { get; set; }
         
-        List<string> GetFieldValues(List<List<FieldInstance>> fieldList, int fieldIndex) {
+        List<string> GetFieldValues(List<DBRow> fieldList, int fieldIndex) {
             List<string> fieldData = new List<string>();
             foreach(List<FieldInstance> fields in fieldList) {
                 fieldData.Add(fields[fieldIndex].Value);

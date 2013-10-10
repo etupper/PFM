@@ -5920,6 +5920,26 @@
     <field name='joiner' type='boolean' />
     <field name='auxiliary' type='boolean' />
   </table>
+  <table table_name='battlefield_buildings_tables'
+         table_version='15'
+         guid='21b34934-45c1-42bf-8310-12c3e7a19ae9'>
+    <field name='key' type='string_ascii' pk='true' />
+    <field fkey='battlefield_building_categories_tables.category' name='category' type='string_ascii' />
+    <field fkey='models_building_tables.key' name='model' type='string_ascii' />
+    <field name='audio_material' type='string_ascii' />
+    <field name='hit_points' type='int' />
+    <field fkey='missile_weapons_tables.key' name='gun_type' type='optstring_ascii' />
+    <field fkey='battlefield_buildings_names_tables.key' name='onscreen_name' type='optstring_ascii' />
+    <field name='ignition_threshold' type='int' version_start='1' />
+    <field name='radar_icon' type='optstring_ascii' />
+    <field name='visible_in_public_ted' type='boolean' />
+    <field name='fortwall_penetration_chance' type='int' />
+    <field name='collision_3d' type='boolean' />
+    <field name='destruct_thresholds' type='optstring_ascii' />
+    <field name='joiner' type='boolean' />
+    <field name='auxiliary' type='boolean' />
+    <field name='unknown' type='float' />
+  </table>
   <table table_name='battlefield_buildings_with_projectiles_names_tables'
          table_version='0'
          guid='52432095-5dfc-46c4-a2a5-42e03410cbcb'>
@@ -10596,6 +10616,15 @@
     <field name='type' type='string_ascii' pk='true' />
     <field fkey='unit_attributes_tables.key' name='penalty_immune_attribute' type='string_ascii' />
   </table>
+  <table table_name='ground_types_tables'
+         table_version='2'
+         guid='c0414b28-0e65-44aa-a2ba-e735298d6c2b'>
+    <field name='enum_value' type='int' />
+    <field fkey='cursors_tables.key' name='selection_cursor' type='optstring_ascii' />
+    <field fkey='cursors_tables.key' name='standard_cursor' type='optstring_ascii' />
+    <field name='type' type='string_ascii' pk='true' />
+    <field fkey='unit_attributes_tables.key' name='penalty_immune_attribute' type='optstring_ascii' />
+  </table>
   <table table_name='groupings_continents_junct_tables'
          table_version='0'
          guid='acb76fbd-6d20-4b68-8da0-1d84e36db42f'>
@@ -13964,6 +13993,15 @@
     <field name='shield_armour_value' type='int' />
     <field name='audio_material' type='string_ascii' />
   </table>
+  <table table_name='unit_shield_types_tables'
+         table_version='3'
+         guid='edb246ef-55ca-420e-8001-e36e23f7148f'>
+    <field name='key' type='string_ascii' pk='true' />
+    <field name='shield_defence_value' type='int' />
+    <field name='shield_armour_value' type='int' />
+    <field name='audio_material' type='string_ascii' />
+    <field name='unknown' type='int' />
+  </table>  
   <table table_name='unit_spacings_tables'
          table_version='2'
          guid='90094125-4b13-4b66-95b0-e92d6d1f6ca1'>

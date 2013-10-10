@@ -16,7 +16,12 @@ namespace EsfLibrary {
             Write = writer;
         }
         protected override T ReadValue(BinaryReader reader, EsfType readAs) { return Read(reader); }
-        protected override void WriteValue(BinaryWriter writer) {
+        public override void WriteValue(BinaryWriter writer) {
+#if DEBUG
+            if (Modified) {
+                Console.WriteLine("Writing {0}", Value);
+            }
+#endif
             Write(writer, Value);
         }
     }
@@ -201,7 +206,7 @@ namespace EsfLibrary {
             Coordinates2D result = new Coordinates2D(reader.ReadSingle(), reader.ReadSingle());
             return result;
         }
-        protected override void WriteValue(BinaryWriter writer) {
+        public override void WriteValue(BinaryWriter writer) {
             writer.Write(Value.Item1);
             writer.Write(Value.Item2);
         }
@@ -227,7 +232,7 @@ namespace EsfLibrary {
             Coordinates3D result = new Coordinates3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
             return result;
         }
-        protected override void WriteValue(BinaryWriter writer) {
+        public override void WriteValue(BinaryWriter writer) {
             writer.Write(Value.Item1);
             writer.Write(Value.Item2);
             writer.Write(Value.Item3);

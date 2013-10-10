@@ -79,7 +79,7 @@ namespace EsfLibrary {
     }
 
     [DebuggerDisplay("ValueNode: {TypeCode}")]
-    public abstract class EsfValueNode<T> : EsfNode {
+    public class EsfValueNode<T> : EsfNode {
         public EsfValueNode(T value) {
             val = value;
         }
@@ -125,6 +125,13 @@ namespace EsfLibrary {
             return result;
         }
         
+        public override EsfNode CreateCopy() {
+            return new EsfValueNode<T> {
+                TypeCode = this.TypeCode,
+                Value = this.Value
+            };
+        }
+        
         public override int GetHashCode() {
             return Value.GetHashCode();
         }
@@ -144,7 +151,7 @@ namespace EsfLibrary {
             writer.Write((byte)TypeCode);
             WriteValue(writer);
         }
-        protected abstract void WriteValue(BinaryWriter writer);
+        public abstract void WriteValue(BinaryWriter writer);
     }
 
 }

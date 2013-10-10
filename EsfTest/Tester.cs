@@ -1,16 +1,17 @@
+using EsfLibrary;
 using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
 
-namespace EsfLibrary {
+namespace EsfTest {
     public class Tester {
         public static string FILENAME="testfiles.txt";
         public static TextWriter logWriter;        
         public static TextWriter addressLogWriter;
         public static void Main(string[] args) {
-            //runTests();
-            testFiles();
+            runTests();
+            //testFiles();
         }
         
         public static void runTests() {

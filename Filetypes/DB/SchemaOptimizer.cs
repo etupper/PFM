@@ -40,7 +40,7 @@ namespace Filetypes {
             if (Directory.Exists(PackDirectory)) {
                 DateTime start = DateTime.Now;
                 Console.WriteLine("Retrieving from {0}, storing to {1}", PackDirectory, SchemaFilename);
-
+                
                 typeMap.Clear();
                 guidMap.Clear();
                 minVersion.Clear();
@@ -48,7 +48,12 @@ namespace Filetypes {
 
                 List<GuidTypeInfo> allUsed = new List<GuidTypeInfo>();
                 Dictionary<GuidTypeInfo, PackedFile> infos = new Dictionary<GuidTypeInfo, PackedFile>();
-                foreach (string path in Directory.EnumerateFiles(PackDirectory, "*.pack")) {
+                // all pack files in game directory
+                List<string> files = new List<string>(Directory.EnumerateFiles(PackDirectory, "*.pack"));
+                // all files called "*patch*" for backed up earlier packs
+                files.AddRange(Directory.EnumerateFiles(PackDirectory, "*.patch*"));
+
+                foreach (string path in files) {
                     try {
                         PackFile pack = new PackFileCodec().Open(path);
                         GetUsedTypes(pack, infos);

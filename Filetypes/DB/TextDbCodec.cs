@@ -62,7 +62,7 @@ namespace Filetypes {
                 if (strArray.Length != info.Fields.Count) {
                     continue;
                 }
-                List<List<FieldInstance>> entries = new List<List<FieldInstance>> ();
+                List<DBRow> entries = new List<DBRow> ();
                 while (!reader.EndOfStream) {
                     line = reader.ReadLine ();
                     try {
@@ -74,7 +74,7 @@ namespace Filetypes {
                             field.Value = fieldValue;
                             item.Add (field);
                         }
-                        entries.Add (item);
+                        entries.Add (new DBRow(info, item));
 #if DEBUG
                     } catch (Exception x) {
                         Console.WriteLine (x);

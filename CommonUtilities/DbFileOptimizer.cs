@@ -4,8 +4,6 @@ using System.IO;
 using Common;
 using Filetypes;
 
-using DatabaseRow = System.Collections.Generic.List<Filetypes.FieldInstance>;
-
 namespace CommonUtilities {
     /*
      * Analyses the db files of a pack whether they contain changes
@@ -153,18 +151,18 @@ namespace CommonUtilities {
         /*
          * Retrieve all rows that are in valueFile, but not in findIn.
          */
-        List<DatabaseRow> GetDifferingRows(DBFile valueFile, DBFile findIn) {
+        List<DBRow> GetDifferingRows(DBFile valueFile, DBFile findIn) {
             ValueFinder finder = new ValueFinder(findIn);
 #if DEBUG
-            List<DatabaseRow> rows = new List<DatabaseRow>();
-            foreach(DatabaseRow row in valueFile.Entries) {
+            List<DBRow> rows = new List<DBRow>();
+            foreach(DBRow row in valueFile.Entries) {
                 if (!finder.ContainsRow(row)) {
                     Console.WriteLine("Entry not found: {0}", string.Join(",", row));
                     rows.Add(row);
                 }
             }
 #else
-            List<DatabaseRow> rows = new List<DatabaseRow>(valueFile.Entries);
+            List<DBRow> rows = new List<DBRow>(valueFile.Entries);
             rows.RemoveAll(finder.ContainsRow);
 #endif
             return rows;
@@ -178,9 +176,9 @@ namespace CommonUtilities {
         }
         
         DBFile gameDbFile;
-        public bool ContainsRow(DatabaseRow checkRow) {
+        public bool ContainsRow(DBRow checkRow) {
             bool result = false;
-            foreach(DatabaseRow row in gameDbFile.Entries) {
+            foreach(DBRow row in gameDbFile.Entries) {
                 if (SameData(row, checkRow)) {
                     result = true;
                     break;
@@ -189,7 +187,7 @@ namespace CommonUtilities {
             return result;
         }
 
-        bool SameData(DatabaseRow row1, DatabaseRow row2) {
+        bool SameData(DBRow row1, DBRow row2) {
             bool result = row1.Count == row2.Count;
             for (int i = 0; result && i < row1.Count; i++) {
                 result = row1[i].Value.Equals(row2[i].Value);

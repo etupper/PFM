@@ -41,8 +41,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Esf\EsfNode.cs" />
     <Compile Include="Esf\EsfFileCodec.cs" />
-    <Compile Include="Esf\Tester.cs" />
-    <Compile Include="Esf\CodecTest.cs" />
     <Compile Include="Esf\TypeCodes.cs" />
     <Compile Include="Esf\ComplexNodes.cs" />
     <Compile Include="Esf\ArrayNodes.cs" />

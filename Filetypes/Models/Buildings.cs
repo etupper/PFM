@@ -12,7 +12,7 @@ namespace Filetypes {
         List<List<FieldInstance>> fields = new List<List<FieldInstance>>();
         
         public BuildingModelFile(DBFile file) {
-            fields = file.Entries;
+            fields = new List<List<FieldInstance>>(file.Entries);
             header = file.Header;
             // info = file.CurrentType;
         }

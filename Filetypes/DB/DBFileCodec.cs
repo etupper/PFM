@@ -209,7 +209,7 @@ namespace Filetypes {
 
         // creates a list of field values from the given type.
         // stream needs to be positioned at the beginning of the entry.
-        private List<FieldInstance> ReadFields(BinaryReader reader, TypeInfo ttype, bool skipHeader = true) {
+        private DBRow ReadFields(BinaryReader reader, TypeInfo ttype, bool skipHeader = true) {
             if (!skipHeader) {
                 readHeader(reader);
             }
@@ -227,7 +227,8 @@ namespace Filetypes {
                         ("Failed to read field {0}/{1}, type {3} ({2})", i, ttype.Fields.Count, x.Message, instance.Info.TypeName));
                 }
             }
-            return entry;
+            DBRow result = new DBRow(ttype, entry);
+            return result;
         }
 
         #region Write
@@ -238,7 +239,7 @@ namespace Filetypes {
             BinaryWriter writer = new BinaryWriter(stream);
             file.Header.EntryCount = (uint)file.Entries.Count;
             WriteHeader(writer, file.Header);
-            file.Entries.ForEach(delegate(List<FieldInstance> e) { WriteEntry(writer, e); });
+            file.Entries.ForEach(delegate(DBRow e) { WriteEntry(writer, e); });
             writer.Flush();
         }
         /*
