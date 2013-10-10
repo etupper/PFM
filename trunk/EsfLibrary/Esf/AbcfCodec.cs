@@ -61,7 +61,7 @@ namespace EsfLibrary {
             WriteStringReference(w, s, Utf16StringList);
         }
 
-        public override EsfNode ReadValueNode(BinaryReader reader, EsfType typeCode) {
+        public override EsfNode CreateValueNode(EsfType typeCode, bool optimize = false) {
             StringNode result;
             switch (typeCode) {
                 case EsfType.UTF16:
@@ -71,9 +71,8 @@ namespace EsfLibrary {
                     result = new StringNode(ReadAsciiString, WriteAsciiReference);
                     break;
                 default:
-                    return base.ReadValueNode(reader, typeCode);
+                    return base.CreateValueNode(typeCode);
             }
-            result.Decode(reader, typeCode);
             result.TypeCode = typeCode;
             return result;
         }

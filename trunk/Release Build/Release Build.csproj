@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -6,14 +6,13 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{69EFD9F5-3100-4133-B4F5-289D7B07E448}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Release_Build</RootNamespace>
+    <RootNamespace>ReleaseBuild</RootNamespace>
     <AssemblyName>Release Build</AssemblyName>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -31,7 +30,17 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>ReleaseBuild.PrepareRelease</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{6D23F5FB-04D4-4D7E-BDFF-FCA718309298}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DBEditorTableControl\DBEditorTableControl.csproj">
       <Project>{3B928C9E-A55F-4912-9880-FF134E68AFCA}</Project>
       <Name>DBEditorTableControl</Name>
@@ -40,9 +49,9 @@
       <Project>{7CB586B7-A10B-4540-899B-671B9383605E}</Project>
       <Name>DbSql</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PackFileTest\PackFileTest.csproj">
-      <Project>{C3A9D2C3-E35C-4160-9ED9-68B8A5BF5F9C}</Project>
-      <Name>PackFileTest</Name>
+    <ProjectReference Include="..\Filetypes\Filetypes.csproj">
+      <Project>{2419C2AF-48A3-40D2-980B-36AB2D81DC74}</Project>
+      <Name>Filetypes</Name>
     </ProjectReference>
     <ProjectReference Include="..\PackFileManager\PackFileManager.csproj">
       <Project>{BED0F2F6-BD7B-4D6D-8959-98A6E9B6F88A}</Project>
@@ -53,6 +62,12 @@
       <Name>PfmCL</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="PrepareRelease.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>copy "$(SolutionDir)\Files\master_schema.xml" "$(TargetDir)"
@@ -61,21 +76,17 @@ copy "$(SolutionDir)\Files\xmlversion" "$(TargetDir)"
 </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>copy "$(SolutionDir)\PackFileTest\bin\*.exe" "$(TargetDir)"
-copy "$(SolutionDir)\PackFileTest\bin\*.dll" "$(TargetDir)"
-copy "$(SolutionDir)\PackFileManager\bin\Release\*.exe" "$(TargetDir)"
+    <PostBuildEvent>copy "$(SolutionDir)\PackFileManager\bin\Release\*.exe" "$(TargetDir)"
 copy "$(SolutionDir)\PackFileManager\bin\Release\*.dll" "$(TargetDir)"
 
 cd "$(TargetDir)"
-del "Release Build.dll"
 del "*vshost"*
 del "Pack File Manager.zip"
 
-copy "$(SolutionDir)\Files\master_schema.xml" "$(SolutionDir)\PackFileTest\bin"
-start /wait PackFileTest.exe -pr -x
+copy "$(SolutionDir)\Files\master_schema.xml" "$(TargetDir)"
+start /wait "building schemas" "Release Build.exe"
+del "Release Build.exe"
 copy "$(SolutionDir)\Files\schema_models.xml" "$(TargetDir)"
-
-del "PackFileTest.exe"
 
 start WinRAR.exe a "Pack File Manager.zip" "*dll" "*exe" "schema_*.xml" "xmlversion"
 start WinRAR.exe a "schema.zip" "schema_*.xml" "xmlversion"</PostBuildEvent>

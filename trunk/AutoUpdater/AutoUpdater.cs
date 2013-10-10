@@ -111,7 +111,7 @@ namespace AutoUpdater {
                             zipStream.CopyTo(outStream);
                         }
                         entry = zipStream.GetNextEntry();
-                    } catch (Exception e) {
+                    } catch {
                         Console.WriteLine("Could not unpack {0}", entry.Name);
                     }
                 }

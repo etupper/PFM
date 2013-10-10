@@ -42,6 +42,7 @@ namespace EsfControl {
                 }
             }
         }
+
         public EditEsfComponent() {
             InitializeComponent();
             nodeValueGridView.Rows.Clear();
@@ -55,6 +56,14 @@ namespace EsfControl {
 
             MouseHandler mouseHandler = new MouseHandler();
             esfNodeTree.MouseUp += new MouseEventHandler(mouseHandler.ShowContextMenu);
+            
+            nodeValueGridView.CellClick += CellClicked;
+        }
+        
+        private void CellClicked(object sender, DataGridViewCellEventArgs args) {
+            if (args.ColumnIndex == 1) {
+                Console.WriteLine("editing {0}", nodeValueGridView.Rows[args.RowIndex].Cells[0].Value);
+            }
         }
 
         private void validateCell(object sender, DataGridViewCellValidatingEventArgs args) {
@@ -261,7 +270,7 @@ namespace EsfControl {
         public void Fill() {
             if (Nodes.Count == 0) {
 #if DEBUG
-                Console.WriteLine("filling list for {0}: {1}", (Tag as ParentNode).Name, string.Join(",", (Tag as ParentNode).Value));
+                Console.WriteLine("filling list for {0}", (Tag as ParentNode).Name);
 #endif
                 ParentNode parentNode = (Tag as ParentNode);
                 foreach (ParentNode child in parentNode.Children) {

@@ -198,6 +198,8 @@ namespace PackFileManager {
                         Name = modName,
                         BaseDirectory = dialog.SelectedPath
                     };
+                    // create directory if it doesn't already exist
+                    Directory.CreateDirectory(mod.BaseDirectory);
 
                     // create new mod file to start off with
                     result = Path.Combine(mod.BaseDirectory, string.Format("{0}.pack", modName));

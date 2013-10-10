@@ -61,7 +61,7 @@ namespace Filetypes {
 	 * Class representing a database file.
 	 */
     public class DBFile {
-        private List<List<FieldInstance>> entries = new List<List<FieldInstance>>();
+        private List<DBRow> entries = new List<DBRow>();
         public DBFileHeader Header;
         public TypeInfo CurrentType {
             get;
@@ -70,7 +70,7 @@ namespace Filetypes {
 
 		#region Attributes
 		// the entries of this file
-        public List<List<FieldInstance>> Entries {
+        public List<DBRow> Entries {
             get {
                 return this.entries;
             }
@@ -98,7 +98,7 @@ namespace Filetypes {
         public DBFile (DBFile toCopy) : this(toCopy.Header, toCopy.CurrentType) {
 			Header = new DBFileHeader (toCopy.Header.GUID, toCopy.Header.Version, toCopy.Header.EntryCount, toCopy.Header.HasVersionMarker);
             // we need to create a new instance for every field so we don't write through to the old data
-			toCopy.entries.ForEach (entry => entries.Add (new List<FieldInstance> (entry)));
+			toCopy.entries.ForEach (entry => entries.Add (new DBRow (toCopy.CurrentType, entry)));
 		}
         #endregion
 
@@ -106,12 +106,8 @@ namespace Filetypes {
          * Create new entry for the data base.
          * Note that the entry will not be added to the entries by this.
          */
-        public List<FieldInstance> GetNewEntry() {
-			List<FieldInstance> newEntry = new List<FieldInstance> ();
-			foreach (FieldInfo field in CurrentType.Fields) {
-				newEntry.Add (field.CreateInstance());
-			}
-			return newEntry;
+        public DBRow GetNewEntry() {
+			return new DBRow(CurrentType);
 		}
   
         /*

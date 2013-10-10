@@ -59,7 +59,7 @@ namespace DbSql {
                 DBFile targetFile = GetTargetFile (packed);
                 foreach(RowValues insertValues in Source.Values) {
                     if (targetFile.CurrentType.Fields.Count == insertValues.Count) {
-                        List<FieldInstance> newRow = targetFile.GetNewEntry();
+                        DBRow newRow = targetFile.GetNewEntry();
                         for (int i = 0; i < newRow.Count; i++) {
                             newRow[i].Value = insertValues[i];
                         }

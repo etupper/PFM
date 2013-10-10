@@ -1,8 +1,9 @@
+using EsfLibrary;
 using System;
 using System.IO;
 using System.Collections.Generic;
 
-namespace EsfLibrary {
+namespace EsfTest {
     public class CodecTest {
         TestableAbcaCodec codec = new TestableAbcaCodec();
         
@@ -12,17 +13,19 @@ namespace EsfLibrary {
         }
 
         public void run() {
-            testEquals();
-            testIntCodec();
-            testUIntCodec();
-            testUIntArrayCodec();
-            testRecordNode();
-            testRecordArrayNode();
+            TestEquals();
+            TestIntCodec();
+            TestUIntCodec();
+            TestUIntArrayCodec();
+            TestOptimizedIntNode();
+            TestOptimizedUIntArrayCodec();
+            TestRecordNode();
+            TestRecordArrayNode();
             Console.WriteLine("All tests successful");
             Console.ReadKey();
         }
         
-        public void testRecordArrayNode() {
+        public void TestRecordArrayNode() {
             List<EsfNode> records = new List<EsfNode>();
             for (int i = 0; i < 5; i++) {
                 RecordEntryNode entry = new RecordEntryNode(codec) {
@@ -35,24 +38,52 @@ namespace EsfLibrary {
                 Name = "test",
                 Value = records
             };
-            verifyEncodeDecode(array);
+            VerifyEncodeDecode(array, false);
         }
         
-        public void testRecordNode() {
+        public void TestRecordNode() {
             RecordNode node = new RecordNode(codec, (byte)EsfType.RECORD) {
                 Name = "test",
                 Value = createSomeNodes()
             };
-            verifyEncodeDecode(node);
+            VerifyEncodeDecode(node);
         }
 
-        private void verifyEncodeDecode(EsfNode node) {
+        private void VerifyEncodeDecode(EsfNode node, bool withoutCodec = true) {
+            if (withoutCodec) {
+                // encode only the single node
+                ICodecNode codecNode = node as ICodecNode;
+                if (codecNode != null) {
+                    byte[] bytes;
+                    using (var stream = new MemoryStream()) {
+                        using (var writer = new BinaryWriter(stream)) {
+                            codecNode.Encode(writer);
+                        }
+                        bytes = stream.ToArray();
+                    }
+                    EsfNode decoded = node.CreateCopy();
+                    ((ICodecNode) decoded).Decode(new BinaryReader(new MemoryStream(bytes, 1, bytes.Length-1)), node.TypeCode);
+                    assertEqual(node, decoded);
+                }
+            }
+            
+            // now the test with the full file codec
             List<EsfNode> singleNode = new List<EsfNode>();
             singleNode.Add(node);
-            verifyEncodeDecode(singleNode);
+            VerifyEncodeDecode(singleNode);
         }
-        private void verifyEncodeDecode(List<EsfNode> nodes) {
-            RecordNode rootNode = createRootNode();
+        private byte[] Encode(ICodecNode node) {
+            byte[] result;
+            using (var stream = new MemoryStream()) {
+                using (var writer = new BinaryWriter(stream)) {
+                    node.Encode(writer);
+                }
+                result = stream.ToArray();
+            }
+            return result;
+        }
+        private void VerifyEncodeDecode(List<EsfNode> nodes) {
+            RecordNode rootNode = CreateRootNode();
             rootNode.Value = nodes;
             // EsfFile encodedFile = new EsfFile(rootNode, codec);
             MemoryStream stream = new MemoryStream();
@@ -73,7 +104,7 @@ namespace EsfLibrary {
 //            nodes.ForEach(node => {assertEqual(node, decodedResult); });
         }
         
-        private RecordNode createRootNode() {
+        private RecordNode CreateRootNode() {
             return new RecordNode(codec, (byte) EsfType.RECORD) { Name = "root" };
         }
         private List<EsfNode> createSomeNodes() {
@@ -86,14 +117,30 @@ namespace EsfLibrary {
             return list;
         }
         
-        public void testUIntArrayCodec() {
-            byte[] array = { 0, 1, 2, 3, 4, 5 };
+        public void TestUIntArrayCodec() {
+            uint[] array = { 0, 1, 2, 3, 4, 5 };
             //List<EsfNode> nodes = new List<EsfNode>();
-            UIntArrayNode node = new UIntArrayNode(codec) { Value = array, TypeCode = EsfType.UINT32_ARRAY };
-            verifyEncodeDecode(node);
+            EsfArrayNode<uint> node = new EsfArrayNode<uint>(codec, EsfType.UINT32_ARRAY) { 
+                Value = array
+            };
+            VerifyEncodeDecode(node);
         }
         
-        public void testEquals() {
+        public void TestOptimizedUIntArrayCodec() {
+            uint[] array = { 0, 1, 2, 3, 4, 5 };
+            //List<EsfNode> nodes = new List<EsfNode>();
+            EsfArrayNode<uint> node = new OptimizedArrayNode<uint>(codec, EsfType.UINT32_ARRAY, delegate(uint val) {
+                return new OptimizedUIntNode {
+                    Value = val,
+                    SingleByteMin = true
+                };
+            }) {
+                Value = array
+            };
+            VerifyEncodeDecode(node);
+        }
+        
+        public void TestEquals() {
             EsfNode valueNode = new IntNode { Value = 1 };
             EsfNode valueNode2 = new IntNode { Value = 1 };
             assertEqual(valueNode, valueNode2);
@@ -117,16 +164,16 @@ namespace EsfLibrary {
             assertEqual(file, file2);
         }
         
-        private EsfValueNode<int> testIntNode(int val, EsfType expectedTypeCode = EsfType.INVALID) {
+        private void TestIntNode(int val, EsfType expectedTypeCode = EsfType.INVALID) {
             EsfValueNode<int> node = new OptimizedIntNode { Value = val };
-            return testNode(node, expectedTypeCode);
+            TestNode(node, expectedTypeCode);
         }
-        private void testUIntNode(uint val, EsfType typeCode = EsfType.UINT32) {
+        private void TestUIntNode(uint val, EsfType typeCode = EsfType.UINT32) {
             EsfValueNode<uint> node = new OptimizedUIntNode { Value = val, TypeCode = typeCode };
-            testNode(node);
+            TestNode(node);
         }
 
-        private EsfValueNode<T> testNode<T>(EsfValueNode<T> node, EsfType expectedTypeCode = EsfType.INVALID) {
+        private EsfValueNode<T> TestNode<T>(EsfValueNode<T> node, EsfType expectedTypeCode = EsfType.INVALID) {
             byte[] data = encodeNode(node);
             EsfNode decoded = decodeNode(data);
             EsfValueNode<T> node2 = decoded as EsfValueNode<T>;
@@ -178,31 +225,64 @@ namespace EsfLibrary {
         #endregion
         
         #region Old Tests
-        public void testIntCodec() {
-            testIntNode(0);
-            testIntNode(1);
-            testIntNode(0x100);
-            testIntNode(181);
-            testIntNode(0x10000);
-            testIntNode(1573280);
-            testIntNode(0x1000000);
-            testIntNode(int.MaxValue);
-            testIntNode(-1, EsfType.INT32_BYTE);
-            testIntNode(-0xff);
-            testIntNode(-0xffff);
-            testIntNode(-0xffffff);
-            testIntNode(-11831522);
-            testIntNode(int.MinValue);
+        public void TestIntCodec() {
+            TestIntNode(0);
+            TestIntNode(1);
+            TestIntNode(0x100);
+            TestIntNode(181);
+            TestIntNode(0x10000);
+            TestIntNode(1573280);
+            TestIntNode(0x1000000);
+            TestIntNode(int.MaxValue);
+            TestIntNode(-1, EsfType.INT32_BYTE);
+            TestIntNode(-0xff);
+            TestIntNode(-0xffff);
+            TestIntNode(-0xffffff);
+            TestIntNode(-11831522);
+            TestIntNode(int.MinValue);
+            
+            IntNode testNode = new IntNode {
+                Value = 17
+            };
+            VerifyEncodeDecode(testNode);
+            
+            IntNode node = new IntNode();
+            node.FromString("17");
+            assertEqual(node, testNode);
         }
+        
+        public void TestOptimizedIntNode() {
+            OptimizedIntNode optimized = new OptimizedIntNode {
+                Codec = codec, Value = 5
+            };
+            OptimizedIntNode other = new OptimizedIntNode {
+                Codec = codec, Value = 5
+            };
+            assertEqual(optimized, other);
+            
+            RecordNode rootNode = CreateRootNode();
+            rootNode.Value = new List<EsfNode>(new EsfNode[] { other });
+            //rootNode.AllNodes.Add(other);
+            other.FromString("1");
+            assertTrue(other.Modified);
+            assertTrue(rootNode.Modified);
+            assertEqual(other.Value, 1);
 
-        public void testUIntCodec() {
-            testUIntNode(0);
-            testUIntNode(1);
-            testUIntNode(480, EsfType.UINT32_SHORT);
-            testUIntNode(0x100);
-            testUIntNode(0x10000);
-            testUIntNode(0x1000000);
-            testUIntNode(uint.MaxValue);
+            //assertEqual(optimized, other);
+        }
+        
+        public void TestUIntCodec() {
+            TestUIntNode(0);
+            TestUIntNode(1);
+            TestUIntNode(480, EsfType.UINT32_SHORT);
+            TestUIntNode(0x100);
+            TestUIntNode(0x10000);
+            TestUIntNode(0x1000000);
+            TestUIntNode(uint.MaxValue);
+            
+            VerifyEncodeDecode(new UIntNode {
+                Value = 17
+            });
         }
         #endregion
     }

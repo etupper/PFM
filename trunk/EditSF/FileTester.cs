@@ -13,7 +13,7 @@ namespace EditSF {
             statusLabel.Text = string.Format("Loading file {0}", Path.GetFileName(file));
             Application.DoEvents();
             string result;
-            ProgressUpdater updater = new ProgressUpdater(progress);
+            // ProgressUpdater updater = new ProgressUpdater(progress);
             using (Stream s = File.OpenRead(file)) {
                 try {
                     EsfCodec codec = EsfCodecUtil.GetCodec(File.OpenRead(file));

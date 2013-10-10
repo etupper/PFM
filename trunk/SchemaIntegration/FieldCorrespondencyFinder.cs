@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Xml;
 using Common;
 using Filetypes;
-using PackFileTest.Mapping;
+using SchemaIntegration.Mapping;
 
 //using ValueList = System.Collections.Generic.List<string>;
 //using Table = System.Tuple<string, System.Collections.Generic.List<string>>;
 using NameMapping = System.Tuple<string, string>;
 
-namespace PackFileTest {
+namespace SchemaIntegration {
     /*
      * Finds the field correspondencies between the db file schema and the ones used by CA.
      * Does this by comparing all values within a column, so it depends on

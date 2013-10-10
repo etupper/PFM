@@ -114,7 +114,11 @@ namespace DecodeTool {
                 return currentTypeInfo;
             }
             set {
-                currentTypeInfo = value;
+                if (value != null) {
+                    currentTypeInfo = value;
+                } else {
+                    currentTypeInfo = new TypeInfo { Name = "" };
+                }
                 ParseData();
                 FillTypeList();
             }

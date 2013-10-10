@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace DbSql {
-    using QueryResult = List<FieldInstance>;
     using RowValues = List<string>;
     
     /*
@@ -55,34 +54,29 @@ namespace DbSql {
          * or from all rows if none was given.
          */
         public override void Execute() {
-            List<QueryResult> result = new List<QueryResult>();
+            // List<DBRow> result = new List<DBRow>();
             values = new List<RowValues>();
             foreach(DBFile db in DbFiles) {
-                foreach(QueryResult row in db.Entries) {
+                foreach(DBRow row in db.Entries) {
                     if (whereClause != null && !whereClause.Accept(row)) {
                         continue;
                     }
                     RowValues fieldValues = new RowValues();
                     if (AllFields) {
-                        result.Add(row);
                         row.ForEach(v => { fieldValues.Add(v.Value); });
                     } else {
-                        QueryResult rowResult = new QueryResult();
-                        foreach(FieldInstance instance in row) {
-                            if (Fields.Contains(instance.Info.Name)) {
-                                rowResult.Add(instance);
-                                fieldValues.Add(instance.Value);
-                            }
-                        }
-                        result.Add(rowResult);
+                        Fields.ForEach(f => fieldValues.Add(row[f].Value));
                     }
                     values.Add(fieldValues);
                 }
             }
 #if DEBUG
-            Console.WriteLine("{0} lines selected", values.Count);
+            // Console.WriteLine("{0} lines selected", values.Count);
 #endif
             if (!Silent) {
+                if (tables.Count > 0) {
+                    Console.WriteLine("{0}:", tables[0]);
+                }
                 Values.ForEach(r => {
                     Console.WriteLine(string.Join(",", r));
                 });

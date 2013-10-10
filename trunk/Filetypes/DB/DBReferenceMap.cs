@@ -103,20 +103,8 @@ namespace Filetypes {
          */
         public static void FillFromPacked(SortedSet<string> result, PackedFile packed, string fieldName) {
             DBFile dbFile = PackedFileDbCodec.Decode(packed);
-            int index = -1;
-            for (int i = 0; i < dbFile.CurrentType.Fields.Count; i++) {
-                if (dbFile.CurrentType.Fields[i].Name.Equals(fieldName)) {
-                    index = i;
-                    break;
-                }
-            }
-            if (index == -1) {
-                // did not find in file with correct type
-                throw new InvalidDataException(string.Format("Did not find field {0} in {1}",
-                    fieldName, Path.GetFileName(packed.FullPath)));
-            }
-            foreach (List<FieldInstance> entry in dbFile.Entries) {
-                string toAdd = entry[index].Value;
+            foreach (DBRow entry in dbFile.Entries) {
+                string toAdd = entry[fieldName].Value;
                 if (toAdd != null) {
                     result.Add(toAdd);
                 }

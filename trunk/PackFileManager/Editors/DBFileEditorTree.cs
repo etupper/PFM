@@ -108,9 +108,9 @@ namespace PackFileManager {
         /*
          * Retrieve all data from the tags in the tree view (will include added items).
          */
-        List<List<FieldInstance>> Fields {
+        List<DBRow> Fields {
             get {
-                List<List<FieldInstance>> fields = new List<List<FieldInstance>>();
+                List<DBRow> fields = new List<DBRow>();
                 foreach (TreeNode node in treeView.Nodes) {
                     FieldInstanceNode fieldNode = node as FieldInstanceNode;
                     fields.Add(fieldNode.Fields);
@@ -470,8 +470,8 @@ namespace PackFileManager {
         }
 
         #region Contained Field list access
-        public List<FieldInstance> Fields {
-            get { return Tag as List<FieldInstance>; }
+        public DBRow Fields {
+            get { return Tag as DBRow; }
         }
 
         public List<ListField> ListFields {

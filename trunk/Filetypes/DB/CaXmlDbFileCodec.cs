@@ -94,7 +94,7 @@ namespace Filetypes {
                                 throw e;
                             }
                         }
-                        result.Entries.Add(fields);
+                        result.Entries.Add(new DBRow(typeinfo, fields));
                     }
                 }
             }

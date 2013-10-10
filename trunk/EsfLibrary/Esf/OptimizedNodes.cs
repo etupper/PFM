@@ -30,7 +30,7 @@ namespace EsfLibrary {
             return result;
 
         }
-        protected override void WriteValue(BinaryWriter writer) {
+        public override void WriteValue(BinaryWriter writer) {
             // writer.Write((byte)TypeCode);
         }
         public override EsfNode CreateCopy() {
@@ -42,9 +42,13 @@ namespace EsfLibrary {
 
     public class OptimizedIntNode : CodecNode<int> {
         public OptimizedIntNode() : base(int.Parse) { }
-        //private EsfType initialType;
+        private EsfType setType;
+        public bool SingleByteMin { get; set; }
         public override EsfType TypeCode {
             get {
+                if (setType != EsfType.INVALID) {
+                    return setType;
+                }
                 if (Value == int.MinValue) {
                     return EsfType.INT32;
                 }
@@ -55,7 +59,7 @@ namespace EsfLibrary {
                     result = EsfType.INT32;
                 } else if ((value & 0x7f8000) != 0) {
                     result = EsfType.INT32_24BIT;
-                } else if ((value & 0x7f80) != 0) {
+                } else if ((value & 0x7f80) != 0 || SingleByteMin) {
                     result = EsfType.INT32_SHORT;
                 } else if (value > 0) {
                     result = EsfType.INT32_BYTE;
@@ -63,7 +67,7 @@ namespace EsfLibrary {
                 return result;
             }
             set {
-                // ignore; actual code is value dependent
+                setType = value;
             }
         }
         protected override int ReadValue(BinaryReader reader, EsfType readAs) {
@@ -119,7 +123,12 @@ namespace EsfLibrary {
             }
             return value;
         }
-        protected override void WriteValue(BinaryWriter writer) {
+        public override void WriteValue(BinaryWriter writer) {
+#if DEBUG
+            if (Modified) {
+                Console.WriteLine("Writing optimized {0}", Value);
+            }
+#endif
             switch (TypeCode) {
                 case EsfType.INT32_ZERO:
                     break;
@@ -148,9 +157,13 @@ namespace EsfLibrary {
 
     public class OptimizedUIntNode : CodecNode<uint> {
         public OptimizedUIntNode() : base(uint.Parse) { }
-        //private EsfType initialType;
+        private EsfType setType;
+        public bool SingleByteMin { get; set; }
         public override EsfType TypeCode {
             get {
+                if (setType != EsfType.INVALID) {
+                    return setType;
+                }
                 EsfType result;
                 if (Value > 0xffffff) {
                     result = EsfType.UINT32;
@@ -158,7 +171,7 @@ namespace EsfLibrary {
                     result = EsfType.UINT32_24BIT;
                 } else if (Value > 0xff) {
                     result = EsfType.UINT32_SHORT;
-                } else if (Value > 1) {
+                } else if (Value > 1 || SingleByteMin) {
                     result = EsfType.UINT32_BYTE;
                 } else {
                     result = (Value == 1) ? EsfType.UINT32_ONE : EsfType.UINT32_ZERO;
@@ -166,7 +179,7 @@ namespace EsfLibrary {
                 return result;
             }
             set {
-                // ignore; actual code is value dependent
+                setType = value;
             }
         }
         protected override uint ReadValue(BinaryReader reader, EsfType readAs) {
@@ -215,7 +228,7 @@ namespace EsfLibrary {
             }
             return value;
         }
-        protected override void WriteValue(BinaryWriter writer) {
+        public override void WriteValue(BinaryWriter writer) {
             switch (TypeCode) {
                 case EsfType.UINT32_ZERO:
                 case EsfType.UINT32_ONE:
@@ -247,18 +260,22 @@ namespace EsfLibrary {
         public OptimizedFloatNode()
             : base(float.Parse) {
         }
+        /*private EsfType setTypeCode;
         public override EsfType TypeCode {
             get {
+                if (setTypeCode != EsfType.INVALID) {
+                    return setTypeCode;
+                }
                 return Value == 0 ? EsfType.SINGLE_ZERO : EsfType.SINGLE;
             }
             set {
-                //
+                setTypeCode = value;
             }
-        }
+        }*/
         protected override float ReadValue(BinaryReader reader, EsfType readAs) {
             return (readAs == EsfType.SINGLE_ZERO) ? 0 : reader.ReadSingle();
         }
-        protected override void WriteValue(BinaryWriter writer) {
+        public override void WriteValue(BinaryWriter writer) {
             if (TypeCode != EsfType.SINGLE_ZERO) {
                 writer.Write(Value);
             }
@@ -267,6 +284,52 @@ namespace EsfLibrary {
             return new OptimizedFloatNode {
                 Value = this.Value
             };
+        }
+    }
+    
+    public class OptimizedArrayNode<T> : EsfArrayNode<T> {
+        public delegate EsfValueNode<N> NodeFactory<N>(N val);
+        
+        NodeFactory<T> CreateNode;
+        EsfType optimizedType;
+        public override EsfType TypeCode {
+            get {
+                if (optimizedType == EsfType.INVALID) {
+                    // iterate all values and use highest code for all
+                    // (highest code has longest encoding)
+                    byte maxContained = 0;
+                    foreach(T item in Value) {
+                        EsfValueNode<T> node = CreateNode(item);
+                        maxContained = Math.Max(maxContained, (byte) node.TypeCode);
+                    }
+                    optimizedType = (EsfType) (maxContained + 0x40);
+                }
+                return optimizedType;
+            }
+            set {
+                base.TypeCode = value;
+            }
+        }
+        /*
+         * Override to invalidate type code after setting a new value.
+         */
+        public override T[] Value {
+            get {
+                return base.Value;
+            }
+            set {
+                base.Value = value;
+                if (value.Length != 0) {
+                    optimizedType = EsfType.INVALID;
+                } else {
+                    optimizedType = base.TypeCode;
+                }
+            }
+        }
+
+        public OptimizedArrayNode(EsfCodec codec, EsfType typeCode, NodeFactory<T> factory) : base(codec, typeCode) {
+            CreateNode = factory;
+            optimizedType = typeCode;
         }
     }
 }

@@ -6,7 +6,7 @@ using Filetypes;
 
 using NameMapping = System.Tuple<string, string>;
 
-namespace PackFileTest.Mapping {
+namespace SchemaIntegration.Mapping {
     class MappedDataTable : MappedTable {
         public MappedDataTable(string name) : base(name) { }
 

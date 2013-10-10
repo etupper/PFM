@@ -324,7 +324,7 @@ namespace PackFileManager {
                 }
             }
             
-            EditedFile.Entries.Insert(index, newEntry);
+            EditedFile.Entries.Insert(index, new DBRow(EditedFile.CurrentType, newEntry));
             currentDataTable.Rows.InsertAt(row, index);
             FillRowHeaders();
             dataGridView.FirstDisplayedScrollingRowIndex = index;
@@ -408,9 +408,8 @@ namespace PackFileManager {
             DataGridViewSelectedRowCollection selectedRows = dataGridView.SelectedRows;
             if (selectedRows.Count != 0) {
                 foreach (DataGridViewRow row in selectedRows) {
-                    List<FieldInstance> toCopy = EditedFile.Entries[row.Index];
-                    var copy = new List<FieldInstance>(toCopy.Count);
-                    toCopy.ForEach(field => copy.Add(field.CreateCopy()));
+                    DBRow toCopy = EditedFile.Entries[row.Index];
+                    var copy = new DBRow(EditedFile.CurrentType, toCopy);
                     createRow(copy, row.Index);
                 }
             } else {

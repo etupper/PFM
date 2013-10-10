@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace PackFileTest.Mapping {
+namespace SchemaIntegration.Mapping {
 
     public class UniqueTableGenerator {
         string xmlDirectory;

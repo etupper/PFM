@@ -2181,7 +2181,7 @@ namespace DBTableControl
                 dbfileconstructionRow.Add(editedFile.CurrentType.Fields[i].CreateInstance());
             }
 
-            editedFile.Entries.Add(dbfileconstructionRow);
+            editedFile.Entries.Add(new DBRow(EditedFile.CurrentType, dbfileconstructionRow));
             visibleRows.Add(System.Windows.Visibility.Visible);
 
             dataChanged = true;

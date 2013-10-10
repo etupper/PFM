@@ -899,6 +899,9 @@ namespace PackFileManager
                 } catch (Exception ex) {
                     MessageBox.Show (string.Format("DecodeTool could not be opened:\n{0}", ex.Message), 
                                      "DecodeTool problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
+#if DEBUG
+                    Console.WriteLine(ex);
+#endif
                 } finally {
                     if (decoder != null) {
                         decoder.Dispose();

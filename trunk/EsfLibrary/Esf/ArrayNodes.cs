@@ -6,45 +6,100 @@ using Coordinates2D = System.Tuple<float, float>;
 using Coordinates3D = System.Tuple<float, float, float>;
 
 namespace EsfLibrary {
-    public class EsfArrayNode<T> : EsfValueNode<byte[]>, ICodecNode {
-        protected EsfArrayNode(EsfCodec codec, Converter<T> reader) : base(delegate(string s) { throw new InvalidOperationException(); }) {
+    public class EsfArrayNode<T> : EsfValueNode<T[]>, ICodecNode {
+        public EsfArrayNode(EsfCodec codec, EsfType code) : base(delegate(string s) { throw new InvalidOperationException(); }) {
             Codec = codec;
-            Convert = reader;
+            Separator = " ";
+            TypeCode = code;
+            ConvertItem = DefaultFromString;
+            Value = new T[0];
         }
-
-        public ValueReader<T> ItemReader {
-            get; set;
+        // string to T
+        public Converter<T> ConvertItem { get; set; }
+        static T DefaultFromString(string toConvert) {
+            return (T) Convert.ChangeType(toConvert, typeof(T));
         }
-        public T[] Values {
-            get {
-                throw new InvalidOperationException("Cannot show items for " + TypeCode);
-            }
-            private set {
-            }
-        }
-        public Converter<T> Convert { get; set; }
         
         public override EsfNode CreateCopy() {
-            return new EsfArrayNode<T>(Codec, Convert) {
+            return new EsfArrayNode<T>(Codec, TypeCode) {
                 TypeCode = this.TypeCode,
                 Value = this.Value
             };
         }
         public override void ToXml(TextWriter writer, string indent) {
             writer.WriteLine("{2}<{0} Length=\"{1}\"/>", TypeCode, Value.Length, indent);
-        }        
+        }
 
         #region ICodecNode Implementation
+        protected virtual EsfType ContainedTypeCode {
+            get {
+                return (EsfType) (TypeCode - 0x40);
+            }
+        }
         public void Decode(BinaryReader reader, EsfType type) {
+            EsfType containedTypeCode = ContainedTypeCode;
+#if DEBUG
+            // Console.WriteLine("decoding array type code {0} containing {1}", type, containedTypeCode);
+#endif
+
             int size = Codec.ReadSize(reader);
-            Value = reader.ReadBytes(size);
+#if DEBUG
+            // Console.WriteLine("Reading array[{0}] with {1} elements", type, size);
+#endif
+            List<T> read = new List<T>();
+            using (var itemReader = new BinaryReader(new MemoryStream(reader.ReadBytes(size)))) {
+                while (itemReader.BaseStream.Position < size) {
+                    read.Add(ReadFromCodec(itemReader, containedTypeCode));
+                }
+            }
+            Value = read.ToArray();
         }
         public void Encode(BinaryWriter writer) {
-            writer.Write ((byte) TypeCode);
-            Codec.WriteOffset(writer, Value.Length);
-            writer.Write(Value);
+            EsfType containedTypeCode = ContainedTypeCode;
+            EsfType myRealType = (EsfType) (containedTypeCode + 0x40);
+#if DEBUG
+            Console.WriteLine("encoding array with {2} bytes, code {0} containing {1}", myRealType, containedTypeCode, Value.Length);
+#endif
+            
+            writer.Write ((byte) myRealType);
+            byte[] encodedArray = new byte[0];
+            using (var stream = new MemoryStream()) {
+                using (var memWriter = new BinaryWriter(stream)) {
+                    CodecNode<T> valueNode = Codec.CreateValueNode(containedTypeCode, false) as CodecNode<T>;
+                    valueNode.TypeCode = containedTypeCode;
+                    foreach(T item in Value) {
+                        valueNode.Value = item;
+                        valueNode.WriteValue(memWriter);
+                    }
+                    encodedArray = stream.ToArray();
+#if DEBUG
+                    Console.WriteLine("size is {0}", encodedArray.Length);
+#endif
+                    Codec.WriteOffset(writer, encodedArray.Length);
+                    writer.Write(encodedArray);
+                }
+            }
+        }
+        private T ReadFromCodec(BinaryReader reader, EsfType containedTypeCode) {
+            EsfValueNode<T> node = (EsfValueNode<T>) Codec.ReadValueNode(reader, containedTypeCode);
+            return node.Value;
         }
         #endregion
+
+        public override void FromString(string value) {
+#if DEBUG
+            Console.WriteLine("decoding {0}", value);
+#endif
+            string[] elements = value.Split(Separator.ToCharArray());
+            List<T> values = new List<T>(elements.Length);
+            foreach(string e in elements) {
+                values.Add(ConvertItem(e));
+            }
+            if (Parent == null) {
+                Console.WriteLine("No parent set! I'm sad.");
+            }
+            Value = values.ToArray() ?? new T[0];
+        }
 
         #region Framework overrides
         public override bool Equals(object o) {
@@ -56,9 +111,21 @@ namespace EsfLibrary {
         public override int GetHashCode() {
             return Value.GetHashCode();
         }
+        public string Separator {
+            get; set;
+        }
         public override string ToString() {
-            string result = Value.ToString();
-            result = string.Format("{0}{1}]", result.Substring(0, result.Length-1), Value.Length);
+            string result = "";
+            try {
+                if (Value != null) {
+                    result = string.Join(Separator, Value);
+                }
+            } catch (Exception e) {
+                Console.WriteLine(e);
+                result = Value.ToString();
+                result = string.Format("{0}{1}]", result.Substring(0, result.Length-1), Value.Length);
+            }
+            // result = string.Format("{0}{1}]", result.Substring(0, result.Length-1), Value.Length);
             return result;
         }
         #endregion
@@ -88,68 +155,49 @@ namespace EsfLibrary {
         }
         #endregion
     }
-    #region Typed Array Nodes
-    public class BoolArrayNode : EsfArrayNode<bool> {
-        public BoolArrayNode(EsfCodec codec) : base(codec, bool.Parse) {}
-    }
-    public class ByteArrayNode : EsfArrayNode<byte> {
-        public ByteArrayNode(EsfCodec codec) : base(codec, byte.Parse) {}
-    }
-    public class SByteArrayNode : EsfArrayNode<sbyte> {
-        public SByteArrayNode(EsfCodec codec) : base(codec, sbyte.Parse) {}
-    }
-    public class ShortArrayNode : EsfArrayNode<short> {
-        public ShortArrayNode(EsfCodec codec) : base(codec, short.Parse) {}
-    }
-    public class UShortArrayNode : EsfArrayNode<ushort> {
-        public UShortArrayNode(EsfCodec codec) : base(codec, ushort.Parse) {}
-    }
-    public class IntArrayNode : EsfArrayNode<int> {
-        public IntArrayNode(EsfCodec codec) : base(codec, int.Parse) {}
-    }
-    public class LongArrayNode : EsfArrayNode<long> {
-        public LongArrayNode(EsfCodec codec) : base(codec, long.Parse) {}
-    }
-    public class ULongArrayNode : EsfArrayNode<ulong> {
-        public ULongArrayNode(EsfCodec codec) : base(codec, ulong.Parse) {}
-    }
-    public class UIntArrayNode : EsfArrayNode<uint> {
-        public UIntArrayNode(EsfCodec codec) : base(codec, uint.Parse) {}
-    }
-    public class StringArrayNode : EsfArrayNode<string> {
-        public StringArrayNode(EsfCodec codec) : base(codec, delegate(string v) { return v; }) {}
-    }
-    public class FloatArrayNode : EsfArrayNode<float> {
-        public FloatArrayNode(EsfCodec codec) : base(codec, float.Parse) {}
-    }   
-    public class DoubleArrayNode : EsfArrayNode<double> {
-        public DoubleArrayNode(EsfCodec codec) : base(codec, double.Parse) {}
-    }
-    public class Coordinate2DArrayNode : EsfArrayNode<Coordinates2D> {
-        static Coordinates2D Parse(string value) {
-            string removedBrackets = value.Substring(1, value.Length-1);
-            string[] coords = removedBrackets.Split(',');
-            Coordinates2D result = new Coordinates2D (
-                float.Parse(coords[0].Trim()),
-                float.Parse(coords[1].Trim())
-            );
+    
+    public class RawDataNode : EsfValueNode<byte[]>, ICodecNode {
+        public RawDataNode(EsfCodec codec) : base(delegate(string s) { throw new InvalidOperationException(); }) {
+            Codec = codec;
+            TypeCode = EsfType.UINT8_ARRAY;
+        }
+        public override EsfNode CreateCopy() {
+            return new RawDataNode(Codec) {
+                TypeCode = this.TypeCode,
+                Value = this.Value
+            };
+        }
+        public override void ToXml(TextWriter writer, string indent) {
+            writer.WriteLine("{2}<{0} Length=\"{1}\"/>", TypeCode, Value.Length, indent);
+        }
+        #region ICodecNode Implementation
+        public void Decode(BinaryReader reader, EsfType type) {
+            int size = Codec.ReadSize(reader);
+            Value = reader.ReadBytes(size);
+        }
+        public void Encode(BinaryWriter writer) {
+            writer.Write ((byte) TypeCode);
+            Codec.WriteOffset(writer, Value.Length);
+            writer.Write(Value);
+        }
+        #endregion
+
+        #region Framework overrides
+        public override bool Equals(object o) {
+            RawDataNode otherNode = o as RawDataNode;
+            bool result = otherNode != null;
+            result = result && EqualityComparer<byte[]>.Default.Equals(Value, otherNode.Value);
             return result;
         }
-        public Coordinate2DArrayNode(EsfCodec codec) : base(codec, Parse) {}
-    }
-    public class Coordinates3DArrayNode : EsfArrayNode<Coordinates3D> {
-        static Coordinates3D Parse(string value) {
-            string removedBrackets = value.Substring(1, value.Length-1);
-            string[] coords = removedBrackets.Split(',');
-            Coordinates3D result = new Coordinates3D (
-                float.Parse(coords[0].Trim()),
-                float.Parse(coords[1].Trim()),
-                float.Parse(coords[2].Trim())
-            );
+        public override int GetHashCode() {
+            return Value.GetHashCode();
+        }
+        public override string ToString() {
+            string result = Value.ToString();
+            result = string.Format("{0}{1}]", result.Substring(0, result.Length-1), Value.Length);
             return result;
         }
-        public Coordinates3DArrayNode(EsfCodec codec) : base(codec, Parse) {}
+        #endregion
     }
-    #endregion
 }
 

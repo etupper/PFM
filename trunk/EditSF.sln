@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonDialogs", "CommonDial
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CameraFix", "EditSF\CameraFix\CameraFix.csproj", "{47F6E429-E293-4B3D-9ABA-85425226AC79}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EsfTest", "EsfTest\EsfTest.csproj", "{70A3B4EE-2A5E-47C9-8766-9B9143F48483}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,9 @@ Global
 		{47F6E429-E293-4B3D-9ABA-85425226AC79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47F6E429-E293-4B3D-9ABA-85425226AC79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47F6E429-E293-4B3D-9ABA-85425226AC79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70A3B4EE-2A5E-47C9-8766-9B9143F48483}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70A3B4EE-2A5E-47C9-8766-9B9143F48483}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70A3B4EE-2A5E-47C9-8766-9B9143F48483}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CF6B62D-CAC9-4861-AB9F-D8E200A9DE0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9CF6B62D-CAC9-4861-AB9F-D8E200A9DE0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CF6B62D-CAC9-4861-AB9F-D8E200A9DE0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
