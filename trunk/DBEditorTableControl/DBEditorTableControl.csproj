@@ -58,6 +58,7 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DBFilter.cs" />
     <Compile Include="Dialogs\ApplyExpressionWindow.xaml.cs">
       <DependentUpon>ApplyExpressionWindow.xaml</DependentUpon>
     </Compile>
@@ -75,6 +76,9 @@
     <Compile Include="Dialogs\FindAndReplaceWindow.xaml.cs">
       <DependentUpon>FindAndReplaceWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\ManageFiltersWindow.xaml.cs">
+      <DependentUpon>ManageFiltersWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DBEditorTableHost.cs" />
     <Compile Include="DBUtil.cs" />
@@ -89,6 +93,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\FindAndReplaceWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\ManageFiltersWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -111,6 +119,7 @@
       <Name>Filetypes</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
