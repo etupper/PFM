@@ -54,7 +54,7 @@ namespace PackFileManager {
             }
             // no game installed?
             if (CurrentGame == null) {
-                CurrentGame = Game.R2TW;
+                CurrentGame = DefaultGame;
             }
 
 #if DEBUG
@@ -126,7 +126,8 @@ namespace PackFileManager {
             File.WriteAllLines(GameDirFilepath, newEntries);
         }
         #endregion
-
+  
+        static Game DefaultGame = Game.R2TW;
         Game current;
         public Game CurrentGame {
             get {
@@ -134,7 +135,7 @@ namespace PackFileManager {
             }
             set {
                 if (current != value) {
-                    current = value != null ? value : Game.STW;
+                    current = value != null ? value : DefaultGame;
                     if (current != null) {
                         Settings.Default.CurrentGame = current.Id;
 
