@@ -40,9 +40,12 @@ namespace Common {
          * Retrieve the packs loaded from the given directory.
          */
         public List<string> GetPacksLoadedFrom(string directory) {
+            List<string> result = new List<string>();
+            if (directory == null) {
+                return result;
+            }
             directory = Path.Combine(directory, "data");
             List<string> paths = new List<string>();
-            List<string> result = new List<string>();
             if (Directory.Exists(directory)) {
                 // remove obsoleted packs
                 List<string> obsoleted = new List<string>();
