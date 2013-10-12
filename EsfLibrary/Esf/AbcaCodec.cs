@@ -40,7 +40,6 @@ namespace EsfLibrary {
                 }
             } else {
                 bool blockBit = ((typeCode & BLOCK_BIT) != 0);
-                //Debug.WriteLine(string.Format("Reading section {0}node at {1:x}", blockBit ? "block " : "", reader.BaseStream.Position-1));
                 // use new block decoding
                 result = blockBit
                     ? ReadRecordArrayNode(reader, typeCode)
@@ -63,7 +62,7 @@ namespace EsfLibrary {
             case EsfType.BOOL_TRUE:
             case EsfType.BOOL_FALSE:
                 if (optimize) {
-                    result = new OptimizedBoolNode();
+                    return new OptimizedBoolNode();
                 } else {
                     result = new BoolNode();
                 }
@@ -74,23 +73,21 @@ namespace EsfLibrary {
             case EsfType.UINT32_BYTE:
             case EsfType.UINT32_SHORT:
             case EsfType.UINT32_24BIT:
-                result = new OptimizedUIntNode {
+                return new OptimizedUIntNode {
                     SingleByteMin = !optimize
                 };
-                break;
             case EsfType.INT32:
             case EsfType.INT32_ZERO:
             case EsfType.INT32_BYTE:
             case EsfType.INT32_SHORT:
             case EsfType.INT32_24BIT:
-                result = new OptimizedIntNode {
+                return new OptimizedIntNode {
                     SingleByteMin = !optimize
                 };
-                break;
             case EsfType.SINGLE:
             case EsfType.SINGLE_ZERO:
                 if (optimize) {
-                    result = new OptimizedFloatNode();
+                    return new OptimizedFloatNode();
                 } else {
                     result = new FloatNode();
                 }
@@ -144,7 +141,6 @@ namespace EsfLibrary {
         }
 
         protected override byte[] ReadArray(BinaryReader reader) {
-            //long targetOffset = ReadSize(reader) + reader.BaseStream.Position;
             long size = ReadSize(reader);
             return reader.ReadBytes((int) size);
         }
@@ -177,7 +173,6 @@ namespace EsfLibrary {
                 read = reader.ReadByte();
             }
             result = (result << 7) + (read & (byte)0x7f);
-            // Debug.WriteLine(string.Format("size is {0}, end of size at {1:x}", result, reader.BaseStream.Position));
             return (int) result;
         }
         public override int ReadCount(BinaryReader reader) {
@@ -217,12 +212,10 @@ namespace EsfLibrary {
             if (reader.BaseStream.Position == headerLength + 1 || (encoded & LONG_INFO) != 0) {
                 base.ReadRecordInfo(reader, encoded, out name, out version);
             } else {
-                // Debug.WriteLine(string.Format("Reading short node info from {0:x}", reader.BaseStream.Position - 1));
                 version = (byte)((encoded & 31) >> 1);
                 ushort nameIndex = (ushort)((encoded & 1) << 8);
                 nameIndex += reader.ReadByte();
                 name = GetNodeName(nameIndex);
-                // Debug.WriteLine(string.Format("Name {0}, version {1} (ABCA), position now {2:x}", nodeNames[nameIndex], version, reader.BaseStream.Position));
             }
         }
         public override void WriteRecordInfo(BinaryWriter writer, byte typeCode, string name, byte version) {
