@@ -671,6 +671,13 @@ namespace DBTableControl
             // OLD: another control between then and now.
             if (loadedDataSet.Tables.Contains(constructionTable.TableName))
             {
+                // Update the visible rows for the cached table.
+                visibleRows.Clear();
+                for (int i = 0; i < loadedDataSet.Tables[currentPackedFile.Name].Rows.Count; i++)
+                {
+                    visibleRows.Add(System.Windows.Visibility.Visible);
+                }
+
                 return loadedDataSet.Tables[currentPackedFile.Name];
                 //loadedDataSet.Tables.Remove(constructionTable.TableName);
             }
