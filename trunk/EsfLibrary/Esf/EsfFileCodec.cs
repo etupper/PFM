@@ -355,7 +355,6 @@ namespace EsfLibrary {
             try {
                 EsfNode result = CreateValueNode(typeCode);
                 (result as ICodecNode).Decode(reader, typeCode);
-                result.TypeCode = typeCode;
                 return result;
             } catch (Exception e) {
                 throw new InvalidDataException(string.Format("{0} at {1:x}", e.Message, reader.BaseStream.Position));

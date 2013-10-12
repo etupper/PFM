@@ -31,7 +31,7 @@ namespace EsfLibrary {
 
         }
         public override void WriteValue(BinaryWriter writer) {
-            // writer.Write((byte)TypeCode);
+            // the type code already contains the value
         }
         public override EsfNode CreateCopy() {
             return new OptimizedBoolNode {
@@ -260,18 +260,14 @@ namespace EsfLibrary {
         public OptimizedFloatNode()
             : base(float.Parse) {
         }
-        /*private EsfType setTypeCode;
         public override EsfType TypeCode {
             get {
-                if (setTypeCode != EsfType.INVALID) {
-                    return setTypeCode;
-                }
                 return Value == 0 ? EsfType.SINGLE_ZERO : EsfType.SINGLE;
             }
             set {
-                setTypeCode = value;
+                // doing nothing
             }
-        }*/
+        }
         protected override float ReadValue(BinaryReader reader, EsfType readAs) {
             return (readAs == EsfType.SINGLE_ZERO) ? 0 : reader.ReadSingle();
         }

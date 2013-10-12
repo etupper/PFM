@@ -83,7 +83,6 @@ namespace EsfLibrary {
         public EsfValueNode(T value) {
             val = value;
         }
-        // public NodeStringConverter<T> Converter { get; set; }
         public delegate S Converter<S>(string value);
         protected Converter<T> ConvertString;
         
@@ -148,6 +147,9 @@ namespace EsfLibrary {
         }
         protected abstract T ReadValue(BinaryReader reader, EsfType readAs);
         public void Encode(BinaryWriter writer) {
+            if (TypeCode == EsfType.INVALID) {
+                throw new InvalidDataException("Cannot encode without valid type code");
+            }
             writer.Write((byte)TypeCode);
             WriteValue(writer);
         }
