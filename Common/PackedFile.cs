@@ -259,7 +259,7 @@ namespace Common {
          * Retrieve the directory with the given name.
          * Will create and add an empty one if it doesn't already exists.
          */
-        public VirtualDirectory getSubdirectory(string subDir) {
+        public VirtualDirectory GetSubdirectory(string subDir) {
             VirtualDirectory result = null;
             foreach (VirtualDirectory dir in subdirectories) {
                 if (dir.Name.Equals (subDir)) {
@@ -275,14 +275,14 @@ namespace Common {
         }
 
         /*
-         * Retrieve the contained file with the given name.
-         * Will return null if file does not exist.
+         * Retrieve the contained entry with the given name.
+         * Will return null if entry does not exist.
          */
-        public PackedFile GetFile(string name) {
-            PackedFile result = null;
-            foreach (PackedFile file in containedFiles) {
-                if (file.Name.Equals (name)) {
-                    result = file;
+        public PackEntry GetEntry(string name) {
+            PackEntry result = null;
+            foreach(PackEntry entry in Entries) {
+                if (entry.Name.Equals (name)) {
+                    result = entry;
                     break;
                 }
             }
@@ -356,7 +356,7 @@ namespace Common {
             VirtualDirectory current = this;
             if (dirs.Length > 0) {
                 foreach (string dir in dirs) {
-                    current = current.getSubdirectory(dir);
+                    current = current.GetSubdirectory(dir);
                 }
             }
             file.Parent = current;

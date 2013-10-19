@@ -293,14 +293,15 @@ namespace Filetypes {
                     string[] split = value.Split(' ');
                     result.Append(string.Format("{0}", byte.Parse(split[0]).ToString()));
                     for(int i = 1; i < split.Length; i++) {
-                        result.Append(string.Format(" {0:x2}", byte.Parse(split[1]).ToString()));
+                        result.Append(string.Format(" {0}", byte.Parse(split[1]).ToString("x2")));
                     }
                     base.Value = result.ToString();
                 }
             }
         }
     }
-
+ 
+    
     /*
      * List Field.
      */
