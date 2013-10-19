@@ -127,6 +127,13 @@
                     </Button.ContextMenu>
                 </Button>
                 <Separator Margin="3,0,0,0" />
+                <StackPanel Name="moveAndFreezeKeysStackPanel" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <CheckBox Name="moveAndFreezeKeysCheckBox"
+                              Content="Move and Freeze Keys"
+                              IsChecked="{Binding ElementName=TableControl, Path=MoveAndFreezeKeys}"
+                              VerticalAlignment="Center"
+                              Margin="20,0,0,0" />
+                </StackPanel>
                 <StackPanel Name="useComboBoxesStackPanel" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
                     <CheckBox Name="useComboBoxesCheckBox" 
                               Content="Use Combo Boxes" 
@@ -192,7 +199,7 @@
                     </ListView.ItemContainerStyle>
                 </ListView>
             </DockPanel>
-            <DataGrid Name="dbDataGrid"
+            <local:DBDataGrid x:Name="dbDataGrid"
                       AutoGenerateColumns="False"
                       DockPanel.Dock="Left"
                       ItemsSource="{Binding Path=CurrentTable.DefaultView, ElementName=TableControl, UpdateSourceTrigger=PropertyChanged}"
@@ -204,6 +211,9 @@
                       RowHeaderTemplate="{StaticResource MyRowHeaderTemplate}"
                       VirtualizingStackPanel.IsVirtualizing="True"
                       VirtualizingStackPanel.VirtualizationMode="Recycling"
+                      EnableColumnVirtualization="True"
+                      EnableRowVirtualization="True"
+                      ScrollViewer.CanContentScroll="True"
                       Background="#FFAAAAAA"
                       CanUserResizeRows="False"
                       CanUserAddRows="{Binding ReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}"
@@ -215,7 +225,7 @@
                       SelectionChanged="dbDataGrid_SelectionChanged"
                       LoadingRow="dbDataGrid_LoadingRow"
                       CopyingRowClipboardContent="dbDataGrid_CopyingRowClipboardContent">
-            </DataGrid>
+            </local:DBDataGrid>
         </DockPanel>
         <TextBox Name="unsupportedDBErrorTextBox" 
                      Visibility="Hidden" 
