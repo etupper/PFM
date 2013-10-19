@@ -82,7 +82,7 @@ namespace DbSql {
          */
         DBFile GetTargetFile(PackedFile packed) {
             DBFile targetFile = null;
-            PackedFile existingPack = SaveTo[packed.FullPath];
+            PackedFile existingPack = SaveTo[packed.FullPath] as PackedFile;
             if (existingPack != null) {
                 targetFile = PackedFileDbCodec.Decode(existingPack);
             }

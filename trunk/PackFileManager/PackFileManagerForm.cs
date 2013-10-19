@@ -108,8 +108,9 @@ namespace PackFileManager
 
         public PackFileManagerForm (string[] args) {
             Directory.SetCurrentDirectory(Path.GetDirectoryName(Application.ExecutablePath));
-
             InitializeComponent();
+
+            ReadInitialSize();
 
             CreateEditors();
             dbUpdater.DetermineGuid = QueryGuid;
@@ -228,6 +229,61 @@ namespace PackFileManager
             default:
                 e.Cancel = QuerySaveModifiedFile() == DialogResult.Cancel;
                 break;
+            }
+            if (!e.Cancel) {
+                try {
+#if DEBUG
+                    Console.WriteLine("Writing window state to {0}", SizeLocationFile);
+#endif
+                    using (var writer = File.CreateText(SizeLocationFile)) {
+                        writer.WriteLine((int)this.WindowState);
+                        writer.WriteLine("{0}:{1}", this.Location.X, this.Location.Y);
+                        writer.WriteLine("{0}:{1}", this.Width, this.Height);
+                    }
+                } catch { }
+            }
+        }
+        
+        private void ReadInitialSize() {
+            if (!File.Exists(SizeLocationFile)) {
+                return;
+            }
+            try {
+                using (var reader = File.OpenText(SizeLocationFile)) {
+                    string state = reader.ReadLine();
+                    int winState = (int) Convert.ChangeType(state, typeof(int));
+                    FormWindowState initialState = (FormWindowState) winState;
+                    if (initialState == FormWindowState.Minimized) {
+                        return;
+                    }
+                    this.WindowState = initialState;
+                    if (initialState != FormWindowState.Maximized) {
+                        this.StartPosition = FormStartPosition.Manual;
+                        string line = reader.ReadLine();
+                        this.Location = ParsePoint(line);
+                        line = reader.ReadLine();
+                        this.Size = new Size(ParsePoint(line));
+                    }
+                }
+#if DEBUG
+            } catch (Exception e) {
+                Console.WriteLine("Failed to restore previous window location/size: {0}", e.Message);
+#else
+            } catch {
+#endif
+            }
+        }
+        private static Point ParsePoint(string pointString) {
+            Point p = new Point();
+            string[] coords = pointString.Split(':');
+            p.X = int.Parse(coords[0]);
+            p.Y = int.Parse(coords[1]);
+            return p;
+        }
+        
+        private string SizeLocationFile {
+            get {
+                return Path.Combine(Program.ApplicationFolder, "window_state.txt");
             }
         }
 
@@ -774,7 +830,7 @@ namespace PackFileManager
                         string relativePath = GetPathRelativeToMod(basePath);
                         addToBase = CurrentPackFile.Root;
                         foreach (string pathElement in relativePath.Split(Path.DirectorySeparatorChar)) {
-                            addToBase = addToBase.getSubdirectory(pathElement);
+                            addToBase = addToBase.GetSubdirectory(pathElement);
                         }
                         addToBase = addToBase.Parent as VirtualDirectory;
                     }
@@ -1196,7 +1252,7 @@ namespace PackFileManager
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
             var form = new Form {
                 Text = string.Format("About Pack File Manager {0}", Application.ProductVersion),
-                Size = new Size (0x177, 0xe1),
+                Size = new Size (0x177, 0x130),
                 WindowState = FormWindowState.Normal,
                 FormBorderStyle = FormBorderStyle.FixedDialog,
                 StartPosition = FormStartPosition.CenterParent

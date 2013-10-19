@@ -121,21 +121,35 @@ namespace PfmCL {
          */
         void ExtractPack(string packFileName, List<string> containedFiles) {
             PackFile pack = new PackFileCodec().Open(packFileName);
-            foreach (PackedFile packed in pack) {
+            foreach(string entryPath in containedFiles) {
                 try {
-                    if (containedFiles.Count == 0 || containedFiles.Contains(packed.FullPath)) {
-                        string systemPath = packed.FullPath.Replace('/', Path.DirectorySeparatorChar);
-                        string directoryName = Path.GetDirectoryName(systemPath);
-                        if (directoryName.Length != 0 && !Directory.Exists(directoryName)) {
-                            Directory.CreateDirectory(directoryName);
-                        }
-                        using (var fileStream = new MemoryStream(packed.Data)) {
-                            fileStream.CopyTo(File.Create(systemPath));
-                        }
+                    PackEntry entry = pack[entryPath];
+                    if (entry is VirtualDirectory) {
+                        VirtualDirectory directory = entry as VirtualDirectory;
+                        directory.AllFiles.ForEach(f => ExtractPackedFile(f));
+                    } else {
+                        ExtractPackedFile(entry as PackedFile);
                     }
                 } catch (Exception e) {
-                    Console.Error.WriteLine("Failed to extract {0}: {1}", packed.FullPath, e.Message);
+                    Console.Error.WriteLine("Failed to extract {0}: {1}", entryPath, e.Message);
                 }
+            }
+        }
+        /*
+         * Extracts the given file, retaining its path relative to the current directory.
+         */
+        private void ExtractPackedFile(PackedFile file) {
+            try {
+                string systemPath = file.FullPath.Replace('/', Path.DirectorySeparatorChar);
+                string directoryName = Path.GetDirectoryName(systemPath);
+                if (directoryName.Length != 0 && !Directory.Exists(directoryName)) {
+                    Directory.CreateDirectory(directoryName);
+                }
+                using (var fileStream = new MemoryStream(file.Data)) {
+                    fileStream.CopyTo(File.Create(systemPath));
+                }
+            } catch (Exception e) {
+                Console.Error.WriteLine("Failed to extract {0}: {1}", file.FullPath, e.Message);
             }
         }
 

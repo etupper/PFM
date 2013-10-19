@@ -79,7 +79,8 @@ namespace AutoUpdater {
             string asParameters = string.Join(" ", arguments);
             Console.WriteLine ("starting {0} {1}", startFileName, asParameters.Trim ());
             
-            Console.WriteLine ("Okay, finished. Restarting.");
+            Console.WriteLine ("Okay, finished. Press key to restart.");
+            Console.ReadKey();
             Process.Start (startFileName, asParameters.Trim ());
         }
   
@@ -100,19 +101,48 @@ namespace AutoUpdater {
                 }
             }
         }
+        
+        static List<string> DontUnzip {
+            get {
+                // these two files are in use by the auto updater itself and can't be unzipped
+                List<string> result = new List<string>();
+                result.Add("AutoUpdater.exe");
+                result.Add("ICSharpCode.SharpZipLib.dll");
+                return result;
+            }
+        }
         // unzip all entries of the given file to the directory it resides in.
         public static void Unzip(string zipFile) {
             string targetDir = Path.GetDirectoryName(zipFile);
             using (var zipStream = new ZipInputStream(File.OpenRead(zipFile))) {
             ZipEntry entry = zipStream.GetNextEntry();
+            int tryCount = 0;
                 while (entry != null) {
                     try {
-                        using (FileStream outStream = File.OpenWrite(Path.Combine(targetDir, entry.Name))) {
+                        if (DontUnzip.Contains(entry.Name)) {
+                            Console.WriteLine("Skipping {0}", entry.Name);
+                            continue;
+                        }
+                        string targetFile = Path.Combine(targetDir, entry.Name);
+                        using (FileStream outStream = File.OpenWrite(targetFile)) {
                             zipStream.CopyTo(outStream);
+                        }
+                        // give specific notes to user
+                        // (like "AutoUpdater has been updated but can't be installed automatically, unzip manually")
+                        if (entry.Name.Equals ("README")) {
+                            foreach(string line in File.ReadAllLines(targetFile)) {
+                                Console.WriteLine(line);
+                            }
                         }
                         entry = zipStream.GetNextEntry();
                     } catch {
-                        Console.WriteLine("Could not unpack {0}", entry.Name);
+                        if (tryCount++ < 5) {
+                            Console.WriteLine("Could not unpack {0}; retrying", entry.Name);
+                        } else {
+                            Console.WriteLine("Giving up. It's probably best if you manually extract that file.", entry.Name);
+                            tryCount = 0;
+                            entry = zipStream.GetNextEntry();
+                        }
                     }
                 }
             }

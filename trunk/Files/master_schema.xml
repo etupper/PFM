@@ -5997,7 +5997,8 @@
   <table table_name='battlefield_siege_vehicles_tables'
          table_version='13'
          guid='c06e612b-f870-4dd8-9aa8-635e4d770f7e,
-               edc94499-e1d0-4536-87af-9beb299cad4f'>
+               edc94499-e1d0-4536-87af-9beb299cad4f,
+               ff453094-263e-49d4-a8f8-7423c0052de1'>
     <field name='hit_points' type='int' />
     <field name='key' type='string_ascii' pk='true' />
     <field fkey='models_sieges_tables.key' name='model' type='string_ascii' />
@@ -6016,22 +6017,22 @@
     <field name='attack_damage' type='float' />
   </table>
   <table table_name='battlefield_siege_vehicles_tables'
-         table_version='13'
-         guid='ff453094-263e-49d4-a8f8-7423c0052de1'>
+         table_version='14'
+         guid='45852145-3838-4fca-88e2-5813852e40ca'>
     <field name='hit_points' type='int' />
-    <field name='unknown' type='string_ascii' />
-    <field name='unknown3' type='string_ascii' />
+    <field name='key' type='string_ascii' pk='true' />
+    <field fkey='models_sieges_tables.key' name='model' type='string_ascii' />
     <field fkey='battle_entities_tables.key' name='battle_entity' type='string_ascii' />
-    <field name='gun_type' type='optstring_ascii' />
-    <field name='Docking_Clearance' type='float' />
-    <field fkey='battlefield_engines_tables.key' name='engine' type='string_ascii' />
+    <field name='gun_type' type='optstring' />
+    <field name='docking_clearance' type='float' />
+    <field fkey='battlefield_engines_tables.key' name='engine' type='optstring_ascii' />
     <field name='image_path' type='string_ascii' />
     <field name='recruitment_cap' type='int' />
     <field name='uses_8m_wall' type='boolean' />
     <field name='uses_15m_wall' type='boolean' />
-    <field name='unknown12' type='int' />
+    <field name='cost' type='int' />
     <field name='category_image_path' type='string_ascii' />
-    <field name='unknown14' type='int' />
+    <field name='special_edition_mask' type='int' />
     <field name='ignition_threshold' type='int' />
     <field name='attack_damage' type='float' />
   </table>
@@ -7093,6 +7094,11 @@
     <field name='key' type='string_ascii' pk='true' />
   </table>
   <table table_name='cai_personalities_reliability_policies_tables'
+         table_version='3'
+         guid='d4a87f27-5250-4eb7-a1f0-5b5764a2145d'>
+    <field name='key' type='string_ascii' pk='true' />
+  </table>
+  <table table_name='cai_personalities_reliability_policies_tables'
          table_version='2'
          guid='ac62d13d-48bb-4f20-bb65-cc2b437d9508'>
     <field name='key' type='string' pk='true' />
@@ -7249,6 +7255,25 @@
     <field name='war_priority' type='float' />
     <field name='failure_timeout' type='int' />
   </table>
+  <table table_name='cai_personality_deal_generation_generator_priorities_tables'
+         table_version='2'
+         guid='85bcc350-eee6-46fb-8d90-84ce7b2d85ba'>
+    <field fkey='cai_personality_deal_generation_components_tables.id' name='component_key' type='string_ascii' pk='true' />
+    <field fkey='cai_personality_deal_generation_generators_tables.id' name='generator_key' type='string_ascii' pk='true' />
+    <field name='last_stand_priority' type='float' />
+    <field name='param1' type='float' />
+    <field name='unknown5' type='float' />
+    <field name='unknown6' type='float' />
+    <field name='unknown7' type='float' />
+    <field name='peace_priority' type='float' />
+    <field name='tension_priority' type='float' />
+    <field name='total_war_priority' type='float' />
+    <field name='war_priority' type='float' />
+    <field name='failure_timeout' type='int' />
+    <field name='unknown8' type='int' />
+    <field name='unknown9' type='int' />
+    <field name='unknown10' type='float' />
+  </table>
   <table table_name='cai_personality_deal_generation_generators_tables'
          table_version='0'
          guid='3ad1ccd8-3d3f-4688-860f-2eda65864fa9'>
@@ -7326,6 +7351,24 @@
     <field name='unknown_faction_multiplier' type='float' />
     <field name='max_merc_proportion' type='float' />
     <field name='min_merc_cap' type='float' />
+  </table>
+  <table table_name='cai_personality_strategic_components_tables'
+         table_version='4'
+         guid='fc43b3c3-9338-466f-9459-7f5119e5e1d9'>
+    <field name='friendly_towards_enemy_multiplier' type='float' />
+    <field name='friendly_towards_friend_multiplier' type='float' />
+    <field name='hostile_towards_enemy_multiplier' type='float' />
+    <field name='hostile_towards_friend_multiplier' type='float' />
+    <field name='id' type='string_ascii' pk='true' />
+    <field name='max_friendly_attitude' type='float' />
+    <field name='max_hostile_attitude' type='float' />
+    <field name='unknown_faction_multiplier' type='float' />
+    <field name='max_merc_proportion' type='float' />
+    <field name='min_merc_cap' type='float' />
+    <field name='unknown1' type='float' />
+    <field name='unknown2' type='float' />
+    <field name='unknown3' type='float' />
+    <field name='unknown4' type='float' />
   </table>
   <table table_name='cai_personality_strategic_desired_attitudes_tables'
          table_version='1'
@@ -10424,6 +10467,19 @@
     <field name='card_colour_b' type='float' />
     <field fkey='cultures_tables.key' name='diplomacy_culture' type='string_ascii' />
     <field name='senator_total' type='int' />
+  </table>
+  <table table_name='fame_levels_tables'
+         table_version='0'
+         guid='5c3ec0fc-a755-4324-98cc-5444344a4e14'>
+    <field name='unknown1' type='int' />
+    <field name='unknown2' type='int' />
+    <field name='unknown3' type='int' />
+    <field name='unknown4' type='int' />
+    <field name='unknown5' type='int' />
+    <field name='unknown6' type='int' />
+    <field name='unknown7' type='int' />
+    <field name='unknown8' type='int' />
+    <field name='unknown9' type='int' />
   </table>
   <table table_name='family_relationship_types_tables'
          table_version='0'

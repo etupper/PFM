@@ -88,14 +88,16 @@ namespace Common {
             }
         }
         // retrieves the packed file at the given path name
-        public PackedFile this[string filepath] {
+        public PackEntry this[string filepath] {
             get {
-                string[] paths = Path.GetDirectoryName(filepath).Split(Path.DirectorySeparatorChar);
+                string[] paths = filepath.Split(Path.DirectorySeparatorChar);
                 VirtualDirectory dir = Root;
+                PackEntry result = dir;
                 foreach (string subDir in paths) {
-                    dir = dir.getSubdirectory(subDir);
+                    result = dir.GetEntry(subDir);
+                    dir = result as VirtualDirectory;
                 }
-                return dir.GetFile(Path.GetFileName(filepath));
+                return result;
             }
         }
         public int FileCount {

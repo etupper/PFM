@@ -25,8 +25,6 @@ namespace PackFileTest {
             "-g",
             // -gf: run group formation tests
             "-gf", 
-            // -os: optimize schema
-            "-os", 
             // -v : verbose output
             "-v",
             // -tg: test game
