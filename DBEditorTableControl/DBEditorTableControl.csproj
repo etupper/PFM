@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DBDataGrid.cs" />
+    <Compile Include="DBError.cs" />
     <Compile Include="DBFilter.cs" />
     <Compile Include="Dialogs\ApplyExpressionWindow.xaml.cs">
       <DependentUpon>ApplyExpressionWindow.xaml</DependentUpon>
@@ -68,6 +69,9 @@
       <DependentUpon>DBEditorTableControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="DBTableEditorConfig.cs" />
+    <Compile Include="Dialogs\DBCompileMergeWindow.xaml.cs">
+      <DependentUpon>DBCompileMergeWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ErrorDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -90,6 +94,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="DBEditorTableControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\DBCompileMergeWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -120,7 +128,10 @@
       <Name>Filetypes</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\dberror.ico" />
+    <Resource Include="Resources\dbwarning.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

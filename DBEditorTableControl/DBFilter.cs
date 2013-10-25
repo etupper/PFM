@@ -56,6 +56,7 @@ namespace DBTableControl
     public enum MatchType
     {
         Exact, 
-        Partial
+        Partial,
+        Regex
     }
 }

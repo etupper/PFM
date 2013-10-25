@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -40,8 +41,12 @@ namespace DBTableControl
                 else if (filter.MatchMode == MatchType.Partial)
                 {
                     matchtypeComboBox.SelectedIndex = 1;
-                    //filtervalueComboBox.IsEditable = true;
                     filtervalueComboBox.Text = filter.FilterValue;
+                }
+                else if (filter.MatchMode == MatchType.Regex)
+                {
+                    matchtypeComboBox.SelectedIndex = 2;
+                    filtervalueTextBox.Text = filter.FilterValue;
                 }
                 
                 originalname = filter.Name;
@@ -92,6 +97,7 @@ namespace DBTableControl
 
             matchtypes.Add("Exact");
             matchtypes.Add("Partial");
+            matchtypes.Add("Regex");
             matchtypeComboBox.ItemsSource = matchtypes;
             matchtypeComboBox.SelectedIndex = 0;
 
@@ -131,45 +137,98 @@ namespace DBTableControl
             if (matchtypeComboBox.SelectedValue.Equals("Exact"))
             {
                 filtervalueComboBox.IsEditable = false;
+                filtervalueComboBox.Visibility = System.Windows.Visibility.Visible;
+                filtervalueTextBox.Visibility = System.Windows.Visibility.Collapsed;
             }
             else if (matchtypeComboBox.SelectedValue.Equals("Partial"))
             {
                 filtervalueComboBox.IsEditable = true;
+                filtervalueComboBox.Visibility = System.Windows.Visibility.Visible;
+                filtervalueTextBox.Visibility = System.Windows.Visibility.Collapsed;
+            }
+            else if (matchtypeComboBox.SelectedValue.Equals("Regex"))
+            {
+                filtervalueComboBox.Visibility = System.Windows.Visibility.Collapsed;
+                filtervalueTextBox.Visibility = System.Windows.Visibility.Visible;
             }
         }
 
         private void saveButton_Click(object sender, RoutedEventArgs e)
         {
+            bool haserrors = false;
             // First, test the name, so we don't wind up with duplicate filter names.
             if (filternames.Contains(filternameTextBox.Text) && !filternameTextBox.Text.Equals(originalname))
             {
                 filternameTextBox.Background = new SolidColorBrush(Colors.LightPink);
                 filternameTextBox.ToolTip = String.Format("Cannot save filter: {0} is the name of another filter, please pick another.", filternameTextBox.Text);
+                haserrors = true;
             }
             else if (String.IsNullOrEmpty(filternameTextBox.Text))
             {
                 filternameTextBox.Background = new SolidColorBrush(Colors.LightPink);
-                filternameTextBox.ToolTip = String.Format("Cannot save filter: Please enter a name for this filter.", filternameTextBox.Text);
+                filternameTextBox.ToolTip = "Cannot save filter: Please enter a name for this filter.";
+                haserrors = true;
             }
-            else
+
+            if (columnComboBox.SelectedValue == null || String.IsNullOrEmpty(columnComboBox.SelectedValue.ToString()))
+            {
+                columnComboBox.Background = new SolidColorBrush(Colors.LightPink);
+                columnComboBox.ToolTip = "Cannot save filter: Please specify a column for this filter.";
+                haserrors = true;
+            }
+
+            if (filtervalueComboBox.Visibility == System.Windows.Visibility.Visible)
+            {
+                if (filtervalueComboBox.SelectedValue == null || String.IsNullOrEmpty(filtervalueComboBox.SelectedValue.ToString()))
+                {
+                    filtervalueComboBox.Background = new SolidColorBrush(Colors.LightPink);
+                    filtervalueComboBox.ToolTip = "Cannot save filter: Please enter a value for the filter.";
+                    haserrors = true;
+                }
+            }
+            else if (filtervalueTextBox.Visibility == System.Windows.Visibility.Visible)
+            {
+                if (String.IsNullOrEmpty(filtervalueTextBox.Text) || filtervalueTextBox.Text == null)
+                {
+                    filtervalueTextBox.Background = new SolidColorBrush(Colors.LightPink);
+                    filtervalueTextBox.ToolTip = "Cannot save filter: Invalid Regex string.";
+                    haserrors = true;
+                }
+                else
+                {
+                    try
+                    {
+                        Regex testregex = new Regex(filtervalueTextBox.Text);
+                    }
+                    catch
+                    {
+                        filtervalueTextBox.Background = new SolidColorBrush(Colors.LightPink);
+                        filtervalueTextBox.ToolTip = "Cannot save filter: Invalid Regex string.";
+                        haserrors = true;
+                    }
+                }
+            }
+            
+            if(!haserrors)
             {
                 filter.Name = filternameTextBox.Text;
                 filter.ApplyToColumn = columnComboBox.SelectedValue.ToString();
-                filter.FilterValue = filtervalueComboBox.Text;
 
                 if (matchtypeComboBox.SelectedValue.ToString().Equals("Exact"))
                 {
                     filter.MatchMode = MatchType.Exact;
+                    filter.FilterValue = filtervalueComboBox.Text;
                 }
                 else if (matchtypeComboBox.SelectedValue.ToString().Equals("Partial"))
                 {
                     filter.MatchMode = MatchType.Partial;
+                    filter.FilterValue = filtervalueComboBox.Text;
                 }
-
-                //if (FilterSaved != null)
-                //{
-                //    FilterSaved(filter, new FilterSavedEventArgs(originalname));
-                //}
+                else if (matchtypeComboBox.SelectedValue.ToString().Equals("Regex"))
+                {
+                    filter.MatchMode = MatchType.Regex;
+                    filter.FilterValue = filtervalueTextBox.Text;
+                }
 
                 this.DialogResult = true;
             }

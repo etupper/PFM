@@ -12,6 +12,7 @@
     <UserControl.Resources>
         <local:BackgroundConverter x:Key="BackgroundConverter" />
         <local:BoolConverter x:Key="BooleanFlipConverter" />
+        <local:ImageSourceConverter x:Key="ImageSourceConverter" />
         
         <Style x:Key="GridCellStyle" TargetType="{x:Type DataGridCell}">
             <EventSetter Event="PreviewMouseLeftButtonDown" Handler="dbDataGridCell_PreviewMouseLeftButtonDown" />
@@ -35,7 +36,7 @@
                                 BorderBrush="{TemplateBinding BorderBrush}" 
                                 BorderThickness="{TemplateBinding BorderThickness}" 
                                 Background="{TemplateBinding Background}" 
-                                SnapsToDevicePixels="True">
+                                SnapsToDevicePixels="False">
                             <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </Border>
                     </ControlTemplate>
@@ -54,6 +55,7 @@
             <MenuItem Header="Remove Sorting" Click="RemoveSortingMenuItem_Click" />
             <Separator/>
             <MenuItem Header="Apply Expression" Click="ColumnApplyExpressionMenuItem_Click" />
+            <MenuItem Header="Mass Edit" Click="ColumnMassEditMenuItem_Click" />
             <MenuItem Header="Renumber Cells" Click="RenumberMenuItem_Click" />
             <Separator/>
             <MenuItem Header="Hide Column" Click="HideColumnMenuItem_Click"/>
@@ -67,6 +69,9 @@
             <MenuItem Header="Paste" Click="DataGridPasteMenuItem_Click"/>
             <Separator/>
             <MenuItem Header="Apply Expression to Selected Cells" Click="DataGridApplyExpressionMenuItem_Click"/>
+            <MenuItem Header="Mass Edit String Cells" Click="DataGridMassEditStringsMenuItem_Click" />
+            <Separator/>
+            <MenuItem Header="Revert Cell(s) to Original Value" Click="DataGridRevertCellMenuItem_Click" />
         </ContextMenu>
         
         <ContextMenu x:Key="RowHeaderContextMenu" Opened="RowHeaderContextMenu_Opened">
@@ -101,6 +106,7 @@
             <ToolBar Name="dbeditControlToobar" DockPanel.Dock="Top" Background="Transparent">
                 <Button Name="addRowButton" Content="Add Row" Padding="3,4" Click="AddRowButton_Clicked" IsEnabled="{Binding ReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}" />
                 <Button Name="cloneRowButton" Content="Clone Row(s)" Padding="3,4" Click="CloneRowButton_Clicked" IsEnabled="{Binding ReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}" />
+                <Button Name="insertRowButton" Content="Insert Row" Padding="3,4" Click="insertRowButton_Click" IsEnabled="{Binding ReadOnly, ElementName=TableControl, Converter={StaticResource BooleanFlipConverter}}" />
                 <Button Name="copyButton" Content="Copy" Padding="3,4" Command="Copy" />
                 <Button Name="pasteButton" Content="Paste" Padding="3,4" Command="Paste" />
                 <Button Name="findButton" Content="Find" Padding="3,4" Click="findButton_Click" />
@@ -169,6 +175,7 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <Button Name="editFilterButton" Content="Edit Filter" Grid.Column="0" Grid.Row="0" Margin="5" Click="editFilterButton_Click" IsEnabled="False" />
+                    <Button Name="cloneFilterButton" Content="Clone Filter" Grid.Column="0" Grid.Row="1" Margin="5" Click="cloneFilterButton_Click" IsEnabled="False" />
                     <Button Name="addFilterButton" Content="Add Filter" Grid.Column="1" Grid.Row="0" Margin="5" Click="addFilterButton_Click" />
                     <Button Name="deleteFilterButton" Content="Delete Filter" Grid.Column="1" Grid.Row="1" Margin="5" Click="deleteFilterButton_Click" IsEnabled="False" />
                 </Grid>
@@ -197,6 +204,72 @@
                             <EventSetter Event="Drop" Handler="filterListView_Drop" />
                         </Style>
                     </ListView.ItemContainerStyle>
+                </ListView>
+            </DockPanel>
+            <DockPanel Name="dberrorsDockPanel" LastChildFill="True" DockPanel.Dock="Bottom" Visibility="Collapsed">
+                <Label Content="Error List:" DockPanel.Dock="Top" Foreground="White" Background="DarkRed" />
+                <ToolBar DockPanel.Dock="Top" >
+                    <ToggleButton Name="errorToggleButton" Padding="10,5" Background="#FFD0D0" BorderBrush="Black" BorderThickness="1" >
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="Resources\dberror.ico" Height="20" /> 
+                            <TextBlock Name="errornumberTextBlock" Text="0" Margin="10,0,5,0" VerticalAlignment="Center" />
+                            <TextBlock Text="Errors" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </ToggleButton>
+                    <Separator Margin="5,0" />
+                    <ToggleButton Name="warningToggleButton" Padding="10,5" Background="#FAFAD2" BorderBrush="Black" BorderThickness="1" >
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="Resources\dbwarning.ico" Height="20" />
+                            <TextBlock Name="warningnumberTextBlock" Text="0" Margin="10,0,5,0" VerticalAlignment="Center" />
+                            <TextBlock Text="Warnings" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </ToggleButton>
+                    <Separator Margin="5,0" />
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Name="dberrorfilterCheckBox" 
+                                  Content="Error Filter" 
+                                  IsChecked="False" 
+                                  VerticalAlignment="Center" 
+                                  Margin="10,0,0,0"
+                                  Checked="dberrorwarningfilterCheckBox_CheckedChanged"
+                                  Unchecked="dberrorwarningfilterCheckBox_CheckedChanged" />
+                        <CheckBox Name="dbwarningfilterCheckBox" 
+                                  Content="Warning Filter" 
+                                  IsChecked="False" 
+                                  VerticalAlignment="Center" 
+                                  Margin="10,0,0,0"
+                                  Checked="dberrorwarningfilterCheckBox_CheckedChanged"
+                                  Unchecked="dberrorwarningfilterCheckBox_CheckedChanged" />
+                    </StackPanel>
+                    <Separator Margin="5,0" />
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Name="minimizeerrorlistCheckBox" 
+                                  Content="Minimize Error List" 
+                                  IsChecked="False" 
+                                  VerticalAlignment="Center" 
+                                  Margin="10,0,0,0"
+                                  Checked="minimizeerrorlistCheckBox_Checked"
+                                  Unchecked="minimizeerrorlistCheckBox_Unchecked"/>
+                    </StackPanel>
+                </ToolBar>
+                <ListView Name="dberrorsListView"
+                      DockPanel.Dock="Bottom"
+                      Visibility="Visible"
+                      SelectionMode="Single"
+                      Height="130"
+                      PreviewMouseDoubleClick="dberrorsListView_PreviewMouseDoubleClick">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Width="25" >
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Image Source="{Binding Path=ErrorMessage, Converter={StaticResource ImageSourceConverter}}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=ErrorMessage}" Header="Description" />
+                        </GridView>
+                    </ListView.View>                    
                 </ListView>
             </DockPanel>
             <local:DBDataGrid x:Name="dbDataGrid"
