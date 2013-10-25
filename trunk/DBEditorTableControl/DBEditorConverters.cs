@@ -119,6 +119,8 @@ namespace DBTableControl
             {
                 cell = (DataGridCell)values[0];
                 cell.ToolTip = null;
+                cell.BorderBrush = null;
+                cell.BorderThickness = new Thickness(0);
                 row = (DataRow)values[1];
 
                 // Skip deleted rows, since they disappear.
@@ -163,6 +165,16 @@ namespace DBTableControl
                 newColor = new SolidColorBrush(Colors.LightGreen);
             }
 
+            if (row.HasErrors)
+            {
+                if (row.GetColumnsInError().Contains(column))
+                {
+                    cell.BorderBrush = new SolidColorBrush(Colors.Red);
+                    cell.BorderThickness = new Thickness(5);
+                    cell.ToolTip = String.Format("{0}\nOriginal Value: {1}", row.GetColumnError(column), row.RowState == DataRowState.Added ? "None, new row." : row[column, DataRowVersion.Original]);
+                }
+            }
+
             return newColor;
         }
 
@@ -185,5 +197,38 @@ namespace DBTableControl
         }
 
         #endregion
+    }
+
+    [ValueConversion(typeof(string), typeof(string))]
+    public class ImageSourceConverter : MarkupExtension, IValueConverter
+    {
+        private static ImageSourceConverter _converter = null;
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            if (_converter == null)
+            {
+                _converter = new ImageSourceConverter();
+            }
+            return _converter;
+        }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value.ToString().Contains("Error:"))
+            {
+                return "Resources\\dberror.ico";
+            }
+            else if (value.ToString().Contains("Warning:"))
+            {
+                return "Resources\\dbwarning.ico";
+            }
+
+            return DependencyProperty.UnsetValue;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return DependencyProperty.UnsetValue;
+        }
     }
 }
