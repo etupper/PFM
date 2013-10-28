@@ -90,7 +90,7 @@ namespace EsfLibrary {
 #if DEBUG
             Console.WriteLine("decoding {0}", value);
 #endif
-            string[] elements = value.Split(Separator.ToCharArray());
+            string[] elements = value.Split(Separator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
             List<T> values = new List<T>(elements.Length);
             foreach(string e in elements) {
                 values.Add(ConvertItem(e));

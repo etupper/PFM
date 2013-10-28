@@ -62,9 +62,7 @@ namespace EditSF {
         }
         
         private void promptOpenFile() {
-            OpenFileDialog dialog = new OpenFileDialog {
-                RestoreDirectory = true
-            };
+            OpenFileDialog dialog = new OpenFileDialog();
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 try {
                     OpenFile(dialog.FileName);
@@ -113,9 +111,7 @@ namespace EditSF {
         }
 
         private void promptSaveFile() {
-            SaveFileDialog dialog = new SaveFileDialog {
-                RestoreDirectory = true
-            };
+            SaveFileDialog dialog = new SaveFileDialog();
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 Save(dialog.FileName);
                 FileName = dialog.FileName;

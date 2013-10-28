@@ -26,7 +26,7 @@ namespace Filetypes {
         }
         private int IndexOfField(string fieldName) {
             for(int i = 0; i < info.Fields.Count; i++) {
-                if (info.Name.Equals(fieldName)) {
+                if (info.Fields[i].Name.Equals(fieldName)) {
                     return i;
                 }
             }

@@ -39,12 +39,14 @@ namespace Filetypes {
                     if (targetInfo == null) {
                         throw new Exception(string.Format("Can't decide new structure for {0} version {1}.", key, maxVersion));
                     }
-
+     
                     // identify FieldInstances missing in db file
-                    for (int i = dbFileInfo.Fields.Count; i < targetInfo.Fields.Count; i++) {
-                        foreach (List<FieldInstance> entry in updatedFile.Entries) {
-                            var field = targetInfo.Fields[i].CreateInstance();
-                            entry.Add(field);
+                    for (int i = 0; i < targetInfo.Fields.Count; i++) {
+                        FieldInfo oldField = dbFileInfo[targetInfo.Fields[i].Name];
+                        if (oldField == null) {
+                            foreach(List<FieldInstance> entry in updatedFile.Entries) {
+                                entry.Insert(i, targetInfo.Fields[i].CreateInstance());
+                            }
                         }
                     }
                     updatedFile.Header.GUID = guid;
