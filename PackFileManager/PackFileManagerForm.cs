@@ -64,7 +64,7 @@ namespace PackFileManager
             try
             {
                 string dbeLocation = Path.Combine(Program.ApplicationFolder, "DBEditorTableControl.dll");
-                Assembly dbeAssembly = Assembly.LoadFrom(dbeLocation);
+                Assembly dbeAssembly = Assembly.Load(File.ReadAllBytes(dbeLocation));
                 Type dbeType = dbeAssembly.GetType("DBTableControl.DBEditorTableControl");
                 MethodInfo registerMethodInfo = dbeType.GetMethod("RegisterDbEditor", BindingFlags.Public | BindingFlags.Static);
                 object registered = registerMethodInfo.Invoke(null, null);
