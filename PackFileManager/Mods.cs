@@ -93,6 +93,9 @@ namespace PackFileManager {
      * Manager for all mods of a user.
      */
     public class ModManager {
+        const string MOD_SPACE_MESSAGE = "Your current mod name contains spaces, which Rome 2's Mod Manager can't handle.\n" +
+                        "Replace spaces with underline?"; 
+
         // singleton
         public static readonly ModManager Instance = new ModManager();
         
@@ -190,8 +193,19 @@ namespace PackFileManager {
             InputBox box = new InputBox { Text = "Enter Mod Name:", Input = "my_mod" };
             if (box.ShowDialog() == System.Windows.Forms.DialogResult.OK && box.Input.Trim() != "") {
                 string modName = box.Input;
+                if (modName.Contains(" ")) {
+                    if (MessageBox.Show(MOD_SPACE_MESSAGE, "Mod name warning", MessageBoxButtons.YesNo)
+                        == DialogResult.Yes) {
+                        modName = modName.Replace(" ", "_");
+                    }
+                }
+                string newModDir = Settings.Default.LastPackDirectory;
+                if (newModDir != null) {
+                    newModDir = Path.GetDirectoryName(newModDir);
+                    newModDir = Path.Combine(newModDir, modName);
+                }
                 DirectoryDialog dialog = new DirectoryDialog {
-                    SelectedPath = Settings.Default.LastPackDirectory
+                    SelectedPath = newModDir
                 };
                 if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                     Mod mod = new Mod {
@@ -331,7 +345,7 @@ namespace PackFileManager {
             }
             return result;
         }
-
+  
         #region Install/Uninstall
         public void InstallCurrentMod() {
             if (CurrentMod == null) {
@@ -342,8 +356,16 @@ namespace PackFileManager {
                 throw new FileNotFoundException(string.Format("Game install directory not found"));
             }
             targetDir = Path.Combine(targetDir, "data");
-            string targetFile = Path.Combine(targetDir, CurrentMod.PackName);
             if (File.Exists(CurrentMod.FullModPath) && Directory.Exists(targetDir)) {
+
+                string installPackName = CurrentMod.PackName;
+                if (installPackName.Contains(' ') && GameManager.Instance.CurrentGame == Game.R2TW) {
+                    if (MessageBox.Show(MOD_SPACE_MESSAGE, "Invalid pack file name", MessageBoxButtons.YesNo) 
+                        == DialogResult.Yes) {
+                            installPackName = installPackName.Replace(' ', '_');
+                    }
+                }
+                string targetFile = Path.Combine(targetDir, installPackName);
                 
                 // copy to data directory
                 File.Copy(CurrentMod.FullModPath, targetFile, true);

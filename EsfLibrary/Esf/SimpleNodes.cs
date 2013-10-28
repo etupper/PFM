@@ -18,9 +18,9 @@ namespace EsfLibrary {
         protected override T ReadValue(BinaryReader reader, EsfType readAs) { return Read(reader); }
         public override void WriteValue(BinaryWriter writer) {
 #if DEBUG
-            if (Modified) {
-                Console.WriteLine("Writing {0}", Value);
-            }
+//            if (Modified) {
+//                Console.WriteLine("Writing {0}", Value);
+//            }
 #endif
             Write(writer, Value);
         }

@@ -23,6 +23,18 @@ namespace Filetypes {
                 return applicableGuids;
             }
         }
+        public FieldInfo this[string name] {
+            get {
+                FieldInfo result = null;
+                foreach(FieldInfo field in fields) {
+                    if (field.Name.Equals(name)) {
+                        result = field;
+                        break;
+                    }
+                }
+                return result;
+            }
+        }
   
         #region Constructors
 		public TypeInfo () {

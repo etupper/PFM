@@ -181,14 +181,15 @@ namespace EsfControl {
                 ParentNode parent = toCopy.Parent as ParentNode;
                 if (parent != null) {
                     List<EsfNode> nodes = new List<EsfNode>(parent.Value);
+                    SetAllModified(copy);
                     int insertAt = parent.Children.IndexOf(toCopy) + 1;
                     nodes.Insert(insertAt, copy);
-                    parent.Value = nodes;
 #if DEBUG
                     Console.Out.WriteLine("new list now {0}", string.Join(",", nodes));
 #endif
-                    copy.Modified = true;
-                    copy.AllNodes.ForEach(n => n.Modified = false);
+                    // copy.Modified = true;
+                    // copy.AllNodes.ForEach(n => n.Modified = true);
+                    parent.Value = nodes;
 #if DEBUG
                 } else {
                     Console.WriteLine("no parent to add to");
@@ -199,6 +200,11 @@ namespace EsfControl {
                 Console.WriteLine("couldn't create copy");
 #endif
             }
+        }
+        
+        private void SetAllModified(ParentNode node) {
+            node.Modified = true;
+            node.Children.ForEach(n => SetAllModified(n));
         }
 
         private void DeleteNode(EsfNode node) {
@@ -281,6 +287,9 @@ namespace EsfControl {
         }
         public void NodeChange(EsfNode n) {
             ForeColor = n.Modified ? Color.Red : Color.Black;
+            if (!n.Modified) {
+                return;
+            }
             ParentNode node = (Tag as ParentNode);
             bool sameChildren = node.Children.Count == this.Nodes.Count;
             for (int i = 0; sameChildren && i < node.Children.Count; i++) {
