@@ -29,13 +29,34 @@ namespace PfmCL {
             get;
             set;
         }
+        List<string> containedFileList;
         List<string> ContainedFiles {
-            get;
-            set;
+            get {
+                List<string> result = containedFileList;
+                if (result == null || result.Count == 0) {
+                    try {
+                        result = new List<string>();
+                        PackFile pack = new PackFileCodec().Open(PackFileName);
+                        pack.Files.ForEach(p => result.Add(p.FullPath));
+                    } catch {}
+                }
+                return result;
+            }
+            set {
+                containedFileList = value;
+            }
         }
         PackAction action;
+        
+        private bool Verbose {
+            get; set;
+        }
 
         Pfm(string command) {
+            if (command.Contains("v")) {
+                Verbose = true;
+                command = command.Replace("v", "");
+            }
             switch (command) {
                 case "c": 
                     action = CreatePack;
@@ -76,19 +97,26 @@ namespace PfmCL {
             Console.WriteLine("'a' to add (does not replace files with same path)");
 //            Console.WriteLine("'m' to export to official mod tool format XML");
         }
+        
+        private void HandlingFile(string file) {
+            if (Verbose) {
+                Console.WriteLine(file);
+            }
+        }
 
         /*
          * Create a new pack containing the given files.
          */
         void CreatePack(string packFileName, List<string> containedFiles) {
             try {
-                PFHeader header = new PFHeader("PFH3") {
+                PFHeader header = new PFHeader("PFH4") {
                     Version = 0,
                     Type = PackType.Mod
                 };
                 PackFile packFile = new PackFile(packFileName, header);
                 foreach (string file in containedFiles) {
                     try {
+                        HandlingFile(file);
                         PackedFile toAdd = new PackedFile(file);
                         packFile.Add(toAdd, true);
                     } catch (Exception e) {
@@ -145,6 +173,7 @@ namespace PfmCL {
                 if (directoryName.Length != 0 && !Directory.Exists(directoryName)) {
                     Directory.CreateDirectory(directoryName);
                 }
+                HandlingFile(file.FullPath);
                 using (var fileStream = new MemoryStream(file.Data)) {
                     fileStream.CopyTo(File.Create(systemPath));
                 }
@@ -162,6 +191,7 @@ namespace PfmCL {
                 PackFile toUpdate = new PackFileCodec().Open(packFileName);
                 foreach (string file in toAdd) {
                     try {
+                        HandlingFile(file);
                         toUpdate.Add(new PackedFile(file), replace);
                     } catch (Exception e) {
                         Console.Error.WriteLine("Failed to add {0}: {1}", file, e.Message);
