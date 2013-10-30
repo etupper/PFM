@@ -13,6 +13,7 @@
         <local:BackgroundConverter x:Key="BackgroundConverter" />
         <local:BoolConverter x:Key="BooleanFlipConverter" />
         <local:ImageSourceConverter x:Key="ImageSourceConverter" />
+        <local:RowIndexConverter x:Key="RowIndexConverter" />
         
         <Style x:Key="GridCellStyle" TargetType="{x:Type DataGridCell}">
             <EventSetter Event="PreviewMouseLeftButtonDown" Handler="dbDataGridCell_PreviewMouseLeftButtonDown" />
@@ -267,6 +268,7 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=RowIndex, Converter={StaticResource RowIndexConverter}}" Header="Row" />
                             <GridViewColumn DisplayMemberBinding="{Binding Path=ErrorMessage}" Header="Description" />
                         </GridView>
                     </ListView.View>                    

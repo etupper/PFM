@@ -231,4 +231,28 @@ namespace DBTableControl
             return DependencyProperty.UnsetValue;
         }
     }
+
+    [ValueConversion(typeof(int), typeof(int))]
+    public class RowIndexConverter : MarkupExtension, IValueConverter
+    {
+        private static RowIndexConverter _converter = null;
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            if (_converter == null)
+            {
+                _converter = new RowIndexConverter();
+            }
+            return _converter;
+        }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (int)value + 1;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return DependencyProperty.UnsetValue;
+        }
+    }
 }
