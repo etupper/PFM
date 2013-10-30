@@ -53,7 +53,9 @@ namespace DBTableControl
 
                 using (Stream s = File.Open(file, FileMode.Open))
                 {
-                    loadedconfig = (DBTableEditorConfig)xs.Deserialize(s);
+                    try {
+                        loadedconfig = (DBTableEditorConfig)xs.Deserialize(s);
+                    } catch { }
                 }
             }
 

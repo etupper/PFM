@@ -63,8 +63,9 @@ namespace PackFileManager
             PackedFileEditorRegistry.Editors.Add(new AtlasFileEditorControl { Dock = DockStyle.Fill });
             try
             {
-                string dbeLocation = Path.Combine(Program.ApplicationFolder, "DBEditorTableControl.dll");
-                Assembly dbeAssembly = Assembly.Load(File.ReadAllBytes(dbeLocation));
+                string dbeLocation = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                dbeLocation = Path.Combine(dbeLocation, "DBEditorTableControl.dll");
+                Assembly dbeAssembly = Assembly.LoadFile(dbeLocation);
                 Type dbeType = dbeAssembly.GetType("DBTableControl.DBEditorTableControl");
                 MethodInfo registerMethodInfo = dbeType.GetMethod("RegisterDbEditor", BindingFlags.Public | BindingFlags.Static);
                 object registered = registerMethodInfo.Invoke(null, null);
