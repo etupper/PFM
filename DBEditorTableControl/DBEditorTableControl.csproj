@@ -69,9 +69,6 @@
       <DependentUpon>DBEditorTableControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="DBTableEditorConfig.cs" />
-    <Compile Include="Dialogs\DBCompileMergeWindow.xaml.cs">
-      <DependentUpon>DBCompileMergeWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Dialogs\ErrorDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -94,10 +91,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="DBEditorTableControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Dialogs\DBCompileMergeWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
