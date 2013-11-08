@@ -500,7 +500,6 @@ namespace PackFileManager
             if (QuerySaveModifiedFile() == System.Windows.Forms.DialogResult.No) {
                 NewMod("Untitled.pack");
             }
-            PackedFileEditorRegistry.NotifyDBE(NotificationReason.PackFileOpening);
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -518,7 +517,6 @@ namespace PackFileManager
             if (querySaveCurrent && QuerySaveModifiedFile() == DialogResult.Cancel) {
                 return;
             }
-            PackedFileEditorRegistry.NotifyDBE(NotificationReason.PackFileOpening);
 
             Settings.Default.LastPackDirectory = Path.GetDirectoryName(filepath);
             try {
@@ -588,7 +586,6 @@ namespace PackFileManager
 
                 new PackFileCodec().Save(currentPackFile);
                 OpenExistingPackFile(currentPackFile.Filepath);
-                PackedFileEditorRegistry.NotifyDBE(NotificationReason.PackFileOpening);
             }
         }
 
@@ -605,7 +602,6 @@ namespace PackFileManager
                 }
                 File.Move (tempFile, filename);
                 OpenExistingPackFile (filename);
-                PackedFileEditorRegistry.NotifyDBE(NotificationReason.PackFileOpening);
             }
         }
         #endregion
