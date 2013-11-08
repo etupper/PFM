@@ -82,9 +82,27 @@
         
         <Style x:Key="GridHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
             <Setter Property="ContextMenu" Value="{StaticResource ColumnHeaderContextMenu}" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         </Style>
-        
+
+        <DataTemplate x:Key="AutoFilterGridHeader">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="2*" />
+                </Grid.RowDefinitions>
+                <TextBlock Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" 
+                           Grid.Row="0" 
+                           HorizontalAlignment="Center" 
+                           Margin="5"/>
+                <ComboBox Grid.Row="1" 
+                          IsEditable="False" 
+                          HorizontalAlignment="Right" 
+                          DropDownOpened="dbDataGridColumnFilterComboBox_DropDownOpened" 
+                          SelectionChanged="dbDataGridColumnFilterComboBox_SelectionChanged"/>
+            </Grid>
+        </DataTemplate>
+
         <Style x:Key="RowHeaderStyle" TargetType="{x:Type DataGridRowHeader}">
             <Setter Property="ContextMenu" Value="{StaticResource RowHeaderContextMenu}" />
             <Setter Property="HorizontalContentAlignment" Value="Right" />
@@ -133,6 +151,8 @@
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>
+                <Separator Margin="3,0,0,0" />
+                <Button Name="checktableforerrorsButton" Content="Check Table For Errors" Padding="3,4" Click="checktableforerrorsButton_Click" />
                 <Separator Margin="3,0,0,0" />
                 <StackPanel Name="moveAndFreezeKeysStackPanel" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <CheckBox Name="moveAndFreezeKeysCheckBox"
@@ -299,7 +319,8 @@
                       PreviewKeyDown="dbDataGrid_PreviewKeyDown"
                       SelectionChanged="dbDataGrid_SelectionChanged"
                       LoadingRow="dbDataGrid_LoadingRow"
-                      CopyingRowClipboardContent="dbDataGrid_CopyingRowClipboardContent">
+                      CopyingRowClipboardContent="dbDataGrid_CopyingRowClipboardContent"
+                      Sorting="dbDataGrid_Sorting">
             </local:DBDataGrid>
         </DockPanel>
         <TextBox Name="unsupportedDBErrorTextBox" 

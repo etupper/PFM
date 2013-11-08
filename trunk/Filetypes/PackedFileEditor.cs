@@ -40,33 +40,6 @@ namespace Filetypes {
                 return editors;
             }
         }
-
-        // Possibly useful future feature.
-        public static void NotifyEditors(NotificationReason reason)
-        {
-
-        }
-
-        public static void NotifyDBE(NotificationReason reason)
-        {
-#if __MonoCS__
-#else           // Code to tell the new DBEditor to update its Data Set.
-            Assembly dbeAssembly = Assembly.LoadFrom("DBEditorTableControl.dll");
-            Type dbeType = dbeAssembly.GetType("DBTableControl.DBEditorTableControl");
-            MethodInfo registerMethodInfo;
-            if (reason == NotificationReason.PackFileSaving)
-            {
-                registerMethodInfo = dbeType.GetMethod("DbEditorCommitTables", BindingFlags.Public | BindingFlags.Static);
-                object registered = registerMethodInfo.Invoke(null, null);
-            }
-            else if (reason == NotificationReason.PackFileOpening)
-            {
-                registerMethodInfo = dbeType.GetMethod("DbEditorClearCache", BindingFlags.Public | BindingFlags.Static);
-                object registered = registerMethodInfo.Invoke(null, null);
-            }
-#endif
-        }
-
     }
     
     /*
@@ -172,13 +145,5 @@ namespace Filetypes {
             }
             return result;
         }
-    }
-
-    public enum NotificationReason
-    {
-        PackFileSaving,
-        PackFileOpening,
-        NewPackFile,
-        PFMClosing
     }
 }
