@@ -46,6 +46,15 @@ namespace Common {
                 }
             }
         }
+        public bool IsShader {
+            get { return Header.IsShader; }
+            set {
+                if (value != Header.IsShader) {
+                    Header.IsShader = value;
+                    IsModified = true;
+                }
+            }
+        }
         // Modified attribute, calls Modified event after set
         public bool IsModified {
             get { return modified; }
@@ -234,6 +243,18 @@ namespace Common {
                 precedenceByte = value;
             }
         }
+        public bool IsShader {
+            get {
+                return (precedenceByte & 0x40) != 0;
+            }
+            set {
+                if (value) {
+                    precedenceByte |= 0x40;
+                } else {
+                    precedenceByte = (byte) (precedenceByte & ~0x40);
+                }
+            }
+        }
         public int LoadOrder {
             get {
                 return precedenceByte & 7;
@@ -242,7 +263,7 @@ namespace Common {
         public bool HasAdditionalInfo {
             get {
                 // bit 1000000 set?
-                return (PrecedenceByte & 0x40) != 0;
+                return IsShader;
             }
         }
         // query/set version

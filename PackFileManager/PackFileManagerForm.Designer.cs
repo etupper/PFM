@@ -76,7 +76,9 @@ namespace PackFileManager
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.shaderItemSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.changePackTypeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setShaderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.exportFileListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
@@ -566,9 +568,23 @@ namespace PackFileManager
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(169, 6);
             // 
+            // shaderItemSeparator
+            // 
+            this.shaderItemSeparator.Name = "shaderItemSeparator";
+            this.shaderItemSeparator.Size = new System.Drawing.Size(169, 6);
+            // 
+            // setShaderToolStripMenuItem
+            // 
+            this.setShaderToolStripMenuItem.Enabled = false;
+            this.setShaderToolStripMenuItem.Name = "setShaderToolStripMenuItem";
+            this.setShaderToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.setShaderToolStripMenuItem.Text = "Shader";
+            // 
             // changePackTypeToolStripMenuItem
             // 
-            this.changePackTypeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {});
+            this.changePackTypeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+                shaderItemSeparator, setShaderToolStripMenuItem
+            });
             this.changePackTypeToolStripMenuItem.Enabled = false;
             this.changePackTypeToolStripMenuItem.Name = "changePackTypeToolStripMenuItem";
             this.changePackTypeToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
@@ -1149,6 +1165,7 @@ namespace PackFileManager
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
+        private System.Windows.Forms.ToolStripSeparator shaderItemSeparator;
         private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem updateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem searchForUpdateToolStripMenuItem;
@@ -1156,6 +1173,7 @@ namespace PackFileManager
         private System.Windows.Forms.ToolStripMenuItem saveToDirectoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem filesMenu;
         private System.Windows.Forms.ToolStripMenuItem changePackTypeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem setShaderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addFromPackToolStripMenuItem;

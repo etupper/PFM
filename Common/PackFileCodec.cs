@@ -94,7 +94,7 @@ namespace Common {
         public void WriteToFile(string FullPath, PackFile packFile) {
             using (BinaryWriter writer = new BinaryWriter(new FileStream(FullPath, FileMode.Create), Encoding.ASCII)) {
                 writer.Write (packFile.Header.PackIdentifier.ToCharArray ());
-                writer.Write ((int)packFile.Header.Type);
+                writer.Write ((int)packFile.Header.PrecedenceByte);
                 writer.Write ((int)packFile.Header.Version);
                 writer.Write (packFile.Header.ReplacedFileNamesLength);
                 UInt32 indexSize = 0;

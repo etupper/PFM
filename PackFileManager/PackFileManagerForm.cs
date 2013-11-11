@@ -159,8 +159,12 @@ namespace PackFileManager
                     Name = string.Format("{0}ToolStripMenuItem", type.ToString().ToLower())
                 };
                 item.Click += PackTypeItemSelected;
-                changePackTypeToolStripMenuItem.DropDownItems.Add(item);
+                changePackTypeToolStripMenuItem.DropDownItems.Insert(0, item);
             }
+            setShaderToolStripMenuItem.Click += (sender, e) => {
+                currentPackFile.IsShader = !currentPackFile.IsShader;
+                setShaderToolStripMenuItem.Checked = currentPackFile.IsShader;
+            };
 
             InitializeBrowseDialogs (args);
 
@@ -453,7 +457,11 @@ namespace PackFileManager
                 changePackTypeToolStripMenuItem.Enabled = false;
             } else {
                 changePackTypeToolStripMenuItem.Enabled = true;
-                foreach(ToolStripMenuItem item in changePackTypeToolStripMenuItem.DropDownItems) {
+                foreach(ToolStripItem i in changePackTypeToolStripMenuItem.DropDownItems) {
+                    ToolStripMenuItem item = i as ToolStripMenuItem;
+                    if (item == null) {
+                        break;
+                    }
                     item.Checked = (item.Tag.Equals(currentPackFile.Type));
                     switch ((PackType) item.Tag) {
                     case PackType.Mod:
@@ -468,6 +476,8 @@ namespace PackFileManager
                         break;
                     }
                 }
+                setShaderToolStripMenuItem.Checked = currentPackFile.Header.IsShader;
+                setShaderToolStripMenuItem.Enabled = CanWriteCurrentPack;
             }
             
             addToolStripMenuItem.Enabled = CanWriteCurrentPack;
