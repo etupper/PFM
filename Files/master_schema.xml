@@ -13301,7 +13301,8 @@
          guid='0665163b-070f-439e-9f8c-0e813002c661,
                7881c48c-ec6a-4713-869b-d67b7d64841f,
                cc51ca72-73bc-40f6-9332-2a97f1ae3acc,
-               cf7cd7e2-0959-4677-ab44-372467c9b5ad'>
+               cf7cd7e2-0959-4677-ab44-372467c9b5ad,
+               ba2bb412-c7ec-43fc-96ac-d56a53ecfc7b'>
     <field name='unknown1' type='boolean' />
     <field name='unknown2' type='boolean' />
     <field name='indent' type='int' />
@@ -13314,23 +13315,12 @@
          table_version='0'
          guid='5af40583-e4e1-4a9b-a6e9-886117872854'>
     <field name='campaign_key' type='optstring_ascii' />
-    <field name='unknown' type='boolean' />
+    <field name='faction_key' type='optstring_ascii' />
     <field name='indent' type='int' />
     <field name='key' type='string_ascii' pk='true' />
     <field fkey='technologies_tables.key' name='technology_key' type='string_ascii' />
     <field fkey='technology_node_sets_tables.key' name='technology_node_set' type='string_ascii' />
     <field name='tier' type='int' />
-  </table>
-  <table table_name='technology_nodes_tables'
-         table_version='0'
-         guid='ba2bb412-c7ec-43fc-96ac-d56a53ecfc7b'>
-    <field name='unknown1' type='boolean' />
-    <field name='unknown2' type='boolean' />
-    <field name='indent' type='int' />
-    <field name='key' type='string' />
-    <field fkey='technologies_tables.key' name='technology_key' type='string' />
-    <field fkey='technology_node_sets_tables.key' name='technology_node_set' type='string' />
-    <field name='unknown7' type='int' />
   </table>
   <table table_name='technology_required_building_levels_junctions_tables'
          table_version='0'
