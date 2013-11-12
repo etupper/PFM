@@ -126,11 +126,10 @@ namespace PackFileManager
             Console.WriteLine("Updating with AutoUpdater.exe {0}", arguments);
 #endif
 
-            if (myProcess.CloseMainWindow()) {
-                // re-open file if one is open already
-                Process.Start("AutoUpdater.exe", arguments);
-                myProcess.Close();
-            }
+            myProcess.CloseMainWindow();
+            // re-open file if one is open already
+            Process.Start("AutoUpdater.exe", arguments);
+            myProcess.Close();
         }
 	}
     

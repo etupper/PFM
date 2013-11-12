@@ -121,6 +121,7 @@ namespace AutoUpdater {
                     try {
                         if (DontUnzip.Contains(entry.Name)) {
                             Console.WriteLine("Skipping {0}", entry.Name);
+                            entry = zipStream.GetNextEntry();
                             continue;
                         }
                         string targetFile = Path.Combine(targetDir, entry.Name);
