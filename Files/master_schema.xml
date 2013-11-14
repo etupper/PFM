@@ -6470,32 +6470,34 @@
     <field name='level_name' type='string_ascii' pk='true' />
     <field fkey='building_chains_tables.key' name='chain' type='string_ascii' />
     <field name='level' type='int' />
-    <field name='condition' type='string_ascii' />
+    <field name='condition' type='optstring_ascii' />
+    <field name='only_in_capital' type='boolean' />
     <field name='create_time' type='int' />
     <field name='create_cost' type='int' />
-    <field name='Upkeep Cost' type='int' />
-    <field name='Demolition Cost' type='int' />
-    <field name='ZOC' type='int' />
-    <field name='Lower Happiness' type='int' />
-    <field name='Upper Happiness' type='int' />
-    <field name='Repression' type='int' />
-    <field name='GDP' type='int' />
-    <field name='Town Wealth Growth' type='int' />
-    <field name='Population Change' type='int' />
-    <field name='Max Population Change' type='int' />
-    <field name='Commodity' type='string_ascii' />
-    <field name='unknown' type='boolean' />
-    <field name='unknown19' type='boolean' />
-    <field name='unknown20' type='int' />
-    <field name='unknown21' type='boolean' />
+    <field name='upkeep_cost' type='int' />
+    <field name='demolition_cost' type='int' />
+    <field name='zoc' type='float' />
+    <field name='lower_happiness' type='int' />
+    <field name='upper_happiness' type='int' />
+    <field name='repression' type='int' />
+    <field name='gdp' type='int' />
+    <field name='town_wealth_growth' type='int' />
+    <field name='pop_change' type='float' />
+    <field name='maxpop_change' type='float' />
+    <field name='commodity' type='optstring_ascii' />
+    <field name='commodity_vol' type='int' />
+    <field name='building_category' type='optstring_ascii' />
+    <field name='gov_type_key' type='optstring_ascii' />
+    <field name='unknown_22' type='boolean' />
     <field name='military_prestige' type='int' />
     <field name='naval_prestige' type='int' />
     <field name='economic_prestige' type='int' />
     <field name='enlightenment_prestige' type='int' />
+    <field name='unknown_27' type='optstring_ascii' />
     <field name='destruction_terminator' type='boolean' />
     <field name='faction_unique' type='boolean' />
-    <field name='unknown28' type='boolean' />
-    <field name='unknown29' type='boolean' />
+    <field name='religion_requirement' type='optstring_ascii' />
+    <field name='first_in_world_bundle' type='optstring_ascii' />
     <field fkey='resources_tables.key' name='resource_requirement' type='optstring_ascii' />
     <field fkey='warscape_rigid_tables.key' name='working_model' type='string_ascii' />
     <field name='unique_index' type='int' />
