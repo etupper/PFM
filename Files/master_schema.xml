@@ -10488,6 +10488,21 @@
     <field name='unknown8' type='int' />
     <field name='unknown9' type='int' />
   </table>
+  <table table_name='fame_levels_tables'
+         table_version='3'
+         guid='893e7080-d685-4034-b17a-8587b51f56a7'>
+    <field name='unknown1' type='int' />
+    <field name='army_cap' type='int' />
+    <field name='champion_cap' type='int' />
+    <field name='dignitary_cap' type='int' />
+    <field name='imperium_level' type='int' pk='true' />
+    <field name='fleet_cap' type='int'/>
+    <field name='unknown7' type='int' />
+    <field name='edict_cap' type='int' />
+    <field name='spy_cap' type='int' />
+    <field name='campaign_key' type='string_ascii' pk='true' />
+    <field name='tooltip' type='optstring_ascii' />
+  </table>
   <table table_name='family_relationship_types_tables'
          table_version='0'
          guid='0f35a0a0-fe21-49f4-8743-e38b0ab8b836,
