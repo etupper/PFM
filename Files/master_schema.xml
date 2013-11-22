@@ -12304,9 +12304,9 @@
     <field name='below_waterline_damage_modifer' type='int' />
     <field name='calibration_distance' type='float' />
     <field name='calibration_area' type='float' />
-    <field name='unknown25' type='float' />
-    <field name='unknown26' type='float' />
-    <field name='unknown27' type='float' />
+    <field name='bonus_v_infantry' type='int' />
+    <field name='bonus_v_cavalry' type='int' />
+    <field name='bonus_v_elephant' type='int' />
     <field fkey='projectile_displays_tables.key' name='projectile_display' type='optstring_ascii' />
     <field fkey='special_ability_phases_tables.id' name='overhead_stat_effect' type='optstring_ascii' />
     <field fkey='audio_projectiles_tables.key' name='projectile_audio' type='string_ascii' />
