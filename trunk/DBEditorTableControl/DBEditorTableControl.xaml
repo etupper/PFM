@@ -306,7 +306,7 @@
                       RowHeaderTemplate="{StaticResource MyRowHeaderTemplate}"
                       VirtualizingStackPanel.IsVirtualizing="True"
                       VirtualizingStackPanel.VirtualizationMode="Recycling"
-                      EnableColumnVirtualization="True"
+                      EnableColumnVirtualization="False"
                       EnableRowVirtualization="True"
                       ScrollViewer.CanContentScroll="True"
                       Background="#FFAAAAAA"

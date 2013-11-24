@@ -595,7 +595,13 @@ namespace DBTableControl
             {
                 // Create the new column, using object as the data type for all columns, this way we avoid the WPF DataGrid's built in
                 // data validation abilities in favor of our own implementation.
-                constructionColumn = new DataColumn(columnInfo.Name, typeof(object));
+                constructionColumn = new DataColumn(columnInfo.Name, typeof(string));
+
+                if (columnInfo.TypeCode == TypeCode.Int16 || columnInfo.TypeCode == TypeCode.Int32 || columnInfo.TypeCode == TypeCode.Single)
+                {
+                    constructionColumn = new DataColumn(columnInfo.Name, typeof(double));
+                }
+
                 constructionColumn.AllowDBNull = true;
                 constructionColumn.Unique = false;
                 constructionColumn.ReadOnly = readOnly;
@@ -1165,9 +1171,19 @@ namespace DBTableControl
                     proposedvalue = (cell.Content as CheckBox).IsChecked.Value.ToString();
                 }
 
-                currentTable.Rows[rowindex].BeginEdit();
-                currentTable.Rows[rowindex][colindex] = proposedvalue;
-                currentTable.Rows[rowindex].EndEdit();
+                if (ValueIsValid(proposedvalue, colindex))
+                {
+                    currentTable.Rows[rowindex].BeginEdit();
+                    currentTable.Rows[rowindex][colindex] = proposedvalue;
+                    currentTable.Rows[rowindex].EndEdit();
+                }
+                else
+                {
+                    // If the proposed value for this cell is invalid we should add an error here manually for the user since it will not
+                    // always generate one if the proposed value is too different, e.g. a letter in a number column.
+                    AddError(rowindex, colindex, String.Format("'{0}' is not a valid value for '{1}'", proposedvalue,
+                                                                                                    currentTable.Columns[colindex].ColumnName));
+                }
             }
 
             Style TempStyle = cell.Style;
@@ -1414,7 +1430,8 @@ namespace DBTableControl
             else
             {
                 // We have a regular column, get the existing values for the list.
-                filtervalues.AddRange(currentTable.Columns[colname].GetItemArray(false).Cast<string>().Distinct());
+                List<object> possiblevalues = currentTable.Columns[colname].GetItemArray(false).Distinct().ToList();
+                filtervalues.AddRange(possiblevalues.Select(n => n.ToString()));
             }
 
             autofilter.ItemsSource = filtervalues;
@@ -4141,7 +4158,7 @@ namespace DBTableControl
                     haserrors = true;
 
                     // Add an error to our internal list for display.
-                    List<string> fkey = currentTable.ExtendedProperties["FKey"].ToString().Split('.').ToList();
+                    List<string> fkey = currentTable.Columns[colindex].ExtendedProperties["FKey"].ToString().Split('.').ToList();
                     string errormessage = String.Format("Error: '{0}' is not a valid value for '{1}', no matching value in column:'{3}' of '{2}' tables found.",
                                                         currentvalue, currentTable.Columns[colindex].ColumnName, fkey[0], fkey[1]);
                     AddError(rowindex, colindex, errormessage);

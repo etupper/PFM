@@ -179,7 +179,7 @@ namespace DBTableControl
 
             if (filtervalueComboBox.Visibility == System.Windows.Visibility.Visible)
             {
-                if (filtervalueComboBox.SelectedValue == null || String.IsNullOrEmpty(filtervalueComboBox.SelectedValue.ToString()))
+                if (String.IsNullOrEmpty(filtervalueComboBox.Text))
                 {
                     filtervalueComboBox.Background = new SolidColorBrush(Colors.LightPink);
                     filtervalueComboBox.ToolTip = "Cannot save filter: Please enter a value for the filter.";
