@@ -169,6 +169,7 @@ namespace DBTableControl
             {
                 if (row.GetColumnsInError().Contains(column))
                 {
+                    newColor = new SolidColorBrush(Color.FromArgb(255, 250, 250, 250));
                     cell.BorderBrush = new SolidColorBrush(Colors.Red);
                     cell.BorderThickness = new Thickness(5);
                     cell.ToolTip = String.Format("{0}\nOriginal Value: {1}", row.GetColumnError(column), row.RowState == DataRowState.Added ? "None, new row." : row[column, DataRowVersion.Original]);

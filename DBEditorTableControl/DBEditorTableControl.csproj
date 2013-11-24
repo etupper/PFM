@@ -58,9 +58,9 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DBDataGrid.cs" />
-    <Compile Include="DBError.cs" />
-    <Compile Include="DBFilter.cs" />
+    <Compile Include="DBTypes\DBDataGrid.cs" />
+    <Compile Include="DBTypes\DBError.cs" />
+    <Compile Include="DBTypes\DBFilter.cs" />
     <Compile Include="Dialogs\ApplyExpressionWindow.xaml.cs">
       <DependentUpon>ApplyExpressionWindow.xaml</DependentUpon>
     </Compile>
