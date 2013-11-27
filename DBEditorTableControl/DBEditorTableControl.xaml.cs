@@ -474,6 +474,12 @@ namespace DBTableControl
                     constructionColumn.Header = column.ColumnName;
                     constructionColumn.IsReadOnly = column.ReadOnly;
 
+                    // Setup the column header's tooltip.
+                    string headertooltip = String.Format("Column Data Type: {0}\nReference Table: {1}\nReference Column: {2}",
+                                                    editedFile.CurrentType.Fields[CurrentTable.Columns.IndexOf(column)].TypeCode.ToString(),
+                                                    column.ExtendedProperties["FKey"].ToString().Split('.')[0],
+                                                    column.ExtendedProperties["FKey"].ToString().Split('.')[1]);
+
                     // Set the combo boxes items source to the already tested list.
                     constructionColumn.ItemsSource = referencevalues;
 
@@ -486,6 +492,7 @@ namespace DBTableControl
                     // Setup the column context menu
                     // TODO: programatically create context menu so hidden item can be bound to current state.
                     Style tempstyle = new System.Windows.Style(typeof(DataGridColumnHeader), (Style)this.Resources["GridHeaderStyle"]);
+                    tempstyle.Setters.Add(new Setter(ToolTipService.ToolTipProperty, headertooltip));
                     constructionColumn.HeaderStyle = tempstyle;
 
                     // Setup the AutoFilter
@@ -503,6 +510,11 @@ namespace DBTableControl
                     DataGridCheckBoxColumn constructionColumn = new DataGridCheckBoxColumn();
                     constructionColumn.Header = column.ColumnName;
                     constructionColumn.IsReadOnly = column.ReadOnly;
+
+                    // Setup the column header's tooltip.
+                    string headertooltip = String.Format("Column Data Type: {0}",
+                                                    editedFile.CurrentType.Fields[CurrentTable.Columns.IndexOf(column)].TypeCode.ToString());
+
                     Binding constructionBinding = new Binding(String.Format("{0}", column.ColumnName));
                     if (!column.ReadOnly)
                     {
@@ -520,6 +532,7 @@ namespace DBTableControl
                     // Setup the column context menu
                     // TODO: programatically create context menu so hidden item can be bound to current state.
                     Style tempstyle = new System.Windows.Style(typeof(DataGridColumnHeader), (Style)this.Resources["GridHeaderStyle"]);
+                    tempstyle.Setters.Add(new Setter(ToolTipService.ToolTipProperty, headertooltip));
                     constructionColumn.HeaderStyle = tempstyle;
 
                     // Setup the AutoFilter
@@ -537,6 +550,11 @@ namespace DBTableControl
                     DataGridTextColumn constructionColumn = new DataGridTextColumn();
                     constructionColumn.Header = column.ColumnName;
                     constructionColumn.IsReadOnly = column.ReadOnly;
+
+                    // Setup the column header's tooltip.
+                    string headertooltip = String.Format("Column Data Type: {0}",
+                                                    editedFile.CurrentType.Fields[CurrentTable.Columns.IndexOf(column)].TypeCode.ToString());
+
                     Binding constructionBinding = new Binding(String.Format("{0}", column.ColumnName));
                     if (!column.ReadOnly)
                     {
@@ -552,6 +570,7 @@ namespace DBTableControl
                     // Setup the column context menu
                     // TODO: programatically create context menu so hidden item can be bound to current state.
                     Style tempstyle = new System.Windows.Style(typeof(DataGridColumnHeader), (Style)this.Resources["GridHeaderStyle"]);
+                    tempstyle.Setters.Add(new Setter(ToolTipService.ToolTipProperty, headertooltip));
                     constructionColumn.HeaderStyle = tempstyle;
 
                     // Setup the AutoFilter
@@ -1171,18 +1190,23 @@ namespace DBTableControl
                     proposedvalue = (cell.Content as CheckBox).IsChecked.Value.ToString();
                 }
 
-                if (ValueIsValid(proposedvalue, colindex))
+                // If the user is editing the blank row to create a new one, do not attempt to edit the value directly since the
+                // blank row has not been added to the currentTable's row collection yet.
+                if ((e.Row.Item as DataRowView).Row.RowState != DataRowState.Detached)
                 {
-                    currentTable.Rows[rowindex].BeginEdit();
-                    currentTable.Rows[rowindex][colindex] = proposedvalue;
-                    currentTable.Rows[rowindex].EndEdit();
-                }
-                else
-                {
-                    // If the proposed value for this cell is invalid we should add an error here manually for the user since it will not
-                    // always generate one if the proposed value is too different, e.g. a letter in a number column.
-                    AddError(rowindex, colindex, String.Format("'{0}' is not a valid value for '{1}'", proposedvalue,
-                                                                                                    currentTable.Columns[colindex].ColumnName));
+                    if (ValueIsValid(proposedvalue, colindex))
+                    {
+                        currentTable.Rows[rowindex].BeginEdit();
+                        currentTable.Rows[rowindex][colindex] = proposedvalue;
+                        currentTable.Rows[rowindex].EndEdit();
+                    }
+                    else
+                    {
+                        // If the proposed value for this cell is invalid we should add an error here manually for the user since it will not
+                        // always generate one if the DataGrid's data validation catches it.
+                        AddError(rowindex, colindex, String.Format("'{0}' is not a valid value for '{1}'", proposedvalue,
+                                                                                                        currentTable.Columns[colindex].ColumnName));
+                    }
                 }
             }
 
