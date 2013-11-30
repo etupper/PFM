@@ -30,6 +30,20 @@ namespace PackFileManager {
                     }
                 }
             };
+            /*
+             * Add all files below a directory upon right click.
+             */
+            packFileTree.NodeMouseClick += delegate(object sender, TreeNodeMouseClickEventArgs e) {
+                VirtualDirectory directory = e.Node.Tag as VirtualDirectory;
+                if (e.Button == MouseButtons.Right && directory != null) {
+                    directory.AllFiles.ForEach(f => {
+                        if (!selectedFiles.Contains(f)) {
+                            selectedFiles.Add(f);
+                            statusLabel.Text = string.Format("{0} added", f.FullPath);
+                        }
+                    });
+                }
+            };
         }
 
         /*
@@ -39,7 +53,7 @@ namespace PackFileManager {
         public PackFile PackFile {
             private get { return pack; }
             set {
-                statusLabel.Text = "Double click to select";
+                statusLabel.Text = "Double click to select file; right-click directory to add all files below";
                 pack = value;
                 packFileTree.Nodes.Clear();
                 selectedFiles.Clear();
