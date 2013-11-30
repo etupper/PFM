@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -73,6 +73,7 @@
     <PreBuildEvent>copy "$(SolutionDir)\Files\master_schema.xml" "$(TargetDir)"
 copy "$(SolutionDir)\Files\*.dll" "$(TargetDir)"
 copy "$(SolutionDir)\Files\xmlversion" "$(TargetDir)"
+copy "$(SolutionDir)\Files\PackFileManager.exe.config" "$(TargetDir)"
 </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
@@ -88,7 +89,7 @@ start /wait "building schemas" "Release Build.exe"
 del "Release Build.exe"
 copy "$(SolutionDir)\Files\schema_models.xml" "$(TargetDir)"
 
-start WinRAR.exe a "Pack File Manager.zip" "*dll" "*exe" "schema_*.xml" "xmlversion"
+start WinRAR.exe a "Pack File Manager.zip" "*dll" "*exe" "*exe.config" "schema_*.xml" "xmlversion"
 start WinRAR.exe a "schema.zip" "schema_*.xml" "xmlversion"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
