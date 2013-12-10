@@ -11147,6 +11147,18 @@
     <field name='icon' type='string_ascii' />
     <field name='sound_event' type='string_ascii' />
   </table>
+  <table table_name='message_event_strings_tables'
+         table_version='3'
+         guid='d35f745c-1c57-45cc-94fe-26906f1779e9'>
+    <field name='event' type='string_ascii' />
+    <field name='optional_campaign_key' type='optstring_ascii' />
+    <field name='culture' type='string_ascii' />
+    <field name='text' type='string_ascii' />
+    <field name='image' type='string_ascii' />
+    <field name='icon' type='string_ascii' />
+    <field name='sound_event' type='string_ascii' />
+    <field name='title' type='optstring_ascii' />
+  </table>
   <table table_name='message_events_tables'
          table_version='0'
          guid='c952c82d-ecdc-4419-a33e-31a76100245c'>
@@ -11154,6 +11166,15 @@
     <field name='instant_open' type='boolean' />
     <field name='layout' type='string_ascii' />
     <field name='requires_response' type='boolean' />
+  </table>
+  <table table_name='message_events_tables'
+         table_version='1'
+         guid='d125084c-f470-4802-a828-2f30cf7554d5'>
+    <field name='event' type='string_ascii' pk='true' />
+    <field name='instant_open' type='boolean' />
+    <field name='layout' type='string_ascii' />
+    <field name='requires_response' type='boolean' />
+	<field name='unknown5' type='int' />
   </table>
   <table table_name='military_force_legacy_emblems_tables'
          table_version='2'
