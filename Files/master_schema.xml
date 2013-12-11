@@ -5974,6 +5974,16 @@
     <field fkey='battle_entities_tables.key' name='engine_crew_entity' type='string_ascii' />
     <field name='key' type='string_ascii' pk='true' />
   </table>
+  </table>
+    <table table_name='battlefield_engines_autonomous_tables'
+         table_version='1'
+         guid='148b809a-d0f3-4342-8d8c-b4cbc7a5b3c2'>
+    <field fkey='battlefield_engines_tables.key' name='autonomous_engine_type' type='string_ascii' />
+    <field name='engine_crew_anims' type='string_ascii' />
+    <field fkey='battle_entities_tables.key' name='engine_crew_entity' type='string_ascii' />
+    <field name='key' type='string_ascii' pk='true' />
+    <field name='unknown' type='int' />
+  </table>
   <table table_name='battlefield_engines_tables'
          table_version='4'
          guid='0dc7dfea-ad5b-4a41-8877-ad705534300f'>
