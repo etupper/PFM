@@ -10513,6 +10513,22 @@
     <field name='campaign_key' type='string_ascii' pk='true' />
     <field name='tooltip' type='optstring_ascii' />
   </table>
+  <table table_name='fame_levels_tables'
+         table_version='4'
+         guid='1a2646ac-c012-4367-ab05-f9bc469f24d9'>
+    <field name='fame_AI' type='int' />
+    <field name='army_cap' type='int' />
+    <field name='champion_cap' type='int' />
+    <field name='dignitary_cap' type='int' />
+    <field name='imperium_level' type='int' pk='true' />
+    <field name='fleet_cap' type='int' />
+    <field name='fame_player' type='int' />
+    <field name='edict_cap' type='int' />
+    <field name='spy_cap' type='int' />
+    <field name='campaign_key' type='string_ascii' pk='true' />
+    <field name='tooltip' type='optstring_ascii' />
+    <field name='tooltip_gaul' type='optstring_ascii' />
+  </table>
   <table table_name='family_relationship_types_tables'
          table_version='0'
          guid='0f35a0a0-fe21-49f4-8743-e38b0ab8b836,
