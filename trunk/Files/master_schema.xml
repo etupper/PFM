@@ -7085,6 +7085,23 @@
     <field fkey='cai_personalities_random_groups_tables.random_personality_group_key' name='personality_group' type='string' />
     <field fkey='cai_personalities_randomisation_policies_tables.randomisation_policy_key' name='randomisation_policy_key' type='string' />
   </table>
+  <table table_name='cai_personalities_income_allocation_policies_tables'
+         table_version='0'
+         guid='2c2200b0-ecd2-45a4-8d11-682174971c24'>
+    <field name='unknown1' type='int' />
+    <field name='unknown2' type='float' />
+    <field name='unknown3' type='int' />
+    <field name='unknown4' type='string_ascii' />
+  </table>
+  <table table_name='cai_personalities_income_allocation_policy_strategic_context_junctions_tables'
+         table_version='0'
+         guid='92e017ea-243d-49d1-83cd-78bdcc5e98a2'>
+    <field name='unknown1' type='string_ascii' />
+    <field name='unknown2' type='int' />
+    <field name='unknown3' type='float' />
+    <field name='unknown4' type='string_ascii' />
+    <field name='unknown5' type='int' />
+  </table>
   <table table_name='cai_personalities_random_group_junctions_tables'
          table_version='0'
          guid='476dcdda-33ae-4fba-b372-f0822c2cd1d3'>
@@ -7201,12 +7218,37 @@
     <field name='allowed_for_random_selection' type='boolean' />
     <field fkey='cai_personality_diplomatic_components_tables.id' name='diplomatic_component' type='string_ascii' version_start='2' />
     <field fkey='cai_personality_strategic_components_tables.id' name='strategic_component' type='string_ascii' />
-    <field name='unknown' type='string_ascii' />
+    <field name='unknown14' type='string_ascii' />
     <field fkey='cai_personality_deal_evaluation_components_tables.id' name='deal_evaluation_component' type='string_ascii' />
     <field name='unknown16' type='string_ascii' />
     <field fkey='cai_personalities_construction_system_policies_tables.key' name='construction_system_policy' type='string_ascii' />
     <field fkey='cai_personalities_task_management_system_task_generator_profiles_tables.key' name='task_management_system_task_generation_profile' type='string_ascii' />
     <field fkey='cai_personality_negotiation_components_tables.id' name='negotiation_component' type='string_ascii' />
+  </table>
+  <table table_name='cai_personalities_tables'
+         table_version='10'
+         guid='bb7342f2-af10-46fe-a48c-ccf2989cd8f2'>
+    <field fkey='cai_agent_distribution_profiles_tables.key' name='agent_distribution_profile_key' type='string_ascii' />
+    <field fkey='cai_agent_recruitment_profiles_tables.key' name='agent_recruitment_profile_key' type='string_ascii' />
+    <field fkey='cai_personalities_budget_policies_tables.key' name='budget_policy_key' type='string_ascii' />
+    <field name='character_skill_tree_manager_key' type='string_ascii' />
+    <field name='key' type='string_ascii' pk='true' />
+    <field fkey='cai_military_aggressiveness_policies_tables.key' name='military_aggressiveness_policy' type='string_ascii' />
+    <field fkey='cai_military_behaviour_policies_tables.key' name='military_behaviour_policy' type='string_ascii' />
+    <field fkey='cai_personalities_reliability_policies_tables.key' name='reliability_policy_key' type='string_ascii' />
+    <field fkey='cai_personalities_religious_conversion_policies_tables.key' name='religious_conversion_policy' type='string_ascii' />
+    <field name='technology_manager_key' type='string_ascii' />
+    <field name='allowed_for_random_selection' type='boolean' />
+    <field fkey='cai_personality_diplomatic_components_tables.id' name='diplomatic_component' type='string_ascii' version_start='2' />
+    <field fkey='cai_personality_strategic_components_tables.id' name='strategic_component' type='string_ascii' />
+    <field name='unknown14' type='string_ascii' />
+    <field fkey='cai_personality_deal_evaluation_components_tables.id' name='deal_evaluation_component' type='string_ascii' />
+    <field name='unknown16' type='string_ascii' />
+    <field fkey='cai_personalities_construction_system_policies_tables.key' name='construction_system_policy' type='string_ascii' />
+    <field fkey='cai_personalities_task_management_system_task_generator_profiles_tables.key' name='task_management_system_task_generation_profile' type='string_ascii' />
+    <field fkey='cai_personality_negotiation_components_tables.id' name='negotiation_component' type='string_ascii' />
+    <field name='unknown20' type='string_ascii' />
+    <field name='unknown21' type='string_ascii' />
   </table>
   <table table_name='cai_personalities_task_management_system_task_generator_profiles_tables'
          table_version='0'
@@ -7373,6 +7415,26 @@
     <field name='no_payment_chance' type='int' />
     <field name='num_goals_generated' type='int' />
   </table>
+  <table table_name='cai_personality_occupation_decision_components_tables'
+         table_version='0'
+         guid='1b0d07fa-eab5-4070-b2fb-130689526179'>
+    <field name='unknown1' type='int' />
+    <field name='unknown2' type='int' />
+    <field name='unknown3' type='string_ascii' />
+    <field name='unknown4' type='int' />
+    <field name='unknown5' type='int' />
+  </table>
+  <table table_name='cai_personality_occupation_decision_priorities_tables'
+         table_version='0'
+         guid='aac34a2e-ec34-4a1d-81ef-89bd6706aecb'>
+    <field name='unknown1' type='string_ascii' />
+    <field name='unknown2' type='float' />
+    <field name='unknown3' type='string_ascii' />
+    <field name='unknown4' type='float' />
+    <field name='unknown5' type='float' />
+    <field name='unknown6' type='float' />
+    <field name='unknown7' type='float' />
+  </table>
   <table table_name='cai_personality_strategic_components_tables'
          table_version='3'
          guid='fb08bc5f-32a7-4e43-b063-bdea095e664e'>
@@ -7462,6 +7524,22 @@
          table_version='0'
          guid='007dd3f8-01f8-4a35-bd20-5b65c22bf5c3'>
     <field name='key' type='string_ascii' />
+  </table>
+  <table table_name='cai_variables_overides_tables'
+         table_version='0'
+         guid='42f04ffb-7eed-4c22-8bed-05d67b5047d6'>
+    <field name='unknown1' type='string_ascii' />
+    <field name='unknown2' type='string_ascii' />
+    <field name='unknown3' type='boolean' />
+    <field name='unknown4' type='boolean' />
+    <field name='unknown5' type='float' />
+  </table>
+  <table table_name='cai_variables_tables'
+         table_version='0'
+         guid='b702b58d-cb63-4043-9de5-0f0643bedb0e'>
+    <field name='unknown1' type='string_ascii' />
+    <field name='unknown2' type='float' />
+    <field name='unknown3' type='string_ascii' />
   </table>
   <table table_name='campaign_ai_character_skill_tree_distribution_junctions_tables'
          table_version='0'
@@ -10023,6 +10101,12 @@
     <field name='order' type='int' />
     <field fkey='encyclopedia_pages_tables.page_key' name='page_key' type='string_ascii' />
   </table>
+  <table table_name='encyclopedia_building_redirects_tables'
+         table_version='0'
+         guid='ae4bbb5d-2c4f-4720-9d6c-c2ab9d728121'>
+    <field name='unknown1' type='string_ascii' />
+    <field name='unknown2' type='string_ascii' />
+  </table>
   <table table_name='encyclopedia_page_linkages_tables'
          table_version='1'
          guid='23b48108-ce42-49ef-9738-e57a6113de18'>
@@ -11065,6 +11149,61 @@
     <field name='selected_vo_tertiary' type='string_ascii' />
     <field name='hiding_scalar' type='float' />
   </table>
+  <table table_name='land_units_tables'
+		 table_version='27'
+         guid='0a574dd0-2379-47d7-ae20-610b93d6ae5f'>
+    <field name='accuracy' type='int' />
+    <field name='ammo' type='int' />
+    <field fkey='unit_armour_types_tables.key' name='armour' type='string_ascii' />
+    <field name='campaign_action_points' type='int' />
+    <field fkey='unit_category_tables.key' name='category' type='string_ascii' />
+    <field name='charge_bonus' type='int' />
+    <field fkey='unit_class_tables.key' name='class' type='string_ascii' />
+    <field name='dismounted_charge_bonus' type='int' />
+    <field name='dismounted_melee_attack' type='int' />
+    <field name='dismounted_melee_defence' type='int' />
+    <field name='unknown11' type='string_ascii' />
+    <field name='key' type='string_ascii' pk='true' />
+    <field name='man_animation' type='optstring_ascii' />
+    <field fkey='battle_entities_tables.key' name='man_entity' type='string_ascii' />
+    <field name='melee_attack' type='int' />
+    <field name='melee_defence' type='int' />
+    <field name='morale' type='int' />
+    <field name='bonus_hit_points' type='int' />
+    <field fkey='mounts_tables.key' name='mount' type='optstring_ascii' />
+    <field name='num_animals' type='int' />
+    <field fkey='animals_tables.key' name='animal' type='optstring_ascii' />
+    <field name='num_mounts' type='int' />
+    <field fkey='melee_weapons_tables.key' name='primary_melee_weapon' type='string_ascii' />
+    <field fkey='missile_weapons_tables.key' name='primary_missile_weapon' type='optstring_ascii' />
+    <field name='rank_depth' type='int' />
+    <field fkey='unit_shield_types_tables.key' name='shield' type='string_ascii' />
+    <field fkey='unit_description_short_texts_tables.key' name='short_description_text' type='string_ascii' />
+    <field fkey='unit_spacings_tables.key' name='spacing' type='string_ascii' />
+    <field fkey='unit_description_strengths_weaknesses_texts_tables.key' name='strengths_weaknesses_text' type='string_ascii' />
+    <field name='supports_first_person' type='boolean' />
+    <field name='training_level' type='string_ascii' />
+    <field name='num_guns' type='int' />
+    <field fkey='land_units_officers_tables.key' name='officers' type='string_ascii' />
+    <field fkey='land_unit_articulated_vehicles_tables.key' name='articulated_record' type='optstring_ascii' />
+    <field fkey='battlefield_engines_tables.key' name='engine' type='optstring_ascii' />
+    <field name='is_male' type='boolean' />
+    <field name='visibility_spotting_range_min' type='float' />
+    <field name='visibility_spotting_range_max' type='float' />
+    <field name='ability_global_recharge' type='float' />
+    <field fkey='unit_attributes_groups_tables.group_name' name='attribute_group' type='optstring_ascii' />
+    <field name='spot_dist_tree' type='float' />
+    <field name='spot_dist_scrub' type='float' />
+    <field fkey='battlefield_chariots_tables.key' name='chariot' type='optstring_ascii' />
+    <field name='num_chariots' type='int' />
+    <field name='reload' type='int' />
+    <field name='loose_spacing' type='boolean' />
+    <field fkey='spotting_and_hiding_values_tables.key' name='spotting_and_hiding' type='optstring_ascii' />
+    <field name='selection_vo' type='string_ascii' />
+    <field name='selected_vo_secondary' type='string_ascii' />
+    <field name='selected_vo_tertiary' type='string_ascii' />
+    <field name='hiding_scalar' type='float' />
+  </table>
   <table table_name='land_units_to_unit_abilites_junctions_tables'
          table_version='0'
          guid='d71a96d1-dc5b-4555-8c59-7c5598ca7caa'>
@@ -11983,6 +12122,28 @@
     <field fkey='unit_class_tables.key' name='class' type='string_ascii' />
     <field fkey='unit_description_gameplay_texts_tables.key' name='gameplay_description_text' type='string_ascii' />
     <field fkey='unit_description_historical_texts_tables.key' name='historical_description_text' type='string_ascii' />
+    <field name='key' type='string_ascii' pk='true' />
+    <field fkey='ship_dbs_tables.key' name='ship' type='string_ascii' />
+    <field fkey='unit_description_short_texts_tables.key' name='short_description_text' type='string_ascii' />
+    <field fkey='unit_description_strengths_weaknesses_texts_tables.key' name='strengths_weaknesses_text' type='string_ascii' />
+    <field name='unit_type_icon' type='optstring_ascii' />
+    <field fkey='unit_attributes_groups_tables.group_name' name='attribute_groups' type='optstring_ascii' />
+    <field fkey='naval_weapons_tables.key' name='primary_naval_weapon' type='optstring_ascii' />
+    <field fkey='naval_weapons_tables.key' name='secondary_naval_weapon' type='optstring_ascii' />
+    <field name='rank_depth' type='int' />
+    <field name='supports_first_person' type='boolean' />
+    <field name='can_board' type='boolean' />
+    <field name='unit_card' type='string_ascii' />
+    <field name='is_composite' type='boolean' />
+    <field name='ignition_threshold' type='int' />
+  </table>
+  <table table_name='naval_units_tables'
+		 table_version='16'
+         guid='f15bdc23-d27c-44b7-96e6-124b8d1cc3df'>
+    <field name='campaign_action_points' type='int' />
+    <field fkey='unit_category_tables.key' name='category' type='string_ascii' />
+    <field fkey='unit_class_tables.key' name='class' type='string_ascii' />
+    <field name='unknown4' type='string_ascii' />
     <field name='key' type='string_ascii' pk='true' />
     <field fkey='ship_dbs_tables.key' name='ship' type='string_ascii' />
     <field fkey='unit_description_short_texts_tables.key' name='short_description_text' type='string_ascii' />
