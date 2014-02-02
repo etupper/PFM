@@ -7970,6 +7970,20 @@
     <field name='unknown8' type='optstring_ascii' />
     <field name='unknown9' type='optstring_ascii' />
   </table>
+  <table table_name='campaign_character_attribute_effects_tables'
+         table_version='1'
+         guid='bd843be8-0bc2-47d4-a28c-73652fa303c9'>
+    <field fkey='agents_tables.key' name='agent_record' type='string_ascii' pk='true' />
+    <field name='attribute_level' type='int' pk='true' />
+    <field fkey='agent_attributes_tables.key' name='attribute_record' type='string_ascii' pk='true' />
+    <field name='unknown' type='optstring_ascii' />
+    <field fkey='effects_tables.effect' name='effect_record' type='string_ascii' pk='true' />
+    <field fkey='campaign_effect_scopes_tables.key' name='effect_scope' type='string_ascii' pk='true' />
+    <field name='effect_value' type='float' />
+    <field name='unknown8' type='optstring_ascii' />
+    <field name='unknown9' type='optstring_ascii' />
+    <field name='unknown10' type='optstring_ascii' />
+  </table>
   <table table_name='campaign_clan_level_infos_tables'
          table_version='1'
          guid='24a3b534-797e-4282-a157-09402a874ad6,
