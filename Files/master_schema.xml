@@ -6180,6 +6180,27 @@
     <field name='id' type='string_ascii' pk='true' />
     <field fkey='cultures_subcultures_tables.subculture' name='sub_culture' type='optstring_ascii' />
   </table>
+  <table table_name='building_chain_availabilities_tables'         
+         table_version='1'
+         guid='e5272ba5-5851-4192-b49a-07d5793ee7a3'>
+    <field fkey='building_chains_tables.key' name='building_chain' type='string_ascii' />
+    <field fkey='cultures_tables.key' name='culture' type='optstring_ascii' />
+    <field fkey='factions_tables.key' name='faction' type='optstring_ascii' />
+    <field name='key' type='string_ascii' pk='true' />
+    <field fkey='cultures_subcultures_tables.subculture' name='subculture' type='optstring_ascii' />
+    <field name='campaign' type='optstring_ascii' />
+  </table>
+  <table table_name='building_chain_availability_set_ids_tables'
+         table_version='0'
+         guid='d2eef011-8fb3-438e-9799-035ce2cd47b7'>
+    <field name='key' type='string_ascii' pk='true'/>
+  </table>
+  <table table_name='building_chain_availability_sets_tables'
+         table_version='0'
+         guid='b63d1b08-a5e6-44d7-b7ae-41d36742b283'>
+    <field name='building_chain' type='string_ascii' pk='true' />
+    <field name='set_key' type='string_ascii' pk='true' />
+  </table>
   <table table_name='building_chain_to_slots_tables'
          table_version='0'
          guid='1582edce-b56a-465e-9d23-f413eea0fea4,
