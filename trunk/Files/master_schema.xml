@@ -7418,6 +7418,34 @@
     <field name='war' type='float' />
     <field name='military_access' type='float' />
   </table>
+  <table table_name='cai_personality_group_junctions_tables'
+         table_version='0'
+         guid='3774d6e4-e6db-4e0d-89d8-ead51a860d73'>
+    <field name='unknown1' type='string_ascii' />
+    <field name='unknown2' type='string_ascii' />
+    <field name='unknown3' type='float' />
+    <field name='unknown4' type='int' />
+    <field name='unknown5' type='int' />
+    <field name='unknown6' type='int' />
+    <field name='unknown7' type='int' />
+    <field name='unknown8' type='float' />
+    <field name='unknown9' type='float' />
+    <field name='unknown10' type='float' />
+    <field name='unknown11' type='float' />
+  </table>
+  <table table_name='cai_personality_group_overrides_tables'
+         table_version='0'
+         guid='180ac3ec-c94d-429b-93ec-e4f034f30c9a'>
+    <field name='unknown1' type='optstring_ascii' />
+    <field name='unknown2' type='int' />
+    <field name='unknown3' type='string_ascii' />
+    <field name='unknown4' type='string_ascii' />
+  </table>
+  <table table_name='cai_personality_groups_tables'
+         table_version='0'
+         guid='5c6be947-53c4-4a45-bb52-ef96994b861a'>
+    <field name='unknown1' type='string_ascii' />
+  </table>
   <table table_name='cai_personality_negotiation_components_tables'
          table_version='0'
          guid='08aec885-a13a-46ed-a087-07bf5f4d8d40'>
@@ -7487,6 +7515,26 @@
     <field name='unknown2' type='float' />
     <field name='unknown3' type='float' />
     <field name='unknown4' type='float' />
+  </table>
+  <table table_name='cai_personality_strategic_components_tables'
+         table_version='5'
+         guid='8fe6c911-724d-499f-90b7-a13786ed30b6'>
+    <field name='friendly_towards_enemy_multiplier' type='float' />
+    <field name='friendly_towards_friend_multiplier' type='float' />
+    <field name='hostile_towards_enemy_multiplier' type='float' />
+    <field name='hostile_towards_friend_multiplier' type='float' />
+    <field name='id' type='string_ascii' pk='true' />
+    <field name='max_friendly_attitude' type='float' />
+    <field name='max_hostile_attitude' type='float' />
+    <field name='unknown_faction_multiplier' type='float' />
+    <field name='max_merc_proportion' type='float' />
+    <field name='min_merc_cap' type='float' />
+    <field name='unknown1' type='float' />
+    <field name='unknown2' type='float' />
+    <field name='unknown3' type='float' />
+    <field name='unknown4' type='float' />
+    <field name='unknown5' type='float' />
+    <field name='unknown6' type='float' />
   </table>
   <table table_name='cai_personality_strategic_desired_attitudes_tables'
          table_version='1'
