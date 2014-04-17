@@ -7511,10 +7511,10 @@
     <field name='unknown_faction_multiplier' type='float' />
     <field name='max_merc_proportion' type='float' />
     <field name='min_merc_cap' type='float' />
-    <field name='unknown1' type='float' />
-    <field name='unknown2' type='float' />
-    <field name='unknown3' type='float' />
-    <field name='unknown4' type='float' />
+    <field name='enemy_strength_modifier' type='float' />
+    <field name='enemy_threat_strength_modifier' type='float' />
+    <field name='min_retreat_ratio' type='float' />
+    <field name='min_retreat_to_settlement_ratio' type='float' />
   </table>
   <table table_name='cai_personality_strategic_components_tables'
          table_version='5'
@@ -7528,12 +7528,12 @@
     <field name='max_hostile_attitude' type='float' />
     <field name='unknown_faction_multiplier' type='float' />
     <field name='max_merc_proportion' type='float' />
-    <field name='min_merc_cap' type='float' />
-    <field name='unknown1' type='float' />
-    <field name='unknown2' type='float' />
-    <field name='unknown3' type='float' />
-    <field name='unknown4' type='float' />
-    <field name='unknown5' type='float' />
+    <field name='min_merc_cap' type='int' />
+    <field name='enemy_strength_modifier' type='float' />
+    <field name='enemy_threat_strength_modifier' type='float' />
+    <field name='min_retreat_ratio' type='float' />
+    <field name='min_retreat_to_settlement_ratio' type='float' />
+    <field name='strategic_balance_oppurtunism_factor' type='float' />
     <field name='unknown6' type='float' />
   </table>
   <table table_name='cai_personality_strategic_desired_attitudes_tables'
