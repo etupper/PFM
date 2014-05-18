@@ -2,11 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Xml.Serialization;
 using Common;
 using Filetypes;
 using PackFileManager.Properties;
 using System.Windows.Forms;
 using CommonDialogs;
+
+using TableVersions = System.Collections.Generic.SortedList<string, int>;
 
 namespace PackFileManager {
     /*
@@ -85,9 +88,6 @@ namespace PackFileManager {
 
         // load the given game's directory from the gamedirs file
         public static void LoadGameLocationFromFile(Game g) {
-            if (g.IsInstalled) {
-                return;
-            }
             string result = null;
             // load from file
             if (File.Exists(GameDirFilepath)) {
@@ -140,7 +140,7 @@ namespace PackFileManager {
                         Settings.Default.CurrentGame = current.Id;
 
                         // load the appropriate type map
-                        ApplyGameTypemap();
+                        LoadGameMaxDbVersions();
 
                         // invalidate cache of reference map cache
                         List<string> loaded = new PackLoadSequence() {
@@ -156,44 +156,53 @@ namespace PackFileManager {
         }
         
         public static void CheckGameDirectories() {
+            bool writeGameDirFile = false;
             foreach(Game g in Game.Games) {
                 if (g.GameDirectory == null) {
                     // if there was an empty entry in file, don't ask again
                     DirectoryDialog dlg = new DirectoryDialog() {
                         Description = string.Format("Please point to Location of {0}\nCancel if not installed.", g.Id)
                     };
+                    dlg.Refresh();
                     if (dlg.ShowDialog() == DialogResult.OK) {
                         g.GameDirectory = dlg.SelectedPath;
                     } else {
                         // add empty entry to file for next time
                         g.GameDirectory = Game.NOT_INSTALLED;
                     }
+                    writeGameDirFile = true;
                 } else if (g.GameDirectory.Equals(Game.NOT_INSTALLED)) {
                     // mark as invalid
                     g.GameDirectory = null;
                 }
             }
-            SaveGameDirs();
+            // don't write the file if user wasn't queried
+            if (writeGameDirFile) {
+                SaveGameDirs();
+            }
         }
         
         #region Game-specific schema (typemap) handling
-        public void ApplyGameTypemap() {
+        private void LoadGameMaxDbVersions() {
             try {
                 Game game = CurrentGame;
-                string schemaFile = Path.Combine(InstallationPath, DBTypeMap.Instance.GetUserFilename(game.Id));
-                if (!File.Exists(schemaFile)) {
-                    schemaFile = Path.Combine(InstallationPath, game.SchemaFilename);
-                    if (!File.Exists(schemaFile)) {
-                        // rebuild from master schema
-                        DBTypeMap.Instance.InitializeTypeMap(InstallationPath);
-                        CreateSchemaFile(game);
-                    }
+                if (gameDbVersions.ContainsKey(game)) {
+                    return;
                 }
-                DBTypeMap.Instance.initializeFromFile(schemaFile);
+                string schemaFile = Path.Combine(InstallationPath, game.MaxVersionFilename);
+                if (File.Exists(schemaFile)) {
+                    SortedList<string, int> versions = SchemaOptimizer.ReadTypeVersions(schemaFile);
+                    if (versions != null) {
+                        gameDbVersions.Add(game, versions);
+                    }
+                } else {
+                    // rebuild from master schema
+                    CreateSchemaFile(game);
+                }
             } catch { }
         }
         public void CreateSchemaFile(Game game) {
-            string filePath = Path.Combine(InstallationPath, game.SchemaFilename);
+            string filePath = Path.Combine(InstallationPath, game.MaxVersionFilename);
             if (game.IsInstalled && !File.Exists(filePath)) {
                 SchemaOptimizer optimizer = new SchemaOptimizer() {
                     PackDirectory = Path.Combine(game.GameDirectory, "data"),
@@ -205,6 +214,18 @@ namespace PackFileManager {
                 createdGameSchemata = true;
 #endif
             }
+        }
+        
+        private Dictionary<Game, TableVersions> gameDbVersions = new Dictionary<Game, TableVersions>();
+        public int GetMaxDbVersion(string tableName) {
+            int result = -1;
+            SortedList<string, int> tablesToVersion;
+            if (gameDbVersions.TryGetValue(CurrentGame, out tablesToVersion)) {
+                if (!tablesToVersion.TryGetValue(tableName, out result)) {
+                    result = -1;
+                }
+            }
+            return result;
         }
         #endregion
     }

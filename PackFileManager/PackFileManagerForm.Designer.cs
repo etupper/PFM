@@ -124,6 +124,7 @@ namespace PackFileManager
             this.extrasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cAPacksAreReadOnlyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.subscribeToBetaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showDecodeToolOnErrorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.extractTSVFileExtensionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.csvToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -918,6 +919,7 @@ namespace PackFileManager
             this.extrasToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.cAPacksAreReadOnlyToolStripMenuItem,
             this.updateOnStartupToolStripMenuItem,
+            this.subscribeToBetaToolStripMenuItem,
             this.showDecodeToolOnErrorToolStripMenuItem,
             this.extractTSVFileExtensionToolStripMenuItem});
             this.extrasToolStripMenuItem.Name = "extrasToolStripMenuItem";
@@ -942,6 +944,14 @@ namespace PackFileManager
             this.updateOnStartupToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
             this.updateOnStartupToolStripMenuItem.Text = "Update on Startup";
             this.updateOnStartupToolStripMenuItem.Click += new System.EventHandler(this.updateOnStartupToolStripMenuItem_Click);
+            // 
+            // subscribeToBetaToolStripMenuItem
+            // 
+            this.subscribeToBetaToolStripMenuItem.CheckOnClick = true;
+            this.subscribeToBetaToolStripMenuItem.Name = "subscribeToBetaToolStripMenuItem";
+            this.subscribeToBetaToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.subscribeToBetaToolStripMenuItem.Text = "Use Beta Schemas";
+            this.subscribeToBetaToolStripMenuItem.Click += new System.EventHandler(this.subscribeToBetaToolStripMenuItem_Click);
             // 
             // showDecodeToolOnErrorToolStripMenuItem
             // 
@@ -1204,6 +1214,7 @@ namespace PackFileManager
         private System.Windows.Forms.ToolStripMenuItem extrasToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cAPacksAreReadOnlyToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem updateOnStartupToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem subscribeToBetaToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         private System.Windows.Forms.ToolStripMenuItem contextAddMenuItem;
         private System.Windows.Forms.ToolStripMenuItem contextAddFileMenuItem;
