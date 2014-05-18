@@ -20,8 +20,8 @@ namespace PackFileTest {
             List<ReferenceChecker> checkers = new List<ReferenceChecker>();
             Dictionary<string, List<string>> result = new Dictionary<string, List<string>>();
             DBTypeMap.Instance.InitializeTypeMap(Directory.GetCurrentDirectory());
-            foreach (string table in DBTypeMap.Instance.TypeMap.Keys) {
-                foreach (FieldInfo info in DBTypeMap.Instance.TypeMap[table]) {
+            foreach (TypeInfo table in DBTypeMap.Instance.AllInfos) {
+                foreach (FieldInfo info in table.Fields) {
                     if (!string.IsNullOrEmpty(info.ForeignReference)) {
                         List<string> addTo;
                         if (!result.TryGetValue(info.ForeignReference, out addTo)) {

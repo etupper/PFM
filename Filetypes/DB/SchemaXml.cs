@@ -9,23 +9,18 @@ using System.Xml;
 namespace Filetypes {
     using GuidList = List<GuidTypeInfo>;
     using FieldInfoList = List<FieldInfo>;
+    using TypeInfoList = List<TypeInfo>;
     
     public class XmlImporter {
         // table to contained fields
-        public SortedDictionary<string, FieldInfoList> descriptions = new SortedDictionary<string, FieldInfoList>();
-        public SortedDictionary<string, FieldInfoList> Descriptions {
+        List<TypeInfo> typeInfos = new List<TypeInfo>();
+        public List<TypeInfo> Imported {
             get {
-                return descriptions;
-            }
-        }
-        public SortedDictionary<GuidTypeInfo, FieldInfoList> guidToDescriptions = new SortedDictionary<GuidTypeInfo, FieldInfoList>();
-        public SortedDictionary<GuidTypeInfo, FieldInfoList> GuidToDescriptions {
-            get {
-                return guidToDescriptions;
+                return typeInfos;
             }
         }
         
-        private static string[] GUID_SEPARATOR = { "," };
+        // private static string[] GUID_SEPARATOR = { "," };
         
         public static readonly string GUID_TAG = "guid";
 
@@ -44,8 +39,9 @@ namespace Filetypes {
 			foreach (XmlNode node in doc.ChildNodes) {
 				foreach (XmlNode tableNode in node.ChildNodes) {
                     string id;
+                    int version = 0;
                     FieldInfoList fields = new FieldInfoList ();
-                    bool verifyEquality = false;
+                    // bool verifyEquality = false;
                     
                     XmlAttribute attribute = tableNode.Attributes["name"];
                     if (attribute != null) {
@@ -54,41 +50,25 @@ namespace Filetypes {
                         if (unify) {
                             id = UnifyName (id);
                         }
-                        Descriptions.Add(id, fields);
                     } else {
                         // table with GUIDs
-                        id = tableNode.Attributes[GUID_TAG].Value.Trim();
-                        string table_name = tableNode.Attributes["table_name"].Value.Trim();
-                
+                        // id = tableNode.Attributes[GUID_TAG].Value.Trim();
+                        id = tableNode.Attributes["table_name"].Value.Trim();
                         string table_version = tableNode.Attributes["table_version"].Value.Trim();
-                        string[] guids = id.Split(GUID_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
-                        // create separate entry for each GUID
-                        foreach(string s in guids) {
-                            string guid = s.Trim();
-                            GuidTypeInfo info = new GuidTypeInfo(guid, table_name, int.Parse(table_version));
-                            if (!GuidToDescriptions.ContainsKey(info)) {
-                                GuidToDescriptions.Add(info, fields);
-                            } else {
-                                verifyEquality = true;
-                            }
-                        }
+                        version = int.Parse(table_version);
                     }
 
                     FillFieldList(fields, tableNode.ChildNodes, unify);
-
-                    // defensive code block.
-                    // used when the guid part was first introduced to make sure that
-                    // guids didn't get shared across games
-                    if (verifyEquality) {
-                        VerifyEquality(tableNode, fields);
-                    }
-
-                    verifyEquality = false;
+                    TypeInfo info = new TypeInfo(fields) {
+                        Name = id,
+                        Version = version
+                    };
+                    typeInfos.Add(info);
 				}
 			}
 		}
         
-        void FillFieldList(FieldInfoList fields, XmlNodeList nodes, bool unify = false) {
+        void FillFieldList(List<FieldInfo> fields, XmlNodeList nodes, bool unify = false) {
             // add all fields
             foreach(XmlNode fieldNode in nodes) {
                 FieldInfo field = FromNode (fieldNode, unify);
@@ -138,25 +118,6 @@ namespace Filetypes {
             }
 			return description;
 		}
-
-        void VerifyEquality(XmlNode tableNode, FieldInfoList fields) {
-            string id = tableNode.Attributes[GUID_TAG].Value.Trim();
-            string table_name = tableNode.Attributes["table_name"].Value.Trim();
-            string table_version = tableNode.Attributes["table_version"].Value.Trim();
-            string[] guids = id.Split(GUID_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
-            foreach(string s in guids) {
-                string guid = s.Trim();
-                GuidTypeInfo info = new GuidTypeInfo(guid, table_name, int.Parse(table_version));
-                FieldInfoList existing = GuidToDescriptions[info];
-                if (!Enumerable.SequenceEqual<FieldInfo>(fields, existing)) {
-                    Console.WriteLine("{0} was:", info.Guid);
-                    existing.ForEach(f => Console.WriteLine(f));
-                    Console.WriteLine("is:");
-                    fields.ForEach(f => Console.WriteLine(f));
-                    throw new InvalidDataException();
-                }
-            }
-        }
     }
 
     public class XmlExporter {
@@ -171,31 +132,36 @@ namespace Filetypes {
         }
         
         public void Export() {
-            Export(DBTypeMap.Instance.TypeMap, DBTypeMap.Instance.GuidMap);
+            Export(DBTypeMap.Instance.AllInfos);
         }
 
-        public void Export(SortedDictionary<string, FieldInfoList> nameMap, SortedDictionary<GuidTypeInfo, FieldInfoList> guidMap) {
+        public void Export(List<TypeInfo> infos) {
+#if DEBUG
+            Console.WriteLine("storing {0} infos", infos.Count);
+#endif
 			writer.WriteLine ("<schema>");
-            WriteTables(nameMap, new VersionedTableInfoFormatter());
-            SortedDictionary<GuidList, FieldInfoList> cleaned = CompileSameDefinitions(guidMap);
+            // WriteTables(infos, new VersionedTableInfoFormatter());
+            List<TypeInfo> cleaned = CompileSameDefinitions(infos);
+#if DEBUG
+            Console.WriteLine("cleaned: {0}", cleaned.Count);
+#endif
             WriteTables(cleaned, new GuidTableInfoFormatter());
 			writer.WriteLine ("</schema>");
 			writer.Close ();
 		}
         
-        private void WriteTables<T>(SortedDictionary<T, FieldInfoList> tableDescriptions, TableInfoFormatter<T> formatter) {
-            foreach (T name in tableDescriptions.Keys) {
-                FieldInfoList descriptions = tableDescriptions[name];
-                WriteTable(name, descriptions, formatter);
+        private void WriteTables(List<TypeInfo> tableDescriptions, TableInfoFormatter<TypeInfo> formatter) {
+            foreach (TypeInfo typeInfo in tableDescriptions) {
+                WriteTable(typeInfo, formatter);
             }
         }
         
-        void WriteTable<T>(T id, FieldInfoList descriptions, TableInfoFormatter<T> format) {
+        void WriteTable(TypeInfo id, TableInfoFormatter<TypeInfo> format) {
             if (LogWriting) {
                 Console.WriteLine ("writing table {0}", id);
             }
 			writer.WriteLine (format.FormatHeader(id));
-            WriteFieldInfos (descriptions);
+            WriteFieldInfos (id.Fields);
 			writer.WriteLine ("  </table>");
             writer.Flush();
 		}
@@ -240,27 +206,31 @@ namespace Filetypes {
         /*
          * Collect all GUIDs with the same type name and definition structure to store them in a single entry.
          */
-        private SortedDictionary<GuidList, FieldInfoList> CompileSameDefinitions(SortedDictionary<GuidTypeInfo, FieldInfoList> guidMap) {
-            SortedDictionary<GuidList, FieldInfoList> result = 
-                new SortedDictionary<GuidList, FieldInfoList>(GuidListComparer.Instance);
+        private List<TypeInfo> CompileSameDefinitions(List<TypeInfo> sourceList) {
+            Dictionary<string, List<TypeInfo>> typeMap = new Dictionary<string, List<TypeInfo>>();
             
-            foreach(GuidTypeInfo guid in guidMap.Keys) {
-                GuidList addTo = new GuidList();
-                FieldInfoList typeDef = guidMap[guid];
-
-                foreach(GuidList guids in result.Keys) {
-                    if (!guids[0].TypeName.Equals(guid.TypeName)) {
-                        continue;
+            foreach(TypeInfo typeInfo in sourceList) {
+                if (!typeMap.ContainsKey(typeInfo.Name)) {
+                    List<TypeInfo> addTo = new List<TypeInfo>();
+                    addTo.Add(typeInfo);
+                    typeMap.Add(typeInfo.Name, addTo);
+                } else {
+                    bool added = false;
+                    foreach(TypeInfo existing in typeMap[typeInfo.Name]) {
+                        if (Enumerable.SequenceEqual<FieldInfo>(typeInfo.Fields, existing.Fields)) {
+                            existing.ApplicableGuids.AddRange(typeInfo.ApplicableGuids);
+                            added = true;
+                            break;
+                        }
                     }
-                    if (Enumerable.SequenceEqual<FieldInfo>(typeDef, result[guids])) {
-                        addTo = guids;
-                        break;
+                    if (!added) {
+                        typeMap[typeInfo.Name].Add(typeInfo);
                     }
                 }
-
-                addTo.Add (guid);
-                addTo.Sort();
-                result[addTo] = typeDef;
+            }
+            List<TypeInfo> result = new List<TypeInfo>();
+            foreach(List<TypeInfo> infos in typeMap.Values) {
+                result.AddRange(infos);
             }
             return result;
         }
@@ -273,13 +243,14 @@ namespace Filetypes {
             string result = "";
             using (var stream = new MemoryStream()) {
                 XmlExporter exporter = new XmlExporter(stream);
-                if (string.IsNullOrEmpty(guid.Guid)) {
-                    exporter.WriteTable(guid.TypeName, description, new VersionedTableInfoFormatter());
-                } else {
-                    GuidList info = new GuidList();
-                    info.Add(guid);
-                    exporter.WriteTable(info, description, new GuidTableInfoFormatter());
+                TypeInfo info = new TypeInfo(description) {
+                    Name = guid.TypeName,
+                    Version = guid.Version
+                };
+                if (!string.IsNullOrEmpty(guid.Guid)) {
+                    info.ApplicableGuids.Add(guid.Guid);
                 }
+                exporter.WriteTable(info, new GuidTableInfoFormatter());
                 stream.Position = 0;
                 result = new StreamReader(stream).ReadToEnd();
             }
@@ -326,16 +297,16 @@ namespace Filetypes {
     /*
      * Formats header with tablename/version and list of applicable GUIDs.
      */
-    class GuidTableInfoFormatter : TableInfoFormatter<GuidList> {
+    class GuidTableInfoFormatter : TableInfoFormatter<TypeInfo> {
         static string HEADER_FORMAT = "  <table table_name='{1}'" + Environment.NewLine +
             "         table_version='{2}'" + Environment.NewLine +
             "         " + XmlImporter.GUID_TAG +"='{0}'>";
         static string GUID_SEPARATOR = string.Format(",{0}               ", Environment.NewLine);
 
-        public override string FormatHeader(GuidList info) {
-            List<string> guids = new List<string>(info.Count);
-            info.ForEach(i => { if (!guids.Contains(i.Guid)) { guids.Add(i.Guid);  }});
-            return string.Format(HEADER_FORMAT, string.Join(GUID_SEPARATOR, guids), info[0].TypeName, info[0].Version);
+        public override string FormatHeader(TypeInfo info) {
+            List<string> guids = new List<string>(info.ApplicableGuids.Count);
+            info.ApplicableGuids.ForEach(i => { if (!guids.Contains(i)) { guids.Add(i);  }});
+            return string.Format(HEADER_FORMAT, string.Join(GUID_SEPARATOR, guids), info.Name, info.Version);
         }
     }
     #endregion

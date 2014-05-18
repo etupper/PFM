@@ -100,36 +100,8 @@ namespace SchemaIntegration {
             }
 
             if (IntegrateExisting) {
-                foreach (string type in importer.Descriptions.Keys) {
-                    IntegrateTable(type, importer.Descriptions[type]);
-                }
-            }
-            foreach(GuidTypeInfo info in importer.GuidToDescriptions.Keys) {
-                List<FieldInfo> infos;
-                if (!importer.GuidToDescriptions.TryGetValue(info, out infos)) {
-                    // nothing to integrate
-                    continue;
-                }
-                if (!DBTypeMap.Instance.GuidMap.ContainsKey(info)) {
-                    DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, infos);
-                } else {
-                    PackedFile dbPacked;
-                    List<FieldInfo> oldInfo = DBTypeMap.Instance.GetInfoByGuid(info.Guid);
-                    if (packedFiles.TryGetValue(info.TypeName, out dbPacked)) {
-                        if (OverwriteExisting || !CanDecode(dbPacked)) {
-                            DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, infos);
-                            if (CanDecode(dbPacked)) {
-                                Console.WriteLine("Using new schema for {0}", info.TypeName);
-                            } else {
-                                DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, oldInfo);
-                            }
-                        } else if (IntegrateExisting) {
-                            IntegrateInto(info.TypeName, oldInfo, infos);
-                            DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, oldInfo);
-                        } else {
-                            Console.WriteLine("Can already decode {0}", info.TypeName);
-                        }
-                    }
+                foreach (TypeInfo type in importer.Imported) {
+                    IntegrateTable(type.Name, type.Fields);
                 }
             }
         }
@@ -138,15 +110,9 @@ namespace SchemaIntegration {
             using (var stream = File.OpenRead(file)) {
                 XmlImporter importer = new XmlImporter(stream);
                 importer.Import();
-                foreach (GuidTypeInfo info in importer.GuidToDescriptions.Keys) {
-                    if (!DBTypeMap.Instance.GuidMap.ContainsKey(info)) {
-                        Console.WriteLine("adding {0}", info.Guid);
-                        DBTypeMap.Instance.SetByGuid(info.Guid, info.TypeName, info.Version, importer.GuidToDescriptions[info]);
-                    } else {
-                        List<FieldInfo> existingInfo = DBTypeMap.Instance.GetInfoByGuid(info.Guid);
-                        List<FieldInfo> update = importer.GuidToDescriptions[info];
-                        ReplaceUnknowns(existingInfo, update);
-                    }
+                foreach (TypeInfo info in importer.Imported) {
+                    Console.WriteLine("adding {0}", info.Name);
+                    DBTypeMap.Instance.AllInfos.Add (info);
                 }
             }
         }
@@ -227,89 +193,6 @@ namespace SchemaIntegration {
             }
         }
         
-        public void AddCaData(string caDir) {
-            HandleAllCaFields(caDir, AddCaFieldInfo);
-        }
-        public void VerifyData(string caDir) {
-            HandleAllCaFields(caDir, SearchMissingData);
-        }
-        private void HandleAllCaFields(string caDir, HandleCaField handle) {
-            CaXmlDbFileCodec codec = new CaXmlDbFileCodec(caDir);
-            LoadDbFiles();
-
-            foreach(string dbType in packedFiles.Keys) {
-                
-                if (dbType.Contains("advice_levels")) {
-                    Console.WriteLine("one second...");
-                }
-                
-                DBFileHeader header = PackedFileDbCodec.readHeader(packedFiles[dbType]);
-                if (header.GUID != null && header.EntryCount > 0) {
-                    TypeInfo caInfo = codec.TypeInfoByTableName(dbType);
-                    List<FieldInfo> existingInfo = DBTypeMap.Instance.GetInfoByGuid(header.GUID);
-                    if (caInfo != null && existingInfo != null) {
-                        DBFile packData = PackedFileDbCodec.Decode(packedFiles[caInfo.Name]);
-                        string caXmlFile = string.Format("{0}.xml", caInfo.Name.Replace("_tables", ""));
-                        caXmlFile = Path.Combine(caDir, caXmlFile);
-                        DBFile caData = codec.Decode(File.OpenRead(caXmlFile));
-
-                        if (caData == null) {
-                            Console.WriteLine("Could not decode xml file for type {0}", caInfo.Name);
-                            continue;
-                        }
-                        if (packData == null) {
-                            Console.WriteLine("Could not decode pack file data for type {0}", caInfo.Name);
-                            continue;
-                        }
-                        handle(caData, packData);
-                    }
-                }
-            }
-        }
-        
-        private delegate void HandleCaField(DBFile xmlData, DBFile packData);
-        private void AddCaFieldInfo(DBFile xmlData, DBFile packData) {
-            TypeInfo caInfo = xmlData.CurrentType;
-            List<FieldInfo> existingInfo = packData.CurrentType.Fields;
-            for (int fieldIndex = 0; fieldIndex < existingInfo.Count; fieldIndex++) {
-                FieldInfo info = existingInfo[fieldIndex];
-                if (CheckAllFields || UNKNOWN_RE.IsMatch(info.Name)) {
-                    try {
-                        List<string> fieldValues = GetFieldValues(packData.Entries, fieldIndex);
-                        List<string> fieldNames = GetMatchingFieldNames(xmlData, fieldValues);
-                        if (fieldNames.Count != 1) {
-                            Console.WriteLine("no unique fields matching data from {0}:{1}", caInfo.Name, info.Name);
-                        } else if (!info.Name.Equals(fieldNames[0])) {
-                            Console.WriteLine("resolved {0}:{1} to {2}", caInfo.Name, info.Name, fieldNames[0]);
-                            info.Name = fieldNames[0];
-                        }
-                    } catch (Exception e) {
-                        Console.WriteLine(e);
-                    }
-                }
-            }
-            AddCaReferences (caInfo, existingInfo);
-        }
-        /*
-         * Looks for data contained in the pack file that doesn't have 
-         * a correspondence in the xml. Outputs to console.
-         */
-        private void SearchMissingData(DBFile xmlData, DBFile packData) {
-            List<string> missing = new List<string>();
-            DoSearch(xmlData, packData);
-            if (missing.Count > 0) {
-                missing.Insert(0, "Not in XML:");
-            }
-            List<string> missingInPack = DoSearch(packData, xmlData);
-            if (missingInPack.Count > 0) {
-                missingInPack.Insert(0, "Not in Pack:");
-            }
-            missing.AddRange(missingInPack);
-            if (missing.Count > 0) {
-                Console.WriteLine("{0}:", xmlData.CurrentType.Name);
-                missing.ForEach(m => Console.WriteLine(m));
-            }
-        }
         private List<string> DoSearch(DBFile dataOne, DBFile dataTwo) {
             List<string> messages = new List<string>();
             if (dataTwo.Entries.Count == 0) {
@@ -466,16 +349,8 @@ namespace SchemaIntegration {
         
         static ICollection<List<FieldInfo>> InfosForTypename(string type, int version) {
             ICollection<List<FieldInfo>> result = new List<List<FieldInfo>>();
-            if (DBTypeMap.Instance.TypeMap.ContainsKey(type)) {
-                List<FieldInfo> info = DBTypeMap.Instance.TypeMap[type];
-                if (GetVersions(info).Contains(version)) {
-                    result.Add(DBTypeMap.FilterForVersion(info, version));
-                }
-            }
-            foreach(GuidTypeInfo guidInfo in DBTypeMap.Instance.GuidMap.Keys) {
-                if (guidInfo.TypeName.Equals(type) && guidInfo.Version == version) {
-                    result.Add(DBTypeMap.Instance.GuidMap[guidInfo]);
-                }
+            foreach (TypeInfo info in DBTypeMap.Instance.GetVersionedInfos(type, version)) {
+                result.Add(info.Fields);
             }
             return result;
         }

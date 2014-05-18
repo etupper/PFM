@@ -152,15 +152,16 @@ namespace Common {
          */
         public bool IsInstalled {
             get {
-                return Directory.Exists(GameDirectory);
+                return Directory.Exists(GameDirectory)
+                    && Directory.Exists(DataDirectory);
             }
         }
         /*
          * Retrieve the schema filename for this game.
          */
-        public string SchemaFilename {
+        public string MaxVersionFilename {
             get {
-                return string.Format("schema_{0}.xml", Id);
+                return string.Format("maxVersions_{0}.xml", Id);
             }
         }
         
