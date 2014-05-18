@@ -144,6 +144,7 @@ namespace PackFileManager
 
             // reflect settings in check box menu items
             updateOnStartupToolStripMenuItem.Checked = Settings.Default.UpdateOnStartup;
+            subscribeToBetaToolStripMenuItem.Checked = Settings.Default.SubscribeToBetaSchema;
             showDecodeToolOnErrorToolStripMenuItem.Checked = Settings.Default.ShowDecodeToolOnError;
 
             tsvToolStripMenuItem.Checked = "tsv".Equals(Settings.Default.TsvExtension);
@@ -617,7 +618,11 @@ namespace PackFileManager
         #endregion
 
         private void PackTypeItemSelected(object sender, EventArgs e) {
-            foreach (ToolStripMenuItem item in changePackTypeToolStripMenuItem.DropDownItems) {
+            foreach (ToolStripItem inMenu in changePackTypeToolStripMenuItem.DropDownItems) {
+                ToolStripMenuItem item = inMenu as ToolStripMenuItem;
+                if (item == null) {
+                    continue;
+                }
                 item.Checked = (sender == item);
                 if (item.Checked) {
                     currentPackFile.Type = (PackType) item.Tag;
@@ -1138,7 +1143,7 @@ namespace PackFileManager
         private void saveToDirectoryToolStripMenuItem_Click(object sender, EventArgs e) {
             try {
                 DBTypeMap.Instance.SaveToFile(Path.GetDirectoryName(Application.ExecutablePath), 
-                                              string.Format("{0}_{1}", GameManager.Instance.CurrentGame.Id, "user"));
+                                              "user");
                 string message = "You just saved your own DB definitions in a new file.\n" +
                     "This means that these will be used instead of the ones received in updates from TWC.\n" +
                     "Once you have uploaded your changes and they have been integrated,\n" +
@@ -1185,10 +1190,10 @@ namespace PackFileManager
 
         static void TryUpdate(bool showSuccess = true, string currentPackFile = null) {
             try {
-                DBFileTypesUpdater updater = new DBFileTypesUpdater();
+                DBFileTypesUpdater updater = new DBFileTypesUpdater(Settings.Default.SubscribeToBetaSchema);
                 if (updater.NeedsSchemaUpdate) {
                     updater.UpdateSchema();
-                    GameManager.Instance.ApplyGameTypemap();
+                    DBTypeMap.Instance.InitializeTypeMap(Path.GetDirectoryName(Application.ExecutablePath));
                     if (showSuccess) {
                         MessageBox.Show("DB File description updated.", "Update result", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
@@ -1243,6 +1248,10 @@ namespace PackFileManager
 
         private void updateOnStartupToolStripMenuItem_Click(object sender, EventArgs e) {
             Settings.Default.UpdateOnStartup = updateOnStartupToolStripMenuItem.Checked;
+        }
+
+        private void subscribeToBetaToolStripMenuItem_Click(object sender, EventArgs e) {
+            Settings.Default.SubscribeToBetaSchema = subscribeToBetaToolStripMenuItem.Checked;
         }
 
         private void showDecodeToolOnErrorToolStripMenuItem_Click(object sender, EventArgs e) {

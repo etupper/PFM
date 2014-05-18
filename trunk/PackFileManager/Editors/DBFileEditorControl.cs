@@ -42,24 +42,14 @@ namespace PackFileManager {
             bool result = file.FullPath.StartsWith("db");
             try {
                 if (result) {
+                    string type = DBFile.Typename(file.FullPath);
                     DBFileHeader header = PackedFileDbCodec.readHeader(file);
-                    TypeInfo info = null;
-                    if (!string.IsNullOrEmpty(header.GUID)) {
-                        DBTypeMap.Instance.GetInfoByGuid(header.GUID);
-                    }
-                    if (info == null) {
-                        info = DBTypeMap.Instance.GetVersionedInfo(DBFile.Typename(file.FullPath), header.Version);
-                    }
-                    if (info != null) {
-                        foreach(FieldInfo field in info.Fields) {
-                            result &= !(field is ListType);
-                            if (!result) {
-                                break;
-                            }
-                        }
-                    } else {
-                        result = false;
-                    }
+                    result = (DBTypeMap.Instance.GetVersionedInfos(type, header.Version).Count > 0);
+#if DEBUG
+                    if (!result) 
+                        Console.WriteLine("Can't edit that!");
+#endif
+                    return result;
                 }
             } catch {
                 result = false;
@@ -79,6 +69,7 @@ namespace PackFileManager {
                 return readOnly;
             }
             set {
+                
                 readOnly = value;
                 pasteToolStripButton.Enabled = !value;
                 cloneRowsButton.Enabled = !value;
@@ -191,6 +182,15 @@ namespace PackFileManager {
 
             dataGridView.Visible = true;
             unsupportedDBErrorTextBox.Visible = false;
+
+            // cannot edit contained complex types
+            foreach(FieldInfo f in EditedFile.CurrentType.Fields) {
+                if (f is ListType) {
+                    Console.WriteLine("cannot edit this");
+                    ReadOnly = true;
+                    break;
+                }
+            }
         }
         void CreateDataTable() {
             TypeInfo info = EditedFile.CurrentType;

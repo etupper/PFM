@@ -236,6 +236,16 @@
                 Save();
             }
         }
+        [DebuggerNonUserCode, DefaultSettingValue("False"), UserScopedSetting]
+        public bool SubscribeToBetaSchema {
+            get {
+                return (bool)this["SubscribeToBetaSchema"];
+            }
+            set {
+                this["SubscribeToBetaSchema"] = value;
+                Save();
+            }
+        }
 
         [DebuggerNonUserCode, DefaultSettingValue("False"), UserScopedSetting]
         public bool ShowDecodeToolOnError {

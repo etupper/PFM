@@ -37,9 +37,9 @@ namespace PackFileManager
         
         ILatestVersionRetriever versions;
         
-        public DBFileTypesUpdater() {
+        public DBFileTypesUpdater(bool findBetaSchema) {
             // versions = new TwcVersionRetriever();
-            versions = new SourceforgeVersionRetriever();
+            versions = new SourceforgeVersionRetriever(findBetaSchema);
         }
         
         #region Query Update Neccessary
@@ -50,13 +50,13 @@ namespace PackFileManager
             get {
                 int currentVersion, latestVersion;
                 int.TryParse(CurrentSchemaVersion, out currentVersion);
-                int.TryParse(versions.LatestSchemaVersion, out latestVersion);
+                int.TryParse(LatestSchemaVersion, out latestVersion);
                 bool result = latestVersion > currentVersion;
                 if (!result) {
                     // check if we have all game schema files; if not, force update
                     string appBaseDir = Path.GetDirectoryName(Application.ExecutablePath);
                     foreach(Game g in Game.Games) {
-                        result |= !File.Exists(Path.Combine(appBaseDir, g.SchemaFilename));
+                        result |= !File.Exists(Path.Combine(appBaseDir, g.MaxVersionFilename));
                     }
                 }
                 return result;
@@ -68,7 +68,7 @@ namespace PackFileManager
          */
         public bool NeedsPfmUpdate {
             get {
-                return BuildVersionComparator.Instance.Compare(versions.LatestPfmVersion, CurrentPfmVersion) > 0;
+                return BuildVersionComparator.Instance.Compare(versions.LatestPfmFile, CurrentPfmVersion) > 0;
             }
         }
         #endregion
@@ -81,7 +81,7 @@ namespace PackFileManager
         }
         public string LatestPfmVersion {
             get {
-                return versions.LatestPfmVersion;
+                return versions.LatestPfmFile;
             }
         }
         static string CurrentSchemaVersion {
@@ -95,12 +95,22 @@ namespace PackFileManager
         #region Zip File Names
         string PackFileZipname {
             get {
-                return string.Format("Pack File Manager {0}.zip", LatestPfmVersion);
+                return versions.LatestPfmFile;
             }
         }
         string SchemaZipname {
             get {
-                return string.Format("schema_{0}.zip", versions.LatestSchemaVersion);
+                return versions.LatestSchemaFile;
+            }
+        }
+        static Regex VERSION_RE = new Regex("schema_([0-9]*)(beta)?\\..*");
+        string LatestSchemaVersion {
+            get {
+                string result = "";
+                try {
+                    result = VERSION_RE.Match(SchemaZipname).Groups[1].Value;
+                } catch { }
+                return result;
             }
         }
         #endregion
@@ -137,8 +147,8 @@ namespace PackFileManager
      * Retrieve latest versions from any source.
      */
     interface ILatestVersionRetriever {
-        string LatestPfmVersion { get; }
-        string LatestSchemaVersion { get; }
+        string LatestPfmFile { get; }
+        string LatestSchemaFile { get; }
         
         string SchemaUrl { get; }
         string PfmUrl { get; }
@@ -152,29 +162,31 @@ namespace PackFileManager
         const string pfmTag = "packfilemanager";
         const string schemaTag = "xmlversion";
         
-        public string LatestPfmVersion { get; private set; }
-        public string LatestSchemaVersion { get; private set; }
+        public string LatestPfmFile { get; private set; }
+        public string LatestSchemaFile { get; private set; }
 
         #region Download URLs
         public string SchemaUrl {
             get {
-                return Util.CreateSourceforgeUrl(string.Format("Schemata/schema_{0}.zip", LatestSchemaVersion));
+                string result = Util.CreateSourceforgeUrl(string.Format("Schemata/{0}", LatestSchemaFile));
+                return result;
             }
         }
         public string PfmUrl {
             get {
-                return Util.CreateSourceforgeUrl(string.Format("Release/Pack%20File%20Manager%20{0}.zip", LatestPfmVersion));
+                return Util.CreateSourceforgeUrl(string.Format("Release/{0}", LatestPfmFile)); // replace " " -> "%20"
             }
         }
         #endregion
         
         static Regex schema_file_re = new Regex("schema_([0-9]*).zip");
+        static Regex beta_schema_file_re = new Regex("schema_([0-9]*)(beta)?.zip");
         static Regex pfm_file_re = new Regex("Pack File Manager (.*).zip");
-        public SourceforgeVersionRetriever() {
+        public SourceforgeVersionRetriever(bool findBeta) {
             Console.WriteLine("looking up sf");
             FindOnPage findSchema = new FindOnPage {
                 Url = "https://sourceforge.net/projects/packfilemanager/files/Schemata/",
-                ToFind = schema_file_re
+                ToFind = findBeta ? beta_schema_file_re : schema_file_re
             };
             FindOnPage findPfmVersion = new FindOnPage {
                 Url = "https://sourceforge.net/projects/packfilemanager/files/Release/",
@@ -190,14 +202,14 @@ namespace PackFileManager
             foreach (Thread t in findThreads) {
                 t.Join();
             }
-            LatestSchemaVersion = findSchema.Result;
-            LatestPfmVersion = findPfmVersion.Result;
-            if (LatestPfmVersion == null || LatestSchemaVersion == null) {
+            LatestSchemaFile = findSchema.Result;
+            LatestPfmFile = findPfmVersion.Result;
+            if (LatestPfmFile == null || LatestSchemaFile == null) {
                 throw new InvalidDataException(string.Format("Could not determine latest versions: got {0}, {1}", 
-                                                             LatestPfmVersion, LatestSchemaVersion));
+                                                             LatestPfmFile, LatestSchemaFile));
             }
 #if DEBUG
-            Console.WriteLine("Current versions: pfm {0}, schema {1}", LatestPfmVersion, LatestSchemaVersion);
+            Console.WriteLine("Current versions: pfm {0}, schema {1}", LatestPfmFile, LatestSchemaFile);
 #endif
         }
     }
@@ -208,15 +220,15 @@ namespace PackFileManager
      * forum thread href.
      */
     class TwcVersionRetriever : ILatestVersionRetriever {
-        public string LatestPfmVersion { get; private set; }
-        public string LatestSchemaVersion { get; private set; }
+        public string LatestPfmFile { get; private set; }
+        public string LatestSchemaFile { get; private set; }
   
         #region Download URLs
         // retrieved from twc thread link while parsing
         string schemaUrl;
         public string SchemaUrl {
             get {
-                return string.Format(schemaUrl, LatestSchemaVersion);
+                return string.Format(schemaUrl, LatestSchemaFile);
             }
             private set {
                 // expects the "attachmentid=..." string for the query parameters, will create URL itself
@@ -225,7 +237,7 @@ namespace PackFileManager
         }
         public string PfmUrl {
             get {
-                return string.Format(schemaUrl, LatestPfmVersion);
+                return string.Format(schemaUrl, LatestPfmFile);
             }
         }
         #endregion
@@ -235,7 +247,7 @@ namespace PackFileManager
         static Regex StopReadRegex = new Regex("/ attachments");
 
         public TwcVersionRetriever() {
-            LatestPfmVersion = LatestSchemaVersion = "0";
+            LatestPfmFile = LatestSchemaFile = "0";
             
             string url = string.Format("http://www.twcenter.net/forums/showthread.php?t=494248");
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -246,14 +258,14 @@ namespace PackFileManager
                     if (FileTypeRegex.IsMatch(line)) {
                         Match match = FileTypeRegex.Match(line);
                         string schemaVersion = match.Groups[2].Value;
-                        if (BuildVersionComparator.Instance.Compare(schemaVersion, LatestSchemaVersion) > 0) {
-                            LatestSchemaVersion = schemaVersion;
+                        if (BuildVersionComparator.Instance.Compare(schemaVersion, LatestSchemaFile) > 0) {
+                            LatestSchemaFile = schemaVersion;
                             schemaUrl = match.Groups[1].Value;
                         }
                     } else if (SwVersionRegex.IsMatch(line)) {
                         string swVersion = SwVersionRegex.Match(line).Groups[1].Value;
-                        if (BuildVersionComparator.Instance.Compare(swVersion, LatestPfmVersion) > 0) {
-                            LatestPfmVersion = swVersion;
+                        if (BuildVersionComparator.Instance.Compare(swVersion, LatestPfmFile) > 0) {
+                            LatestPfmFile = swVersion;
                         }
                     } else if (StopReadRegex.IsMatch(line)) {
                         // PFM info is in the post itself, schema info in the attachment links...
@@ -263,12 +275,12 @@ namespace PackFileManager
                     line = stream.ReadLine();
                 }
             }
-            if (LatestPfmVersion == null || LatestSchemaVersion == null) {
+            if (LatestPfmFile == null || LatestSchemaFile == null) {
                 throw new InvalidDataException(string.Format("Could not determine latest versions: got {0}, {1}", 
-                                                             LatestPfmVersion, LatestSchemaVersion));
+                                                             LatestPfmFile, LatestSchemaFile));
             }
 #if DEBUG
-            Console.WriteLine("Latest PFM: {0}, Latest Schema: {1}", LatestPfmVersion, LatestSchemaVersion);
+            Console.WriteLine("Latest PFM: {0}, Latest Schema: {1}", LatestPfmFile, LatestSchemaFile);
 #endif
         }
     }
@@ -297,7 +309,7 @@ namespace PackFileManager
                             // found the expression: store the group,
                             // then we can stop reading data
                             Match match = ToFind.Match(line);
-                            Result = match.Groups[1].Value;
+                            Result = match.Groups[0].Value;
                             break;
                         }
                         line = stream.ReadLine();
