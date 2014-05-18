@@ -20,10 +20,12 @@ namespace Filetypes {
         public static readonly string SCHEMA_USER_FILE_NAME = "schema_user.xml";
         public static readonly string MODEL_SCHEMA_FILE_NAME = "schema_models.xml";
   
-        // contains the infos for db files without guid information
-        SortedDictionary<string, List<FieldInfo>> typeMap = new SortedDictionary<string, List<FieldInfo>>();
-        // contains infos for db files with guids
-        SortedDictionary<GuidTypeInfo, List<FieldInfo>> guidMap = new SortedDictionary<GuidTypeInfo, List<FieldInfo>>();
+        List<TypeInfo> typeInfos = new List<TypeInfo>();
+        public List<TypeInfo> AllInfos {
+            get {
+                return typeInfos;
+            }
+        }
 
         /*
          * Singleton access.
@@ -43,7 +45,7 @@ namespace Filetypes {
          */
         public bool Initialized {
             get {
-                return typeMap.Count != 0 || guidMap.Count != 0;
+                return typeInfos.Count != 0;
             }
         }
 
@@ -57,44 +59,15 @@ namespace Filetypes {
             SCHEMA_USER_FILE_NAME, MASTER_SCHEMA_FILE_NAME
         };
 
-        #region Type Maps
-        public SortedDictionary<string, List<FieldInfo>> TypeMap {
-            get {
-                return new SortedDictionary<string, List<FieldInfo>>(typeMap);
-            }
-        }
-        public SortedDictionary<GuidTypeInfo, List<FieldInfo>> GuidMap {
-            get {
-                return guidMap;
-            }
-        }
-        #endregion
-  
-        /*
-         * Retrieve info for the given table and version.
-         */
-        public TypeInfo GetVersionedInfo(string key, int version) {
-            List<TypeInfo> infos = GetVersionedInfos(key, version);
-            return infos.Count > 0 ? infos[0] : null;
-        }
         /*
          * Retrieve all infos currently loaded for the given table,
          * either in the table/version format or from the GUID list.
          */
         public List<TypeInfo> GetAllInfos(string table) {
             List<TypeInfo> result = new List<TypeInfo>();
-            if (typeMap.ContainsKey(table)) {
-                TypeInfo info = new TypeInfo(typeMap[table]);
-                info.Name = table;
-                result.Add(info);
-            }
-            foreach (GuidTypeInfo typeInfo in guidMap.Keys) {
-                if (typeInfo.TypeName.Equals(table)) {
-                    TypeInfo info = new TypeInfo(guidMap[typeInfo]);
-                    info.Name = table;
-                    result.Add(info);
-                }
-            }
+            typeInfos.ForEach(t => { if (t.Name.Equals(table)) { 
+                    result.Add (t);
+                }});
             return result;
         }
         /*
@@ -103,26 +76,20 @@ namespace Filetypes {
          * the same type/version but different structures.
          */
         public List<TypeInfo> GetVersionedInfos(string key, int version) {
-            List<TypeInfo> typeInfos = new List<TypeInfo>();
-            foreach(GuidTypeInfo keyInfo in GuidMap.Keys) {
-                if (keyInfo.Version == version && keyInfo.TypeName.Equals(key)) {
-                    TypeInfo result = new TypeInfo(guidMap[keyInfo]) {
+            List<TypeInfo> result = new List<TypeInfo>();
+            foreach(TypeInfo info in GetAllInfos(key)) {
+                List<FieldInfo> fields = info.ForVersion(version);
+                if (fields.Count > 0) {
+                    TypeInfo newInfo = new TypeInfo(fields) {
                         Name = key, Version = version
                     };
-                    result.ApplicableGuids.Add(keyInfo.Guid);
-                    AddOrMerge(typeInfos, result);
+                    AddOrMerge(result, newInfo);
                 }
             }
-            List<FieldInfo> list = new List<FieldInfo>();
-            if (typeMap.TryGetValue(key, out list)) {
-                TypeInfo result = new TypeInfo() {
-                    Name = key, Version = version
-                };
-                result.ApplicableGuids.Add("");
-                result.Fields.AddRange(FilterForVersion(list, version));
-                AddOrMerge(typeInfos, result);
-            }
-            return typeInfos;
+#if DEBUG
+            Console.WriteLine("Returning {0} infos for {1}/{2}", result.Count, key, version);
+#endif
+            return result;
         }
         /*
          * Add the given type info to the given list, or add its guid to an
@@ -137,19 +104,6 @@ namespace Filetypes {
                 }
             }
             list.Add(toAdd);
-        }
-        /*
-         * Retrieve info for the table with the given guid.
-         */
-        public List<FieldInfo> GetInfoByGuid(string guid) {
-            List<FieldInfo> result = null;
-            foreach (GuidTypeInfo info in guidMap.Keys) {
-                if (info.Guid.Equals(guid)) {
-                    result = guidMap[info];
-                    break;
-                }
-            }
-            return result;
         }
 
         #region Initialization / IO
@@ -174,21 +128,12 @@ namespace Filetypes {
                 importer = new XmlImporter(stream);
                 importer.Import();
             }
-            typeMap = importer.Descriptions;
-            guidMap = importer.GuidToDescriptions;
+            typeInfos = importer.Imported;
             if (File.Exists(MODEL_SCHEMA_FILE_NAME)) {
                 importer = null;
                 using (Stream stream = File.OpenRead(MODEL_SCHEMA_FILE_NAME)) {
                     importer = new XmlImporter(stream);
                     importer.Import();
-                }
-                foreach (string key in importer.Descriptions.Keys) {
-                    if (!typeMap.ContainsKey(key)) {
-                        typeMap.Add(key, importer.Descriptions[key]);
-                    }
-                }
-                foreach (GuidTypeInfo key in importer.GuidToDescriptions.Keys) {
-                    guidMap.Add(key, importer.GuidToDescriptions[key]);
                 }
             }
         }
@@ -205,7 +150,7 @@ namespace Filetypes {
             Console.WriteLine("saving schema file {0}", filename);
 #endif
             var stream = File.Create(filename);
-            new XmlExporter(stream).Export(typeMap, guidMap);
+            new XmlExporter(stream).Export();
             stream.Close();
             if (File.Exists(backupName)) {
                 File.Delete(backupName);
@@ -215,20 +160,26 @@ namespace Filetypes {
   
         #region Setting Changed Definitions
         public void SetByName(string key, List<FieldInfo> setTo) {
-            typeMap[key] = setTo;
+            typeInfos.Add(new TypeInfo(setTo) {
+                Name = key
+            });
         }
         public void SetByGuid(string guid, string tableName, int version, List<FieldInfo> setTo) {
-            foreach(GuidTypeInfo infos in new List<GuidTypeInfo>(guidMap.Keys)) {
-                if (infos.Guid.Equals(guid)) {
-                    guidMap.Remove(infos);
+            bool found = false;
+            foreach(TypeInfo info in typeInfos) {
+                if (info.Fields.SequenceEqual(setTo)) {
+                    info.ApplicableGuids.Add(guid);
+                    found = true;
+                    break;
+                } else if (info.ApplicableGuids.Contains(guid)) {
+                    info.ApplicableGuids.Remove(guid);
                 }
             }
-            GuidTypeInfo info = new GuidTypeInfo(guid, tableName, version);
-            if (setTo != null) {
-#if DEBUG
-                Console.WriteLine("adding table definition by GUID {1} for {0}", tableName, guid);
-#endif
-                guidMap[info] = setTo;
+            if (!found) {
+                typeInfos.Add(new TypeInfo(setTo) {
+                    Name = tableName,
+                    Version = version
+                });
             }
         }
         #endregion
@@ -257,10 +208,10 @@ namespace Filetypes {
          */
         public List<string> DBFileTypes {
             get {
-                SortedSet<string> result = new SortedSet<string>(typeMap.Keys);
-                foreach (GuidTypeInfo info in guidMap.Keys) {
-                    result.Add(info.TypeName);
-                }
+                SortedSet<string> result = new SortedSet<string>();
+                typeInfos.ForEach(t => { if (!result.Contains(t.Name)) { 
+                    result.Add(t.Name);
+                }});  
                 return new List<string>(result);
             }
         }
@@ -270,31 +221,19 @@ namespace Filetypes {
          */
         public int MaxVersion(string type) {
             int result = 0;
-            // look in the guid tables first
-            foreach(GuidTypeInfo info in guidMap.Keys) {
-                if (info.TypeName.Equals(type)) {
-                    result = Math.Max(result, info.Version);
-                }
-            }
-            List<FieldInfo> list = null;
-            if (typeMap.TryGetValue(type, out list)) {
-                list.ForEach(delegate(FieldInfo d) { result = Math.Max(d.StartVersion, result); });
-            }
+            typeInfos.ForEach(t => result = Math.Max(t.Version, result));
             return result;
         }
         /*
          * Query if the given type is supported at all.
          */
         public bool IsSupported(string type) {
-            bool result = typeMap.ContainsKey(type);
-            if (!result) {
-                foreach(GuidTypeInfo info in guidMap.Keys) {
-                    if (info.TypeName.Equals(type)) {
-                        result = true; break;
-                    }
+            foreach(TypeInfo info in typeInfos) {
+                if (info.Name.Equals(type)) {
+                    return true;
                 }
             }
-            return result;
+            return false;
         }
         #endregion
         
@@ -304,7 +243,7 @@ namespace Filetypes {
          * enumeration; the FieldInfo lists and contained FieldInfos can.
          */
         public IEnumerator<TypeInfo> GetEnumerator() {
-            return new TypeInfoEnumerator(GuidMap.Keys, TypeMap.Keys);
+            return typeInfos.GetEnumerator();
         }
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
             return GetEnumerator();
@@ -369,79 +308,6 @@ namespace Filetypes {
                 result = y.Version - x.Version;
             }
             return result;
-        }
-    }
-    /*
-     * Enumerator for all types contained in the type map.
-     */
-    public class TypeInfoEnumerator : IEnumerator<TypeInfo> {
-        IEnumerator<GuidTypeInfo> guidEnumerator;
-        IEnumerator<string> typeNameEnumerator;
-
-        bool usingTypes = false;
-
-        public TypeInfoEnumerator(IEnumerable<GuidTypeInfo> guids, IEnumerable<string> types) {
-            guidEnumerator = guids.GetEnumerator();
-            typeNameEnumerator = types.GetEnumerator();
-        }
-        /*
-         * Query if the enumeration should also add types without guids.
-         * This will be set to true after all types containing guids have been enumerated,
-         * so those come first (because their definition is usually more recent).
-         */
-        public bool UsingTypes {
-            get {
-                return usingTypes;
-            }
-        }
-        /*
-         * Retrieve the current info.
-         */
-        public TypeInfo Current {
-            get {
-                string typeName;
-                List<FieldInfo> result;
-                if (UsingTypes) {
-                    typeName = typeNameEnumerator.Current;
-                    result = DBTypeMap.Instance.TypeMap[typeName];
-                } else {
-                    typeName = guidEnumerator.Current.TypeName;
-                    result = DBTypeMap.Instance.GuidMap[guidEnumerator.Current];
-                }
-                return new TypeInfo(result) {
-                    Name = typeName
-                };
-            }
-        }
-        object System.Collections.IEnumerator.Current {
-            get {
-                return Current;
-            }
-        }
-        public void Reset() {
-            if (UsingTypes) {
-                usingTypes = false;
-                typeNameEnumerator.Reset();
-            }
-            guidEnumerator.Reset();
-        }
-        public bool MoveNext() {
-            bool result;
-            if (usingTypes) {
-                result = typeNameEnumerator.MoveNext();
-            } else {
-                result = guidEnumerator.MoveNext();
-                if (!result) {
-                    usingTypes = true;
-                    result = typeNameEnumerator.MoveNext();
-                }
-            }
-            return result;
-        }
-
-        public void Dispose() {
-            guidEnumerator.Dispose();
-            typeNameEnumerator.Dispose();
         }
     }
 }

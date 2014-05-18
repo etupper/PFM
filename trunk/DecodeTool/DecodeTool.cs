@@ -142,6 +142,15 @@ namespace DecodeTool {
                 currentTypeInfo.Fields.Clear();
                 List<FieldInfo> cleaned = new List<FieldInfo>();
                 for (int i = 0; i < value.Count; i++) {
+                    // correct the "unknown" columns
+                    Regex unknowns = new Regex("[Uu]nknown([0-9]*)");
+                    if (unknowns.IsMatch(value[i].Name)) {
+                        value[i].Name = String.Format("unknown{0}", i);
+#if DEBUG
+                    } else {
+#endif
+                        Console.WriteLine("Does not match unknown: {0}", value[i].Name);
+                    }
                     if (!value[i].TypeName.StartsWith("blob")) {
                         cleaned.Add(value[i]);
                     } else {
@@ -272,13 +281,22 @@ namespace DecodeTool {
             }
             using (BinaryReader reader = new BinaryReader(new MemoryStream(Bytes))) {
                 DBFileHeader header = PackedFileDbCodec.readHeader(reader);
+                guid = header.GUID;
+                version = header.Version;
                 if (Bytes != null && header != null) {
-                    guid = header.GUID;
-                    version = header.Version;
                     if (DBTypeMap.Instance.IsSupported(TypeName)) {
-                        guid = header.GUID;
-                        version = header.Version;
-                        CurrentTypeInfo = DBTypeMap.Instance.GetVersionedInfo(TypeName, header.Version);
+                        try {
+                            DBFile decoded = new PackedFileDbCodec(TypeName).Decode(Bytes);
+                            CurrentTypeInfo = decoded.CurrentType;
+#if DEBUG
+                            Console.WriteLine("Found decoding type");
+#endif
+                        } catch {
+                            guid = header.GUID;
+                            List<TypeInfo> infos = DBTypeMap.Instance.GetVersionedInfos(TypeName, header.Version);
+                            CurrentTypeInfo = infos[infos.Count-1];
+                        }
+                        version = CurrentTypeInfo.Version;
                     }
                 }
                 HeaderLength = header.Length;
@@ -530,7 +548,7 @@ namespace DecodeTool {
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 using (FileStream stream = File.OpenWrite(dlg.FileName)) {
                     XmlExporter exporter = new XmlExporter(stream);
-                    exporter.Export(DBTypeMap.Instance.TypeMap, DBTypeMap.Instance.GuidMap);
+                    exporter.Export(DBTypeMap.Instance.AllInfos);
                 }
             }
         }

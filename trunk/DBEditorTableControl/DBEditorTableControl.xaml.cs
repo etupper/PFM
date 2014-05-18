@@ -238,6 +238,15 @@ namespace DBTableControl
                 CurrentTable = CreateTable(editedFile);
 
                 NotifyPropertyChanged(this, "CurrentPackedFile");
+
+                // cannot edit contained complex types
+                foreach(FieldInfo f in EditedFile.CurrentType.Fields) {
+                    if (f is ListType) {
+                        Console.WriteLine("cannot edit this");
+                        ReadOnly = true;
+                        break;
+                    }
+                }
             }
         }
 
@@ -354,35 +363,8 @@ namespace DBTableControl
         #region IPackedFileEditor Implementation
         public bool CanEdit(PackedFile file)
         {
-            bool result = file.FullPath.StartsWith("db");
-            try
-            {
-                if (result)
-                {
-                    DBFileHeader header = PackedFileDbCodec.readHeader(file);
-                    TypeInfo info = DBTypeMap.Instance.GetVersionedInfo(Path.GetFileName(Path.GetDirectoryName (file.FullPath)), header.Version);
-                    if (info != null)
-                    {
-                        foreach (FieldInfo field in info.Fields)
-                        {
-                            result &= !(field is ListType);
-                            if (!result)
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        result = false;
-                    }
-                }
-            }
-            catch
-            {
-                result = false;
-            }
-            return result;
+            String unused;
+            return PackedFileDbCodec.CanDecode(file, out unused);
         }
 
         public void Commit()

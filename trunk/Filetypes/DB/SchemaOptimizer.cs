@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Serialization;
 using Common;
 
 namespace Filetypes {
     
     /*
      * Will go through all packs in a given directory, 
-     * and remove all table/version definitions from the DBTypeMap
-     * that are not used in any db file in any pack.
+     * and determine the maximum version for all db files of any type.
      */
     public class SchemaOptimizer {
 
@@ -18,77 +18,46 @@ namespace Filetypes {
         // the filename to save the result in
         public string SchemaFilename { get; set; }
 
-        SortedDictionary<string, List<FieldInfo>> typeMap = new SortedDictionary<string, List<FieldInfo>>();
-        SortedDictionary<GuidTypeInfo, List<FieldInfo>> guidMap = new SortedDictionary<GuidTypeInfo, List<FieldInfo>>();
-
         public SchemaOptimizer () {
             PackDirectory = "";
             SchemaFilename = "schema_optimized.xml";
         }
         
-        public int RemovedEntries {
-            get {
-                int typeCount = DBTypeMap.Instance.TypeMap.Count - typeMap.Count;
-                int guidCount = DBTypeMap.Instance.GuidMap.Count - guidMap.Count;
-                return typeCount + guidCount;
-            }
-        }
-        Dictionary<string, int> minVersion = new Dictionary<string, int>();
-        Dictionary<string, int> maxVersion = new Dictionary<string, int>();
+        SortedList<string, int> maxVersion = new SortedList<string, int>();
 
         public void FilterExistingPacks() {
             if (Directory.Exists(PackDirectory)) {
                 DateTime start = DateTime.Now;
                 Console.WriteLine("Retrieving from {0}, storing to {1}", PackDirectory, SchemaFilename);
                 
-                typeMap.Clear();
-                guidMap.Clear();
-                minVersion.Clear();
                 maxVersion.Clear();
 
-                List<GuidTypeInfo> allUsed = new List<GuidTypeInfo>();
-                Dictionary<GuidTypeInfo, PackedFile> infos = new Dictionary<GuidTypeInfo, PackedFile>();
                 // all pack files in game directory
                 List<string> files = new List<string>(Directory.EnumerateFiles(PackDirectory, "*.pack"));
                 // all files called "*patch*" for backed up earlier packs
-                files.AddRange(Directory.EnumerateFiles(PackDirectory, "*.patch*"));
+                // files.AddRange(Directory.EnumerateFiles(PackDirectory, "*.patch*"));
 
                 foreach (string path in files) {
                     try {
                         PackFile pack = new PackFileCodec().Open(path);
-                        GetUsedTypes(pack, infos);
-
-                        // add all infos we don't have yet
-                        foreach (GuidTypeInfo info in infos.Keys) {
-                            if (!allUsed.Contains(info)) {
-                                allUsed.Add(info);
-                            }
+                        // only use CA packs
+                        if (pack.Type != PackType.Release && pack.Type != PackType.Patch) {
+                            Console.WriteLine("not handling {0}", path);
+                            continue;
                         }
+                        GetUsedTypes(pack);
                     } catch (Exception e) {
                         Console.WriteLine("Not able to include {0} into schema: {1}", path, e);
                     }
                 }
                 
-                foreach(GuidTypeInfo info in allUsed) {
-                    if (!string.IsNullOrEmpty(info.Guid)) {
-                        AddSafe(info, infos[info]);
-                        continue;
-                    }
+                List<TypeVersionTuple> asTuples = new List<TypeVersionTuple>();
+                foreach(string s in maxVersion.Keys) {
+                    asTuples.Add(new TypeVersionTuple { Type = s, MaxVersion = maxVersion[s] });
                 }
-                foreach (string type in minVersion.Keys) {
-                    List<FieldInfo> add = new List<FieldInfo>();
-                    List<FieldInfo> addFrom;
-                    if (DBTypeMap.Instance.TypeMap.TryGetValue(type, out addFrom)) {
-                        int min = minVersion[type];
-                        int max = maxVersion[type];
-                        
-                        add = FilterList(addFrom, min, max);
-                        typeMap[type] = add;
-                    }
-                }
-                
                 using (var stream = File.Create(SchemaFilename)) {
-                    new XmlExporter(stream) { LogWriting = false}.Export(typeMap, guidMap);
+                    XmlSerializer serializer = new XmlSerializer(asTuples.GetType());
+                    serializer.Serialize(stream, asTuples);
                 }
 
                 DateTime end = DateTime.Now;
@@ -96,75 +65,38 @@ namespace Filetypes {
             }
         }
 
-        private void AddSafe(GuidTypeInfo key, PackedFile packedFile) {
-            // try out all available schemata (PackedFileDbCodec does that)
-            TypeInfo useInfo = null;
-            DBFile checkFile = PackedFileDbCodec.Decode(packedFile);
-            if (checkFile != null) {
-                useInfo = checkFile.CurrentType;
-                Console.WriteLine("no info for {2} guid {0}, but can use {1}", key.Guid, useInfo, key.TypeName);
-            } else {
-                List<TypeInfo> allInfos = DBTypeMap.Instance.GetAllInfos(key.TypeName);
-                Console.WriteLine("no info for {2} guid {0}, using highest of {1}", key.Guid, allInfos.Count, key.TypeName);
-                int highestVersion = -1;
-                if (allInfos.Count > 0) {
-                    allInfos.ForEach(i => {
-                        if (i.Version > highestVersion) {
-                            highestVersion = i.Version;
-                            useInfo = i;
-                        }
-                    });
-                }
-            }
-            if (useInfo != null) {
-                guidMap[key] = useInfo.Fields;
-            }
-        }
-        
-        private List<FieldInfo> FilterList(List<FieldInfo> infos, int min, int max) {
-            List<FieldInfo> result = new List<FieldInfo>();
-#if DEBUG
-            foreach(FieldInfo field in infos) {
-                if (field.StartVersion <= max && field.LastVersion >= min) {
-                    result.Add(field);
-                }
-            }
-#else
-        infos.ForEach(field => {
-                if (field.StartVersion <= max && field.LastVersion >= min) {
-                    result.Add(field);
-                }
-            });
-#endif
-            return result;
-        }
-
-        private Dictionary<GuidTypeInfo, PackedFile> GetUsedTypes(PackFile pack, Dictionary<GuidTypeInfo, PackedFile> infos) {
+        private void GetUsedTypes(PackFile pack) {
             foreach (PackedFile packed in pack.Files) {
                 if (packed.FullPath.StartsWith("db")) {
-                    AddFromPacked(infos, packed);
+                    AddFromPacked(packed);
                 }
             }
-            return infos;
         }
 
-        private void AddFromPacked(Dictionary<GuidTypeInfo, PackedFile> infos, PackedFile packed) {
+        private void AddFromPacked(PackedFile packed) {
             if (packed.Size != 0) {
                 string type = DBFile.Typename(packed.FullPath);
                 DBFileHeader header = PackedFileDbCodec.readHeader(packed);
-                infos[new GuidTypeInfo(header.GUID, type, header.Version)] = packed;
-                if (string.IsNullOrEmpty(header.GUID)) {
-                    int min = int.MaxValue;
-                    minVersion.TryGetValue(type, out min);
-                    min = Math.Min(min, header.Version);
-                    minVersion[type] = min;
-                    int max = 0;
-                    maxVersion.TryGetValue(type, out max);
-                    max = Math.Max(max, header.Version);
-                    maxVersion[type] = max;
+                int currentMaxVersion;
+                if (!maxVersion.TryGetValue(type, out currentMaxVersion)) {
+                    currentMaxVersion = header.Version;
+                } else {
+                    currentMaxVersion = Math.Max(header.Version, currentMaxVersion);
                 }
+                maxVersion[type] = currentMaxVersion;
             }
         }
-    }
+        
+        public static SortedList<string, int> ReadTypeVersions(string filename) {
+            List<TypeVersionTuple> tuples = new List<TypeVersionTuple>();
+            XmlSerializer ser = new XmlSerializer(tuples.GetType());
+            using (var stream = File.OpenRead(filename)) {
+                tuples = ser.Deserialize(stream) as List<TypeVersionTuple>;
+            }
+            SortedList<string, int> versions = new SortedList<string, int>();
+            tuples.ForEach(e => versions.Add(e.Type, e.MaxVersion));
+            return versions;
+        }
+    }    
 }
 

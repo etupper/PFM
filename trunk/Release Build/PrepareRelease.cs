@@ -15,11 +15,9 @@ namespace ReleaseBuild {
             foreach (Game game in Game.Games) {
                 GameManager.LoadGameLocationFromFile(game);
                 if (game.IsInstalled) {
-                    string datapath = game.DataDirectory;
-                    string outfile = string.Format("schema_{0}.xml", game.Id);
                     SchemaOptimizer optimizer = new SchemaOptimizer() {
-                        PackDirectory = datapath,
-                        SchemaFilename = outfile
+                        PackDirectory = game.DataDirectory,
+                        SchemaFilename = game.MaxVersionFilename
                     };
                     //optimizer.FilterExistingPacks();
                     ThreadStart start = new ThreadStart(optimizer.FilterExistingPacks);

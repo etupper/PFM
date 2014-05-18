@@ -11,10 +11,6 @@ using System.Text.RegularExpressions;
 namespace SchemaIntegration {
     class MainClass {
         private static string[] OPTIONS = { 
-            // -ca: read CA schema files and get the references
-            "-ca",
-            // -vd: read CA files and verify if each line in pack data has an xml correspondence
-            "-vd",
             // -as: add entries from other schema file by GUID if they don't exists already
             "-as",
             // -cs: read from CA schema directory and correct references
@@ -35,12 +31,6 @@ namespace SchemaIntegration {
                 } else if (dir.StartsWith("-i")) {
                     string path = dir.Substring(2);
                     IntegrateAll(path, integrator.IntegrateFile);
-                } else if (dir.StartsWith("-vd")) {
-                    string path = dir.Substring(3);
-                    IntegrateAll(path, integrator.VerifyData);
-                } else if (dir.StartsWith("-ca")) {
-                    string path = dir.Substring(3);
-                    IntegrateAll(path, integrator.AddCaData);
                 } else if (dir.StartsWith("-cs")) {
                     ReplaceSchemaNames(dir.Substring(3));
                 } else if (dir.StartsWith("-mx")) {
@@ -124,12 +114,9 @@ namespace SchemaIntegration {
         #region Save Schema
         static readonly Regex NumberedFieldNameRe = new Regex("([^0-9]*)([0-9]+)");
         void SaveSchema() {
-            foreach (List<FieldInfo> typeInfos in DBTypeMap.Instance.TypeMap.Values) {
-                MakeFieldNamesUnique(typeInfos);
-            }
-            foreach (List<FieldInfo> typeInfos in DBTypeMap.Instance.GuidMap.Values) {
-                MakeFieldNamesUnique(typeInfos);
-            }
+            DBTypeMap.Instance.AllInfos.ForEach(info => {
+                MakeFieldNamesUnique(info.Fields);
+            });
             DBTypeMap.Instance.SaveToFile(Directory.GetCurrentDirectory(), "user");
         }
         void MakeFieldNamesUnique(List<FieldInfo> fields) {

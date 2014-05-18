@@ -54,7 +54,7 @@ namespace Filetypes {
         /*
          * Create codec for table of the given type.
          */
-        private PackedFileDbCodec(string type) {
+        public PackedFileDbCodec(string type) {
             typeName = type;
             AutoadjustGuid = true;
         }
@@ -69,25 +69,13 @@ namespace Filetypes {
             reader.BaseStream.Position = 0;
             DBFileHeader header = readHeader(reader);
             List<TypeInfo> infos = DBTypeMap.Instance.GetVersionedInfos(typeName, header.Version);
-            if (!string.IsNullOrEmpty(header.GUID)) {
-                List<FieldInfo> byGuid = DBTypeMap.Instance.GetInfoByGuid(header.GUID);
-                if (byGuid != null) {
-                    TypeInfo typeByGuid = new TypeInfo(byGuid) {
-                        Name = typeName,
-                        Version = header.Version
-                    };
-                    typeByGuid.ApplicableGuids.Add(header.GUID);
-                    // infos = new List<TypeInfo>();
-                    infos.Add(typeByGuid);
-                }
-            }
             if (infos.Count == 0) {
                 infos.AddRange(DBTypeMap.Instance.GetAllInfos(typeName));
             }
             foreach (TypeInfo realInfo in infos) {
                 try {
 #if DEBUG
-                    // Console.WriteLine("Parsing version {1} with info {0}", string.Join(",", realInfo.Fields), header.Version);
+                    Console.WriteLine("Parsing version {1} with info {0}", string.Join(",", realInfo.Fields), header.Version);
 #endif
                     DBFile result = ReadFile(reader, header, realInfo);
                     return result;

@@ -34,8 +34,7 @@ namespace Filetypes {
                     DBFile updatedFile = PackedFileDbCodec.Decode(packedFile);
 
                     TypeInfo dbFileInfo = updatedFile.CurrentType;
-                    string guid;
-                    TypeInfo targetInfo = GetTargetTypeInfo (key, maxVersion, out guid);
+                    TypeInfo targetInfo = GetTargetTypeInfo (key, maxVersion);
                     if (targetInfo == null) {
                         throw new Exception(string.Format("Can't decide new structure for {0} version {1}.", key, maxVersion));
                     }
@@ -49,7 +48,7 @@ namespace Filetypes {
                             }
                         }
                     }
-                    updatedFile.Header.GUID = guid;
+                    //updatedFile.Header.GUID = guid;
                     updatedFile.Header.Version = maxVersion;
                     packedFile.Data = codec.Encode(updatedFile);
                 }
@@ -58,32 +57,9 @@ namespace Filetypes {
         /*
          * Find the type info for the given type and version to update to.
          */
-        TypeInfo GetTargetTypeInfo(string key, int maxVersion, out string guid) {
-            TypeInfo targetInfo = null;
-            List<string> newGuid = GetGuidsForInfo(key, maxVersion);
-            guid = null;
-            if (newGuid.Count == 0) {
-                guid = "";
-            } else if (newGuid.Count == 1) {
-                guid = newGuid[0];
-            } if (newGuid.Count > 1) {
-                guid = DetermineGuid(newGuid);
-            }
-            
-            if (guid != null) {
-                targetInfo = DBTypeMap.Instance.GetVersionedInfo(key, maxVersion);
-            }
+        TypeInfo GetTargetTypeInfo(string key, int maxVersion) {
+            TypeInfo targetInfo = DBTypeMap.Instance.GetVersionedInfos(key, maxVersion)[0];
             return targetInfo;
-        }
-
-        private List<string> GetGuidsForInfo(string type, int version) {
-            List<string> result = new List<string>();
-            foreach(GuidTypeInfo info in DBTypeMap.Instance.GuidMap.Keys) {
-                if (info.Version == version && info.TypeName.Equals(type)) {
-                    result.Add(info.Guid);
-                }
-            }
-            return result;
         }
     }
 }
