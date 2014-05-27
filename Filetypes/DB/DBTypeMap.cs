@@ -83,6 +83,9 @@ namespace Filetypes {
                     TypeInfo newInfo = new TypeInfo(fields) {
                         Name = key, Version = version
                     };
+                    if (fields.Count == info.Fields.Count) {
+                        newInfo.ApplicableGuids.AddRange(info.ApplicableGuids);
+                    }
                     AddOrMerge(result, newInfo);
                 }
             }
