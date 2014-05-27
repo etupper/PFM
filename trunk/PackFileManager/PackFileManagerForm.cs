@@ -915,6 +915,8 @@ namespace PackFileManager
                 if (openDBFileDialog.ShowDialog() == DialogResult.OK) {
                     Settings.Default.ImportExportDirectory = Path.GetDirectoryName(openDBFileDialog.FileName);
                     try {
+                        string addBase = (ModManager.Instance.CurrentModSet)
+                            ? GetPathRelativeToMod(openDBFileDialog.FileName) : Path.GetFileName(openDBFileDialog.FileName);
                         using (FileStream filestream = File.OpenRead(openDBFileDialog.FileName)) {
                             string filename = Path.GetFileNameWithoutExtension(openDBFileDialog.FileName);
                             byte[] data;
@@ -930,11 +932,19 @@ namespace PackFileManager
                             } else {
                                 DBFile file = new TextDbCodec().Decode(filestream);
                                 data = PackedFileDbCodec.FromFilename(openDBFileDialog.FileName).Encode(file);
+                                addBase = String.Format("/db/{0}/", file.CurrentType.Name);
                             }
-                            string addBase = (ModManager.Instance.CurrentModSet)
-                                ? GetPathRelativeToMod(openDBFileDialog.FileName) : Path.GetFileName(openDBFileDialog.FileName);
 
-                            addToBase.Add(addBase, new PackedFile { Data = data, Name = filename });
+                            PackedFile packedFile = new PackedFile { Data = data, Name = filename };
+                            addToBase.Add(addBase, packedFile);
+                            foreach(TreeNode node in GetAllContainedNodes(packTreeView.Nodes)) {
+                                if (node.Tag == packedFile) {
+                                    node.Expand();
+                                    packTreeView.SelectedNode = node;
+                                    OpenPackedFile(packedFile);
+                                    break;
+                                }
+                            }
                         }
                     } catch (Exception x) {
                         MessageBox.Show(x.Message);

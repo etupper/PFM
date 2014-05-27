@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace Filetypes {
-    using GuidList = List<GuidTypeInfo>;
     using FieldInfoList = List<FieldInfo>;
     using TypeInfoList = List<TypeInfo>;
     
@@ -40,6 +39,7 @@ namespace Filetypes {
 				foreach (XmlNode tableNode in node.ChildNodes) {
                     string id;
                     int version = 0;
+                    string guids = "";
                     FieldInfoList fields = new FieldInfoList ();
                     // bool verifyEquality = false;
                     
@@ -52,7 +52,7 @@ namespace Filetypes {
                         }
                     } else {
                         // table with GUIDs
-                        // id = tableNode.Attributes[GUID_TAG].Value.Trim();
+                        guids = tableNode.Attributes[GUID_TAG].Value.Trim();
                         id = tableNode.Attributes["table_name"].Value.Trim();
                         string table_version = tableNode.Attributes["table_version"].Value.Trim();
                         version = int.Parse(table_version);
@@ -63,6 +63,14 @@ namespace Filetypes {
                         Name = id,
                         Version = version
                     };
+#if DEBUG
+                    if (id.Equals("cdir_military_generator_unit_qualities_tables")) {
+                        Console.WriteLine();
+                    }                    
+#endif
+                    foreach (string guid in guids.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)) {
+                        info.ApplicableGuids.Add(guid);
+                    }
                     typeInfos.Add(info);
 				}
 			}
@@ -287,14 +295,6 @@ namespace Filetypes {
         }
     }
     /*
-     * Formats header without GUID; table name only.
-     */
-    class VersionedTableInfoFormatter : TableInfoFormatter<string> {
-        public override string FormatHeader(string type) {
-            return string.Format("  <table name='{0}'>", type); 
-        }
-    }
-    /*
      * Formats header with tablename/version and list of applicable GUIDs.
      */
     class GuidTableInfoFormatter : TableInfoFormatter<TypeInfo> {
@@ -310,18 +310,5 @@ namespace Filetypes {
         }
     }
     #endregion
-    
-    public class GuidListComparer : Comparer<GuidList> {
-        public static readonly GuidListComparer Instance = new GuidListComparer();
-        
-        public override int Compare(GuidList x, GuidList y) {
-            if (x.Count == 0) {
-                return y.Count == 0 ? 0 : 1;
-            } else  if (y.Count == 0) {
-                return -1;
-            }
-            return x[0].CompareTo(y[0]);
-        }
-    }
 }
 
