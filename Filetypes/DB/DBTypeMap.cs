@@ -81,7 +81,7 @@ namespace Filetypes {
                 List<FieldInfo> fields = info.ForVersion(version);
                 if (fields.Count > 0) {
                     TypeInfo newInfo = new TypeInfo(fields) {
-                        Name = key, Version = version
+                        Name = key, Version = info.Version
                     };
                     if (fields.Count == info.Fields.Count) {
                         newInfo.ApplicableGuids.AddRange(info.ApplicableGuids);
@@ -89,11 +89,13 @@ namespace Filetypes {
                     AddOrMerge(result, newInfo);
                 }
             }
+            result.Sort(new BestVersionComparer { TargetVersion = version });
 #if DEBUG
             Console.WriteLine("Returning {0} infos for {1}/{2}", result.Count, key, version);
 #endif
             return result;
         }
+
         /*
          * Add the given type info to the given list, or add its guid to an
          * existing entry if one with the same structure is found.
@@ -301,6 +303,7 @@ namespace Filetypes {
         }
         #endregion
     }
+
     /*
      * Comparer for two guid info instances.
      */
@@ -311,6 +314,19 @@ namespace Filetypes {
                 result = y.Version - x.Version;
             }
             return result;
+        }
+    }
+
+    /*
+     * Compares two versioned infos to best match a version being looked for.
+     */
+    class BestVersionComparer : IComparer<TypeInfo> {
+        public int TargetVersion { get; set; }
+        public int Compare(TypeInfo info1, TypeInfo info2)
+        {
+            int difference1 = info1.Version - TargetVersion;
+            int difference2 = info2.Version - TargetVersion;
+            return difference2 - difference1;
         }
     }
 }
