@@ -11839,9 +11839,9 @@
     <field name='initial_unit_count' type='int' />
     <field name='key' type='int' pk='true' />
     <field fkey='mercenary_pools_tables.key' name='pool' type='string_ascii' />
-    <field name='unknown5' type='boolean' />
-    <field name='unknown6' type='boolean' />
-    <field name='unknown7' type='boolean' />
+    <field name='faction' type='optstring_ascii' />
+    <field name='sub-culture' type='optstring_ascii' />
+    <field name='technology' type='optstring_ascii' />
   </table>
   <table table_name='mercenary_pool_type_enums_tables'
          table_version='0'
