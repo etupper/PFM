@@ -36,15 +36,17 @@ namespace PackFileManager {
             name1 = Path.GetFileName(name1);
             name2 = Path.GetFileName(name2);
             int result = name1.CompareTo(name2);
-            if (NumberedFileNameRE.IsMatch(name1) && NumberedFileNameRE.IsMatch(name2)) {
-                Match m1 = NumberedFileNameRE.Match(name1);
-                Match m2 = NumberedFileNameRE.Match(name2);
-                if (m1.Groups[1].Value.Equals(m2.Groups[1].Value)) {
-                    int number1 = int.Parse(m1.Groups[2].Value);
-                    int number2 = int.Parse(m2.Groups[2].Value);
-                    result = number2 - number1;
+            try {
+                if (NumberedFileNameRE.IsMatch(name1) && NumberedFileNameRE.IsMatch(name2)) {
+                    Match m1 = NumberedFileNameRE.Match(name1);
+                    Match m2 = NumberedFileNameRE.Match(name2);
+                    if (m1.Groups[1].Value.Equals(m2.Groups[1].Value)) {
+                        int number1 = int.Parse(m1.Groups[2].Value);
+                        int number2 = int.Parse(m2.Groups[2].Value);
+                        result = number2 - number1;
+                    }
                 }
-            }
+            } catch {} // we don't really care; if we can't parse we'll just use the alphanum comparison
             return result;
         }
     }
