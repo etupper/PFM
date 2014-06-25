@@ -2124,35 +2124,27 @@
     <field name='naval_prestige' type='int' />
     <field name='economic_prestige' type='int' />
     <field name='enlightenment_prestige' type='int' />
-    <field name='destruction_terminator' type='boolean' version_start='2' />
-    <field name='faction_unique' type='boolean' version_start='2' />
-    <field fkey='religions_tables.religion_key' name='religion_requirement' type='optstring' version_start='2' />
-    <field fkey='effect_bundles_tables.key' name='first_in_world_bundle' type='optstring' version_start='2' />
-    <field fkey='resources_tables.key' name='resource_requirement' type='optstring' version_start='2' />
-    <field fkey='warscape_rigid_tables.key' name='working_model' type='string' version_start='2' />
-    <field name='unique_index' type='int' version_start='2' />
-    <field fkey='warscape_rigid_tables.key' name='damage_model' type='optstring' version_start='3' />
   </table>
   <table table_name='building_levels_tables'
          table_version='2'
          guid=''>
     <field name='level_name' type='string' pk='true' />
-    <field fkey='building_chains_tables.key' name='chain' type='string' />
+    <field fkey='building_chains_tables.key' name='Building Chain' type='string' />
     <field name='level' type='int' />
     <field name='condition' type='string' />
-    <field name='create_time' type='int' />
+    <field name='Create Time' type='int' />
     <field name='create_cost' type='int' />
-    <field name='unknown' type='int' />
-    <field name='demolition_cost' type='int' />
-    <field name='unknown9' type='int' />
-    <field name='unknown10' type='int' />
-    <field name='unknown11' type='int' />
-    <field name='unknown12' type='int' />
-    <field name='unknown13' type='int' />
-    <field name='unknown14' type='int' />
-    <field name='unknown15' type='int' />
-    <field name='unknown16' type='int' />
-    <field fkey='commodities_tables.key' name='commodity' type='string' />
+    <field name='Upkeep Cost' type='int' />
+    <field name='Demolition Cost' type='int' />
+    <field name='ZOC' type='int' />
+    <field name='Lower Happiness' type='int' />
+    <field name='Upper Happiness' type='int' />
+    <field name='Repression' type='int' />
+    <field name='GDP' type='int' />
+    <field name='Town Wealth Growth' type='int' />
+    <field name='Population Change' type='int' />
+    <field name='Max Population Change' type='int' />
+    <field name='Commodity' type='string' />
     <field name='unknown18' type='boolean' />
     <field name='unknown19' type='boolean' />
     <field name='unknown20' type='int' />
@@ -2161,13 +2153,50 @@
     <field name='naval_prestige' type='int' />
     <field name='economic_prestige' type='int' />
     <field name='enlightenment_prestige' type='int' />
-    <field name='destruction_terminator' type='boolean' version_start='2' />
-    <field name='faction_unique' type='boolean' version_start='2' />
-    <field fkey='religions_tables.religion_key' name='religion_requirement' type='optstring' version_start='2' />
-    <field fkey='effect_bundles_tables.key' name='first_in_world_bundle' type='optstring' version_start='2' />
-    <field fkey='resources_tables.key' name='resource_requirement' type='optstring' version_start='2' />
-    <field fkey='warscape_rigid_tables.key' name='working_model' type='string' version_start='2' />
-    <field name='unique_index' type='int' version_start='2' />
+    <field name='destruction_terminator' type='boolean' />
+    <field name='faction_unique' type='boolean' />
+    <field fkey='religions_tables.religion_key' name='religion_requirement' type='optstring' />
+    <field fkey='effect_bundles_tables.key' name='first_in_world_bundle' type='optstring' />
+    <field fkey='resources_tables.key' name='resource_requirement' type='optstring' />
+    <field fkey='warscape_rigid_tables.key' name='working_model' type='string' />
+    <field name='unique_index' type='int' />
+  </table>
+  <table table_name='building_levels_tables'
+         table_version='3'
+         guid=''>
+    <field name='level_name' type='string' pk='true' />
+    <field fkey='building_chains_tables.key' name='Building Chain' type='string' />
+    <field name='level' type='int' />
+    <field name='condition' type='string' />
+    <field name='Create Time' type='int' />
+    <field name='create_cost' type='int' />
+    <field name='Upkeep Cost' type='int' />
+    <field name='Demolition Cost' type='int' />
+    <field name='ZOC' type='int' />
+    <field name='Lower Happiness' type='int' />
+    <field name='Upper Happiness' type='int' />
+    <field name='Repression' type='int' />
+    <field name='GDP' type='int' />
+    <field name='Town Wealth Growth' type='int' />
+    <field name='Population Change' type='int' />
+    <field name='Max Population Change' type='int' />
+    <field name='Commodity' type='string' />
+    <field name='unknown18' type='boolean' />
+    <field name='unknown19' type='boolean' />
+    <field name='unknown20' type='int' />
+    <field name='Unique' type='boolean' />
+    <field name='military_prestige' type='int' />
+    <field name='naval_prestige' type='int' />
+    <field name='economic_prestige' type='int' />
+    <field name='enlightenment_prestige' type='int' />
+    <field name='destruction_terminator' type='boolean' />
+    <field name='faction_unique' type='boolean' />
+    <field fkey='religions_tables.religion_key' name='religion_requirement' type='optstring' />
+    <field fkey='effect_bundles_tables.key' name='first_in_world_bundle' type='optstring' />
+    <field fkey='resources_tables.key' name='resource_requirement' type='optstring' />
+    <field fkey='warscape_rigid_tables.key' name='working_model' type='string' />
+    <field name='unique_index' type='int' />
+    <field fkey='warscape_rigid_tables.key' name='damage_model' type='optstring' />
   </table>
   <table table_name='building_levels_tables'
          table_version='3'

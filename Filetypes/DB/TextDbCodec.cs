@@ -48,25 +48,25 @@ namespace Filetypes {
             }
 
             DBFile file = null;
-            long parseStart = reader.BaseStream.Position;
+            // skip table header
+            reader.ReadLine();
+            List<String> read = new List<String>();
+            while(!reader.EndOfStream) {
+                read.Add(reader.ReadLine());
+            }
             
-            bool parseSuccessful = true;
-            foreach(TypeInfo info in DBTypeMap.Instance.GetVersionedInfos(typeInfoName, version)) {
-                reader.BaseStream.Seek(parseStart, SeekOrigin.Begin);
-                string line = reader.ReadLine ();
-                // the title line isn't written with trailing tabs anymore...
-                // but it used to, so to stay compatible with earlier exported TSVs,
-                // remove empty entries
-                string[] strArray = line.Split (TABS, StringSplitOptions.RemoveEmptyEntries);
-                // verify we have matching amount of fields
-                if (strArray.Length != info.Fields.Count) {
-                    continue;
-                }
+            List<TypeInfo> infos = DBTypeMap.Instance.GetVersionedInfos(typeInfoName, version);
+            foreach(TypeInfo info in infos) {
+                bool parseSuccessful = true;
+                
                 List<DBRow> entries = new List<DBRow> ();
-                while (!reader.EndOfStream) {
-                    line = reader.ReadLine ();
+                foreach(String line in read) {
                     try {
-                        strArray = line.Split (TABS, StringSplitOptions.None);
+                        String[] strArray = line.Split (TABS, StringSplitOptions.None);
+                        if (strArray.Length != info.Fields.Count) {
+                            parseSuccessful = false;
+                            break;
+                        }
                         List<FieldInstance> item = new List<FieldInstance> ();
                         for (int i = 0; i < strArray.Length; i++) {
                             FieldInstance field = info.Fields [i].CreateInstance();
