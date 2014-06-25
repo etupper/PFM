@@ -84,21 +84,6 @@ namespace Filetypes {
             return result;
         }
 
-        /*
-         * Add the given type info to the given list, or add its guid to an
-         * existing entry if one with the same structure is found.
-         */
-        void AddOrMerge(List<TypeInfo> list, TypeInfo toAdd) {
-            foreach(TypeInfo info in list) {
-                if (Enumerable.SequenceEqual(info.Fields, toAdd.Fields)) {
-                    // merge into existing entry
-                    info.ApplicableGuids.AddRange(toAdd.ApplicableGuids);
-                    return;
-                }
-            }
-            list.Add(toAdd);
-        }
-
         #region Initialization / IO
         /*
          * Read schema from given directory, in the order of the SCHEMA_FILENAMES.
@@ -156,24 +141,6 @@ namespace Filetypes {
             typeInfos.Add(new TypeInfo(setTo) {
                 Name = key
             });
-        }
-        public void SetByGuid(string guid, string tableName, int version, List<FieldInfo> setTo) {
-            bool found = false;
-            foreach(TypeInfo info in typeInfos) {
-                if (info.Fields.SequenceEqual(setTo)) {
-                    info.ApplicableGuids.Add(guid);
-                    found = true;
-                    break;
-                } else if (info.ApplicableGuids.Contains(guid)) {
-                    info.ApplicableGuids.Remove(guid);
-                }
-            }
-            if (!found) {
-                typeInfos.Add(new TypeInfo(setTo) {
-                    Name = tableName,
-                    Version = version
-                });
-            }
         }
         #endregion
 

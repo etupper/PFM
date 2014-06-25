@@ -124,14 +124,14 @@ namespace Filetypes {
                 return null;
             }
             List<FieldInfo> fieldInfos = new List<FieldInfo>();
-            string guid = "";
+            // string guid = "";
             using (var reader = File.OpenText(twadPath)) {
                 XmlDocument defDoc = new XmlDocument();
                 defDoc.Load(reader);
                 foreach(XmlNode root in defDoc.ChildNodes) {
                     foreach(XmlNode fieldNode in root.ChildNodes) {
                         if ("edit_uuid".Equals(fieldNode.Name)) {
-                            guid = fieldNode.InnerText;
+                            // guid = fieldNode.InnerText;
                         } else {
                             fieldInfos.Add(CreateInfoFromNode(fieldNode));
                         }
@@ -141,7 +141,7 @@ namespace Filetypes {
             TypeInfo typeInfo = new TypeInfo(fieldInfos) {
                 Name = name
             };
-            typeInfo.ApplicableGuids.Add(guid);
+            // typeInfo.ApplicableGuids.Add(guid);
             return typeInfo;
         }
         /*

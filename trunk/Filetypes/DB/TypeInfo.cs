@@ -29,12 +29,6 @@ namespace Filetypes {
                 return fields;
             }
         }
-        List<string> applicableGuids = new List<string>();
-        public List<string> ApplicableGuids {
-            get {
-                return applicableGuids;
-            }
-        }
         public FieldInfo this[string name] {
             get {
                 FieldInfo result = null;

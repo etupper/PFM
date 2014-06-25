@@ -86,7 +86,7 @@ namespace Filetypes {
                     }
                 }
                 if (parseSuccessful) {
-                    String guid = info.ApplicableGuids.Count > 0 ? info.ApplicableGuids[0] : "";
+                    String guid = "";
                     DBFileHeader header = new DBFileHeader (guid, version, (uint)entries.Count, version != 0);
                     file = new DBFile (header, info);
                     file.Entries.AddRange (entries);

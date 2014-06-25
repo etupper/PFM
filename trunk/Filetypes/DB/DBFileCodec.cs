@@ -100,13 +100,6 @@ namespace Filetypes {
             if (file.Entries.Count != header.EntryCount) {
                 throw new DBFileNotSupportedException(string.Format("Expected {0} entries, got {1}", header.EntryCount, file.Entries.Count));
             }
-            // auto-adjust header guid
-            if (AutoadjustGuid && !info.ApplicableGuids.Contains(header.GUID)) {
-#if DEBUG
-                Console.WriteLine("adding guid {0} to valid guids for current info", header.GUID);
-#endif
-                info.ApplicableGuids.Add(header.GUID);
-            }
             return file;
         }
         /*
