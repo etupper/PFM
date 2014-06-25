@@ -110,14 +110,13 @@
   <table table_name='achievements_tables'
          table_version='0'
          guid=''>
-    <field name='Achievements' type='string' pk='true' />
-    <field fkey='avatar_aesthetics_tables.key' name='aesthetic' type='optstring' version_start='1' />
+    <field name='key' type='string' pk='true' />
   </table>
   <table table_name='achievements_tables'
          table_version='1'
          guid=''>
     <field name='key' type='string' pk='true' />
-    <field fkey='avatar_aesthetics_tables.key' name='aesthetic' type='optstring' version_start='1' />
+    <field fkey='avatar_aesthetics_tables.key' name='aesthetic' type='optstring' />
   </table>
   <table table_name='achievements_tables'
          table_version='2'
@@ -146,8 +145,31 @@
     <field name='suppressible' type='boolean' />
     <field name='uninhibitable' type='boolean' />
     <field name='audio_clip' type='string' />
-    <field fkey='advisors_tables.advisor_name' name='advisor_name' type='string' version_start='2' />
-    <field name='for_loading_screen' type='boolean' version_start='2' />
+  </table>
+  <table table_name='advice_levels_tables'
+         table_version='2'
+         guid=''>
+    <field name='key' type='string' />
+    <field fkey='advice_threads_tables.thread' name='advice_thread' type='string' />
+    <field name='advice_thread_level' type='int' />
+    <field name='points_needed' type='int' />
+    <field name='game_area' type='string' />
+    <field name='category' type='string' />
+    <field name='sub_category' type='string' />
+    <field name='max_repeat_count' type='int' />
+    <field name='repeat_interval' type='int' />
+    <field name='pause_battle' type='boolean' />
+    <field name='priority_level' type='int' />
+    <field name='high_verbosity_only' type='boolean' />
+    <field name='locatable' type='boolean' />
+    <field name='parameter' type='string' />
+    <field name='on_display_script' type='optstring' />
+    <field name='on_click_script' type='optstring' />
+    <field name='suppressible' type='boolean' />
+    <field name='uninhibitable' type='boolean' />
+    <field name='audio_clip' type='string' />
+    <field fkey='advisors_tables.advisor_name' name='advisor_name' type='string' />
+    <field name='for_loading_screen' type='boolean' />
   </table>
   <table table_name='advice_levels_tables'
          table_version='3'
@@ -217,15 +239,10 @@
   <table table_name='agent_culture_details_tables'
          table_version='0'
          guid=''>
-    <field fkey='agents_tables.key' name='Agent' type='string' pk='true' />
+    <field fkey='agents_tables.key' name='agent' type='string' pk='true' />
     <field fkey='cultures_tables.key' name='culture' type='string' pk='true' />
-    <field name='Model' type='string' />
-    <field name='General Bodyguard Type' type='optstring' />
-    <field name='key' type='int' version_start='3' />
-    <field name='season' type='optstring' version_start='3' />
-    <field name='level' type='int' version_start='3' />
-    <field name='equipment_theme' type='optstring' version_start='3' />
-    <field fkey='movie_event_strings_tables.event' name='agent_recruited_movie' type='optstring' version_start='3' />
+    <field fkey='agent_uniforms_tables.uniform_name' name='model' type='string' />
+    <field fkey='unit_stats_land_tables.key' name='generals_unit' type='optstring' />
   </table>
   <table table_name='agent_culture_details_tables'
          table_version='3'
@@ -234,11 +251,11 @@
     <field fkey='cultures_tables.key' name='culture' type='string' pk='true' />
     <field fkey='agent_uniforms_tables.uniform_name' name='model' type='string' />
     <field fkey='unit_stats_land_tables.key' name='generals_unit' type='optstring' />
-    <field name='key' type='int' version_start='3' />
-    <field name='season' type='optstring' version_start='3' />
-    <field name='level' type='int' version_start='3' />
-    <field name='equipment_theme' type='optstring' version_start='3' />
-    <field fkey='movie_event_strings_tables.event' name='agent_recruited_movie' type='optstring' version_start='3' />
+    <field name='key' type='int' />
+    <field name='season' type='optstring' />
+    <field name='level' type='int' />
+    <field name='equipment_theme' type='optstring' />
+    <field fkey='movie_event_strings_tables.event' name='agent_recruited_movie' type='optstring' />
   </table>
   <table table_name='agent_culture_details_tables'
          table_version='5'
@@ -332,17 +349,17 @@
     <field name='tertiary_colour_r' type='float' />
   </table>
   <table table_name='agent_uniforms_tables'
-         table_version='0'
-         guid=''>
-    <field name='filename' type='string' pk='true' />
-    <field name='uniform_name' type='string' pk='true' />
-    <field name='battle_filename' type='string' pk='true' version_start='2' />
-  </table>
-  <table table_name='agent_uniforms_tables'
          table_version='1'
          guid=''>
     <field name='filename' type='string' pk='true' />
-    <field name='Uniform' type='string' pk='true' />
+    <field name='uniform_name' type='string' pk='true' />
+  </table>
+  <table table_name='agent_uniforms_tables'
+         table_version='2'
+         guid=''>
+    <field name='filename' type='string' pk='true' />
+    <field name='uniform_name' type='string' pk='true' />
+    <field name='battle_filename' type='string' pk='true' />
   </table>
   <table table_name='agent_uniforms_tables'
          table_version='6'
@@ -368,9 +385,9 @@
          guid=''>
     <field name='key' type='string' />
     <field name='move_points' type='int' />
-    <field name='Line Of Sight' type='int' />
-    <field name='Zone of_Control' type='int' />
-    <field name='Playable' type='boolean' />
+    <field name='line_of_sight' type='int' />
+    <field name='zone_of_control' type='int' />
+    <field name='is_playable' type='boolean' />
     <field name='portrait_override' type='optstring' version_start='4' />
     <field name='Animation Type' type='string' version_end='1' />
     <field name='portrait' type='optstring' version_end='1' />
@@ -461,7 +478,6 @@
     <field name='picture_in_picture' type='boolean' />
     <field name='offset_angle' type='float' />
     <field name='offset_range' type='float' />
-    <field name='circumvent_cooldown' type='boolean' version_start='2' />
   </table>
   <table table_name='aide_de_camp_speeches_tables'
          table_version='1'
@@ -471,6 +487,16 @@
     <field name='picture_in_picture' type='boolean' />
     <field name='offset_angle' type='float' />
     <field name='offset_range' type='float' />
+  </table>
+  <table table_name='aide_de_camp_speeches_tables'
+         table_version='2'
+         guid=''>
+    <field name='key' type='string' pk='true' />
+    <field name='text' type='string' />
+    <field name='picture_in_picture' type='boolean' />
+    <field name='offset_angle' type='float' />
+    <field name='offset_range' type='float' />
+    <field name='circumvent_cooldown' type='boolean' />
   </table>
   <table table_name='aide_de_camp_speeches_tables'
          table_version='6'
@@ -886,13 +912,13 @@
          guid=''>
     <field fkey='ancillary_info_tables.ancillary' name='ancillary' type='string' pk='true' />
     <field name='key' type='string' />
-    <field fkey='avatar_product_lookups_tables.key' name='product' type='string' version_start='1' />
   </table>
   <table table_name='avatar_clan_specialisms_tables'
-         table_version='0'
+         table_version='1'
          guid=''>
     <field fkey='ancillary_info_tables.ancillary' name='ancillary' type='string' pk='true' />
     <field name='key' type='string' />
+    <field fkey='avatar_product_lookups_tables.key' name='product' type='string' 
   </table>
   <table table_name='avatar_dojo_chains_tables'
          table_version='0'
@@ -900,7 +926,6 @@
     <field name='key' type='string' pk='true' />
     <field name='onscreen_name' type='string' />
     <field name='recruitment_requirement_description' type='optstring' />
-    <field fkey='avatar_product_lookups_tables.key' name='product' type='string' version_start='2' />
   </table>
   <table table_name='avatar_dojo_chains_tables'
          table_version='1'
@@ -908,6 +933,14 @@
     <field name='key' type='string' pk='true' />
     <field name='onscreen_name' type='string' />
     <field name='recruitment_requirement_description' type='optstring' />
+  </table>
+  <table table_name='avatar_dojo_chains_tables'
+         table_version='2'
+         guid=''>
+    <field name='key' type='string' pk='true' />
+    <field name='onscreen_name' type='string' />
+    <field name='recruitment_requirement_description' type='optstring' />
+    <field fkey='avatar_product_lookups_tables.key' name='product' type='string' />
   </table>
   <table table_name='avatar_dojos_tables'
          table_version='0'
@@ -917,7 +950,6 @@
     <field name='level' type='int' />
     <field fkey='units_tables.key' name='unit' type='optstring' />
     <field fkey='ancillaries_tables.key' name='ancillary' type='optstring' />
-    <field fkey='avatar_product_lookups_tables.key' name='product' type='string' version_start='2' />
   </table>
   <table table_name='avatar_dojos_tables'
          table_version='1'
@@ -927,6 +959,16 @@
     <field name='level' type='int' />
     <field fkey='units_tables.key' name='unit' type='optstring' />
     <field fkey='ancillaries_tables.key' name='ancillary' type='optstring' />
+  </table>
+  <table table_name='avatar_dojos_tables'
+         table_version='2'
+         guid=''>
+    <field name='key' type='string' />
+    <field name='chain' type='optstring' />
+    <field name='level' type='int' />
+    <field fkey='units_tables.key' name='unit' type='optstring' />
+    <field fkey='ancillaries_tables.key' name='ancillary' type='optstring' />
+    <field fkey='avatar_product_lookups_tables.key' name='product' type='string' />
   </table>
   <table table_name='avatar_drop_probabilities_tables'
          table_version='0'
@@ -993,8 +1035,6 @@
     <field name='unknown7' type='int' />
     <field name='unknown8' type='int' />
     <field name='unknown9' type='int' />
-    <field name='unknown10' type='int' version_start='2' />
-    <field name='Product ID' type='string' version_start='3' />
   </table>
   <table table_name='avatar_ranks_tables'
          table_version='1'
@@ -1021,7 +1061,22 @@
     <field name='unknown7' type='int' />
     <field name='unknown8' type='int' />
     <field name='unknown9' type='int' />
-    <field name='unknown10' type='int' version_start='2' />
+    <field name='unknown10' type='int' />
+  </table>
+  <table table_name='avatar_ranks_tables'
+         table_version='3'
+         guid=''>
+    <field name='unknown1' type='int' />
+    <field name='unknown2' type='string' />
+    <field name='unknown3' type='boolean' />
+    <field name='unknown4' type='string' />
+    <field name='unknown5' type='int' />
+    <field name='unknown6' type='int' />
+    <field name='unknown7' type='int' />
+    <field name='unknown8' type='int' />
+    <field name='unknown9' type='int' />
+    <field name='unknown10' type='int' />
+    <field name='product_id' type='string' />
   </table>
   <table table_name='avatar_skill_chain_lookups_tables'
          table_version='0'
@@ -1132,12 +1187,17 @@
          table_version='0'
          guid=''>
     <field name='key' type='string' pk='true' />
-    <field name='unique_index' type='int' version_start='2' />
   </table>
   <table table_name='avatar_traits_tables'
          table_version='1'
          guid=''>
     <field name='key' type='string' pk='true' />
+  </table>
+  <table table_name='avatar_traits_tables'
+         table_version='2'
+         guid=''>
+    <field name='key' type='string' pk='true' />
+    <field name='unique_index' type='int' />
   </table>
   <table table_name='avatar_unit_group_ids_tables'
          table_version='0'
