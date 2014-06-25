@@ -269,7 +269,7 @@ namespace Filetypes {
             "         table_version='{1}' >";
 
         public override string FormatHeader(TypeInfo info) {
-            return string.Format(info.Name, info.Version);
+            return string.Format(HEADER_FORMAT, info.Name, info.Version);
         }
     }
     #endregion

@@ -27,6 +27,12 @@ namespace Common {
         public static string ReadCAString(BinaryReader reader, Encoding encoding) {
             int num = reader.ReadInt16();
             int bytes = num * (encoding.IsSingleByte ? 1 : 2);
+            // enough data left?
+            if (reader.BaseStream.Length - reader.BaseStream.Position < bytes)
+            {
+                throw new InvalidDataException(string.Format("Cannot read string of length {0}: only {1} bytes left",
+                    bytes, reader.BaseStream.Length - reader.BaseStream.Position));
+            }
             return new string(encoding.GetChars(reader.ReadBytes(bytes)));
         }
         /*
