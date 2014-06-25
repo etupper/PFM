@@ -132,22 +132,6 @@ namespace Filetypes {
          */
         public bool Optional { get; set; }
   
-        /*
-         * The first table version in which this field is used (added in this version).
-         */
-        public int StartVersion { get; set; }
-        /*
-         * The last table version in which this field is used (removed after this version).
-         */
-        int lastVersion = int.MaxValue;
-        public int LastVersion {
-            set {
-                lastVersion = value;
-            }
-            get {
-                return lastVersion;
-            }
-        }
         #region Reference
         /*
          * The referenced table/field containing the valid values for this column.

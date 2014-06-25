@@ -6,6 +6,9 @@ using Filetypes;
 namespace SchemaIntegration {
     public class SchemaCanonizer {
         public void Canonize() {
+        }
+    }
+            /*
             List<TypeInfo> infos = CreateAllInfos();
             TypeInfo last = null;
             List<TypeInfo> cleaned = new List<TypeInfo>();
@@ -36,14 +39,14 @@ namespace SchemaIntegration {
         /*
          * Takes all the loaded type infos from DBTypeMap and creates single typeinfos
          * for every applicable version.
-         */
+         *
         List<TypeInfo> CreateAllInfos() {
             List<TypeInfo> result = new List<TypeInfo>();
             foreach(TypeInfo info in DBTypeMap.Instance.AllInfos) {
                 // collect a type info for each version
                 List<int> versions = GetAllVersions(info);
                 foreach(int version in versions) {
-                    List<FieldInfo> fields = info.ForVersion(version);
+                    // List<FieldInfo> fields = info.ForVersion(version);
                     TypeInfo type = new TypeInfo {
                         Name = info.Name,
                         Version = version
@@ -63,7 +66,7 @@ namespace SchemaIntegration {
         
         /*
          * Retrieve all versions for which the given type info has definitions.
-         */
+         *
         private List<int> GetAllVersions(TypeInfo info) {
             List<int> result = new List<int>();
             result.Add(info.Version);
@@ -81,6 +84,6 @@ namespace SchemaIntegration {
             }
             return result;
         }
-    }
+    */
 }
 

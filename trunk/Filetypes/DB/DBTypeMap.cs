@@ -76,19 +76,7 @@ namespace Filetypes {
          * the same type/version but different structures.
          */
         public List<TypeInfo> GetVersionedInfos(string key, int version) {
-            List<TypeInfo> result = new List<TypeInfo>();
-            foreach(TypeInfo info in GetAllInfos(key)) {
-                List<FieldInfo> fields = info.ForVersion(version);
-                if (fields.Count > 0) {
-                    TypeInfo newInfo = new TypeInfo(fields) {
-                        Name = key, Version = info.Version
-                    };
-                    if (fields.Count == info.Fields.Count) {
-                        newInfo.ApplicableGuids.AddRange(info.ApplicableGuids);
-                    }
-                    AddOrMerge(result, newInfo);
-                }
-            }
+            List<TypeInfo> result = new List<TypeInfo>(GetAllInfos(key));
             result.Sort(new BestVersionComparer { TargetVersion = version });
 #if DEBUG
             Console.WriteLine("Returning {0} infos for {1}/{2}", result.Count, key, version);
@@ -190,18 +178,6 @@ namespace Filetypes {
         #endregion
 
         #region Utilities
-        /*
-         * Create a list containing only the items valid for the given version.
-         */
-        public static List<FieldInfo> FilterForVersion(List<FieldInfo> list, int version) {
-            List<FieldInfo> result = new List<FieldInfo>();
-            foreach (FieldInfo d in list) {
-                if (d.StartVersion <= version && d.LastVersion >= version) {
-                    result.Add(d);
-                }
-            }
-            return result;
-        }
         public string GetUserFilename(string suffix) {
             return string.Format(string.Format("schema_{0}.xml", suffix));
         }

@@ -17,16 +17,7 @@ namespace Filetypes {
         int version = 0;
         public int Version {
             get {
-                int result = version;
-                if (result == -1) {
-                    fields.ForEach(f => {
-                        result = Math.Max(result, f.StartVersion);
-                        if (f.LastVersion != int.MaxValue) {
-                            result = Math.Max(result, f.LastVersion+1);
-                        }
-                    });
-                }
-                return result;
+                return version;
             }
             set {
                 version = value;
@@ -55,15 +46,6 @@ namespace Filetypes {
                 }
                 return result;
             }
-        }
-        public List<FieldInfo> ForVersion(int version) {
-            List<FieldInfo> infos = new List<FieldInfo>();
-            fields.ForEach(f => {
-                if (f.StartVersion <= version && f.LastVersion >= version) {
-                    infos.Add(f);
-                }
-            });
-            return infos;
         }
   
         #region Constructors
