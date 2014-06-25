@@ -594,11 +594,12 @@ namespace DecodeTool {
 		}
 
         private void setButton_Click(object sender, EventArgs e) {
-            if (!string.IsNullOrEmpty(guid)) {
-                DBTypeMap.Instance.SetByGuid(guid, TypeName, version, FieldTypes);
-            } else {
-                DBTypeMap.Instance.SetByName(TypeName, FieldTypes);
-            }
+            TypeInfo info = new TypeInfo {
+                Name = TypeName,
+                Version = version
+            };
+            info.Fields.AddRange(FieldTypes);
+            DBTypeMap.Instance.AllInfos.Add(info);
             Close();
         }
 

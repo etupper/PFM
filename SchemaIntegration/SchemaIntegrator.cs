@@ -343,7 +343,7 @@ namespace SchemaIntegration {
                             // we don't have an entry for this yet; try out the ones we have
                             List<TypeInfo> allInfos = DBTypeMap.Instance.GetAllInfos(typename);
                             if (allInfos.Count > 0) {
-                                TryDecode(packed, header, allInfos);
+                                // TryDecode(packed, header, allInfos);
                             } else {
                                 Console.WriteLine("no info at all for {0}", typename);
                             }
@@ -355,6 +355,7 @@ namespace SchemaIntegration {
             }
         }
         
+        /*
         void TryDecode(PackedFile dbFile, DBFileHeader header, List<TypeInfo> infos) {
             foreach (TypeInfo info in infos) {
                 // register converted to type map
@@ -370,6 +371,7 @@ namespace SchemaIntegration {
                 }
             }
         }
+        */
 
         List<FieldInfo> ConvertToAscii(List<FieldInfo> old) {
             List<FieldInfo> newInfos = new List<FieldInfo>(old.Count);

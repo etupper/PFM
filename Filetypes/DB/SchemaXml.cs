@@ -19,10 +19,6 @@ namespace Filetypes {
             }
         }
         
-        // private static string[] GUID_SEPARATOR = { "," };
-        
-        public static readonly string GUID_TAG = "guid";
-
         TextReader reader;
         public XmlImporter (Stream stream) {
             reader = new StreamReader (stream);
@@ -39,7 +35,6 @@ namespace Filetypes {
 				foreach (XmlNode tableNode in node.ChildNodes) {
                     string id;
                     int version = 0;
-                    string guids = "";
                     FieldInfoList fields = new FieldInfoList ();
                     // bool verifyEquality = false;
                     
@@ -51,8 +46,6 @@ namespace Filetypes {
                             id = UnifyName (id);
                         }
                     } else {
-                        // table with GUIDs
-                        guids = tableNode.Attributes[GUID_TAG].Value.Trim();
                         id = tableNode.Attributes["table_name"].Value.Trim();
                         string table_version = tableNode.Attributes["table_version"].Value.Trim();
                         version = int.Parse(table_version);
@@ -68,9 +61,6 @@ namespace Filetypes {
                         Console.WriteLine();
                     }                    
 #endif
-                    foreach (string guid in guids.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)) {
-                        info.ApplicableGuids.Add(guid);
-                    }
                     typeInfos.Add(info);
 				}
 			}
@@ -214,7 +204,6 @@ namespace Filetypes {
                     bool added = false;
                     foreach(TypeInfo existing in typeMap[typeInfo.Name]) {
                         if (Enumerable.SequenceEqual<FieldInfo>(typeInfo.Fields, existing.Fields)) {
-                            existing.ApplicableGuids.AddRange(typeInfo.ApplicableGuids);
                             added = true;
                             break;
                         }
@@ -231,7 +220,6 @@ namespace Filetypes {
             return result;
         }
         
-  
         /*
          * Create string from single definition entry.
          */
@@ -243,9 +231,6 @@ namespace Filetypes {
                     Name = guid.TypeName,
                     Version = guid.Version
                 };
-                if (!string.IsNullOrEmpty(guid.Guid)) {
-                    info.ApplicableGuids.Add(guid.Guid);
-                }
                 exporter.WriteTable(info, new GuidTableInfoFormatter());
                 stream.Position = 0;
                 result = new StreamReader(stream).ReadToEnd();
@@ -280,15 +265,11 @@ namespace Filetypes {
      * Formats header with tablename/version and list of applicable GUIDs.
      */
     class GuidTableInfoFormatter : TableInfoFormatter<TypeInfo> {
-        static string HEADER_FORMAT = "  <table table_name='{1}'" + Environment.NewLine +
-            "         table_version='{2}'" + Environment.NewLine +
-            "         " + XmlImporter.GUID_TAG +"='{0}'>";
-        static string GUID_SEPARATOR = string.Format(",{0}               ", Environment.NewLine);
+        static string HEADER_FORMAT = "  <table table_name='{0}'" + Environment.NewLine +
+            "         table_version='{1}' >";
 
         public override string FormatHeader(TypeInfo info) {
-            List<string> guids = new List<string>(info.ApplicableGuids.Count);
-            info.ApplicableGuids.ForEach(i => { if (!guids.Contains(i)) { guids.Add(i);  }});
-            return string.Format(HEADER_FORMAT, string.Join(GUID_SEPARATOR, guids), info.Name, info.Version);
+            return string.Format(info.Name, info.Version);
         }
     }
     #endregion
