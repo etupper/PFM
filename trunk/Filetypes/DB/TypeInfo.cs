@@ -80,6 +80,18 @@ namespace Filetypes {
 		}
         #endregion
   
+        public bool SameTypes(TypeInfo other) {
+            bool typesMatch = fields.Count == other.fields.Count;
+            if (typesMatch) {
+                for (int i = 0; i < fields.Count && typesMatch; i++) {
+                    if (!fields[i].TypeName.Equals(other.fields[i].TypeName)) {
+                        typesMatch = false;
+                    }
+                }
+            }
+            return typesMatch;
+        }
+
         public int CompareTo(TypeInfo other) {
             int result = Name.CompareTo(other.Name);
             if (result == 0) {

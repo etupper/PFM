@@ -918,7 +918,7 @@
          guid=''>
     <field fkey='ancillary_info_tables.ancillary' name='ancillary' type='string' pk='true' />
     <field name='key' type='string' />
-    <field fkey='avatar_product_lookups_tables.key' name='product' type='string' 
+    <field fkey='avatar_product_lookups_tables.key' name='product' type='string' />
   </table>
   <table table_name='avatar_dojo_chains_tables'
          table_version='0'
