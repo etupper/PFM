@@ -106,12 +106,6 @@ namespace Filetypes {
     				}
     				description.ForeignReference = reference;
     			}
-    			if (attributes ["version_start"] != null) {
-    				description.StartVersion = int.Parse (attributes ["version_start"].Value);
-    			}
-    			if (attributes ["version_end"] != null) {
-    				description.LastVersion = int.Parse (attributes ["version_end"].Value);
-    			}
     			if (attributes ["pk"] != null) {
     				description.PrimaryKey = true;
     			}
@@ -185,12 +179,6 @@ namespace Filetypes {
                 builder.Append (string.Format ("type='{0}' ", description.TypeName));
                 if (description.PrimaryKey) {
                     builder.Append ("pk='true' ");
-                }
-                if (description.StartVersion != 0) {
-                    builder.Append ("version_start='" + description.StartVersion + "' ");
-                }
-                if (description.LastVersion < int.MaxValue) {
-                 builder.Append ("version_end='" + description.LastVersion + "' ");
                 }
                 if (description.TypeCode == TypeCode.Object) {
                     builder.Append(">");
@@ -285,12 +273,6 @@ namespace Filetypes {
             if (description.PrimaryKey) {
                 builder.Append ("pk='true' ");
             }
-            if (description.StartVersion != 0) {
-                 builder.Append ("version_start='" + description.StartVersion + "' ");
-             }
-             if (description.LastVersion < int.MaxValue) {
-                 builder.Append ("version_end='" + description.LastVersion + "' ");
-             }
             return builder.ToString();
         }
     }

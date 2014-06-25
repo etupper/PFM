@@ -101,7 +101,17 @@ namespace SchemaIntegration {
 
             if (IntegrateExisting) {
                 foreach (TypeInfo type in importer.Imported) {
-                    IntegrateTable(type.Name, type.Fields);
+                    TypeInfo replaced = null;
+                    foreach(TypeInfo existing in DBTypeMap.Instance.GetVersionedInfos(type.Name, type.Version)) {
+                        if (existing.SameTypes(type)) {
+                            replaced = existing;
+                            break;
+                        }
+                    }
+                    if (replaced != null) {
+                        DBTypeMap.Instance.AllInfos.Remove(replaced);
+                    }
+                    DBTypeMap.Instance.AllInfos.Add(type);
                 }
             }
         }
@@ -113,34 +123,6 @@ namespace SchemaIntegration {
                 foreach (TypeInfo info in importer.Imported) {
                     Console.WriteLine("adding {0}", info.Name);
                     DBTypeMap.Instance.AllInfos.Add (info);
-                }
-            }
-        }
-
-        void IntegrateTable(string type, List<FieldInfo> toIntegrate) {
-            if (Verbose) {
-                Console.WriteLine("*** Integrating table {0}", FormatTable(type, toIntegrate));
-            }
-            ICollection<int> differentVersions = GetVersions(toIntegrate);
-            foreach(int version in differentVersions) {
-                List<FieldInfo> integrateFrom = DBTypeMap.FilterForVersion(toIntegrate, version);
-                ICollection<List<FieldInfo>> integrateToInfos = InfosForTypename(type, version);
-                foreach(List<FieldInfo> integrateTo in integrateToInfos) {
-                    try {
-                        if (Verbose) {
-                            Console.WriteLine(" Integrating to {0}", FormatTable(type, integrateFrom));
-                        }
-                        IntegrateInto(type, integrateTo, integrateFrom);
-                    } catch (Exception ex) {
-                        if (!failedIntegrations.Contains(type)) {
-                            Console.Error.WriteLine("Cannot integrate:\n{0} (version {2}) into \n{1}",
-                                                    FormatTable(type, toIntegrate), 
-                                                    FormatTable(type, integrateTo), 
-                                                    version, ex.Message);
-                            Console.Error.WriteLine();
-                            FailedIntegrations.Add(type);
-                        }
-                    }
                 }
             }
         }
@@ -335,16 +317,6 @@ namespace SchemaIntegration {
             } catch (Exception) {
             }
             return valid;
-        }
-        
-        static ICollection<int> GetVersions(List<FieldInfo> infos) {
-            ICollection<int> result = new SortedSet<int>();
-            infos.ForEach(i => {
-                result.Add(i.StartVersion);
-                result.Add(i.LastVersion);
-            });
-            result.Remove(int.MaxValue);
-            return result;
         }
         
         static ICollection<List<FieldInfo>> InfosForTypename(string type, int version) {
