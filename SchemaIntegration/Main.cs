@@ -18,7 +18,9 @@ namespace SchemaIntegration {
             // -i : integrate other schema file, overwrite existing entries
             "-i",
             // -mx: find corresponding fields in mod tools xml files
-            "-mx"
+            "-mx",
+            // -c: canonicalize type infos (remove start and end versions)
+            "-c"
         };
         public static void Main(string[] args) {
             new MainClass().Run(args);
@@ -36,6 +38,9 @@ namespace SchemaIntegration {
                 } else if (dir.StartsWith("-mx")) {
                     string[] split = dir.Substring(3).Split(Path.PathSeparator);
                     FindCorrespondingFields(split[0], split[1]);
+                } else if (dir.Equals("-c")) {
+                    SchemaCanonizer sc = new SchemaCanonizer();
+                    sc.Canonize();
                 } else if (dir.Equals("-v")) {
                     verbose = true;
                 }
