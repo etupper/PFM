@@ -3720,12 +3720,12 @@
   <table table_name='cai_personality_strategic_resource_values_tables'
          table_version='0'
          guid=''>
-    <field name='unknown' type='float' />
-    <field name='unknown2' type='float' />
+    <field name='ownership_falloff' type='float' />
+    <field name='ownership_value' type='float' />
     <field fkey='resources_tables.key' name='resource' type='string_ascii' pk='true' />
     <field fkey='cai_personality_strategic_components_tables.id' name='strategic_component' type='string_ascii' pk='true' />
-    <field name='unknown5' type='float' />
-    <field name='unknown6' type='float' />
+    <field name='trade_falloff' type='float' />
+    <field name='trade_value' type='float' />
   </table>
   <table table_name='cai_siege_strength_modifiers_tables'
          table_version='0'
