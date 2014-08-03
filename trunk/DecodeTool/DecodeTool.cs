@@ -119,6 +119,7 @@ namespace DecodeTool {
                 } else {
                     currentTypeInfo = new TypeInfo { Name = "" };
                 }
+                TypeName = currentTypeInfo.Name;
                 ParseData();
                 FillTypeList();
             }
@@ -130,7 +131,7 @@ namespace DecodeTool {
             }
             set {
                 CurrentTypeInfo.Name = value;
-                typeNameLabel.Text = string.Format("Typename: {0} Version: {1}", TypeName, version);
+                typeNameLabel.Text = string.Format("Typename: {0} Version: {1} (parsed with {2})", TypeName, version, currentTypeInfo.Version);
             }
         }
         /* The list of type definitions. Setting this will trigger new parsing of the data. */
@@ -296,7 +297,6 @@ namespace DecodeTool {
                             List<TypeInfo> infos = DBTypeMap.Instance.GetVersionedInfos(TypeName, header.Version);
                             CurrentTypeInfo = infos[infos.Count-1];
                         }
-                        version = CurrentTypeInfo.Version;
                     }
                 }
                 HeaderLength = header.Length;

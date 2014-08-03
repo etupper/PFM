@@ -169,7 +169,7 @@ namespace Filetypes {
          */
         public int MaxVersion(string type) {
             int result = 0;
-            typeInfos.ForEach(t => result = Math.Max(t.Version, result));
+            typeInfos.ForEach(t => { if (t.Name == type) { result = Math.Max(t.Version, result); } });
             return result;
         }
         /*
