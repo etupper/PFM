@@ -2226,6 +2226,27 @@
     <field name='ignition_threshold' type='int' />
     <field name='attack_damage' type='float' />
   </table>
+  <table table_name='battlefield_siege_vehicles_tables'
+         table_version='15'
+         guid=''>
+    <field name='hit_points' type='int' />
+    <field name='key' type='string_ascii' pk='true' />
+    <field fkey='models_sieges_tables.key' name='model' type='string_ascii' />
+    <field fkey='battle_entities_tables.key' name='battle_entity' type='string_ascii' />
+    <field name='gun_type' type='optstring' />
+    <field name='docking_clearance' type='float' />
+    <field name='engine' type='optstring_ascii' />
+    <field name='image_path' type='string_ascii' />
+    <field name='recruitment_cap' type='int' />
+    <field name='uses_8m_wall' type='boolean' />
+    <field name='uses_15m_wall' type='boolean' />
+    <field name='cost' type='int' />
+    <field name='category_image_path' type='string_ascii' />
+    <field name='special_edition_mask' type='int' />
+    <field name='ignition_threshold' type='int' />
+    <field name='attack_damage' type='float' />
+    <field name='unknown16' type='float' />
+  </table>
   <table table_name='battlefield_siege_vehicles_to_autonomous_engines_tables'
          table_version='0'
          guid=''>
