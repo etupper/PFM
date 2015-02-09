@@ -21,8 +21,9 @@ namespace Common {
         public static readonly Game ETW = new Game("ETW", "10500", "Empire") {
             ScriptFilename = "user.empire_script.txt"
         };
+        public static readonly Game ATW = new Game("ATW", "", "Attila");
         private static readonly Game[] GAMES = new Game[] {
-            R2TW, STW, NTW, ETW
+            ATW, R2TW, STW, NTW, ETW
         };
 
         /*
