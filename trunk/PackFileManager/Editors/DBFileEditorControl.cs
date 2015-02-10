@@ -154,6 +154,10 @@ namespace PackFileManager {
                     return;
                 }
             }
+            
+            if (EditedFile == null) {
+                return;
+            }
 
             Codec = PackedFileDbCodec.FromFilename(CurrentPackedFile.FullPath);
             TypeInfo info = EditedFile.CurrentType;

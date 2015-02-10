@@ -27,6 +27,7 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
             this.definitionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            this.availableDefinitionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
             this.moreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
@@ -114,10 +115,17 @@
             // 
             this.definitionsToolStripMenuItem.DropDownItems.AddRange (new System.Windows.Forms.ToolStripItem[] {
             this.loadToolStripMenuItem,
-            this.saveToolStripMenuItem});
+            this.saveToolStripMenuItem,
+            this.availableDefinitionsToolStripMenuItem });
             this.definitionsToolStripMenuItem.Name = "definitionsToolStripMenuItem";
             this.definitionsToolStripMenuItem.Size = new System.Drawing.Size (76, 20);
             this.definitionsToolStripMenuItem.Text = "Definitions";
+            // 
+            // availableDefinitionsToolStripMenuItem
+            // 
+            this.availableDefinitionsToolStripMenuItem.Name = "availableDefinitionsToolStripMenuItem";
+            this.availableDefinitionsToolStripMenuItem.Size = new System.Drawing.Size (76, 20);
+            this.availableDefinitionsToolStripMenuItem.Text = "available";
             // 
             // loadToolStripMenuItem
             // 
@@ -592,6 +600,7 @@
         private System.Windows.Forms.TextBox headerLengthField;
         private System.Windows.Forms.Label headerLengthLabel;
         private System.Windows.Forms.ToolStripMenuItem definitionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem availableDefinitionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
         private System.Windows.Forms.Label typeNameLabel;
         private System.Windows.Forms.Panel typePreviewPanel;

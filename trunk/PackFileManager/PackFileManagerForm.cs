@@ -972,7 +972,11 @@ namespace PackFileManager
                 // best used if a db file...
                 try {
                     string key = DBFile.Typename(packedFile.FullPath);
-                    bool unicode = GameManager.Instance.CurrentGame != Game.R2TW;
+                    bool unicode = true;
+                    if (GameManager.Instance.CurrentGame == Game.R2TW ||
+                        GameManager.Instance.CurrentGame == Game.ATW) {
+                        unicode = false;
+                    }
                     decoder = new DecodeTool.DecodeTool(unicode) { TypeName = key, Bytes = packedFile.Data };
                     decoder.ShowDialog();
                 } catch (Exception ex) {

@@ -57,9 +57,7 @@ namespace Filetypes {
                         Version = version
                     };
 #if DEBUG
-                    if (id.Equals("cdir_military_generator_unit_qualities_tables")) {
-                        Console.WriteLine();
-                    }                    
+                    Console.WriteLine("Adding table {0} version {1}", info.Name, info.Version);
 #endif
                     typeInfos.Add(info);
 				}
@@ -133,11 +131,12 @@ namespace Filetypes {
 #endif
 			writer.WriteLine ("<schema>");
             // WriteTables(infos, new VersionedTableInfoFormatter());
-            List<TypeInfo> cleaned = CompileSameDefinitions(infos);
+            List<TypeInfo> cleaned = new List<TypeInfo>(infos);
+            cleaned.Sort();
 #if DEBUG
             Console.WriteLine("cleaned: {0}", cleaned.Count);
 #endif
-            WriteTables(cleaned, new GuidTableInfoFormatter());
+            WriteTables(infos, new GuidTableInfoFormatter());
 			writer.WriteLine ("</schema>");
 			writer.Close ();
 		}
@@ -149,9 +148,9 @@ namespace Filetypes {
         }
         
         void WriteTable(TypeInfo id, TableInfoFormatter<TypeInfo> format) {
-            if (LogWriting) {
-                Console.WriteLine ("writing table {0}", id);
-            }
+#if DEBUG
+            Console.WriteLine ("writing table {0}", id.Name, id.Version);
+#endif
 			writer.WriteLine (format.FormatHeader(id));
             WriteFieldInfos (id.Fields);
 			writer.WriteLine ("  </table>");
