@@ -31,7 +31,7 @@ namespace DecodeTool {
                 result = field.Value;
 			} catch (Exception x) {
 #if DEBUG
-                Console.WriteLine(x);
+                // Console.WriteLine(x);
 #endif
 				result = x.Message.Replace ("\n", "-");
 			}

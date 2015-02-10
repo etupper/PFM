@@ -23,8 +23,10 @@ namespace DecodeTool {
             /* Add to the TypeSelection listeners. */
             if (unicode) {
                 stringType.Factory = Types.StringType;
+                optStringType.Factory = Types.OptStringType;
             } else {
                 stringType.Factory = Types.StringTypeAscii;
+                optStringType.Factory = Types.OptStringTypeAscii;
             }
             stringType.Selected += AddType;
 
@@ -37,11 +39,6 @@ namespace DecodeTool {
             singleType.Factory = Types.SingleType;
             singleType.Selected += AddType;
    
-            if (unicode) {
-                optStringType.Factory = Types.OptStringType;
-            } else {
-                optStringType.Factory = Types.OptStringTypeAscii;
-            }
             optStringType.Selected += AddType;
 
             byteType.Factory = Types.ByteType;
@@ -73,11 +70,35 @@ namespace DecodeTool {
                 this.parseHereToolStripMenuItem.Enabled = value != null;
                 ParseHeader();
                 ParseData();
+                
+                availableDefinitionsToolStripMenuItem.DropDownItems.Clear();
+                foreach(TypeInfo info in DBTypeMap.Instance.GetAllInfos(currentTypeInfo.Name)) {
+                    ToolStripMenuItem item = new ToolStripMenuItem(String.Format("Version {0}", info.Version)) {
+                        Tag = info,
+                        CheckOnClick = true
+                    };
+                    item.CheckedChanged += availableSelected;
+                    availableDefinitionsToolStripMenuItem.DropDownItems.Add(item);
+                }
 			}
 			get {
 				return bytes;
 			}
 		}
+        
+        void availableSelected(object sender, EventArgs args) {
+            TypeInfo info = null;
+            foreach(ToolStripMenuItem item in availableDefinitionsToolStripMenuItem.DropDownItems) {
+                if (item == sender) {
+                    info = item.Tag as TypeInfo;
+                } else {
+                    item.Checked = false;
+                }
+            }
+            if (info != null) {
+                CurrentTypeInfo = info;
+            }
+        }
         
         #region Data Header
         /* The header within the data (excluded from parsing of contained values). */
@@ -115,7 +136,7 @@ namespace DecodeTool {
             }
             set {
                 if (value != null) {
-                    currentTypeInfo = value;
+                    currentTypeInfo = new TypeInfo(value);
                 } else {
                     currentTypeInfo = new TypeInfo { Name = "" };
                 }
@@ -208,7 +229,7 @@ namespace DecodeTool {
                     showFrom = valueStartPositions[CurrentRowIndex];
                     if (valueList.SelectedIndex != -1) {
                         for (int i = 0; i < valueList.SelectedIndex; i++) {
-                            showFrom += currentValues[currentRowIndex][i].Length;
+                            showFrom += currentValues[currentRowIndex][i].ReadLength;
                         }
                     } else {
                         showFrom += CurrentValueLength;
@@ -226,7 +247,7 @@ namespace DecodeTool {
                 if (currentValues.Count > CurrentRowIndex) {
                     TableRow row = currentValues[CurrentRowIndex];
                     foreach (FieldInstance field in row) {
-                        result += field.Length;
+                        result += field.ReadLength;
                     }
                 }
                 return result;
@@ -288,7 +309,7 @@ namespace DecodeTool {
                     if (DBTypeMap.Instance.IsSupported(TypeName)) {
                         try {
                             DBFile decoded = new PackedFileDbCodec(TypeName).Decode(Bytes);
-                            CurrentTypeInfo = decoded.CurrentType;
+                            CurrentTypeInfo = new TypeInfo(decoded.CurrentType);
 #if DEBUG
                             Console.WriteLine("Found decoding type");
 #endif
@@ -360,6 +381,12 @@ namespace DecodeTool {
                 repeatInfo.Text = string.Format("{0}/{1} entries, {2}/{3} bytes", 
                                                 currentValues.Count, ExpectedEntries, 
                                                 readUpTo, Bytes.Length);
+                if (currentValues.Count == ExpectedEntries && readUpTo == Bytes.Length) {
+                    repeatInfo.ForeColor = Color.Green;
+                    Console.WriteLine("decoding finished");
+                } else {
+                    repeatInfo.ForeColor = Color.Black;
+                }
             }
             FillValueList();
             ShowPreview();
@@ -444,6 +471,9 @@ namespace DecodeTool {
                 intType, stringType, boolType, singleType, optStringType, byteType
             };
             long showFrom = CurrentCursorPosition;
+#if DEBUG
+            Console.WriteLine("parser position {0}", showFrom);
+#endif
             using (var reader = new BinaryReader(new MemoryStream(Bytes))) {
                 foreach (TypeSelection selection in selections) {
                     reader.BaseStream.Position = showFrom;
@@ -555,8 +585,13 @@ namespace DecodeTool {
 
         private void toggleEncoding(object sender, EventArgs e) {
             unicode = !unicode;
-            stringType.Factory = Types.StringTypeAscii;
-            optStringType.Factory = Types.OptStringTypeAscii;
+            if (unicode) {
+                stringType.Factory = Types.StringType;
+                optStringType.Factory = Types.OptStringType;
+            } else {
+                stringType.Factory = Types.StringTypeAscii;
+                optStringType.Factory = Types.OptStringTypeAscii;
+            }
         }
 #endregion
 
@@ -600,6 +635,7 @@ namespace DecodeTool {
             };
             info.Fields.AddRange(FieldTypes);
             DBTypeMap.Instance.AllInfos.Add(info);
+            DBTypeMap.Instance.SaveToFile("schema_current.xml");
             Close();
         }
 

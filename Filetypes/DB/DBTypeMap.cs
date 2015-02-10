@@ -124,15 +124,18 @@ namespace Filetypes {
             if (File.Exists(filename)) {
                 File.Copy(filename, backupName);
             }
+            SaveToFile(filename);
+            if (File.Exists(backupName)) {
+                File.Delete(backupName);
+            }
+        }
+        public void SaveToFile(string filename) {
 #if DEBUG
             Console.WriteLine("saving schema file {0}", filename);
 #endif
             var stream = File.Create(filename);
             new XmlExporter(stream).Export();
             stream.Close();
-            if (File.Exists(backupName)) {
-                File.Delete(backupName);
-            }
         }
         #endregion
   

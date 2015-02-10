@@ -45,6 +45,12 @@ namespace Filetypes {
         public virtual int Length {
             get; protected set;
         }
+        public virtual int ReadLength {
+            get {
+                return Length;
+            }
+        }
+        
         /*
          * Only provided in CA xml files, not needed for binary decoding.
          */
@@ -217,6 +223,7 @@ namespace Filetypes {
      * Opt String Field.
      */
     public class OptStringField : FieldInstance {
+        private bool readLengthZero = false;
         protected Encoding stringEncoding = Encoding.Unicode;
         public OptStringField() : base(Types.OptStringType()) {}
         public OptStringField(FieldInfo info) : base(info) {}
@@ -225,6 +232,7 @@ namespace Filetypes {
             byte b = reader.ReadByte ();
             if (b == 1) {
                 result = IOFunctions.ReadCAString (reader, stringEncoding);
+                readLengthZero = result.Length == 0;
             } else if (b != 0) {
                 throw new InvalidDataException (string.Format("- invalid - ({0:x2})", b));
             }
@@ -238,6 +246,15 @@ namespace Filetypes {
                 len += (Value.Length == 0 ? 1 : 3);
                 return len;
                 // return 2 * (Value.Length) + (Value.Length == 0 ? 1 : 3);
+            }
+        }
+        public override int ReadLength {
+            get {
+                if (readLengthZero) {
+                    return 3;
+                } else {
+                    return Length;
+                }
             }
         }
         public override void Encode(BinaryWriter writer) {
