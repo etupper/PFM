@@ -438,6 +438,8 @@ namespace PackFileManager
                 this.Icon = Resources.Empire;
             } else if (GameManager.Instance.CurrentGame == Game.R2TW) {
                 this.Icon = Resources.Rome2;
+            } else if (GameManager.Instance.CurrentGame == Game.ATW) {
+                this.Icon = Resources.Attila;
             }
         }
 

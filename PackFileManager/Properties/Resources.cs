@@ -66,6 +66,15 @@
             }
         }
 
+        internal static System.Drawing.Icon Attila
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Attila", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         internal static System.Resources.ResourceManager ResourceManager
         {
