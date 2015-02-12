@@ -357,6 +357,7 @@ namespace DecodeTool {
                                 } catch (Exception e) {
                                     // show problems until end of this row
                                     result = info.CreateInstance();
+                                    result = new FieldWrapper(result);
                                     result.Value = string.Format("{0:x} : {1}", 
                                                                  currentPosition, e.Message);
                                     Console.WriteLine(e);
@@ -727,5 +728,39 @@ namespace DecodeTool {
 //            FillValueList();
 //        }
         #endregion
+    }
+    
+    public class FieldWrapper : FieldInstance {
+        public FieldInstance BaseInstance {
+            get; private set;
+        }
+        
+        public FieldWrapper (FieldInstance baseInstance) : base(baseInstance.Info) {
+            BaseInstance = baseInstance;
+        }
+        
+        public bool Invalid {
+            get; private set;
+        }
+        public override string Value {
+            get {
+                return Invalid ? base.Value : BaseInstance.Value;
+            }
+            set {
+                try {
+                    BaseInstance.Value = value;
+                    Invalid = false;
+                } catch (Exception) {
+                    base.Value = value;
+                    Invalid = true;
+                }
+            }
+        }
+        public override void Encode(BinaryWriter writer) {
+            throw new NotImplementedException ();
+        }
+        public override void Decode(BinaryReader reader) {
+            throw new NotImplementedException ();
+        }
     }
 }
