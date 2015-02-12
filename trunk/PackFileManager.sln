@@ -38,6 +38,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBEditorTableControl", "DBE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchemaIntegration", "SchemaIntegration\SchemaIntegration.csproj", "{52372C28-0599-4971-8040-3A0AF7C0BD07}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbDecoding", "DbDecoding\DbDecoding.csproj", "{C4EADC9F-E863-4262-A280-A9AEC73DA75E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +131,12 @@ Global
 		{C3A9D2C3-E35C-4160-9ED9-68B8A5BF5F9C}.Linux|Any CPU.ActiveCfg = Debug|Any CPU
 		{C3A9D2C3-E35C-4160-9ED9-68B8A5BF5F9C}.Linux|Any CPU.Build.0 = Debug|Any CPU
 		{C3A9D2C3-E35C-4160-9ED9-68B8A5BF5F9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4EADC9F-E863-4262-A280-A9AEC73DA75E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4EADC9F-E863-4262-A280-A9AEC73DA75E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4EADC9F-E863-4262-A280-A9AEC73DA75E}.Linux|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4EADC9F-E863-4262-A280-A9AEC73DA75E}.Linux|Any CPU.Build.0 = Debug|Any CPU
+		{C4EADC9F-E863-4262-A280-A9AEC73DA75E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4EADC9F-E863-4262-A280-A9AEC73DA75E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C8E2294E-525D-4EBF-95B1-5ACFBB556DC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C8E2294E-525D-4EBF-95B1-5ACFBB556DC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8E2294E-525D-4EBF-95B1-5ACFBB556DC9}.Linux|Any CPU.ActiveCfg = Debug|Any CPU
@@ -143,7 +151,7 @@ Global
 		{FF1EE66E-779C-4239-9C9E-1D319C88F14F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = PackFileManager\PackFileManager.csproj
+		StartupItem = DbDecoding\DbDecoding.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.inheritsSet = null

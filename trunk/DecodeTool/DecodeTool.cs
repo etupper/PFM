@@ -648,12 +648,10 @@ namespace DecodeTool {
             ParserStart = -1;
         }
 
-        private void more3ToolStripMenuItem_Click(object sender, EventArgs e) {
-
-        }
-
-        private void more4ToolStripMenuItem_Click(object sender, EventArgs e) {
-
+        private void ReapplyExisting(object sender, EventArgs e) {
+            List<FieldInfo> existing = new List<FieldInfo>(FieldTypes);
+            existing.AddRange(FieldTypes);
+            FieldTypes = existing;
         }
 
         private void more5ToolStripMenuItem_Click(object sender, EventArgs e) {

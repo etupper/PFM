@@ -34,7 +34,7 @@
             this.transformToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
             this.parseHereToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
             this.parseFromStartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
-            this.more4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
+            this.reapplyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
             this.more5ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
             this.toggleEncodingStripMenuItem = new System.Windows.Forms.ToolStripMenuItem ();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer ();
@@ -145,7 +145,7 @@
             // 
             this.moreToolStripMenuItem.DropDownItems.AddRange (new System.Windows.Forms.ToolStripItem[] {
             this.transformToolStripMenuItem, this.parseHereToolStripMenuItem, this.parseFromStartToolStripMenuItem, 
-                this.more4ToolStripMenuItem, this.more5ToolStripMenuItem, toggleEncodingStripMenuItem  });
+                this.reapplyToolStripMenuItem, this.more5ToolStripMenuItem, toggleEncodingStripMenuItem  });
             this.moreToolStripMenuItem.Name = "moreToolStripMenuItem";
             this.moreToolStripMenuItem.Size = new System.Drawing.Size (47, 20);
             this.moreToolStripMenuItem.Text = "More";
@@ -174,13 +174,13 @@
             this.parseFromStartToolStripMenuItem.Visible = true;
             this.parseFromStartToolStripMenuItem.Click += new System.EventHandler(ParseFromStart);
             // 
-            // more4ToolStripMenuItem
+            // reapplyToolStripMenuItem
             // 
-            this.more4ToolStripMenuItem.Name = "more4ToolStripMenuItem";
-            this.more4ToolStripMenuItem.Size = new System.Drawing.Size (176, 22);
-            this.more4ToolStripMenuItem.Text = "Bool <-> OptString";
-            this.more4ToolStripMenuItem.Visible = false;
-            //this.more4ToolStripMenuItem.Click += new System.EventHandler(this.ToggleBoolOptstring);
+            this.reapplyToolStripMenuItem.Name = "reapplyToolStripMenuItem";
+            this.reapplyToolStripMenuItem.Size = new System.Drawing.Size (176, 22);
+            this.reapplyToolStripMenuItem.Text = "Add all again";
+            this.reapplyToolStripMenuItem.Visible = true;
+            this.reapplyToolStripMenuItem.Click += new System.EventHandler(this.ReapplyExisting);
             // 
             // more5ToolStripMenuItem
             // 
@@ -619,7 +619,7 @@
         private System.Windows.Forms.ToolStripMenuItem transformToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem parseHereToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem parseFromStartToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem more4ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem reapplyToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem more5ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toggleEncodingStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;

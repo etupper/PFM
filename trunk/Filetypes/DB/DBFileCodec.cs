@@ -99,6 +99,8 @@ namespace Filetypes {
             }
             if (file.Entries.Count != header.EntryCount) {
                 throw new DBFileNotSupportedException(string.Format("Expected {0} entries, got {1}", header.EntryCount, file.Entries.Count));
+            } else if (reader.BaseStream.Position != reader.BaseStream.Length) {
+                throw new DBFileNotSupportedException(string.Format("Expected {0} bytes, read {1}", header.Length, reader.BaseStream.Position));
             }
             return file;
         }
