@@ -6,6 +6,12 @@ using System.IO;
 namespace DbDecoding {
     class MainClass {
         public static void Main(string[] args) {
+            PackFile exported = null;
+            bool export = (args.Length > 0 && args[0].Equals("-x"));
+            if (export) {
+                Console.WriteLine("exporting undecoded to file");
+                exported = new PackFile("undecoded.pack", new PFHeader("PFH4"));
+            }
             DBTypeMap.Instance.initializeFromFile("master_schema.xml");
             foreach (Game game in Game.Games) {
                 LoadGameLocationFromFile(game);
@@ -21,22 +27,37 @@ namespace DbDecoding {
                                     }
                                     // DBFileHeader header = PackedFileDbCodec.readHeader(dbFile);
                                     DBFile decoded = PackedFileDbCodec.Decode(dbFile);
-                                    if (decoded == null && PackedFileDbCodec.readHeader(dbFile).EntryCount != 0) {
+                                    DBFileHeader header = PackedFileDbCodec.readHeader(dbFile);
+                                    if (decoded == null && header.EntryCount != 0) {
                                         Console.WriteLine("failed to read {0} in {1}", dbFile.FullPath, packFile);
-                                        string key = DBFile.Typename(dbFile.FullPath);
-                                        bool unicode = true;
-                                        if (game == Game.R2TW ||
-                                            game == Game.ATW) {
-                                            unicode = false;
+                                        if (export) {
+                                            String exportFileName = String.Format("db/{0}_{1}_{2}", game.Id, dbFile.Name, Path.GetFileName(packFileName)).ToLower();
+                                            PackedFile exportedDbFile = new PackedFile(exportFileName, false) {
+                                                Data = dbFile.Data
+                                            };
+                                            exported.Add(exportedDbFile);
+                                        } else {
+                                            string key = DBFile.Typename(dbFile.FullPath);
+                                            bool unicode = true;
+                                            if (game == Game.R2TW ||
+                                                game == Game.ATW)
+                                            {
+                                                unicode = false;
+                                            }
+                                            DecodeTool.DecodeTool decoder = new DecodeTool.DecodeTool(unicode)
+                                            {
+                                                TypeName = key,
+                                                Bytes = dbFile.Data
+                                            };
+                                            decoder.ShowDialog();
                                         }
-                                        DecodeTool.DecodeTool decoder = new DecodeTool.DecodeTool(unicode) { 
-                                            TypeName = key, Bytes = dbFile.Data 
-                                        };
-                                        decoder.ShowDialog();
                                     }
                                 }
                             }
                         }
+                    }
+                    if (export) {
+                        new PackFileCodec().Save(exported);
                     }
                 } else {
                     Console.Error.WriteLine("Game {0} not installed in {1}", game, game.GameDirectory);
