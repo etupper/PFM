@@ -30,9 +30,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DBTableDisplay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DBTableDisplay.Designer.cs">
+      <DependentUpon>DBTableDisplay.cs</DependentUpon>
+    </Compile>
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
@@ -50,6 +59,11 @@
       <Project>{2419C2AF-48A3-40D2-980B-36AB2D81DC74}</Project>
       <Name>Filetypes</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DBTableDisplay.resx">
+      <DependentUpon>DBTableDisplay.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <PreBuildEvent>copy "$(SolutionDir)\Files\master_schema.xml" "$(TargetDir)"

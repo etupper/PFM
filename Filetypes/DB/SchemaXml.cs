@@ -122,7 +122,9 @@ namespace Filetypes {
         }
         
         public void Export() {
-            Export(DBTypeMap.Instance.AllInfos);
+            List<TypeInfo> sorted = new TypeInfoList(DBTypeMap.Instance.AllInfos);
+            sorted.Sort();
+            Export(sorted);
         }
 
         public void Export(List<TypeInfo> infos) {
