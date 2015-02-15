@@ -13211,9 +13211,6 @@
     <field fkey='unit_regiment_names_localisation_lookup_tables.key' name='unit_name' type='string' pk='true' />
     <field name='name_order' type='int' />
   </table>
-  <table table_name='unit_regiment_names_tables'
-         table_version='1' >
-  </table>
   <table table_name='unit_required_technology_junctions_tables'
          table_version='0' >
     <field fkey='units_tables.key' name='unit_key' type='string' pk='true' />
