@@ -6159,7 +6159,7 @@
   <table table_name='deployables_tables'
          table_version='7' >
     <field name='hitpoints' type='int' />
-    <field name='unknown1' type='optstring_ascii' />
+    <field name='how' type='optstring_ascii' />
     <field name='unknown2' type='string_ascii' />
     <field name='unknown3' type='optstring_ascii' />
     <field name='key' type='string_ascii' />
