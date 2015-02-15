@@ -11,10 +11,8 @@ using System.Windows.Forms;
 
 namespace DbDecoding
 {
-    public partial class DBTableDisplay : Form
-    {
-        public DBTableDisplay()
-        {
+    public partial class DBTableDisplay : Form {
+        public DBTableDisplay() {
             InitializeComponent();
         }
 
@@ -30,8 +28,7 @@ namespace DbDecoding
             List<TypeInfo> infos = new List<TypeInfo>(DBTypeMap.Instance.AllInfos);
             infos.Sort();
             foreach (TypeInfo type in infos) {
-                if (!added.Contains(type.Name))
-                {
+                if (!added.Contains(type.Name)) {
                     dbTypeComboBox.Items.Add(type.Name);
                     added.Add(type.Name);
                 }
@@ -71,6 +68,14 @@ namespace DbDecoding
         }
 
         private void addToolStripMenuItem_Click(object sender, EventArgs e) {
+            Add(true);
+        }
+        private void integrateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Add(false);
+        }
+        private void Add(bool keepExistingNames)
+        {
             FileDialog fileDlg = new OpenFileDialog();
             if (fileDlg.ShowDialog() == DialogResult.OK) {
                 using (var stream = File.OpenRead(fileDlg.FileName)) {
@@ -80,21 +85,23 @@ namespace DbDecoding
                         bool exists = false;
                         foreach (TypeInfo existing in DBTypeMap.Instance.GetAllInfos(info.Name)) {
                             if (existing.Version == info.Version && existing.SameTypes(info)) {
-                                Console.WriteLine("imported type info {0}/{1} already exists with those fields", 
+                                Console.WriteLine("imported type info {0}/{1} already exists with those fields",
                                     info.Name, info.Version);
                                 exists = true;
-                                for (int j = 0; j < existing.Fields.Count; j++) {
-                                    if (!existing.Fields[j].Name.Equals(info.Fields[j].Name)) {
-                                        SchemaFieldNameChooser f = new SchemaFieldNameChooser();
-                                        f.LeftInfo = existing;
-                                        f.RightInfo = info;
-                                        if (f.ShowDialog() == DialogResult.OK) {
-                                            TypeInfo result = f.MergedInfo;
-                                            for (int i = 0; i < result.Fields.Count; i++) {
-                                                existing.Fields[i].Name = result.Fields[i].Name;
+                                if (!keepExistingNames) {
+                                    for (int j = 0; j < existing.Fields.Count; j++) {
+                                        if (!existing.Fields[j].Name.Equals(info.Fields[j].Name)) {
+                                            SchemaFieldNameChooser f = new SchemaFieldNameChooser();
+                                            f.LeftInfo = existing;
+                                            f.RightInfo = info;
+                                            if (f.ShowDialog() == DialogResult.OK) {
+                                                TypeInfo result = f.MergedInfo;
+                                                for (int i = 0; i < result.Fields.Count; i++) {
+                                                    existing.Fields[i].Name = result.Fields[i].Name;
+                                                }
                                             }
+                                            break;
                                         }
-                                        break;
                                     }
                                 }
                                 break;
@@ -116,5 +123,6 @@ namespace DbDecoding
                 DBTypeMap.Instance.SaveToFile(fileDlg.FileName);
             }
         }
+
     }
 }
