@@ -104,7 +104,7 @@ namespace Filetypes {
             XmlImporter importer = null;
             using (Stream stream = File.OpenRead(filename)) {
                 importer = new XmlImporter(stream);
-                importer.Import();
+                importer.Import(true);
             }
             typeInfos = importer.Imported;
             if (File.Exists(MODEL_SCHEMA_FILE_NAME)) {

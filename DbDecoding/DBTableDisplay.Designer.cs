@@ -32,13 +32,14 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.inputToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
-            this.dbTypeComboBox = new System.Windows.Forms.ComboBox();
             this.versionsListBox = new System.Windows.Forms.ListBox();
+            this.dbTypeComboBox = new System.Windows.Forms.ComboBox();
             this.fieldsListBox = new System.Windows.Forms.ListBox();
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.integrateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
@@ -62,6 +63,7 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
             this.addToolStripMenuItem,
+            this.integrateToolStripMenuItem,
             this.saveToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -79,7 +81,15 @@
             this.addToolStripMenuItem.Name = "addToolStripMenuItem";
             this.addToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.addToolStripMenuItem.Text = "Add";
+            this.addToolStripMenuItem.ToolTipText = "Add from other schema file, keep names of existing schemas for equal types";
             this.addToolStripMenuItem.Click += new System.EventHandler(this.addToolStripMenuItem_Click);
+            // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // dataToolStripMenuItem
             // 
@@ -92,7 +102,7 @@
             // inputToolStripMenuItem
             // 
             this.inputToolStripMenuItem.Name = "inputToolStripMenuItem";
-            this.inputToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.inputToolStripMenuItem.Size = new System.Drawing.Size(102, 22);
             this.inputToolStripMenuItem.Text = "Input";
             // 
             // splitContainer
@@ -114,16 +124,6 @@
             this.splitContainer.SplitterDistance = 168;
             this.splitContainer.TabIndex = 1;
             // 
-            // dbTypeComboBox
-            // 
-            this.dbTypeComboBox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.dbTypeComboBox.FormattingEnabled = true;
-            this.dbTypeComboBox.Location = new System.Drawing.Point(0, 0);
-            this.dbTypeComboBox.Name = "dbTypeComboBox";
-            this.dbTypeComboBox.Size = new System.Drawing.Size(763, 21);
-            this.dbTypeComboBox.TabIndex = 0;
-            this.dbTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.dbTypeComboBox_SelectedIndexChanged);
-            // 
             // versionsListBox
             // 
             this.versionsListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -136,6 +136,16 @@
             this.versionsListBox.TabIndex = 1;
             this.versionsListBox.SelectedIndexChanged += new System.EventHandler(this.versionsListBox_SelectedIndexChanged);
             // 
+            // dbTypeComboBox
+            // 
+            this.dbTypeComboBox.Dock = System.Windows.Forms.DockStyle.Top;
+            this.dbTypeComboBox.FormattingEnabled = true;
+            this.dbTypeComboBox.Location = new System.Drawing.Point(0, 0);
+            this.dbTypeComboBox.Name = "dbTypeComboBox";
+            this.dbTypeComboBox.Size = new System.Drawing.Size(763, 21);
+            this.dbTypeComboBox.TabIndex = 0;
+            this.dbTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.dbTypeComboBox_SelectedIndexChanged);
+            // 
             // fieldsListBox
             // 
             this.fieldsListBox.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -145,12 +155,13 @@
             this.fieldsListBox.Size = new System.Drawing.Size(763, 277);
             this.fieldsListBox.TabIndex = 0;
             // 
-            // saveToolStripMenuItem
+            // integrateToolStripMenuItem
             // 
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.saveToolStripMenuItem.Text = "Save";
-            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            this.integrateToolStripMenuItem.Name = "integrateToolStripMenuItem";
+            this.integrateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.integrateToolStripMenuItem.Text = "Integrate";
+            this.integrateToolStripMenuItem.ToolTipText = "Add from other schema file, select field names if types are equal";
+            this.integrateToolStripMenuItem.Click += new System.EventHandler(this.integrateToolStripMenuItem_Click);
             // 
             // DBTableDisplay
             // 
@@ -186,5 +197,6 @@
         private System.Windows.Forms.ComboBox dbTypeComboBox;
         private System.Windows.Forms.ListBox fieldsListBox;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem integrateToolStripMenuItem;
     }
 }
