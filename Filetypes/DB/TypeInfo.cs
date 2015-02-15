@@ -73,6 +73,20 @@ namespace Filetypes {
             if (result == 0) {
                 result = Version - other.Version;
             }
+            if (result == 0) {
+                result = Fields.Count - other.Fields.Count;
+            }
+            if (result == 0) {
+                for (int i = 0; i < Fields.Count; i++) {
+                    result = Fields[i].Name.CompareTo(other.Fields[i].Name);
+                    if (result == 0) {
+                        result = Fields[i].TypeName.CompareTo(other.Fields[i].TypeName);
+                    }
+                    if (result != 0) {
+                        break;
+                    }
+                }
+            }
             return result;
         }
     }

@@ -44,6 +44,12 @@
     </Compile>
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="SchemaFieldNameChooser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SchemaFieldNameChooser.Designer.cs">
+      <DependentUpon>SchemaFieldNameChooser.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -63,6 +69,9 @@
   <ItemGroup>
     <EmbeddedResource Include="DBTableDisplay.resx">
       <DependentUpon>DBTableDisplay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SchemaFieldNameChooser.resx">
+      <DependentUpon>SchemaFieldNameChooser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

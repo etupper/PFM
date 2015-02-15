@@ -80,8 +80,23 @@ namespace DbDecoding
                         bool exists = false;
                         foreach (TypeInfo existing in DBTypeMap.Instance.GetAllInfos(info.Name)) {
                             if (existing.Version == info.Version && existing.SameTypes(info)) {
-                                Console.WriteLine("imported type info {0}/{1} already exists with those fields", info.Name, info.Version);
+                                Console.WriteLine("imported type info {0}/{1} already exists with those fields", 
+                                    info.Name, info.Version);
                                 exists = true;
+                                for (int j = 0; j < existing.Fields.Count; j++) {
+                                    if (!existing.Fields[j].Name.Equals(info.Fields[j].Name)) {
+                                        SchemaFieldNameChooser f = new SchemaFieldNameChooser();
+                                        f.LeftInfo = existing;
+                                        f.RightInfo = info;
+                                        if (f.ShowDialog() == DialogResult.OK) {
+                                            TypeInfo result = f.MergedInfo;
+                                            for (int i = 0; i < result.Fields.Count; i++) {
+                                                existing.Fields[i].Name = result.Fields[i].Name;
+                                            }
+                                        }
+                                        break;
+                                    }
+                                }
                                 break;
                             }
                         }
