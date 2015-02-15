@@ -605,6 +605,19 @@
     <field name='spawnable' type='boolean' />
     <field name='attribute' type='string' />
     <field fkey='religions_tables.religion_key' name='religion' type='optstring' />
+  </table>
+  <table table_name='agents_tables'
+         table_version='0' >
+    <field name='key' type='string' />
+    <field name='move_points' type='int' />
+    <field name='line_of_sight' type='int' />
+    <field name='zone_of_control' type='int' />
+    <field name='is_playable' type='boolean' />
+    <field name='animation_type' type='string' />
+    <field name='portrait' type='optstring' />
+    <field name='spawnable' type='boolean' />
+    <field name='attribute' type='string' />
+    <field fkey='religions_tables.religion_key' name='religion' type='optstring' />
     <field name='faction_total_cap' type='int' />
   </table>
   <table table_name='agents_tables'
@@ -645,6 +658,21 @@
     <field fkey='religions_tables.religion_key' name='religion' type='optstring' />
     <field name='faction_total_cap' type='int' />
     <field name='faction_cap_lower_bound' type='int' />
+  </table>
+  <table table_name='agents_tables'
+         table_version='1' >
+    <field name='key' type='string' />
+    <field name='move_points' type='int' />
+    <field name='line_of_sight' type='int' />
+    <field name='zone_of_control' type='int' />
+    <field name='unknown4' type='boolean' />
+    <field name='unknown5' type='string' />
+    <field name='unknown6' type='optstring' />
+    <field name='unknown7' type='boolean' />
+    <field name='unknown8' type='string' />
+    <field name='unknown9' type='optstring' />
+    <field name='unknown10' type='int' />
+    <field name='unknown11' type='int' />
   </table>
   <table table_name='agents_tables'
          table_version='2' >
@@ -9023,6 +9051,23 @@
     <field fkey='names_tables.id' name='clan_name_key' type='optstring_ascii' />
     <field fkey='names_tables.id' name='other_name_key' type='optstring_ascii' />
   </table>
+  <table table_name='historical_characters_tables'
+         table_version='6' >
+    <field name='key' type='string_ascii' />
+    <field name='nobility' type='boolean' />
+    <field name='gender' type='string_ascii' />
+    <field fkey='agents_tables.key' name='agent_type' type='string_ascii' />
+    <field fkey='factions_tables.key' name='faction' type='string_ascii' />
+    <field name='spawning_window_start' type='int' />
+    <field name='spawning_window_end' type='int' />
+    <field name='spawn_conditions' type='string_ascii' />
+    <field fkey='names_tables.id' name='name_key' type='string_ascii' />
+    <field name='unknown9' type='optstring_ascii' />
+    <field name='unknown10' type='optstring_ascii' />
+    <field name='unknown11' type='optstring_ascii' />
+    <field name='unknown12' type='optstring_ascii' />
+    <field name='unknown13' type='optstring_ascii' />
+  </table>
   <table table_name='honour_effects_tables'
          table_version='0' >
     <field name='applies_to_ai' type='boolean' />
@@ -9464,6 +9509,17 @@
     <field name='max_count' type='int' />
     <field name='max_replenish_per_turn' type='int' />
     <field fkey='main_units_tables.unit' name='unit_record' type='string_ascii' />
+  </table>
+  <table table_name='message_event_strings_tables'
+         table_version='0' >
+    <field name='event_id' type='string' pk='true' />
+    <field fkey='cultures_tables.key' name='culture' type='string' pk='true' />
+    <field name='title' type='string' />
+    <field name='image' type='string' />
+    <field name='layout' type='string' />
+    <field name='requires_response' type='boolean' />
+    <field name='instant_open' type='boolean' />
+    <field name='image8' type='string' />
   </table>
   <table table_name='message_event_strings_tables'
          table_version='0' >
@@ -12051,6 +12107,12 @@
     <field fkey='start_pos_characters_tables.surname' name='character' type='int' />
     <field fkey='start_pos_characters_tables.surname' name='related_to' type='int' />
     <field fkey='family_relationship_types_tables.relationship_type' name='relationship' type='string' />
+  </table>
+  <table table_name='start_pos_family_relationships_tables'
+         table_version='1' >
+    <field fkey='start_pos_characters_tables.surname' name='character' type='int' />
+    <field fkey='start_pos_characters_tables.surname' name='related_to' type='int' />
+    <field name='relationship' type='string_ascii' />
   </table>
   <table table_name='start_pos_past_events_tables'
          table_version='0' >
@@ -14746,6 +14808,128 @@
     <field name='morale' type='int' />
     <field name='mp_fixed_cost' type='int' />
     <field name='mp_experience_cost_multiplier' type='float' />
+  </table>
+  <table table_name='unit_stats_naval_tables'
+         table_version='0' >
+    <field fkey='units_tables.key' name='unit' type='string' pk='true' />
+    <field name='morale' type='int' />
+    <field name='mothball_cost' type='int' />
+    <field name='reactivate_cost' type='int' />
+    <field name='admiral_promotion_cost_record' type='optstring' />
+    <field fkey='gun_types_tables.gun_type' name='bow_chasers' type='optstring' />
+    <field fkey='gun_types_tables.gun_type' name='stern_chasers' type='optstring' />
+    <field fkey='gun_types_tables.gun_type' name='deck_1_top' type='optstring' />
+    <field fkey='gun_types_tables.gun_type' name='deck_2' type='optstring' />
+    <field fkey='gun_types_tables.gun_type' name='deck_3' type='optstring' />
+    <field fkey='gun_types_tables.gun_type' name='deck_4' type='optstring' />
+    <field fkey='gun_types_tables.gun_type' name='deck_5' type='optstring' />
+    <field fkey='models_naval_tables.key' name='ship_model' type='string' />
+    <field fkey='battle_personalities_tables.key' name='admiral' type='string' />
+    <field fkey='battle_personalities_tables.key' name='cpt' type='optstring' />
+    <field fkey='battle_personalities_tables.key' name='lt' type='optstring' />
+    <field fkey='battle_personalities_tables.key' name='bosun' type='optstring' />
+    <field name='num_marines' type='int' />
+    <field name='num_seamen' type='int' />
+    <field name='num_gunners' type='int' />
+    <field name='core_gunner_marksmanship' type='int' />
+    <field name='core_gunner_loading_skill' type='int' />
+    <field fkey='unit_stats_firing_mechanism_enum_tables.key' name='firing_mechanism' type='string' />
+    <field name='water_bail_out_modifier' type='float' />
+    <field name='flood_threshold_to_sink' type='float' />
+    <field name='fire_risk_modifier' type='float' />
+    <field name='mass' type='int' />
+    <field name='collision_momentum_modifer' type='float' />
+    <field name='formation_distance' type='int' />
+    <field name='minimum_distance' type='int' />
+    <field name='formation_integrity' type='int' />
+    <field name='top_speed' type='int' />
+    <field name='acceleration' type='float' />
+    <field name='stopping_threshold' type='float' />
+    <field name='heel_factor' type='float' />
+    <field name='beating_angle' type='int' />
+    <field name='max_yard_angle' type='int' />
+    <field name='sail_furl_angle' type='int' />
+    <field name='speed_wind_astern' type='float' />
+    <field name='speed_coefficient_10-15_degrees' type='float' />
+    <field name='speed_30_deg' type='float' />
+    <field name='speed_coefficient_40-45_degrees' type='float' />
+    <field name='speed_60_deg' type='float' />
+    <field name='speed_75_deg' type='float' />
+    <field name='speed_90_deg' type='float' />
+    <field name='speed_105_deg' type='float' />
+    <field name='speed_120_deg' type='float' />
+    <field name='speed_135_deg' type='float' />
+    <field name='speed_145_deg' type='float' />
+    <field name='speed_180_deg' type='float' />
+    <field name='position_damping' type='float' />
+    <field name='rotation_damping' type='float' />
+    <field name='turn_rate_at_full_speed' type='float' />
+    <field name='turn_rate_at_10_percent' type='float' />
+    <field name='turn_rate_at_20_percent' type='float' />
+    <field name='turn_rate_at_35_percent' type='float' />
+    <field name='turn_rate_at_50_percent' type='float' />
+    <field name='turn_rate_at_65_percent' type='float' />
+    <field name='turn_rate_at_80_percent' type='float' />
+    <field name='turn_rate_stopped' type='float' />
+    <field name='top_gallants_allowed' type='boolean' />
+    <field name='side_panels_above_water_1_top_armour' type='int' />
+    <field name='side_panels_above_water_1_top_hits' type='int' />
+    <field name='side_panels_above_water_1_top_critical' type='float' />
+    <field name='side_panels_above_water_2_armour' type='int' />
+    <field name='side_panels_above_water_2_hits' type='int' />
+    <field name='side_panels_above_water_2_critical' type='float' />
+    <field name='side_panels_below_water_armour' type='int' />
+    <field name='side_panels_below_water_hits' type='int' />
+    <field name='side_panels_below_water_critical' type='float' />
+    <field name='prow_panels_above_water_armour' type='int' />
+    <field name='prow_panels_above_water_hits' type='int' />
+    <field name='prow_panels_above_water_critical' type='float' />
+    <field name='prow_panels_below_water_armour' type='int' />
+    <field name='prow_panels_below_water_hits' type='int' />
+    <field name='prow_panels_below_water_critical' type='float' />
+    <field name='stern_panels_above_water_armour' type='int' />
+    <field name='stern_panels_above_water_hits' type='int' />
+    <field name='stern_panels_above_water_critical' type='float' />
+    <field name='stern_panels_below_water_armour' type='int' />
+    <field name='stern_panels_below_water_hits' type='int' />
+    <field name='stern_panels_below_water_critical' type='float' />
+    <field name='mast_1_front_armour' type='int' />
+    <field name='mast_1_front_hits' type='int' />
+    <field name='mast_1_front_critical' type='float' />
+    <field name='mast_2_armour' type='int' />
+    <field name='mast_2_hits' type='int' />
+    <field name='mast_2_critical' type='float' />
+    <field name='mast_3_armour' type='int' />
+    <field name='mast_3_hits' type='int' />
+    <field name='mast_3_critical' type='float' />
+    <field name='top_sails_armour' type='int' />
+    <field name='top_sails_hits' type='int' />
+    <field name='top_sails_critical' type='float' />
+    <field name='middle_sails_armour' type='int' />
+    <field name='middle_sails_hits' type='int' />
+    <field name='middle_sails_critical' type='float' />
+    <field name='bottom_sails_armour' type='int' />
+    <field name='bottom_sails_hits' type='int' />
+    <field name='bottom_sails_critical' type='float' />
+    <field name='top_gallants_sails_armour' type='int' />
+    <field name='top_gallants_sails_hits' type='int' />
+    <field name='top_gallants_sails_critical' type='float' />
+    <field name='mast_bowsprit_armour' type='int' />
+    <field name='mast_bowsprit_hits' type='int' />
+    <field name='mast_bowsprit_critical' type='float' />
+    <field name='front_sails_armour' type='int' />
+    <field name='front_sails_hits' type='int' />
+    <field name='front_sails_critical' type='float' />
+    <field name='back_sails_armour' type='int' />
+    <field name='back_sails_hits' type='int' />
+    <field name='back_sails_critical' type='float' />
+    <field name='magazine_armour' type='int' />
+    <field name='magazine_hits' type='int' />
+    <field name='magazine_critical' type='float' />
+    <field name='scares_enemies' type='boolean' />
+    <field name='inspire' type='boolean' />
+    <field name='can_trade' type='boolean' />
+    <field name='manoeuverability' type='string' />
   </table>
   <table table_name='unit_stats_naval_tables'
          table_version='0' >
