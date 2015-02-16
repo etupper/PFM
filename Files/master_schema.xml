@@ -9521,6 +9521,23 @@
     <field name='melee_weapon_type' type='string_ascii' />
     <field name='audio_material' type='string_ascii' />
   </table>
+  <table table_name='melee_weapons_tables'
+         table_version='7' >
+    <field name='armour_penetrating' type='boolean' />
+    <field name='armour_piercing' type='boolean' />
+    <field name='bonus_v_elephants' type='int' />
+    <field name='bonus_v_cavalry' type='int' />
+    <field name='bonus_v_infantry' type='int' />
+    <field name='key' type='string_ascii' pk='true' />
+    <field name='damage' type='int' />
+    <field name='ap_damage' type='int' />
+    <field name='first_strike' type='int' />
+    <field name='shield_piercing' type='boolean' />
+    <field name='weapon_length' type='float' />
+    <field name='melee_weapon_type' type='string_ascii' />
+    <field name='audio_material' type='string_ascii' />
+    <field name='unknown13' type='float' />
+  </table>
   <table table_name='mercenary_pool_modifiers_tables'
          table_version='0' >
     <field name='cost_modifier' type='float' />
