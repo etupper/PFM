@@ -1,5 +1,6 @@
 ﻿namespace PackFileManager.Properties
 {
+    using Common;
     using System;
     using System.CodeDom.Compiler;
     using System.ComponentModel;
@@ -87,6 +88,30 @@
                 }
                 return resourceMan;
             }
+        }
+
+        internal static System.Drawing.Icon GetGameIcon(Game game) {
+            if (game == Game.ATW)
+            {
+                return Attila;
+            }
+            else if (game == Game.ETW)
+            {
+                return Empire;
+            }
+            else if (game == Game.NTW)
+            {
+                return Napoleon;
+            }
+            else if (game == Game.R2TW)
+            {
+                return Rome2;
+            }
+            else if (game == Game.STW)
+            {
+                return Shogun;
+            }
+            return null;
         }
     }
 }

@@ -390,6 +390,10 @@ namespace PackFileManager
             item.Click += new EventHandler(delegate(object o, EventArgs unused) { 
                 GameManager.Instance.CurrentGame = Game.ById(item.Text); 
             });
+            Icon icon = Resources.GetGameIcon(g);
+            if (icon != null) {
+                item.Image = icon.ToBitmap();
+            }
             GameManager.Instance.GameChanged += delegate() {
                 item.Checked = GameManager.Instance.CurrentGame.Id.Equals(item.Text);
             };
