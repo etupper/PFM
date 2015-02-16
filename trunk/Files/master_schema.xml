@@ -6001,6 +6001,24 @@
     <field name='unknown14' type='optstring_ascii' />
     <field name='unknown15' type='optstring_ascii' />
   </table>
+  <table table_name='campaign_settlement_display_buildings_tables'
+         table_version='2' >
+    <field name='building_path' type='optstring_ascii' />
+    <field fkey='campaign_settlement_display_building_ids_tables.key' name='display_building_key' type='string_ascii' />
+    <field name='unknown' type='optstring_ascii' />
+    <field name='unknown4' type='optstring_ascii' />
+    <field name='unknown5' type='optstring_ascii' />
+    <field name='key' type='int' pk='true' />
+    <field name='unknown7' type='optstring_ascii' />
+    <field name='unknown8' type='optstring_ascii' />
+    <field name='unknown9' type='optstring_ascii' />
+    <field name='unknown10' type='optstring_ascii' />
+    <field name='unknown11' type='optstring_ascii' />
+    <field name='unknown12' type='optstring_ascii' />
+    <field name='unknown13' type='optstring_ascii' />
+    <field name='unknown14' type='optstring_ascii' />
+    <field name='unknown15' type='optstring_ascii' />
+  </table>
   <table table_name='campaign_settlement_display_construction_model_ids_tables'
          table_version='0' >
     <field name='unknown0' type='string_ascii' />
@@ -6325,6 +6343,14 @@
     <field name='option_key' type='string_ascii' />
     <field name='value' type='optstring_ascii' />
   </table>
+  <table table_name='cdir_events_dilemma_option_junctions_tables'
+         table_version='2' >
+    <field name='dilemma_key' type='string_ascii' />
+    <field name='id' type='int' pk='true' />
+    <field name='unknown3' type='float' />
+    <field name='option_key' type='string_ascii' />
+    <field name='value' type='optstring_ascii' />
+  </table>
   <table table_name='cdir_events_dilemma_payloads_tables'
          table_version='0' >
     <field name='choice_key' type='string' />
@@ -6365,6 +6391,14 @@
   </table>
   <table table_name='cdir_events_incident_option_junctions_tables'
          table_version='1' >
+    <field name='id' type='int' pk='true' />
+    <field name='unknown2' type='float' />
+    <field name='incident_key' type='string_ascii' />
+    <field name='option_key' type='string_ascii' />
+    <field name='value' type='optstring_ascii' />
+  </table>
+  <table table_name='cdir_events_incident_option_junctions_tables'
+         table_version='2' >
     <field name='id' type='int' pk='true' />
     <field name='unknown2' type='float' />
     <field name='incident_key' type='string_ascii' />
@@ -6427,6 +6461,14 @@
   </table>
   <table table_name='cdir_events_mission_option_junctions_tables'
          table_version='1' >
+    <field name='id' type='int' pk='true' />
+    <field name='unknown2' type='float' />
+    <field name='mission_key' type='string_ascii' />
+    <field name='option_key' type='string_ascii' />
+    <field name='value' type='optstring_ascii' />
+  </table>
+  <table table_name='cdir_events_mission_option_junctions_tables'
+         table_version='2' >
     <field name='id' type='int' pk='true' />
     <field name='unknown2' type='float' />
     <field name='mission_key' type='string_ascii' />
@@ -11130,6 +11172,23 @@
     <field name='explosion_particle_effect_on_ground' type='optstring_ascii' />
     <field name='audio_explosion_type' type='string_ascii' />
   </table>
+  <table table_name='projectiles_explosions_tables'
+         table_version='6' >
+    <field name='key' type='string_ascii' pk='true' />
+    <field name='detonator_type' type='string_ascii' />
+    <field name='detonation_type' type='string_ascii' />
+    <field name='detonation_radius' type='float' />
+    <field name='detonation_duration' type='float' />
+    <field name='detonation_speed' type='float' />
+    <field name='detonation_damage' type='float' />
+    <field fkey='projectiles_tables.key' name='projectile_name' type='optstring_ascii' />
+    <field name='projectile_amount' type='int' />
+    <field fkey='particle_effects_tables.key' name='explosion_particle_effect' type='optstring_ascii' />
+    <field name='distance_from_target' type='int' />
+    <field name='error_margin' type='float' />
+    <field name='explosion_particle_effect_on_ground' type='optstring_ascii' />
+    <field name='audio_explosion_type' type='string_ascii' />
+  </table>
   <table table_name='projectiles_missile_type_enum_tables'
          table_version='0' >
     <field name='key' type='string' pk='true' />
@@ -12056,6 +12115,24 @@
     <field fkey='ui_effects_tables.key' name='ui_vfx' type='optstring_ascii' />
     <field name='rally_amount' type='int' />
   </table>
+  <table table_name='special_ability_phases_tables'
+         table_version='12' >
+    <field name='duration' type='float' />
+    <field name='effect_type' type='string_ascii' />
+    <field name='id' type='string_ascii' pk='true' />
+    <field name='requested_stance' type='optstring_ascii' />
+    <field name='unbreakable' type='boolean' />
+    <field name='cant_move' type='boolean' />
+    <field name='kill_own_unit' type='boolean' />
+    <field name='freeze_fatigue' type='boolean' />
+    <field name='fatigue_change_ratio' type='float' />
+    <field name='inspiration_aura_range_mod' type='float' />
+    <field name='ability_recharge_change' type='float' />
+    <field name='minor_casualties' type='boolean' />
+    <field name='major_casualties' type='boolean' />
+    <field fkey='ui_effects_tables.key' name='ui_vfx' type='optstring_ascii' />
+    <field name='rally_amount' type='int' />
+  </table>
   <table table_name='special_ability_to_auto_deactivate_flags_tables'
          table_version='0' >
     <field name='unknown0' type='string_ascii' />
@@ -12963,6 +13040,14 @@
   </table>
   <table table_name='ui_unit_stats_tables'
          table_version='3' >
+    <field name='key' type='string_ascii' pk='true' />
+    <field name='onscreen_name' type='string_ascii' />
+    <field name='max_value' type='int' />
+    <field name='campaign_only' type='boolean' />
+    <field name='sort_order' type='int' />
+  </table>
+  <table table_name='ui_unit_stats_tables'
+         table_version='5' >
     <field name='key' type='string_ascii' pk='true' />
     <field name='onscreen_name' type='string_ascii' />
     <field name='max_value' type='int' />
