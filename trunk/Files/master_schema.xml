@@ -5670,6 +5670,11 @@
     <field name='key' type='string_ascii' pk='true' />
     <field name='percent_unit_damage' type='int' />
   </table>
+  <table table_name='campaign_map_attrition_damages_tables'
+         table_version='1' >
+    <field name='attrition type' type='string_ascii' />
+    <field name='value' type='float' />
+  </table>
   <table table_name='campaign_map_attrition_faction_immunities_tables'
          table_version='0' >
     <field fkey='campaign_map_attritions_tables.key' name='attrition' type='string_ascii' pk='true' />
