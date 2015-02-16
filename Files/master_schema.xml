@@ -5322,6 +5322,17 @@
     <field name='is_male' type='boolean' />
     <field name='group' type='optstring_ascii' />
   </table>
+  <table table_name='campaign_character_art_sets_tables'
+         table_version='5' >
+    <field fkey='agents_tables.key' name='agent_type' type='optstring_ascii' />
+    <field name='art_set_id' type='string_ascii' />
+    <field fkey='cultures_tables.key' name='culture' type='optstring_ascii' />
+    <field fkey='cultures_subcultures_tables.subculture' name='subculture' type='optstring_ascii' />
+    <field fkey='factions_tables.key' name='faction' type='optstring_ascii' />
+    <field name='is_custom' type='boolean' />
+    <field name='is_male' type='boolean' />
+    <field name='group' type='optstring_ascii' />
+  </table>
   <table table_name='campaign_character_arts_tables'
          table_version='0' >
     <field fkey='campaign_character_art_sets_tables.art_set_id' name='art_set_id' type='string' />
@@ -10962,6 +10973,17 @@
   </table>
   <table table_name='political_parties_tables'
          table_version='3' >
+    <field name='key' type='string_ascii' pk='true' />
+    <field name='playable' type='boolean' />
+    <field name='ui_icon' type='string_ascii' />
+    <field fkey='effect_bundles_tables.key' name='effect_bundle' type='string_ascii' />
+    <field name='initial_power' type='int' />
+    <field name='red' type='float' />
+    <field name='green' type='float' />
+    <field name='blue' type='float' />
+  </table>
+  <table table_name='political_parties_tables'
+         table_version='4' >
     <field name='key' type='string_ascii' pk='true' />
     <field name='playable' type='boolean' />
     <field name='ui_icon' type='string_ascii' />
