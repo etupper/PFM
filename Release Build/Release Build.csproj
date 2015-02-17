@@ -74,7 +74,8 @@
 copy "$(SolutionDir)\Files\*.dll" "$(TargetDir)"
 copy "$(SolutionDir)\Files\xmlversion" "$(TargetDir)"
 copy "$(SolutionDir)\Files\PackFileManager.exe.config" "$(TargetDir)"
-</PreBuildEvent>
+
+if exist "$(SolutionDir)\Files\gamedirs.txt" copy "$(SolutionDir)\Files\gamedirs.txt" "$(TargetDir)"</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>copy "$(SolutionDir)\PackFileManager\bin\Release\*.exe" "$(TargetDir)"
