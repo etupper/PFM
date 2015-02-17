@@ -5672,8 +5672,8 @@
   </table>
   <table table_name='campaign_map_attrition_damages_tables'
          table_version='1' >
-    <field name='attrition type' type='string_ascii' />
-    <field name='value' type='float' />
+    <field name='key' type='string_ascii' pk='true' />
+    <field name='unknown1' type='float' />
   </table>
   <table table_name='campaign_map_attrition_faction_immunities_tables'
          table_version='0' >
