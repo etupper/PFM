@@ -76,6 +76,7 @@
   </ItemGroup>
   <PropertyGroup>
     <PreBuildEvent>copy "$(SolutionDir)\Files\master_schema.xml" "$(TargetDir)"
+if exist "$(SolutionDir)\Files\gamedirs.txt" copy "$(SolutionDir)\Files\gamedirs.txt" "$(TargetDir)"
 </PreBuildEvent>
   </PropertyGroup>
 </Project>
