@@ -8576,7 +8576,7 @@
     <field name='card_colour_b' type='float' />
     <field fkey='cultures_tables.key' name='diplomacy_culture' type='string_ascii' />
     <field name='senator_total' type='int' />
-    <field name='unknown2' type='boolean' />
+    <field name='unknown54' type='boolean' />
   </table>
   <table table_name='factions_tables'
          table_version='18' >
