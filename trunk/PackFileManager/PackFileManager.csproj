@@ -61,7 +61,7 @@
     </CustomCommands>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Attila.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Attila.ico</ApplicationIcon>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
