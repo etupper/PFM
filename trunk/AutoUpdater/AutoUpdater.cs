@@ -125,7 +125,7 @@ namespace AutoUpdater {
                             continue;
                         }
                         string targetFile = Path.Combine(targetDir, entry.Name);
-                        using (FileStream outStream = File.OpenWrite(targetFile)) {
+                        using (FileStream outStream = File.Create(targetFile)) {
                             zipStream.CopyTo(outStream);
                         }
                         // give specific notes to user
