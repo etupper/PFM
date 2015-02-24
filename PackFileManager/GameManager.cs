@@ -126,8 +126,8 @@ namespace PackFileManager {
             File.WriteAllLines(GameDirFilepath, newEntries);
         }
         #endregion
-  
-        static Game DefaultGame = Game.R2TW;
+
+        static Game DefaultGame = Game.ATW;
         Game current;
         public Game CurrentGame {
             get {
