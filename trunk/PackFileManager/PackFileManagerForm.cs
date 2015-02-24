@@ -401,15 +401,23 @@ namespace PackFileManager
         }
 
         void UpdateGameDirectoryItems() {
-            UpdateDirectoryItem(openGameDirToolStripMenuItem, GameManager.Instance.CurrentGame.GameDirectory);
-            UpdateDirectoryItem(openDataDirToolStripMenuItem, GameManager.Instance.CurrentGame.DataDirectory);
-            UpdateDirectoryItem(openEncyclopediaDirToolStripMenuItem, 
-                                Path.Combine(GameManager.Instance.CurrentGame.DataDirectory, "encyclopedia"));
-            UpdateDirectoryItem(openUserDirToolStripMenuItem, GameManager.Instance.CurrentGame.UserDir);
-            UpdateDirectoryItem(openReplaysDirToolStripMenuItem, 
-                                Path.Combine(GameManager.Instance.CurrentGame.UserDir, "replays"));
-            UpdateDirectoryItem(openScriptsDirToolStripMenuItem, GameManager.Instance.CurrentGame.ScriptDirectory);
+            if (GameManager.Instance.CurrentGame.IsInstalled) {
+                UpdateDirectoryItem(openGameDirToolStripMenuItem, GameManager.Instance.CurrentGame.GameDirectory);
+                UpdateDirectoryItem(openDataDirToolStripMenuItem, GameManager.Instance.CurrentGame.DataDirectory);
+                UpdateDirectoryItem(openEncyclopediaDirToolStripMenuItem, 
+                                    Path.Combine(GameManager.Instance.CurrentGame.DataDirectory, "encyclopedia"));
+                UpdateDirectoryItem(openUserDirToolStripMenuItem, GameManager.Instance.CurrentGame.UserDir);
+                UpdateDirectoryItem(openReplaysDirToolStripMenuItem, 
+                                    Path.Combine(GameManager.Instance.CurrentGame.UserDir, "replays"));
+                UpdateDirectoryItem(openScriptsDirToolStripMenuItem, GameManager.Instance.CurrentGame.ScriptDirectory);
+            } else {
+                String message = String.Format("Currently edited game is {0}, but it does not seem to be installed.\n" +
+                                               "Make sure to select the proper game in the Games menu.", 
+                                               GameManager.Instance.CurrentGame.Id);
+                MessageBox.Show(message, "Game not found", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
+
         void UpdateDirectoryItem(ToolStripMenuItem item, string tag) {
             item.Tag = tag;
             item.Enabled = Directory.Exists(tag);
