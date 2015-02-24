@@ -913,15 +913,14 @@
     <field name='avatar_special_ability' type='optstring_ascii' />
     <field name='is_wife_ancillary' type='boolean' />
   </table>
-  <table table_name='ancillaries_tables'
-         table_version='9' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='string_ascii' />
-    <field name='unknown2' type='string_ascii' />
-    <field name='unknown3' type='boolean' />
-    <field name='unknown4' type='boolean' />
-    <field name='unknown5' type='boolean' />
-    <field name='unknown6' type='int' />
+  <table table_name='ancillaries_tables' table_version='9' >
+    <field name='key' type='string_ascii' />
+    <field name='type' type='string_ascii' />
+    <field name='applies_to' type='string_ascii' />
+    <field name='transferrable' type='boolean' />
+    <field name='unique_to_world' type='boolean' />
+    <field name='unique_to_faction' type='boolean' />
+    <field name='precedence' type='int' />
     <field name='unknown7' type='int' />
     <field name='unknown8' type='int' />
     <field name='unknown9' type='boolean' />
@@ -930,7 +929,7 @@
     <field name='unknown12' type='int' />
     <field name='unknown13' type='boolean' />
     <field name='unknown14' type='boolean' />
-    <field name='unknown15' type='string_ascii' />
+    <field name='type_category' type='string_ascii' />
     <field name='unknown16' type='int' />
     <field name='unknown17' type='int' />
     <field name='unknown18' type='int' />
