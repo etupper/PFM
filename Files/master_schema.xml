@@ -913,7 +913,8 @@
     <field name='avatar_special_ability' type='optstring_ascii' />
     <field name='is_wife_ancillary' type='boolean' />
   </table>
-  <table table_name='ancillaries_tables' table_version='9' >
+  <table table_name='ancillaries_tables' 
+         table_version='9' >
     <field name='key' type='string_ascii' />
     <field name='type' type='string_ascii' />
     <field name='applies_to' type='string_ascii' />
