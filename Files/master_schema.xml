@@ -3615,6 +3615,36 @@
     <field name='unknown23' type='boolean' />
     <field name='unknown24' type='boolean' />
   </table>
+  <table table_name='building_levels_tables'
+         table_version='11' >
+    <field name='level_name' type='string_ascii' pk='true' />
+    <field fkey='building_chains_tables.key' name='chain' type='string_ascii' />
+    <field name='level' type='int' />
+    <field name='create_time' type='int' />
+    <field name='create_cost' type='int' />
+    <field name='upkeep_cost' type='int' />
+    <field name='commodity' type='string_ascii' />
+    <field name='commodity_vol' type='int' />
+    <field name='only_in_capital' type='boolean' />
+    <field name='military_prestige' type='int' />
+    <field name='naval_prestige' type='int' />
+    <field name='economic_prestige' type='int' />
+    <field name='enlightenment_prestige' type='int' />
+    <field name='destruction_terminator' type='boolean' />
+    <field name='faction_unique' type='boolean' />
+    <field name='religion_requirement' type='optstring_ascii' />
+    <field name='first_in_world_bundle' type='optstring_ascii' />
+    <field name='resource_requirement' type='optstring_ascii' />
+    <field name='unique_index' type='int' />
+    <field name='can_convert' type='boolean' />
+    <field name='building_instance_key' type='optstring_ascii' />
+    <field name='audio_building_type' type='string_ascii' />
+    <field name='should_show_building_level_in_ui_for_technology' type='boolean' />
+    <field name='health_override' type='float' />
+    <field name='development_point_cost' type='int' />
+    <field name='has_aqueduct' type='boolean' />
+    <field name='can_be_damaged' type='boolean' />
+  </table>
   <table table_name='building_research_thread_junction_tables'
          table_version='0' >
     <field fkey='building_levels_tables.level_name' name='building' type='string' pk='true' />
