@@ -9534,7 +9534,7 @@
     <field name='unknown29' type='boolean' />
     <field name='unknown30' type='int' />
     <field name='unknown31' type='int' />
-    <field name='unknown32' type='boolean' />
+    <field name='in_encyclopedia' type='boolean' />
     <field name='unknown33' type='boolean' />
     <field name='unknown34' type='boolean' />
     <field name='unknown35' type='boolean' />
