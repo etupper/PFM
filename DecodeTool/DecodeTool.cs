@@ -141,6 +141,9 @@ namespace DecodeTool {
                     currentTypeInfo = new TypeInfo { Name = "" };
                 }
                 TypeName = currentTypeInfo.Name;
+#if DEBUG
+                Console.WriteLine("Type info now {0}", currentTypeInfo);
+#endif
                 ParseData();
                 FillTypeList();
             }
@@ -192,14 +195,7 @@ namespace DecodeTool {
                 FillTypeList();
             }
         }
-        /* The GuidTypeInfo. */
-        string guid = "";
         int version = 0;
-        GuidTypeInfo GuidInfo {
-            get {
-                return new GuidTypeInfo(guid, TypeName, version);
-            }
-        }
         #endregion
 
         #region Navigation Attributes
@@ -303,7 +299,6 @@ namespace DecodeTool {
             }
             using (BinaryReader reader = new BinaryReader(new MemoryStream(Bytes))) {
                 DBFileHeader header = PackedFileDbCodec.readHeader(reader);
-                guid = header.GUID;
                 version = header.Version;
                 if (Bytes != null && header != null) {
                     if (DBTypeMap.Instance.IsSupported(TypeName)) {
@@ -311,10 +306,9 @@ namespace DecodeTool {
                             DBFile decoded = new PackedFileDbCodec(TypeName).Decode(Bytes);
                             CurrentTypeInfo = new TypeInfo(decoded.CurrentType);
 #if DEBUG
-                            Console.WriteLine("Found decoding type");
+                            Console.WriteLine("Found decoding type version {0}", decoded.CurrentType.Version);
 #endif
                         } catch {
-                            guid = header.GUID;
                             List<TypeInfo> infos = DBTypeMap.Instance.GetVersionedInfos(TypeName, header.Version);
                             CurrentTypeInfo = infos[infos.Count-1];
                         }
@@ -624,7 +618,7 @@ namespace DecodeTool {
         }
 
         private void showTypes_Click(object sender, EventArgs e) {
-            string text = XmlExporter.TableToString(GuidInfo, FieldTypes);
+            string text = XmlExporter.TableToString(TypeName, version, FieldTypes);
 			TextDisplay d = new TextDisplay (text);
 			d.ShowDialog ();
 		}
