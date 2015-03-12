@@ -52,6 +52,7 @@ namespace Filetypes {
 
 		public TypeInfo (TypeInfo toCopy) {
 			Name = toCopy.Name;
+            Version = toCopy.Version;
 			Fields.AddRange (toCopy.Fields);
 		}
         #endregion
@@ -88,6 +89,10 @@ namespace Filetypes {
                 }
             }
             return result;
+        }
+        
+        public override string ToString() {
+            return string.Format("Name={0}, Version={1}, {2} Fields", Name, Version, Fields.Count);
         }
     }
 }

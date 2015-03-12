@@ -224,13 +224,13 @@ namespace Filetypes {
         /*
          * Create string from single definition entry.
          */
-        public static string TableToString(GuidTypeInfo guid, FieldInfoList description) {
+        public static string TableToString(String name, int version, FieldInfoList description) {
             string result = "";
             using (var stream = new MemoryStream()) {
                 XmlExporter exporter = new XmlExporter(stream);
                 TypeInfo info = new TypeInfo(description) {
-                    Name = guid.TypeName,
-                    Version = guid.Version
+                    Name = name,
+                    Version = version
                 };
                 exporter.WriteTable(info, new GuidTableInfoFormatter());
                 stream.Position = 0;
