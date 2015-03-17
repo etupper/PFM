@@ -913,28 +913,27 @@
     <field name='avatar_special_ability' type='optstring_ascii' />
     <field name='is_wife_ancillary' type='boolean' />
   </table>
-  <table table_name='ancillaries_tables' 
+  <table table_name='ancillaries_tables'
          table_version='9' >
-    <field name='key' type='string_ascii' />
+    <field name='key' type='string_ascii' pk='true' />
     <field name='type' type='string_ascii' />
     <field name='applies_to' type='string_ascii' />
     <field name='transferrable' type='boolean' />
     <field name='unique_to_world' type='boolean' />
     <field name='unique_to_faction' type='boolean' />
     <field name='precedence' type='int' />
-    <field name='unknown7' type='int' />
-    <field name='unknown8' type='int' />
-    <field name='unknown9' type='boolean' />
-    <field name='unknown10' type='boolean' />
-    <field name='unknown11' type='boolean' />
-    <field name='unknown12' type='int' />
-    <field name='unknown13' type='boolean' />
-    <field name='unknown14' type='boolean' />
-    <field name='type_category' type='string_ascii' />
-    <field name='unknown16' type='int' />
-    <field name='unknown17' type='int' />
-    <field name='unknown18' type='int' />
-    <field name='unknown19' type='int' />
+    <field name='start_date' type='int' />
+    <field name='end_date' type='int' />
+    <field name='avatar_skill' type='optstring_ascii' />
+    <field name='avatar_special_ability' type='optstring_ascii' />
+    <field name='legendary_item' type='boolean' />
+    <field name='mp_exclusive' type='boolean' />
+    <field name='is_wife_ancillary' type='boolean' />
+    <field name='category' type='string_ascii' />
+    <field name='min_starting_age' type='int' />
+    <field name='max_starting_age' type='int' />
+    <field name='min_expiry_age' type='int' />
+    <field name='max_expiry_age' type='int' />
   </table>
   <table table_name='ancillary_included_subcultures_tables'
          table_version='0' >
