@@ -47,6 +47,7 @@
     <Compile Include="Esf\CompressedNode.cs" />
     <Compile Include="Esf\MemoryMappedRecordNode.cs" />
     <Compile Include="Esf\NodeIteration.cs" />
+    <Compile Include="Esf\Util.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

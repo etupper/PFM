@@ -95,20 +95,9 @@ namespace EsfControl {
         
         public string SelectedPath {
             get {
-                string selectedPath = "";
                 EsfNode node = esfNodeTree.SelectedNode.Tag as EsfNode;
-                while (node != null) {
-                    INamedNode named = node as INamedNode;
-                    if (named is CompressedNode) {
-                        selectedPath = selectedPath.Substring (selectedPath.IndexOf('/') + 1);
-                    } 
-                    if (!(named is MemoryMappedRecordNode) || string.IsNullOrEmpty(selectedPath)) {
-                        selectedPath = string.Format("{0}/{1}", named.GetName(), selectedPath);
-                        Console.WriteLine("node {0} - {1}", named.GetName(), node.GetType());
-                    }
-                    node = node.Parent;
-                }
-                return selectedPath;
+                String result = NodePathCreator.CreatePath(node);
+                return result;
             }
             set {
                 string[] nodes = value.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
