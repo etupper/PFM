@@ -3738,13 +3738,13 @@
   </table>
  <table table_name='building_units_allowed_tables'
          table_version='3' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='string_ascii' />
-    <field name='unknown2' type='int' />
+    <field name='building' type='string_ascii' />
+    <field name='unit' type='string_ascii' />
+    <field name='xp' type='int' />
     <field name='unknown3' type='boolean' />
     <field name='unknown4' type='boolean' />
     <field name='unknown5' type='boolean' />
-    <field name='unknown6' type='int' />
+    <field name='key' type='int' pk='true' />
     <field name='unknown7' type='int' />
     <field name='unknown8' type='boolean' />
     <field name='unknown9' type='boolean' />
@@ -8670,19 +8670,19 @@
   </table>
   <table table_name='fame_levels_tables'
          table_version='0' >
-    <field name='unknown0' type='int' />
-    <field name='unknown1' type='int' />
-    <field name='unknown2' type='int' />
-    <field name='unknown3' type='int' />
-    <field name='unknown4' type='int' />
-    <field name='unknown5' type='int' />
-    <field name='unknown6' type='int' />
-    <field name='unknown7' type='int' />
-    <field name='unknown8' type='int' />
+    <field name='fame_threshold_ai' type='int' />
+    <field name='army_cap' type='int' />
+    <field name='champion_cap' type='int' />
+    <field name='priest_cap' type='int' />
+    <field name='fame_level' type='int' />
+    <field name='fleet_cap' type='int' />
+    <field name='fame_threshold_player' type='int' />
+    <field name='governor_cap' type='int' />
+    <field name='spy_cap' type='int' />
   </table>
   <table table_name='fame_levels_tables'
          table_version='3' >
-    <field name='unknown1' type='int' />
+    <field name='fame_threshold_ai' type='int' />
     <field name='army_cap' type='int' />
     <field name='champion_cap' type='int' />
     <field name='dignitary_cap' type='int' />
@@ -8711,18 +8711,18 @@
   </table>
   <table table_name='fame_levels_tables'
          table_version='5' >
-    <field name='unknown0' type='int' />
-    <field name='unknown1' type='int' />
-    <field name='unknown2' type='int' />
-    <field name='unknown3' type='int' />
-    <field name='unknown4' type='int' />
-    <field name='unknown5' type='int' />
-    <field name='unknown6' type='int' />
-    <field name='unknown7' type='int' />
-    <field name='unknown8' type='int' />
-    <field name='unknown9' type='string_ascii' />
-    <field name='unknown10' type='string_ascii' />
-    <field name='unknown11' type='optstring_ascii' />
+    <field name='fame_threshold_ai' type='int' />
+    <field name='army_cap' type='int' />
+    <field name='champion_cap' type='int' />
+    <field name='priest_cap' type='int' />
+    <field name='fame_level' type='int' />
+    <field name='fleet_cap' type='int' />
+    <field name='fame_threshold_player' type='int' />
+    <field name='governor_cap' type='int' />
+    <field name='spy_cap' type='int' />
+    <field name='campaign_key' type='string_ascii' pk='true' />
+    <field name='tooltip' type='optstring_ascii' />
+    <field name='tooltip_gaul' type='optstring_ascii' />
     <field name='unknown12' type='string_ascii' />
     <field name='unknown13' type='string_ascii' />
   </table>
@@ -9346,7 +9346,7 @@
     <field name='dismounted_charge_bonus' type='int' />
     <field name='dismounted_melee_attack' type='int' />
     <field name='dismounted_melee_defence' type='int' />
-    <field name='unknown10' type='string_ascii' />
+    <field name='long_description_text' type='string_ascii' />
     <field name='key' type='string_ascii' pk='true' />
     <field name='man_animation' type='optstring_ascii' />
     <field fkey='battle_entities_tables.key' name='man_entity' type='string_ascii' />
@@ -9531,16 +9531,16 @@
     <field name='unknown27' type='boolean' />
     <field name='unknown28' type='boolean' />
     <field name='unknown29' type='boolean' />
-    <field name='unknown30' type='int' />
+    <field name='unique_index' type='int' />
     <field name='unknown31' type='int' />
     <field name='in_encyclopedia' type='boolean' />
     <field name='unknown33' type='boolean' />
     <field name='unknown34' type='boolean' />
     <field name='unknown35' type='boolean' />
-    <field name='unknown36' type='string_ascii' />
+    <field name='audio_language' type='string_ascii' />
     <field name='unknown37' type='string_ascii' />
     <field name='unknown38' type='string_ascii' />
-    <field name='unknown39' type='int' />
+    <field name='tier_level' type='int' />
   </table>
   <table table_name='melee_weapons_tables'
          table_version='6' >
