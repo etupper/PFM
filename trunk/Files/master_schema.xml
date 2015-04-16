@@ -8721,7 +8721,7 @@
     <field name='governor_cap' type='int' />
     <field name='spy_cap' type='int' />
     <field name='campaign_key' type='string_ascii' pk='true' />
-    <field name='tooltip' type='optstring_ascii' />
+    <field name='tooltip' type='string_ascii' />
     <field name='tooltip_gaul' type='optstring_ascii' />
     <field name='unknown12' type='string_ascii' />
     <field name='unknown13' type='string_ascii' />
