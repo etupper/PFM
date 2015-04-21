@@ -5574,7 +5574,7 @@
   <table table_name='campaign_faction_religion_effects_tables'
          table_version='0' >
     <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='float' />
+    <field name='unknown1' type='int' />
     <field name='unknown2' type='float' />
     <field name='unknown3' type='int' />
     <field name='unknown4' type='string_ascii' />
