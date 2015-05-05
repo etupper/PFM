@@ -4531,8 +4531,8 @@
   <table table_name='cai_personality_cultural_components_tables'
          table_version='2' >
     <field name='id' type='string_ascii' pk='true' />
-    <field name='unknown1' type='int' />
-    <field name='unknown2' type='int' />
+    <field name='unknown1' type='float' />
+    <field name='unknown2' type='float' />
     <field name='unknown3' type='float' />
     <field name='unknown4' type='float' />
     <field name='unknown5' type='optstring_ascii' />
