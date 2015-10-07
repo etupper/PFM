@@ -3759,7 +3759,7 @@
     <field name='unknown6' type='boolean' />
     <field name='unknown7' type='boolean' />
   </table>
- <table table_name='building_units_allowed_tables'
+  <table table_name='building_units_allowed_tables'
          table_version='3' >
     <field name='building' type='string_ascii' />
     <field name='unit' type='string_ascii' />
@@ -5241,6 +5241,11 @@
     <field fkey='campaign_bonus_value_battle_context_specifiers_tables.key' name='battle_context_key' type='string_ascii' pk='true' />
     <field fkey='campaign_ground_types_tables.type' name='ground_type_key' type='string_ascii' pk='true' />
   </table>
+  <table table_name='campaign_bonus_value_battle_context_religion_junctions_tables'
+         table_version='0' >
+    <field name='unknown0' type='string_ascii' />
+    <field name='unknown1' type='string_ascii' />
+  </table>
   <table table_name='campaign_bonus_value_battle_context_specifiers_tables'
          table_version='1' >
     <field name='key' type='string_ascii' pk='true' />
@@ -5290,6 +5295,12 @@
     <field name='action_id' type='optstring' />
     <field name='transition_to_status' type='optstring' />
     <field name='idle_weighting' type='float' />
+  </table>
+  <table table_name='campaign_character_art_set_inheritance_overrides_tables'
+         table_version='0' >
+    <field name='unknown0' type='string_ascii' />
+    <field name='unknown1' type='boolean' />
+    <field name='unknown2' type='boolean' />
   </table>
   <table table_name='campaign_character_art_sets_campaign_groups_tables'
          table_version='0' >
@@ -5588,6 +5599,10 @@
          table_version='0' >
     <field fkey='campaign_effect_scopes_tables.key' name='campaign_effect_scope_key' type='string_ascii' pk='true' />
     <field name='force_relationship_key' type='string_ascii' pk='true' />
+  </table>
+  <table table_name='campaign_effect_scope_territories_tables'
+         table_version='0' >
+    <field name='unknown0' type='string_ascii' />
   </table>
   <table table_name='campaign_effect_scope_to_category_junctions_tables'
          table_version='1' >
@@ -6395,6 +6410,12 @@
     <field name='unknown1' type='string_ascii' />
     <field name='unknown2' type='string_ascii' />
   </table>
+  <table table_name='cdir_events_dilemma_followup_missions_tables'
+         table_version='0' >
+    <field name='unknown0' type='string_ascii' />
+    <field name='unknown1' type='string_ascii' />
+    <field name='unknown2' type='string_ascii' />
+  </table>
   <table table_name='cdir_events_dilemma_incidents_tables'
          table_version='0' >
     <field name='choice_key' type='string' pk='true' />
@@ -6457,6 +6478,11 @@
     <field fkey='dilemmas_tables.key' name='followup_dliemma_key' type='string_ascii' pk='true' />
   </table>
   <table table_name='cdir_events_incident_followup_incidents_tables'
+         table_version='0' >
+    <field name='unknown0' type='string_ascii' />
+    <field name='unknown1' type='string_ascii' />
+  </table>
+  <table table_name='cdir_events_incident_followup_missions_tables'
          table_version='0' >
     <field name='unknown0' type='string_ascii' />
     <field name='unknown1' type='string_ascii' />
@@ -7652,6 +7678,12 @@
     <field fkey='effects_tables.effect' name='effect' type='string_ascii' pk='true' />
     <field fkey='battlefield_deployable_siege_items_tables.key' name='siege_item' type='string_ascii' pk='true' />
   </table>
+  <table table_name='effect_bonus_value_subculture_junctions_tables'
+         table_version='0' >
+    <field name='unknown0' type='string_ascii' />
+    <field name='unknown1' type='string_ascii' />
+    <field name='unknown2' type='string_ascii' />
+  </table>
   <table table_name='effect_bonus_value_technology_category_junctions_tables'
          table_version='0' >
     <field name='bonus_value_id' type='string_ascii' pk='true' />
@@ -8766,7 +8798,7 @@
     <field name='mp_force_gen_template' type='string_ascii' />
     <field name='unknown57' type='optstring_ascii' />
     <field name='voiceover_subculture' type='string_ascii' />
-</table>
+  </table>
   <table table_name='fame_levels_tables'
          table_version='0' >
     <field name='fame_threshold_ai' type='int' />
@@ -11067,6 +11099,11 @@
     <field name='description' type='optstring_ascii' />
     <field name='release_order' type='int' />
   </table>
+  <table table_name='plagues_permitted_campaigns_tables'
+         table_version='0' >
+    <field name='unknown0' type='string_ascii' />
+    <field name='unknown1' type='string_ascii' />
+  </table>
   <table table_name='plagues_tables'
          table_version='0' >
     <field fkey='effect_bundles_tables.key' name='region_effect_bundle' type='optstring_ascii' />
@@ -11964,6 +12001,11 @@
     <field name='icon_filepath' type='string_ascii' />
     <field name='strategic_value' type='int' />
     <field name='in_encyclopedia' type='boolean' />
+  </table>
+  <table table_name='resources_to_campaign_junctions_tables'
+         table_version='0' >
+    <field name='unknown0' type='string_ascii' />
+    <field name='unknown1' type='string_ascii' />
   </table>
   <table table_name='scripted_objectives_tables'
          table_version='1' >
