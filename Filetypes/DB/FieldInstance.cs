@@ -269,7 +269,7 @@ namespace Filetypes {
     }
     public class OptStringFieldAscii : OptStringField {
         public OptStringFieldAscii() : base(Types.OptStringTypeAscii()) { 
-            stringEncoding = Encoding.ASCII; 
+            stringEncoding = Encoding.UTF8;
         }
     }
 
