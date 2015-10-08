@@ -26,7 +26,8 @@ namespace Common {
          */
         public static string ReadCAString(BinaryReader reader, Encoding encoding) {
             int num = reader.ReadInt16();
-            int bytes = num * (encoding.IsSingleByte ? 1 : 2);
+            // Unicode is 2 bytes per character; UTF8 is variable, but the number stored is the number of bytes, so use that
+            int bytes = (encoding == Encoding.Unicode ? 2 : 1) * num;
             // enough data left?
             if (reader.BaseStream.Length - reader.BaseStream.Position < bytes)
             {
