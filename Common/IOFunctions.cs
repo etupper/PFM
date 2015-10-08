@@ -78,7 +78,10 @@ namespace Common {
          * (not zero-terminated).
          */
         public static void WriteCAString(BinaryWriter writer, string value, Encoding encoding) {
-            writer.Write((ushort) value.Length);
+            byte[] buffer = encoding.GetBytes(value);
+            // utf-8 stores the number of bytes, not characters... inconsistent much?
+            int len = (encoding == Encoding.UTF8) ? buffer.Length : value.Length;
+            writer.Write((ushort) len);
             writer.Write(encoding.GetBytes(value));
         }
         /*
