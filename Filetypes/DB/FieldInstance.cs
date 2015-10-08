@@ -95,7 +95,7 @@ namespace Filetypes {
         public StringField(FieldInfo info) : base(info, "") {}
         public override int Length {
             get {
-                return stringEncoding.GetBytes(Value).Length;
+                return stringEncoding.GetBytes(Value).Length + 2;
             }
         }
         public override void Decode(BinaryReader reader) {
@@ -244,11 +244,10 @@ namespace Filetypes {
 
         public override int Length {
             get {
-                int len = Value.Length * (stringEncoding.IsSingleByte ? 1 : 2);
                 // 1 byte for true/false, two for string length if not empty
-                len += (Value.Length == 0 ? 1 : 3);
+                byte[] encoded = stringEncoding.GetBytes(Value);
+                int len = 1 + (encoded.Length > 0 ? encoded.Length + 2 : 0);
                 return len;
-                // return 2 * (Value.Length) + (Value.Length == 0 ? 1 : 3);
             }
         }
         public override int ReadLength {
