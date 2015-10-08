@@ -2773,7 +2773,7 @@
     <field fkey='battlefield_building_categories_tables.category' name='category' type='string_ascii' />
     <field fkey='models_building_tables.key' name='model' type='string_ascii' />
     <field fkey='audio_materials_enums_tables.key' name='audio_material' type='string_ascii' />
-    <field name='hit_points' type='int' />
+    <field name='hitpoints' type='int' />
     <field fkey='missile_weapons_tables.key' name='gun_type' type='optstring_ascii' />
     <field fkey='battlefield_buildings_names_tables.key' name='onscreen_name' type='optstring_ascii' />
     <field name='ignition_threshold' type='int' />
@@ -2781,12 +2781,13 @@
     <field name='fortwall_penetration_chance' type='int' />
     <field name='visible_in_public_ted' type='boolean' />
     <field name='collision_3d' type='boolean' />
-    <field name='destruct_thresholds' type='optstring_ascii' />
-    <field name='joiner' type='boolean' />
-    <field name='auxiliary' type='boolean' />
+    <field name='unknown12' type='boolean' />
+    <field name='destruct_thresholds' type='string_ascii' />
+    <field name='unknown14' type='boolean' />
+    <field name='unknown15' type='boolean' />
     <field name='burn_rate' type='float' />
-    <field name='height_map_mesh' type='boolean' />
-    <field name='can_burn' type='boolean' />
+    <field name='unknown17' type='boolean' />
+    <field name='unknown18' type='boolean' />
     <field fkey='battle_building_visibility_enums_tables.key' name='visibility_mode' type='string_ascii' />
     <field name='blood_pack_model_override_folder' type='optstring_ascii' />
   </table>

@@ -95,7 +95,7 @@ namespace Filetypes {
         public StringField(FieldInfo info) : base(info, "") {}
         public override int Length {
             get {
-                return Value.Length * (stringEncoding.IsSingleByte ? 1 : 2) + 2;
+                return stringEncoding.GetBytes(Value).Length;
             }
         }
         public override void Decode(BinaryReader reader) {
@@ -106,9 +106,12 @@ namespace Filetypes {
         }
     }
     
+    /*
+     * It's actually StringFieldUTF8, but I'm not going to rename it now.
+     */
     public class StringFieldAscii : StringField {
         public StringFieldAscii() : base(Types.StringTypeAscii()) { 
-            stringEncoding = Encoding.ASCII; 
+            stringEncoding = Encoding.UTF8;
         }
     }
 
