@@ -3539,7 +3539,7 @@ namespace DBTableControl
                 }
                 else
                 {
-                    return "Default";
+                    return "";
                 }
             }
             else if (editedFile.CurrentType.Fields[colindex].TypeCode == TypeCode.Boolean)
@@ -4093,18 +4093,7 @@ namespace DBTableControl
             object currentvalue = currentTable.Rows[rowindex][colindex];
 
             // Test value against required data type.
-            if (editedFile.CurrentType.Fields[colindex].TypeCode == TypeCode.String)
-            {
-                if (String.IsNullOrEmpty(currentvalue.ToString()) && !editedFile.CurrentType.Fields[colindex].TypeName.Contains("optstring"))
-                {
-                    haserrors = true;
-
-                    // Add an error to our internal list for display.
-                    string errormessage = String.Format("Error: Column '{0}' should not be empty", currentTable.Columns[colindex].ColumnName);
-                    AddError(rowindex, colindex, errormessage);
-                }
-            }
-            else if (editedFile.CurrentType.Fields[colindex].TypeCode == TypeCode.Int16)
+            if (editedFile.CurrentType.Fields[colindex].TypeCode == TypeCode.Int16)
             {
                 short test;
                 haserrors = !short.TryParse(currentvalue.ToString(), out test);
@@ -4245,14 +4234,7 @@ namespace DBTableControl
         private bool ValueIsValid(object testval, int colindex)
         {
             // Test value against required data type.
-            if (editedFile.CurrentType.Fields[colindex].TypeCode == TypeCode.String)
-            {
-                if (String.IsNullOrEmpty(testval.ToString()) && !editedFile.CurrentType.Fields[colindex].TypeName.Contains("optstring"))
-                {
-                    return false;
-                }
-            }
-            else if (editedFile.CurrentType.Fields[colindex].TypeCode == TypeCode.Int16)
+            if (editedFile.CurrentType.Fields[colindex].TypeCode == TypeCode.Int16)
             {
                 short test;
                 return short.TryParse(testval.ToString(), out test);
