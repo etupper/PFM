@@ -6811,6 +6811,16 @@
     <field name='unknown7' type='boolean' />
     <field name='unknown8' type='boolean' />
   </table>
+  <table table_name='character_experience_skill_tiers_tables'
+         table_version='2' >
+    <field fkey='agents_tables.key' name='agent_key' type='optstring_ascii' pk='true' />
+    <field name='experience_threshold' type='int' />
+    <field name='skill_points' type='int' />
+    <field name='skill_rank' type='int' pk='true' />
+    <field name='unknown5' type='optstring_ascii' />
+    <field name='for_army' type='boolean' pk='true' />
+    <field name='for_navy' type='boolean' pk='true' />
+  </table>
   <table table_name='character_skill_level_details_tables'
          table_version='0' >
     <field name='unknown' type='optstring_ascii' />
@@ -9975,6 +9985,21 @@
     <field name='unknown8' type='int' />
     <field name='unknown9' type='int' />
     <field name='unknown10' type='int' />
+  </table>
+  <table table_name='ministerial_positions_tables'
+         table_version='2' >
+    <field name='minister_key' type='string_ascii' pk='true' />
+    <field name='rank' type='int' />
+    <field name='unknown2' type='int' />
+    <field name='unknown3' type='int' />
+    <field name='unknown4' type='int' />
+    <field name='unknown5' type='int' />
+    <field name='unknown6' type='int' />
+    <field name='unknown7' type='int' />
+    <field name='unknown8' type='int' />
+    <field name='unknown9' type='int' />
+    <field name='unknown10' type='int' />
+    <field name='unknown11' type='boolean' />
   </table>
   <table table_name='ministerial_positions_to_character_effects_tables'
          table_version='0' >
