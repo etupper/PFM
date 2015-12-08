@@ -60,6 +60,7 @@ namespace DecodeTool {
             }
             /* Enable/disable them depending on selection in type list. */
             typeList.SelectedValueChanged += new EventHandler (EnableTransforms);
+            valueList.SelectedValueChanged += new EventHandler (MarkSelectedValue);
         }
 
         /* The data currently parsed by this decode tool. */
@@ -385,6 +386,9 @@ namespace DecodeTool {
             }
             FillValueList();
             ShowPreview();
+#if DEBUG
+            Console.WriteLine("cursor position now {0}", CurrentCursorPosition);
+#endif
         }
         #endregion
 
@@ -448,13 +452,30 @@ namespace DecodeTool {
             // color header if applicable
             int selectFromIndex = 0;
             if (ShowHeader) {
-                selectFromIndex = (HeaderLength) * 3;
+                selectFromIndex = Math.Max((HeaderLength * 3) - 1, 0);
                 hexView.Select(0, selectFromIndex);
                 hexView.SelectionColor = Color.Red;
             }
             // color data
             hexView.Select(selectFromIndex, (CurrentValueLength) * 3);
             hexView.SelectionColor = Color.Blue;
+            
+            if (valueList.SelectedIndex != -1) {
+                selectFromIndex = Math.Max((HeaderLength * 3) - 1, 0);
+                if (currentValues.Count > CurrentRowIndex) {
+                    TableRow row = currentValues[CurrentRowIndex];
+                    int i = 0;
+                    for (i = 0; i < valueList.SelectedIndex; i++) {
+                        selectFromIndex += row[i].ReadLength * 3;
+                    }
+                    int selectUpTo = row[valueList.SelectedIndex].ReadLength*3;
+#if DEBUG
+                    Console.WriteLine("selecting from {0} to {1}", selectFromIndex, selectUpTo);
+#endif
+                    hexView.Select(selectFromIndex, selectUpTo);
+                    hexView.SelectionColor = Color.Green;
+                }
+            }
         }
 
         /* Show preview of next or selected value for each type. */
@@ -677,6 +698,9 @@ namespace DecodeTool {
                     list.ClearSelected();
                 }
             }
+        }
+        void MarkSelectedValue(object o, EventArgs args) {
+            ShowHexPreview();
         }
         #endregion
   
