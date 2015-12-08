@@ -98,6 +98,12 @@ namespace Filetypes {
                 return stringEncoding.GetBytes(Value).Length + 2;
             }
         }
+        public override int ReadLength {
+            get {
+                // string plus 2 bytes length info
+                return Length + 2;
+            }
+        }
         public override void Decode(BinaryReader reader) {
             Value = IOFunctions.ReadCAString (reader, stringEncoding);
         }
@@ -244,10 +250,7 @@ namespace Filetypes {
 
         public override int Length {
             get {
-                // 1 byte for true/false, two for string length if not empty
-                byte[] encoded = stringEncoding.GetBytes(Value);
-                int len = 1 + (encoded.Length > 0 ? encoded.Length + 2 : 0);
-                return len;
+                return stringEncoding.GetBytes(Value).Length;
             }
         }
         public override int ReadLength {
@@ -255,7 +258,8 @@ namespace Filetypes {
                 if (readLengthZero) {
                     return 3;
                 } else {
-                    return Length;
+                    // 1 byte for true/false, two for string length if not empty
+                    return base.ReadLength + (Value.Length == 0 ? 1 : 3);
                 }
             }
         }
