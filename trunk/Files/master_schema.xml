@@ -6805,11 +6805,9 @@
     <field name='experience_threshold' type='int' />
     <field name='skill_points' type='int' />
     <field name='skill_rank' type='int' pk='true' />
-    <field name='unknown4' type='boolean' />
+    <field name='unknown5' type='optstring_ascii' />
     <field name='for_army' type='boolean' pk='true' />
     <field name='for_navy' type='boolean' pk='true' />
-    <field name='unknown7' type='boolean' />
-    <field name='unknown8' type='boolean' />
   </table>
   <table table_name='character_experience_skill_tiers_tables'
          table_version='2' >
@@ -6817,9 +6815,11 @@
     <field name='experience_threshold' type='int' />
     <field name='skill_points' type='int' />
     <field name='skill_rank' type='int' pk='true' />
-    <field name='unknown5' type='optstring_ascii' />
+    <field name='unknown4' type='boolean' />
     <field name='for_army' type='boolean' pk='true' />
     <field name='for_navy' type='boolean' pk='true' />
+    <field name='unknown7' type='boolean' />
+    <field name='unknown8' type='boolean' />
   </table>
   <table table_name='character_skill_level_details_tables'
          table_version='0' >
@@ -15440,6 +15440,7 @@
     <field name='flood_threshold_to_sink' type='float' />
     <field name='fire_risk_modifier' type='float' />
     <field name='mass' type='int' />
+    <field name='unknown' type='int' />
     <field name='collision_momentum_modifer' type='float' />
     <field name='formation_distance' type='int' />
     <field name='minimum_distance' type='int' />
@@ -16429,6 +16430,7 @@
     <field name='flood_threshold_to_sink' type='float' />
     <field name='fire_risk_modifier' type='float' />
     <field name='mass' type='int' />
+    <field name='unknown' type='int' />
     <field name='collision_momentum_modifer' type='float' />
     <field name='formation_distance' type='int' />
     <field name='minimum_distance' type='int' />
