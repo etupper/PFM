@@ -466,13 +466,16 @@ namespace DecodeTool {
                     TableRow row = currentValues[CurrentRowIndex];
                     int i = 0;
                     for (i = 0; i < valueList.SelectedIndex; i++) {
+#if DEBUG
+                        Console.WriteLine("selected '{0}', length {1}", row[i].Value, row[i].ReadLength);
+#endif
                         selectFromIndex += row[i].ReadLength * 3;
                     }
-                    int selectUpTo = row[valueList.SelectedIndex].ReadLength*3;
+                    int selectLength = row[valueList.SelectedIndex].ReadLength*3;
 #if DEBUG
-                    Console.WriteLine("selecting from {0} to {1}", selectFromIndex, selectUpTo);
+                    Console.WriteLine("selecting from {0}, length {1}", selectFromIndex, selectLength);
 #endif
-                    hexView.Select(selectFromIndex, selectUpTo);
+                    hexView.Select(selectFromIndex, selectLength);
                     hexView.SelectionColor = Color.Green;
                 }
             }

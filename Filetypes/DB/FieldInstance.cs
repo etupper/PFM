@@ -95,12 +95,11 @@ namespace Filetypes {
         public StringField(FieldInfo info) : base(info, "") {}
         public override int Length {
             get {
-                return stringEncoding.GetBytes(Value).Length + 2;
+                return stringEncoding.GetBytes(Value).Length;
             }
         }
         public override int ReadLength {
             get {
-                // string plus 2 bytes length info
                 return Length + 2;
             }
         }
