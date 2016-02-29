@@ -12491,6 +12491,25 @@
     <field fkey='ui_effects_tables.key' name='ui_vfx' type='optstring_ascii' />
     <field name='rally_amount' type='int' />
   </table>
+  <table table_name='special_ability_phases_tables'
+         table_version='13' >
+    <field name='duration' type='float' />
+    <field name='effect_type' type='string_ascii' />
+    <field name='id' type='string_ascii' pk='true' />
+    <field name='requested_stance' type='optstring_ascii' />
+    <field name='unbreakable' type='boolean' />
+    <field name='cant_move' type='boolean' />
+    <field name='kill_own_unit' type='boolean' />
+    <field name='freeze_fatigue' type='boolean' />
+    <field name='fatigue_change_ratio' type='float' />
+    <field name='inspiration_aura_range_mod' type='float' />
+    <field name='ability_recharge_change' type='float' />
+    <field name='minor_casualties' type='boolean' />
+    <field name='major_casualties' type='boolean' />
+    <field fkey='ui_effects_tables.key' name='ui_vfx' type='optstring_ascii' />
+    <field name='rally_amount' type='int' />
+	<field name='poison' type='boolean' />
+  </table>
   <table table_name='special_ability_to_auto_deactivate_flags_tables'
          table_version='0' >
     <field name='unknown0' type='string_ascii' />
