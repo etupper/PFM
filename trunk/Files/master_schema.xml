@@ -12743,6 +12743,17 @@
     <field name='value' type='float' />
     <field name='unknown8' type='boolean' />
   </table>
+  <table table_name='taxes_effects_jct_tables'
+         table_version='2' >
+    <field fkey='taxes_keys_tables.tax_lookup' name='tax_name' type='string_ascii' pk='true' />
+    <field fkey='effects_tables.effect' name='effect' type='string_ascii' pk='true' />
+    <field fkey='campaign_effect_scopes_tables.key' name='effect_scope' type='string_ascii' />
+    <field name='ai_only' type='optstring_ascii' pk='true' />
+    <field name='ai_only5' type='optstring_ascii' pk='true' />
+    <field name='ai_only6' type='optstring_ascii' pk='true' />
+    <field name='value' type='float' />
+    <field name='unknown7' type='boolean' />
+  </table>
   <table table_name='taxes_keys_tables'
          table_version='0' >
     <field fkey='taxes_classes_tables.tax' name='tax_class' type='string' pk='true' />
