@@ -4580,31 +4580,31 @@
   </table>
   <table table_name='cai_personalities_tables'
          table_version='14' >
-    <field name='agent_distribution_profile_key' type='string_ascii' />
-    <field name='agent_recruitment_profile_key' type='string_ascii' />
-    <field name='budget_policy_key' type='string_ascii' />
+    <field fkey='cai_agent_distribution_profiles_tables.key' name='agent_distribution_profile_key' type='string_ascii' />
+    <field fkey='cai_agent_recruitment_profiles_tables.key' name='agent_recruitment_profile_key' type='string_ascii' />
+    <field fkey='cai_personalities_budget_policies_tables.key' name='budget_policy_key' type='string_ascii' />
     <field name='character_skill_tree_manager_key' type='string_ascii' />
-    <field name='construction_policy_key' type='string_ascii' />
-    <field name='key' type='string_ascii' />
-    <field name='military_aggressiveness_policy' type='string_ascii' />
-    <field name='military_behaviour_policy' type='string_ascii' />
-    <field name='reliability_policy_key' type='string_ascii' />
-    <field name='religious_conversion_policy' type='string_ascii' />
-    <field name='unknown10' type='boolean' />
-    <field name='unknown11' type='string_ascii' />
-    <field name='unknown12' type='string_ascii' />
-    <field name='unknown13' type='string_ascii' />
-    <field name='unknown14' type='string_ascii' />
-    <field name='unknown15' type='string_ascii' />
-    <field name='unknown16' type='string_ascii' />
-    <field name='unknown17' type='string_ascii' />
-    <field name='unknown18' type='string_ascii' />
-    <field name='unknown19' type='string_ascii' />
-    <field name='unknown20' type='string_ascii' />
-    <field name='unknown21' type='string_ascii' />
-    <field name='unknown22' type='string_ascii' />
-    <field name='unknown23' type='string_ascii' />
-    <field name='unknown24' type='string_ascii' />
+    <field name='key' type='string_ascii' pk='true' />
+    <field fkey='cai_military_aggressiveness_policies_tables.key'  name='military_aggressiveness_policy' type='string_ascii' />
+    <field fkey='cai_military_behaviour_policies_tables.key' name='military_behaviour_policy' type='string_ascii' />
+    <field fkey='cai_personalities_reliability_policies_tables.key' name='reliability_policy_key' type='string_ascii' />
+    <field  fkey='cai_personalities_religious_conversion_policies_tables.key'  name='religious_conversion_policy' type='string_ascii' />
+    <field fkey='campaign_ai_technology_managers_tables.key' name='technology_manager_key' type='string_ascii' />
+    <field name='allowed_for_random_selection' type='boolean' />
+    <field fkey='cai_personality_diplomatic_components_tables.id' name='diplomatic_component' type='string_ascii' />
+    <field fkey='cai_personality_strategic_components_tables.id' name='strategic_component' type='string_ascii' />
+    <field fkey='cai_personality_cultural_components_tables.id' name='cultural_component' type='string_ascii' />
+    <field  fkey='cai_personality_deal_evaluation_components_tables.id'  name='deal_evaluation_component' type='string_ascii' />
+    <field  fkey='cai_personality_deal_generation_components_tables.id'  name='deal_generation_component' type='string_ascii' />
+    <field  fkey='cai_personalities_construction_system_policies_tables.key'  name='construction_system_policy' type='string_ascii' />
+    <field  fkey='cai_personalities_task_management_system_task_generator_profiles_tables.key'  name='task_management_system_task_generation_profile'  type='string_ascii' />
+    <field fkey='cai_personality_negotiation_components_tables.id' name='negotiation_component' type='string_ascii' />
+    <field  fkey='cai_personalities_income_allocation_policies_tables.key'  name='income_allocation_policy' type='string_ascii' />
+    <field  fkey='cai_personality_occupation_decision_components_tables.id'  name='occupation_decision_component' type='string_ascii' />
+    <field fkey='cai_personality_religious_components_tables.id' name='religious_component' type='string_ascii' />
+    <field  fkey='cai_personality_empire_rivalry_components_tables.key'  name='empire_rivalry_component' type='string_ascii' />
+    <field  fkey='cai_personalities_religion_change_management_policies_tables.key'  name='religion_change_management_policy' type='string_ascii' />
+    <field fkey='cai_personality_trespassing_components_tables.key' name='trespassing_component' type='string_ascii' />
   </table>
   <table table_name='cai_personalities_task_management_system_task_generator_profiles_tables'
          table_version='0' >
@@ -4637,12 +4637,12 @@
   <table table_name='cai_personality_cultural_components_tables'
          table_version='2' >
     <field name='id' type='string_ascii' pk='true' />
-    <field name='unknown1' type='float' />
-    <field name='unknown2' type='float' />
-    <field name='unknown3' type='float' />
-    <field name='unknown4' type='float' />
-    <field name='unknown5' type='optstring_ascii' />
-    <field name='unknown6' type='optstring_ascii' />
+    <field name='base_bonus_multiplier' type='float' />
+    <field name='base_penalty_multiplier' type='float' />
+    <field name='event_bonus_multiplier' type='float' />
+    <field name='event_penalty_multiplier' type='float' />
+    <field name='short_description' type='optstring_ascii' />
+    <field name='long_description' type='optstring_ascii' />
   </table>
   <table table_name='cai_personality_cultural_multipliers_tables'
          table_version='3' >
@@ -7601,6 +7601,14 @@
     <field fkey='religions_tables.religion_key' name='religion_a' type='string_ascii' pk='true' />
     <field fkey='religions_tables.religion_key' name='religion_b' type='string_ascii' pk='true' />
     <field name='relations_modifier' type='int' />
+    <field name='religious_unhappiness_modifier' type='float' />
+  </table>
+  <table table_name='diplomatic_relations_religion_tables'
+         table_version='1' >
+    <field fkey='campaigns_tables.campaign_name' name='campaign' type='optstring_ascii' />
+    <field name='relations_modifier' type='int' />
+    <field fkey='religions_tables.religion_key' name='religion_A' type='string_ascii' />
+    <field fkey='religions_tables.religion_key' name='religion_B' type='string_ascii' />
     <field name='religious_unhappiness_modifier' type='float' />
   </table>
   <table table_name='disaster_to_ground_types_tables'
@@ -11997,9 +12005,9 @@
   </table>
   <table table_name='region_religions_tables'
          table_version='0' >
-    <field name='unknown1' type='string_ascii' pk='true' />
-    <field name='unknown2' type='string_ascii' />
-    <field name='unknown3' type='int' />
+    <field fkey='regions_tables.key' name='region' type='string_ascii' />
+    <field fkey='religions_tables.religion_key' name='religion' type='string_ascii' />
+    <field name='religion_zeal' type='int' />
   </table>
   <table table_name='region_to_province_junctions_tables'
          table_version='0' >
