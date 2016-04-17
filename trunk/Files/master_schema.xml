@@ -5687,6 +5687,10 @@
          table_version='0' >
     <field name='unknown0' type='string_ascii' />
   </table>
+  <table table_name='campaign_effect_scope_territories_tables'
+         table_version='1' >
+    <field name='key' type='string_ascii' />
+  </table>
   <table table_name='campaign_effect_scope_to_category_junctions_tables'
          table_version='1' >
     <field name='unknown0' type='string_ascii' />
@@ -5700,6 +5704,16 @@
     <field name='ownership' type='optstring_ascii' />
     <field name='source' type='string_ascii' />
     <field name='target' type='string_ascii' />
+  </table>
+  <table table_name='campaign_effect_scopes_tables'
+         table_version='1' >
+    <field name='key' type='string_ascii' />
+    <field name='location' type='string_ascii' />
+    <field name='order' type='int' />
+    <field name='ownership' type='optstring_ascii' />
+    <field name='source' type='string_ascii' />
+    <field name='target' type='string_ascii' />
+    <field fkey='campaign_effect_scope_territories_tables.key' name='territory' type='optstring_ascii' />
   </table>
   <table table_name='campaign_faction_religion_effects_tables'
          table_version='0' >
