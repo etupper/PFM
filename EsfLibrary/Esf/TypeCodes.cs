@@ -22,7 +22,11 @@ namespace EsfLibrary {
         UTF16 = 0x0e,
         ASCII = 0x0f,
         ANGLE = 0x10,
-        
+
+        // RoninX: TW Warhammer, ASCII?
+        ASCII_W21 = 0x21,
+        ASCII_W25 = 0x25,
+
         // Arrays
         BOOL_ARRAY = 0x41,
         INT8_ARRAY = 0x42,
