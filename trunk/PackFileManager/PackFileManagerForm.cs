@@ -452,6 +452,8 @@ namespace PackFileManager
                 this.Icon = Resources.Rome2;
             } else if (GameManager.Instance.CurrentGame == Game.ATW) {
                 this.Icon = Resources.Attila;
+            } else if (GameManager.Instance.CurrentGame == Game.TWH) {
+                this.Icon = Resources.Warhammer;
             }
         }
 
@@ -986,10 +988,12 @@ namespace PackFileManager
                 // best used if a db file...
                 try {
                     string key = DBFile.Typename(packedFile.FullPath);
-                    bool unicode = true;
-                    if (GameManager.Instance.CurrentGame == Game.R2TW ||
-                        GameManager.Instance.CurrentGame == Game.ATW) {
-                        unicode = false;
+                    bool unicode = false;
+
+                    if (GameManager.Instance.CurrentGame == Game.ETW ||
+                        GameManager.Instance.CurrentGame == Game.NTW ||
+                        GameManager.Instance.CurrentGame == Game.STW) {
+                        unicode = true;
                     }
                     decoder = new DecodeTool.DecodeTool(unicode) { TypeName = key, Bytes = packedFile.Data };
                     decoder.ShowDialog();

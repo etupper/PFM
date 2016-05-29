@@ -24,8 +24,12 @@ namespace Common {
         public static readonly Game ATW = new Game("ATW", "325610", "Attila") {
             DefaultPfhType = "PFH4"
         };
+        public static readonly Game TWH = new Game("TWH", "459420", "TWH")
+        {
+            DefaultPfhType = "PFH4"
+        };
         private static readonly Game[] GAMES = new Game[] {
-            ATW, R2TW, STW, NTW, ETW
+            TWH, ATW, R2TW, STW, NTW, ETW
         };
 
         /*

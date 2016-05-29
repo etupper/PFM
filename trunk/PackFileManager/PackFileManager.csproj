@@ -61,7 +61,7 @@
     </CustomCommands>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\Attila.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Warhammer.ico</ApplicationIcon>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -266,8 +266,9 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Warhammer.ico" />
+    <None Include="Resources\Warhammer.ico" />
     <None Include="Resources\Attila.ico" />
-    <Content Include="Attila.ico" />
     <Content Include="Resources\Rome2.ico" />
   </ItemGroup>
   <PropertyGroup>

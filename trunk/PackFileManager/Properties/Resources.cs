@@ -76,6 +76,15 @@
             }
         }
 
+        internal static System.Drawing.Icon Warhammer
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Warhammer", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         internal static System.Resources.ResourceManager ResourceManager
         {
@@ -91,7 +100,11 @@
         }
 
         internal static System.Drawing.Icon GetGameIcon(Game game) {
-            if (game == Game.ATW)
+            if (game == Game.TWH)
+            {
+                return Warhammer;
+            }
+            else if (game == Game.ATW)
             {
                 return Attila;
             }
