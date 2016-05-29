@@ -12276,11 +12276,11 @@
     <field name='unknown22' type='boolean' />
     <field name='unknown23' type='boolean' />
     <field name='unknown24' type='boolean' />
-    <field name='unknown22' type='boolean' />
-    <field name='unknown23' type='boolean' />
-    <field name='unknown24' type='boolean' />
     <field name='unknown25' type='boolean' />
-    <field name='unknown23' type='boolean' />
+    <field name='unknown26' type='boolean' />
+    <field name='unknown27' type='boolean' />
+    <field name='unknown28' type='boolean' />
+    <field name='unknown29' type='boolean' />
     <field name='unique_index' type='int' />
     <field name='special_edition_mask' type='int' />
     <field name='in_encyclopedia' type='boolean' />
@@ -12313,28 +12313,31 @@
     <field name='upkeep_cost' type='int' />
     <field fkey='unit_weights_tables.key' name='weight' type='optstring_ascii' />
     <field name='campaign_total_cap' type='int' />
-    <field name='unknown21' type='int' />
-    <field name='unknown22' type='int' />
+    <field name='unknown21' type='boolean' />
+    <field name='unknown22' type='boolean' />
     <field name='unknown23' type='boolean' />
-    <field name='unknown24' type='boolean' />
+    <field name='unknown24' type='int' />
     <field name='unknown25' type='boolean' />
     <field name='unknown26' type='boolean' />
     <field name='unknown27' type='boolean' />
-    <field name='unknown28' type='string_ascii' />
-    <field name='unknown29' type='string_ascii' />
-    <field name='unknown30' type='string_ascii' />
-    <field name='unknown31' type='int' />
-    <field name='unknown32' type='boolean' />
+    <field name='unknown28' type='boolean' />
+    <field name='unknown29' type='boolean' />
+    <field name='unknown30' type='boolean' />
+    <field name='unknown31' type='string_ascii' />
+    <field name='unknown32' type='string_ascii' />
     <field name='unknown33' type='string_ascii' />
-    <field name='unknown34' type='string_ascii' />
-    <field name='unknown35' type='optstring_ascii' />
-    <field name='unknown36' type='boolean' />
-    <field name='unknown37' type='boolean' />
+    <field name='unknown34' type='int' />
+    <field name='unknown35' type='boolean' />
+    <field name='unknown36' type='string_ascii' />
+    <field name='unknown37' type='string_ascii' />
     <field name='unknown38' type='optstring_ascii' />
-    <field name='unknown39' type='float' />
-    <field name='unknown40' type='float' />
-    <field name='unknown41' type='boolean' />
-    <field name='unknown42' type='string_ascii' />
+    <field name='unknown39' type='boolean' />
+    <field name='unknown40' type='boolean' />
+    <field name='unknown41' type='optstring_ascii' />
+    <field name='unknown42' type='float' />
+    <field name='unknown43' type='float' />
+    <field name='unknown44' type='boolean' />
+    <field name='unknown45' type='string_ascii' />
   </table>
   <table table_name='melee_weapons_tables'
          table_version='6' >

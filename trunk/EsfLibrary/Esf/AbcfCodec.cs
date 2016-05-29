@@ -70,6 +70,15 @@ namespace EsfLibrary {
                 case EsfType.ASCII:
                     result = new StringNode(ReadAsciiString, WriteAsciiReference);
                     break;
+
+                // HACK: RoninX
+                case EsfType.ASCII_W21:
+                    result = new StringNode(ReadAsciiString, WriteAsciiReference);
+                    break;
+                case EsfType.ASCII_W25:
+                    result = new StringNode(ReadAsciiString, WriteAsciiReference);
+                    break;
+
                 default:
                     return base.CreateValueNode(typeCode);
             }
