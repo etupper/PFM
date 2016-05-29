@@ -57,7 +57,7 @@ namespace Filetypes {
                         Version = version
                     };
 #if DEBUG
-                    Console.WriteLine("Adding table {0} version {1}", info.Name, info.Version);
+                    // Console.WriteLine("Adding table {0} version {1}", info.Name, info.Version);
 #endif
                     typeInfos.Add(info);
 				}
@@ -151,7 +151,7 @@ namespace Filetypes {
         
         void WriteTable(TypeInfo id, TableInfoFormatter<TypeInfo> format) {
 #if DEBUG
-            Console.WriteLine ("writing table {0}", id.Name, id.Version);
+            // Console.WriteLine ("writing table {0}", id.Name, id.Version);
 #endif
 			writer.WriteLine (format.FormatHeader(id));
             WriteFieldInfos (id.Fields);

@@ -14,7 +14,7 @@ using TableRow = System.Collections.Generic.List<Filetypes.FieldInstance>;
 namespace DecodeTool {
     public partial class DecodeTool : Form {
         private bool unicode;
-        public DecodeTool (bool encodeUnicode = false) {
+        public DecodeTool (bool encodeUnicode = true) {
             InitializeComponent ();
             
             unicode = encodeUnicode;
