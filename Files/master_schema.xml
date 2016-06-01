@@ -12316,21 +12316,21 @@
     <field name='unknown21' type='boolean' />
     <field name='unknown22' type='boolean' />
     <field name='unknown23' type='boolean' />
-    <field name='unknown24' type='int' />
+    <field name='unique_index' type='int' />
     <field name='unknown25' type='boolean' />
     <field name='unknown26' type='boolean' />
     <field name='unknown27' type='boolean' />
     <field name='unknown28' type='boolean' />
     <field name='unknown29' type='boolean' />
     <field name='unknown30' type='boolean' />
-    <field name='unknown31' type='string_ascii' />
-    <field name='unknown32' type='string_ascii' />
-    <field name='unknown33' type='string_ascii' />
-    <field name='unknown34' type='int' />
-    <field name='unknown35' type='boolean' />
-    <field name='unknown36' type='string_ascii' />
-    <field name='unknown37' type='string_ascii' />
-    <field name='unknown38' type='optstring_ascii' />
+    <field name='audio_voiceover_culture' type='string_ascii' />
+    <field name='ui_unit_group_land' type='string_ascii' />
+    <field name='ui_unit_group_naval' type='string_ascii' />
+    <field name='tier' type='int' />
+    <field name='is_high_threat' type='boolean' />
+    <field name='audio_voiceover_actor' type='string_ascii' />
+    <field name='porthole_camera' type='string_ascii' />
+    <field name='mount' type='optstring_ascii' />
     <field name='unknown39' type='boolean' />
     <field name='unknown40' type='boolean' />
     <field name='unknown41' type='optstring_ascii' />
@@ -15512,23 +15512,23 @@
     <field name='unbreakable' type='boolean' />
     <field name='cant_move' type='boolean' />
     <field name='kill_own_unit' type='boolean' />
-    <field name='unknown7' type='float' />
+    <field name='fatigue_change_ratio' type='float' />
     <field name='unknown8' type='boolean' />
     <field name='unknown9' type='boolean' />
     <field name='unknown10' type='boolean' />
     <field name='unknown11' type='boolean' />
-    <field name='unknown12' type='float' />
-    <field name='unknown13' type='float' />
-    <field name='unknown14' type='int' />
-    <field name='unknown15' type='float' />
-    <field name='unknown16' type='int' />
-    <field name='unknown17' type='int' />
+    <field name='ability_recharge_change' type='float' />
+    <field name='hp_change_frequency' type='float' />
+    <field name='heal_amount' type='int' />
+    <field name='damage_chance' type='float' />
+    <field name='damage_amount' type='int' />
+    <field name='max_damaged_entites' type='int' />
     <field name='unknown18' type='int' />
-    <field name='unknown19' type='boolean' />
-    <field name='unknown20' type='float' />
+    <field name='resurrect' type='boolean' />
+    <field name='mana_regen_mod' type='float' />
     <field name='unknown21' type='float' />
     <field name='unknown22' type='boolean' />
-    <field name='unknown23' type='int' />
+    <field name='imbue_ignition' type='int' />
     <field name='unknown24' type='optstring_ascii' />
     <field name='unknown25' type='optstring_ascii' />
     <field name='unknown26' type='optstring_ascii' />
@@ -17178,32 +17178,32 @@
     <field name='can_autotrigger' type='boolean' />
     <field name='target_friends' type='boolean' />
     <field name='target_enemies' type='boolean' />
-    <field name='unknown14' type='float' />
+    <field name='target_intercept_range' type='float' />
     <field name='unknown15' type='boolean' />
-    <field name='unknown16' type='boolean' />
-    <field name='unknown17' type='float' />
-    <field name='unknown18' type='boolean' />
-    <field name='unknown19' type='int' />
+    <field name='clear_current_order' type='boolean' />
+    <field name='wind_up_time' type='float' />
+    <field name='passive' type='boolean' />
+    <field name='unique_id' type='int' />
     <field name='unknown20' type='int' />
-    <field name='unknown21' type='optstring_ascii' />
-    <field name='unknown22' type='optstring_ascii' />
-    <field name='unknown23' type='optstring_ascii' />
-    <field name='unknown24' type='float' />
-    <field name='unknown25' type='float' />
-    <field name='unknown26' type='optstring_ascii' />
-    <field name='unknown27' type='optstring_ascii' />
-    <field name='unknown28' type='optstring_ascii' />
-    <field name='unknown29' type='optstring_ascii' />
-    <field name='unknown30' type='optstring_ascii' />
-    <field name='unknown31' type='float' />
-    <field name='unknown32' type='optstring_ascii' />
-    <field name='unknown33' type='optstring_ascii' />
-    <field name='unknown34' type='optstring_ascii' />
-    <field name='unknown35' type='optstring_ascii' />
-    <field name='unknown36' type='optstring_ascii' />
-    <field name='unknown37' type='float' />
-    <field name='unknown38' type='float' />
-  </table>
+    <field name='bombardment' type='optstring_ascii' />
+    <field name='spawned_unit' type='optstring_ascii' />
+    <field name='wind_up_stance' type='optstring_ascii' />
+    <field name='mana_cost' type='float' />
+    <field name='min_range' type='float' />
+    <field name='targetting_aoe' type='optstring_ascii' />
+    <field name='passive_aoe' type='optstring_ascii' />
+    <field name='active_aoe' type='optstring_ascii' />
+    <field name='activation_effect' type='optstring_ascii' />
+    <field name='vortex' type='optstring_ascii' />
+    <field name='miscast_chance' type='float' />
+    <field name='miscast_explosion' type='optstring_ascii' />
+    <field name='ai_usage' type='optstring_ascii' />
+    <field name='audio' type='optstring_ascii' />
+    <field name='special_ability_display' type='optstring_ascii' />
+    <field name='voiceover_state' type='optstring_ascii' />
+    <field name='additional_melee_cp' type='float' />
+    <field name='additional_missile_cp' type='float' />
+  </table> 
   <table table_name='unit_special_ability_effects_tables'
          table_version='1' >
   </table>
