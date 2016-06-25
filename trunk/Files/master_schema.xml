@@ -3091,18 +3091,18 @@
     <field name='unknown32' type='boolean' />
     <field name='unknown33' type='boolean' />
     <field name='unknown34' type='boolean' />
-    <field name='unknown32' type='boolean' />
-    <field name='unknown33' type='float' />
-    <field name='unknown34' type='float' />
-    <field name='unknown35' type='int' />
+    <field name='unknown35' type='boolean' />
+    <field name='unknown36' type='float' />
+    <field name='unknown37' type='float' />
+    <field name='unknown38' type='int' />
     <field name='unknown39' type='boolean' />
     <field name='unknown40' type='boolean' />
-    <field name='unknown38' type='float' />
-    <field name='unknown39' type='float' />
-    <field name='unknown40' type='int' />
-    <field name='unknown41' type='boolean' />
+    <field name='unknown41' type='float' />
+    <field name='unknown42' type='float' />
+    <field name='unknown43' type='int' />
+    <field name='unknown44' type='boolean' />
     <field name='unknown45' type='boolean' />
-    <field name='unknown43' type='optstring_ascii' />
+    <field name='unknown46' type='optstring_ascii' />
   </table>
   <table table_name='battle_entity_effects_junctions_tables'
          table_version='1' >
