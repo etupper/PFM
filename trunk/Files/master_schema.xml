@@ -3038,53 +3038,6 @@
     <field name='unknown26' type='string_ascii' />
     <field name='unknown27' type='float' />
     <field name='unknown28' type='string_ascii' />
-    <field name='unknown29' type='float' />
-    <field name='unknown30' type='float' />
-    <field name='unknown31' type='float' />
-    <field name='unknown32' type='boolean' />
-    <field name='unknown33' type='float' />
-    <field name='unknown34' type='float' />
-    <field name='unknown35' type='int' />
-    <field name='unknown36' type='optstring_ascii' />
-    <field name='unknown37' type='optstring_ascii' />
-    <field name='unknown38' type='float' />
-    <field name='unknown39' type='float' />
-    <field name='unknown40' type='int' />
-    <field name='unknown41' type='boolean' />
-    <field name='unknown42' type='optstring_ascii' />
-    <field name='unknown43' type='optstring_ascii' />
-  </table>
-  <table table_name='battle_entities_tables'
-         table_version='27' >
-    <field name='key' type='string_ascii' pk='true' />
-    <field name='type' type='string_ascii' />
-    <field name='walk_speed' type='float' />
-    <field name='run_speed' type='float' />
-    <field name='acceleration' type='float' />
-    <field name='deceleration' type='float' />
-    <field name='charge_speed' type='float' />
-    <field name='crawl_speed' type='float' />
-    <field name='charge_distance_commence_run' type='float' />
-    <field name='charge_distance_adopt_charge_pose' type='float' />
-    <field name='charge_distance_pick_target' type='float' />
-    <field name='unknown11' type='string_ascii' />
-    <field name='radius' type='float' />
-    <field name='unknown13' type='float' />
-    <field name='unknown14' type='float' />
-    <field name='unknown15' type='float' />
-    <field name='unknown16' type='float' />
-    <field name='unknown17' type='int' />
-    <field name='unknown18' type='boolean' />
-    <field name='unknown19' type='boolean' />
-    <field name='unknown20' type='float' />
-    <field name='unknown21' type='float' />
-    <field name='unknown22' type='float' />
-    <field name='unknown23' type='string_ascii' />
-    <field name='unknown24' type='float' />
-    <field name='unknown25' type='string_ascii' />
-    <field name='unknown26' type='string_ascii' />
-    <field name='unknown27' type='float' />
-    <field name='unknown28' type='string_ascii' />
     <field name='unknown29' type='int' />
     <field name='unknown30' type='int' />
     <field name='unknown31' type='boolean' />
