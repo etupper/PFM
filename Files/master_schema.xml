@@ -4651,13 +4651,13 @@
          table_version='4' >
     <field fkey='building_levels_tables.level_name' name='building' type='string_ascii' pk='true' />
     <field fkey='cultures_tables.key' name='culture' type='optstring_ascii' pk='true' />
-    <field fkey='battlefield_buildings_tables.key' name='battlefield_building' type='optstring_ascii' />
-    <field fkey='warscape_rigid_tables.key' name='artpiece' type='optstring_ascii' />
-    <field fkey='warscape_animated_tables.key' name='artpiece_animated' type='optstring_ascii' />
     <field name='description' type='optstring_ascii' />
     <field name='icon' type='optstring_ascii' />
     <field fkey='cultures_subcultures_tables.subculture' name='subculture' type='optstring_ascii' pk='true' />
-    <field name='unknown8' type='boolean' />
+    <field name='faction' type='optstring_ascii' />
+    <field name='unknown6' type='optstring_ascii' />
+    <field name='short_description' type='optstring_ascii' />
+    <field name='display_tooltip' type='boolean' />
   </table>
   <table table_name='building_description_texts_tables'
          table_version='0' >
