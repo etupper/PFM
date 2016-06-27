@@ -3040,22 +3040,19 @@
     <field name='unknown28' type='string_ascii' />
     <field name='unknown29' type='int' />
     <field name='unknown30' type='int' />
-    <field name='unknown31' type='boolean' />
+    <field name='unknown31' type='float' />
     <field name='unknown32' type='boolean' />
-    <field name='unknown33' type='boolean' />
-    <field name='unknown34' type='boolean' />
-    <field name='unknown35' type='boolean' />
-    <field name='unknown36' type='float' />
-    <field name='unknown37' type='float' />
-    <field name='unknown38' type='int' />
-    <field name='unknown39' type='boolean' />
-    <field name='unknown40' type='boolean' />
-    <field name='unknown41' type='float' />
-    <field name='unknown42' type='float' />
-    <field name='unknown43' type='int' />
-    <field name='unknown44' type='boolean' />
-    <field name='unknown45' type='boolean' />
-    <field name='unknown46' type='optstring_ascii' />
+    <field name='unknown33' type='float' />
+    <field name='unknown34' type='float' />
+    <field name='unknown35' type='int' />
+    <field name='unknown36' type='optstring_ascii' />
+    <field name='unknown37' type='optstring_ascii' />
+    <field name='unknown38' type='float' />
+    <field name='unknown39' type='float' />
+    <field name='unknown40' type='int' />
+    <field name='unknown41' type='boolean' />
+    <field name='unknown42' type='optstring_ascii' />
+    <field name='unknown43' type='optstring_ascii' />
   </table>
   <table table_name='battle_entity_effects_junctions_tables'
          table_version='1' >
@@ -3660,7 +3657,7 @@
     <field name='unknown21' type='boolean' />
     <field name='unknown22' type='boolean' />
     <field name='unknown23' type='boolean' />
-  </table> 
+  </table>
   <table table_name='battle_weather_effects_tables'
          table_version='1' >
     <field fkey='ui_unit_stats_tables.key' name='stat' type='string_ascii' pk='true' />
@@ -12288,7 +12285,7 @@
     <field name='missile_cp' type='float' />
     <field name='can_siege' type='boolean' />
     <field name='audio_voiceover_culture_override' type='string_ascii' />
-  </table> 
+  </table>
   <table table_name='melee_weapons_tables'
          table_version='6' >
     <field name='armour_penetrating' type='boolean' />
@@ -12329,7 +12326,7 @@
     <field name='bonus_v_infantry' type='int' />
     <field name='key' type='string_ascii' pk='true' />
     <field name='damage' type='int' />
-    <field name='ap damage' type='int' />
+    <field name='ap_damage' type='int' />
     <field name='unknown6' type='float' />
     <field name='weapon_length' type='float' />
     <field name='melee_weapon_type' type='string_ascii' />
@@ -14625,14 +14622,14 @@
     <field name='calibration_distance' type='float' />
     <field name='calibration_area' type='float' />
     <field name='bonus_vs_infantry' type='int' />
-    <field name='bonus_vs_large' type='int' />
     <field name='bonus_vs_cavalry' type='int' />
+    <field name='bonus_vs_large' type='int' />
     <field name='projectile_display' type='optstring_ascii' />
     <field name='overhead_stat_effect' type='optstring_ascii' />
     <field name='projectile_audio' type='string_ascii' />
     <field name='shockwave_radius' type='float' />
     <field name='can_damage_buildings' type='boolean' />
-    <field name='contact_stat_Effect' type='optstring_ascii' />
+    <field name='contact_stat_effect' type='optstring_ascii' />
     <field name='unknown30' type='boolean' />
     <field name='gravity' type='float' />
     <field name='burst_size' type='int' />
@@ -14650,7 +14647,7 @@
     <field name='expire_on_impact' type='boolean' />
     <field name='can_roll' type='boolean' />
     <field name='shots_per_volley' type='int' />
-  </table> 
+  </table>
   <table table_name='prologue_chapters_tables'
          table_version='1' >
     <field fkey='battles_tables.key' name='battle_key' type='optstring_ascii' />
@@ -16663,8 +16660,8 @@
     <field name='requires_effect_enabling' type='boolean' />
     <field name='tooltip_text' type='optstring_ascii' />
   </table>
-   <table table_name='unit_abilities_tables'
-          table_version='11' >
+  <table table_name='unit_abilities_tables'
+         table_version='11' >
     <field name='key' type='string_ascii' pk='true' />
     <field name='supercedes_ability' type='boolean' />
     <field name='requires_effect_enabling' type='boolean' />
@@ -16673,9 +16670,9 @@
     <field name='type' type='string_ascii' />
     <field name='video_previews' type='optstring_ascii' />
     <field name='uniqueness' type='string_ascii' />
-   </table>
-   <table table_name='unit_abilities_to_additional_ui_effects_juncs_tables'
-          table_version='0' >
+  </table>
+  <table table_name='unit_abilities_to_additional_ui_effects_juncs_tables'
+         table_version='0' >
     <field name='unknown0' type='string_ascii' />
     <field name='unknown1' type='string_ascii' />
   </table>
@@ -17153,7 +17150,7 @@
     <field name='voiceover_state' type='optstring_ascii' />
     <field name='additional_melee_cp' type='float' />
     <field name='additional_missile_cp' type='float' />
-  </table> 
+  </table>
   <table table_name='unit_special_ability_effects_tables'
          table_version='1' >
   </table>
