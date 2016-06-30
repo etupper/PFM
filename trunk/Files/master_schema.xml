@@ -17281,7 +17281,7 @@
     <field name='target_friends' type='boolean' />
     <field name='target_enemies' type='boolean' />
     <field name='target_intercept_range' type='float' />
-    <field name='unknown15' type='boolean' />
+    <field name='assume_specific_behaviour' type='optstring_ascii' />
     <field name='clear_current_order' type='boolean' />
     <field name='wind_up_time' type='float' />
     <field name='passive' type='boolean' />
