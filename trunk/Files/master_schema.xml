@@ -3095,44 +3095,44 @@
     <field name='charge_distance_commence_run' type='float' />
     <field name='charge_distance_adopt_charge_pose' type='float' />
     <field name='charge_distance_pick_target' type='float' />
-    <field name='unknown11' type='string_ascii' />
+    <field name='shape' type='string_ascii' />
     <field name='radius' type='float' />
-    <field name='unknown13' type='float' />
-    <field name='unknown14' type='float' />
-    <field name='unknown15' type='float' />
-    <field name='unknown16' type='float' />
-    <field name='unknown17' type='int' />
-    <field name='unknown18' type='boolean' />
-    <field name='unknown19' type='boolean' />
-    <field name='unknown20' type='float' />
-    <field name='unknown21' type='float' />
-    <field name='unknown22' type='float' />
-    <field name='unknown23' type='string_ascii' />
+    <field name='mass' type='float' />
+    <field name='height' type='float' />
+    <field name='fire_arc_close' type='float' />
+    <field name='turn_speed' type='float' />
+    <field name='hit_points' type='int' />
+    <field name='allow_turn_to_move_anim' type='boolean' />
+    <field name='allow_static_turn_anim' type='boolean' />
+    <field name='min_turning_speed' type='float' />
+    <field name='fly_speed' type='float' />
+    <field name='flying_charge_speed' type='float' />
+    <field name='size' type='string_ascii' />
     <field name='unknown24' type='float' />
-    <field name='unknown25' type='string_ascii' />
-    <field name='unknown26' type='string_ascii' />
-    <field name='unknown27' type='float' />
-    <field name='unknown28' type='string_ascii' />
+    <field name='gradient_strategy' type='string_ascii' />
+    <field name='audio_entity_type' type='string_ascii' />
+    <field name='combat_reaction_radius' type='float' />
+    <field name='entity_effects' type='string_ascii' />
     <field name='unknown29' type='float' />
     <field name='unknown30' type='float' />
-    <field name='unknown31' type='float' />
-    <field name='unknown32' type='boolean' />
-    <field name='unknown33' type='float' />
-    <field name='unknown34' type='float' />
-    <field name='unknown35' type='int' />
-    <field name='unknown36' type='optstring_ascii' />
-    <field name='unknown37' type='optstring_ascii' />
-    <field name='unknown38' type='float' />
-    <field name='unknown39' type='float' />
-    <field name='unknown40' type='int' />
-    <field name='unknown41' type='boolean' />
-    <field name='unknown42' type='optstring_ascii' />
-    <field name='unknown43' type='boolean' />
-    <field name='unknown44' type='boolean' />
-    <field name='unknown45' type='optstring_ascii' />
-    <field name='unknown46' type='float' />
-    <field name='unknown47' type='float' />
-  </table>
+    <field name='soft_collision_offset_z' type='float' />
+    <field name='can_climb_ladder_and_stair_pipes' type='boolean' />
+    <field name='projectile_intersection_radius_ratio' type='float' />
+    <field name='projectile_penetration_speed_change' type='float' />
+    <field name='projectile_penetration_resistence' type='int' />
+    <field name='aura_vfx' type='optstring_ascii' />
+    <field name='porthole_camera' type='optstring_ascii' />
+    <field name='min_tracking_ratio' type='float' />
+    <field name='max_tracking_ratio' type='float' />
+    <field name='vfx_filter_id' type='int' />
+    <field name='can_cast_projectile' type='boolean' />
+    <field name='porthole_composite_scene' type='optstring_ascii' />
+    <field name='has_blood' type='boolean' />
+    <field name='can_dismember' type='boolean' />
+    <field name='combat_camera_shake_type' type='optstring_ascii' />
+    <field name='dismember_head-alive_hp_ratio' type='float' />
+    <field name='dismember_arms_hp_ratio' type='float' />
+  </table> 
   <table table_name='battle_entity_effects_junctions_tables'
          table_version='1' >
     <field name='unknown0' type='optstring_ascii' />
