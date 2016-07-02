@@ -339,7 +339,7 @@ namespace EsfLibrary {
                 result = new StringNode(ReadUtf16, WriteUtf16);
                 break;
             case EsfType.ASCII:
-                result = new StringNode(ReadAscii, WriteUtf16);
+                result = new StringNode(ReadAscii, WriteAscii);
                 break;
             case EsfType.ANGLE:
                 result = new UShortNode();
