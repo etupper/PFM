@@ -120,6 +120,18 @@ namespace EsfLibrary {
 
         protected SortedList<int, string> nodeNames = new SortedList<int, string>();
 
+        public SortedList<int, String> NodeNames
+        {
+            get
+            {
+                return nodeNames;
+            }
+            set
+            {
+                nodeNames = value;
+            }
+        }
+
         #region Reader Methods
         public static bool ReadBool(BinaryReader reader) { return reader.ReadBoolean(); }
         public static sbyte ReadSbyte(BinaryReader reader) { return reader.ReadSByte(); }
