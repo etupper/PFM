@@ -15520,6 +15520,11 @@
          table_version='0' >
     <field name='unknown0' type='string_ascii' />
   </table>
+  <table table_name='special_ability_groups_to_units_junctions_tables'
+         table_version='0' >
+    <field name='unknown0' type='string_ascii' />
+    <field name='unknown1' type='string_ascii' />
+  </table>
   <table table_name='special_ability_invalid_usage_flags_tables'
          table_version='0' >
     <field name='flag_key' type='string_ascii' pk='true' />
