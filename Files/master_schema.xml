@@ -3130,7 +3130,7 @@
     <field name='has_blood' type='boolean' />
     <field name='can_dismember' type='boolean' />
     <field name='combat_camera_shake_type' type='optstring_ascii' />
-    <field name='dismember_head-alive_hp_ratio' type='float' />
+    <field name='dismember_head_alive_hp_ratio' type='float' />
     <field name='dismember_arms_hp_ratio' type='float' />
   </table> 
   <table table_name='battle_entity_effects_junctions_tables'
@@ -3771,14 +3771,14 @@
     <field name='composite_scene' type='string_ascii' />
     <field name='detonation_force' type='float' />
     <field name='launch_source' type='string_ascii' />
-    <field name='unknown17' type='string_ascii' />
+    <field name='building_collision' type='string_ascii' />
     <field name='unknown18' type='boolean' />
     <field name='unknown19' type='boolean' />
     <field name='unknown20' type='boolean' />
     <field name='unknown21' type='boolean' />
     <field name='unknown22' type='boolean' />
-    <field name='unknown23' type='optstring_ascii' />
-    <field name='unknown24' type='float' />
+    <field name='composite_scene_blood' type='optstring_ascii' />
+    <field name='delay' type='float' />
   </table>
   <table table_name='battle_weather_effects_tables'
          table_version='1' >
@@ -13665,9 +13665,9 @@
     <field name='key' type='string_ascii' pk='true' />
     <field name='animation' type='string_ascii' />
     <field fkey='battle_entities_tables.key' name='entity' type='string_ascii' />
-    <field name='unknown3' type='string_ascii' />
-    <field name='unknown4' type='string_ascii' />
-    <field name='unknown5' type='string_ascii' />
+    <field name='audio_armour_type' type='string_ascii' />
+    <field name='variant' type='string_ascii' />
+    <field name='voiceover' type='string_ascii' />
   </table>
   <table table_name='movie_event_strings_tables'
          table_version='0' >
@@ -14205,23 +14205,23 @@
   </table>
   <table table_name='projectile_displays_tables'
          table_version='10' >
-    <field name='unknown0' type='optstring_ascii' />
-    <field name='unknown1' type='optstring_ascii' />
-    <field name='unknown2' type='string_ascii' />
-    <field name='unknown3' type='optstring_ascii' />
-    <field name='unknown4' type='optstring_ascii' />
-    <field name='unknown5' type='boolean' />
-    <field name='unknown6' type='optstring_ascii' />
-    <field name='unknown7' type='boolean' />
-    <field name='unknown8' type='float' />
-    <field name='unknown9' type='boolean' />
-    <field name='unknown10' type='optstring_ascii' />
-    <field name='unknown11' type='optstring_ascii' />
-    <field name='unknown12' type='optstring_ascii' />
-    <field name='unknown13' type='optstring_ascii' />
-    <field name='unknown14' type='optstring_ascii' />
-    <field name='unknown15' type='optstring_ascii' />
-  </table>
+    <field name='display_model' type='optstring_ascii' />
+    <field name='impact' type='optstring_ascii' />
+    <field name='key' type='string_ascii' />
+    <field name='launch_fx' type='optstring_ascii' />
+    <field name='trail_fx' type='optstring_ascii' />
+    <field name='stationary_fx' type='boolean' />
+    <field name='airborne_anim' type='optstring_ascii' />
+    <field name='landing_anim' type='boolean' />
+    <field name='tip_offset' type='float' />
+    <field name='trail_spin' type='boolean' />
+    <field name='launch_camera_shake' type='optstring_ascii' />
+    <field name='impact_bounce' type='optstring_ascii' />
+    <field name='impact_penetrate' type='optstring_ascii' />
+    <field name='impact_blood' type='optstring_ascii' />
+    <field name='impact_bounce_blood' type='optstring_ascii' />
+    <field name='impact_penetrate_blood' type='optstring_ascii' />
+  </table> 
   <table table_name='projectile_first_person_params_tables'
          table_version='1' >
     <field name='unknown0' type='float' />
