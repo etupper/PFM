@@ -5657,10 +5657,10 @@
     <field name='navy_turns_of_inactivity_until_cap' type='int' />
     <field fkey='taxes_levels_tables.tax_level' name='minimum_settable_tax_level' type='string_ascii' />
     <field fkey='taxes_levels_tables.tax_level' name='maximum_settable_tax_level' type='string_ascii' />
-    <field name='unknown' type='int' />
+    <field name='technology_funds_allocation_percentage' type='int' />
     <field name='technology_turns_of_inactivity_until_cap' type='int' />
-    <field name='unknown26' type='int' />
-    <field name='unknown27' type='int' />
+    <field name='technology_funding_cap' type='int' />
+    <field name='technology_percentage_of_pool_to_save_on_fail ' type='int' />
   </table>
   <table table_name='cai_personalities_budget_context_types_tables'
          table_version='0' >
@@ -7426,10 +7426,10 @@
          table_version='2' >
     <field name='key' type='string_ascii' pk='true' />
     <field name='location' type='string_ascii' />
-    <field name='unknown2' type='optstring_ascii' />
-    <field name='unknown3' type='string_ascii' />
-    <field name='unknown4' type='string_ascii' />
-    <field name='unknown5' type='optstring_ascii' />
+    <field name='ownership' type='optstring_ascii' />
+    <field name='source' type='string_ascii' />
+    <field name='target' type='string_ascii' />
+    <field name='territory' type='optstring_ascii' />
   </table>
   <table table_name='campaign_faction_religion_effects_tables'
          table_version='0' >
@@ -12143,11 +12143,11 @@
     <field name='morale' type='int' />
     <field name='bonus_hit_points' type='int' />
     <field name='mount' type='optstring_ascii' />
-    <field name='unknown17' type='boolean' />
     <field name='unknown18' type='boolean' />
     <field name='unknown19' type='boolean' />
     <field name='unknown20' type='boolean' />
     <field name='unknown21' type='boolean' />
+    <field name='unknown22' type='boolean' />
     <field name='num_mounts' type='int' />
     <field name='primary_melee_weapon' type='string_ascii' />
     <field name='primary_missile_weapon' type='optstring_ascii' />
@@ -12164,12 +12164,12 @@
     <field name='is_male' type='boolean' />
     <field name='visibility_spotting_range_min' type='float' />
     <field name='visibility_spotting_range_max' type='float' />
-    <field name='unknown38' type='float' />
+    <field name='ability_global_recharge' type='float' />
     <field name='attribute_group' type='optstring_ascii' />
     <field name='spot_dist_tree' type='int' />
     <field name='spot_dist_scrub' type='int' />
     <field name='reload' type='int' />
-    <field name='unknown43' type='boolean' />
+    <field name='loose_spacing' type='boolean' />
     <field name='selected_vo' type='string_ascii' />
     <field name='selected_vo_secondary' type='string_ascii' />
     <field name='selected_vo_tertiary' type='string_ascii' />
@@ -12183,10 +12183,10 @@
     <field name='num_engines' type='int' />
     <field name='damage_mod_physical' type='int' />
     <field name='damage_mod_missiles' type='int' />
-    <field name='unknown57' type='int' />
+    <field name='damage_mod_all' type='int' />
     <field name='ai_usage_group' type='string_ascii' />
     <field name='can_skirmish' type='boolean' />
-    <field name='unknown60' type='boolean' />
+    <field name='mounted_draughts' type='boolean' />
     <field name='sync_locomotion' type='boolean' />
   </table>
   <table table_name='land_units_to_unit_abilites_junctions_tables'
@@ -15170,10 +15170,10 @@
          table_version='4' >
     <field name='key' type='string_ascii' pk='true' />
     <field fkey='commodity_unit_names_tables.unit' name='unit' type='optstring_ascii' />
-    <field name='unknown2' type='int' />
-    <field name='unknown3' type='string_ascii' />
-    <field name='unknown4' type='int' />
-    <field name='unknown5' type='boolean' />
+    <field name='trade_value' type='int' />
+    <field name='icon_filepath' type='string_ascii' />
+    <field name='strategic_value' type='int' />
+    <field name='in_encyclopedia' type='boolean' />
   </table>
   <table table_name='resources_to_campaign_junctions_tables'
          table_version='0' >
@@ -15618,7 +15618,7 @@
     <field name='requested_stance' type='optstring_ascii' />
     <field name='unbreakable' type='boolean' />
     <field name='cant_move' type='boolean' />
-    <field name='kill_own_unit' type='boolean' />
+    <field name='freeze_fatigue' type='boolean' />
     <field name='fatigue_change_ratio' type='float' />
     <field name='unknown8' type='boolean' />
     <field name='unknown9' type='boolean' />
@@ -15633,12 +15633,12 @@
     <field name='unknown18' type='int' />
     <field name='resurrect' type='boolean' />
     <field name='mana_regen_mod' type='float' />
-    <field name='unknown21' type='float' />
-    <field name='unknown22' type='boolean' />
+    <field name='mana_max_depletion_mod' type='float' />
+    <field name='imbue_magical' type='boolean' />
     <field name='imbue_ignition' type='int' />
-    <field name='unknown24' type='optstring_ascii' />
-    <field name='unknown25' type='optstring_ascii' />
-    <field name='unknown26' type='optstring_ascii' />
+    <field name='imbue_contact' type='optstring_ascii' />
+    <field name='phase_display' type='optstring_ascii' />
+    <field name='phase_audio' type='optstring_ascii' />
   </table>
   <table table_name='special_ability_to_auto_deactivate_flags_tables'
          table_version='0' >
