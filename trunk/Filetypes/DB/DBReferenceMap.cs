@@ -64,14 +64,19 @@ namespace Filetypes {
             Console.WriteLine("Looking for {0}:{1} in {2}", tableName, fieldName, packedFiles);
 #endif
             // enable load from multiple files
-            bool found = false;
+            List<string> loadedFrom = new List<string>();
             foreach (PackedFile packed in packedFiles) {
                 string currentTable = DBFile.Typename(packed.FullPath);
                 if (!packed.FullPath.StartsWith("db")) {
                     continue;
                 }
                 if (currentTable.Equals(tableName)) {
-                    found = true;
+                    // load from several files, but not with the same name
+                    string fileName = Path.GetFileName(packed.FullPath);
+                    if (loadedFrom.Contains(fileName))
+                    {
+                        continue;
+                    }
                     if (result == null) {
                         result = new SortedSet<string>();
                     }
@@ -83,9 +88,10 @@ namespace Filetypes {
                     } catch {
                         return null;
                     }
-                } else if (found) {
+                    loadedFrom.Add(fileName);
+                // } else if (found) {
                     // once we're past the files with the correct type, stop searching
-                    break;
+                    // break;
                 } else {
                     // we didn't find the right table type, but cache the PackedFile we created along the way
                     List<PackedFile> cacheFiles;
