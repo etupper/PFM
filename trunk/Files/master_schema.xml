@@ -12454,7 +12454,7 @@
     <field name='splash_attack_max_attacks' type='int' />
     <field name='splash_attack_power_multiplier' type='float' />
     <field name='building_damage' type='int' />
-    <field name='ignition_amount' type='int' />
+    <field name='ignition_amount' type='float' />
     <field name='is_magical' type='boolean' />
     <field name='contact_phase' type='optstring_ascii' />
     <field name='collision_attack_max_targets' type='int' />
