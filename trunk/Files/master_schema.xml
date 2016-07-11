@@ -3772,11 +3772,8 @@
     <field name='detonation_force' type='float' />
     <field name='launch_source' type='string_ascii' />
     <field name='building_collision' type='string_ascii' />
-    <field name='unknown18' type='boolean' />
-    <field name='unknown19' type='boolean' />
-    <field name='unknown20' type='boolean' />
-    <field name='unknown21' type='boolean' />
-    <field name='unknown22' type='boolean' />
+    <field name='launch_vfx' type='optstring_ascii' />
+    <field name='height_off_ground' type='float' />
     <field name='composite_scene_blood' type='optstring_ascii' />
     <field name='delay' type='float' />
   </table>
@@ -12443,13 +12440,13 @@
   </table>
   <table table_name='melee_weapons_tables'
          table_version='20' >
-    <field name='unknown0' type='int' />
+    <field name='bonus_v_cavalry' type='int' />
     <field name='bonus_v_large' type='int' />
     <field name='bonus_v_infantry' type='int' />
     <field name='key' type='string_ascii' pk='true' />
     <field name='damage' type='int' />
     <field name='ap_damage' type='int' />
-    <field name='unknown6' type='float' />
+    <field name='first_strike' type='float' />
     <field name='weapon_length' type='float' />
     <field name='melee_weapon_type' type='string_ascii' />
     <field name='audio_type' type='string_ascii' />
@@ -14063,6 +14060,11 @@
          table_version='0' >
     <field name='unknown0' type='string_ascii' />
   </table>
+  <table table_name='political_parties_frontend_leaders_junctions_tables'
+         table_version='0' >
+    <field name='unknown0' type='string_ascii' />
+    <field name='unknown1' type='string_ascii' />
+  </table>
   <table table_name='political_parties_power_effect_bundles_tables'
          table_version='0' >
     <field name='unknown0' type='string_ascii' />
@@ -14459,14 +14461,14 @@
     <field name='projectile_amount' type='int' />
     <field fkey='particle_effects_tables.key' name='explosion_particle_effect' type='optstring_ascii' />
     <field name='distance_from_target' type='int' />
-    <field name='unknown11' type='optstring_ascii' />
-    <field name='unknown12' type='string_ascii' />
-    <field name='unknown13' type='optstring_ascii' />
-    <field name='unknown14' type='float' />
-    <field name='unknown15' type='boolean' />
-    <field name='unknown16' type='float' />
-    <field name='unknown17' type='optstring_ascii' />
-    <field name='unknown18' type='float' />
+    <field name='explosion_particle_effect_on_ground' type='optstring_ascii' />
+    <field name='explosion_audio' type='string_ascii' />
+    <field name='contact_phase_effect' type='optstring_ascii' />
+    <field name='ignition_amount' type='float' />
+    <field name='is_magical' type='boolean' />
+    <field name='detonation_damage_ap' type='float' />
+    <field name='camera_shake' type='optstring_ascii' />
+    <field name='detonation_force' type='float' />
   </table>
   <table table_name='projectiles_missile_type_enum_tables'
          table_version='0' >
@@ -14780,14 +14782,14 @@
     <field name='shockwave_radius' type='float' />
     <field name='can_damage_buildings' type='boolean' />
     <field name='contact_stat_effect' type='optstring_ascii' />
-    <field name='unknown30' type='boolean' />
+    <field name='is_grapple' type='boolean' />
     <field name='gravity' type='float' />
     <field name='burst_size' type='int' />
-    <field name='ignition_amount' type='float' />
+    <field name='burst_shot_delay' type='float' />
     <field name='mass' type='float' />
     <field name='homing_param' type='optstring_ascii' />
     <field name='first_person_params' type='optstring_ascii' />
-    <field name='unknown37' type='float' />
+    <field name='ignition_amount' type='float' />
     <field name='is_magical' type='boolean' />
     <field name='can_target_airborne' type='boolean' />
     <field name='fixed_elevation' type='int' />
@@ -16162,7 +16164,7 @@
     <field name='key' type='string' />
     <field fkey='technologies_tables.key' name='technology_key' type='string' />
     <field fkey='technology_node_sets_tables.key' name='technology_node_set' type='string' />
-    <field name='unknown7' type='int' />
+    <field name='tier' type='int' />
   </table>
   <table table_name='technology_nodes_tables'
          table_version='1' >
@@ -16173,8 +16175,8 @@
     <field fkey='technologies_tables.key' name='technology_key' type='string_ascii' />
     <field fkey='technology_node_sets_tables.key' name='technology_node_set' type='string_ascii' />
     <field name='tier' type='int' />
-    <field name='unknown7' type='int' />
-    <field name='unknown8' type='int' />
+    <field name='research_points_required' type='int' />
+    <field name='cost_per_round' type='int' />
   </table>
   <table table_name='technology_required_building_levels_junctions_tables'
          table_version='0' >
@@ -17357,11 +17359,11 @@
   <table table_name='unit_stats_land_experience_bonuses_tables'
          table_version='2' >
     <field name='xp_level' type='string_ascii' pk='true' />
-    <field name='melee_attack' type='int' />
-    <field name='melee_defence' type='int' />
-    <field name='unknown3' type='float' />
-    <field name='unknown4' type='float' />
-    <field name='unknown5' type='float' />
+    <field name='fatigue' type='int' />
+    <field name='mp_fixed_cost' type='int' />
+    <field name='mp_experience_cost_multiplier' type='float' />
+    <field name='additional_melee_cp' type='float' />
+    <field name='additional_missile_cp' type='float' />
   </table>
   <table table_name='unit_stats_land_tables'
          table_version='0' >
