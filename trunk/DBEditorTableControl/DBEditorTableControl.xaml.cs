@@ -687,8 +687,6 @@ namespace DBTableControl
                 currentTable.Clear();
             }
 
-            EditedFile.Entries.AddRange(importfile.Entries);
-
             // Since Data.Rows lacks an AddRange method, enumerate through the entries manually.
             foreach (List<FieldInstance> entry in importfile.Entries)
             {
