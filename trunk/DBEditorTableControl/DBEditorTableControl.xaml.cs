@@ -683,8 +683,11 @@ namespace DBTableControl
             if (question == MessageBoxResult.Cancel) {
                 return;
             } else if (question == MessageBoxResult.Yes) {
+                EditedFile.Entries.Clear();
                 currentTable.Clear();
             }
+
+            EditedFile.Entries.AddRange(importfile.Entries);
 
             // Since Data.Rows lacks an AddRange method, enumerate through the entries manually.
             foreach (List<FieldInstance> entry in importfile.Entries)
@@ -693,7 +696,7 @@ namespace DBTableControl
                 row.ItemArray = entry.Select(n => n.Value).ToArray();
                 CurrentTable.Rows.Add(row);
             }
-            
+
             currentTable.EndLoadData();
             dbDataGrid.ItemsSource = CurrentTable.DefaultView;
         }
