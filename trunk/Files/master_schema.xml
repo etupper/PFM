@@ -14310,10 +14310,10 @@
   </table>
   <table table_name='projectile_penetration_junctions_tables'
          table_version='0' >
-    <field name='unknown0' type='optstring_ascii' />
-    <field name='unknown1' type='optstring_ascii' />
-    <field name='unknown2' type='string_ascii' />
-    <field name='unknown3' type='int' />
+    <field name='description' type='optstring_ascii' />
+    <field name='entity_size_cap' type='optstring_ascii' />
+    <field name='key' type='string_ascii' />
+    <field name='max_penetration' type='int' />
   </table>
   <table table_name='projectile_shot_type_enum_tables'
          table_version='0' >
