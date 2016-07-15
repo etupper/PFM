@@ -10151,8 +10151,8 @@
     <field name='icon' type='optstring_ascii' />
     <field name='priority' type='int' />
     <field name='icon_negative' type='optstring_ascii' />
-    <field name='unknown4' type='string_ascii' />
-    <field name='unknown5' type='boolean' />
+    <field name='category' type='string_ascii' />
+    <field name='is_positive_value_good' type='boolean' />
   </table>
   <table table_name='empires_regions_junct_tables'
          table_version='0' >
@@ -15622,10 +15622,7 @@
     <field name='cant_move' type='boolean' />
     <field name='freeze_fatigue' type='boolean' />
     <field name='fatigue_change_ratio' type='float' />
-    <field name='unknown8' type='boolean' />
-    <field name='unknown9' type='boolean' />
-    <field name='unknown10' type='boolean' />
-    <field name='unknown11' type='boolean' />
+    <field name='inspiration_aura_change_mod' type='int' />
     <field name='ability_recharge_change' type='float' />
     <field name='hp_change_frequency' type='float' />
     <field name='heal_amount' type='int' />
@@ -20163,7 +20160,7 @@
     <field name='name' type='string_ascii' />
     <field fkey='land_units_tables.key' name='unit' type='string_ascii' pk='true' />
     <field fkey='variants_tables.variant_name' name='variant' type='string_ascii' />
-    <field name='unknown4' type='string_ascii' />
+    <field name='unit_card' type='string_ascii' />
   </table>
   <table table_name='unit_voice_categories_tables'
          table_version='0' >
