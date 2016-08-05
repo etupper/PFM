@@ -1211,40 +1211,12 @@
     <field name='max_starting_age' type='int' />
     <field name='min_expiry_age' type='int' />
     <field name='max_expiry_age' type='int' />
-    <field name='unknown19' type='boolean' />
-    <field name='unknown20' type='optstring_ascii' />
-    <field name='unknown21' type='boolean' />
-    <field name='unknown22' type='int' />
-    <field name='unknown23' type='int' />
-    <field name='unknown24' type='optstring_ascii' />
-  </table>
-  <table table_name='ancillaries_tables'
-         table_version='15' >
-    <field name='key' type='string_ascii' pk='true' />
-    <field name='type' type='string_ascii' />
-    <field name='applies_to' type='string_ascii' />
-    <field name='transferrable' type='boolean' />
-    <field name='unique_to_world' type='boolean' />
-    <field name='unique_to_faction' type='boolean' />
-    <field name='precedence' type='int' />
-    <field name='start_date' type='int' />
-    <field name='end_date' type='int' />
-    <field name='avatar_skill' type='optstring_ascii' />
-    <field name='avatar_special_ability' type='optstring_ascii' />
-    <field name='legendary_item' type='boolean' />
-    <field name='mp_exclusive' type='boolean' />
-    <field name='is_wife_ancillary' type='boolean' />
-    <field name='category' type='string_ascii' />
-    <field name='min_starting_age' type='int' />
-    <field name='max_starting_age' type='int' />
-    <field name='min_expiry_age' type='int' />
-    <field name='max_expiry_age' type='int' />
-    <field name='unknown19' type='boolean' />
-    <field name='unknown20' type='optstring_ascii' />
-    <field name='unknown21' type='optstring_ascii' />
-    <field name='unknown22' type='int' />
-    <field name='unknown23' type='int' />
-    <field name='unknown24' type='optstring_ascii' />
+    <field name='immortal' type='boolean' />
+    <field name='provided_bodyguard_unit' type='optstring_ascii' />
+    <field name='provided_banner' type='optstring_ascii' />
+    <field name='uniqueness_score' type='int' />
+    <field name='turns_before_swap_allowed' type='int' />
+    <field name='subcategory' type='optstring_ascii' />
   </table>
   <table table_name='ancillary_included_subcultures_tables'
          table_version='0' >
@@ -14338,17 +14310,17 @@
   </table>
   <table table_name='projectile_bombardments_tables'
          table_version='5' >
-    <field name='unknown0' type='float' />
-    <field name='unknown1' type='string_ascii' />
-    <field name='unknown2' type='int' />
-    <field name='unknown3' type='string_ascii' />
-    <field name='unknown4' type='float' />
-    <field name='unknown5' type='float' />
-    <field name='unknown6' type='string_ascii' />
-    <field name='unknown7' type='optstring_ascii' />
-    <field name='unknown8' type='int' />
-    <field name='unknown9' type='optstring_ascii' />
-    <field name='unknown10' type='int' />
+    <field name='arrival_window' type='float' />
+    <field name='bombardment_key' type='string_ascii' />
+    <field name='num_projectiles' type='int' />
+    <field name='projectile_type' type='string_ascii' />
+    <field name='radius_spread' type='float' />
+    <field name='start_time' type='float' />
+    <field name='launch_source' type='string_ascii' />
+    <field name='launch_vfx' type='optstring_ascii' />
+    <field name='launch_height' type='int' />
+    <field name='audio_type' type='optstring_ascii' />
+    <field name='launch_height_underground' type='int' />
   </table>
   <table table_name='projectile_displays_tables'
          table_version='3' >
