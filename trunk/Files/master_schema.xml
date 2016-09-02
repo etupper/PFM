@@ -15207,8 +15207,8 @@
     <field name='is_beam_launch_burst' type='boolean' />
     <field name='expire_on_impact' type='boolean' />
     <field name='can_roll' type='boolean' />
+    <field name='restrict_xp_gain_in_campaign' type='boolean' />
     <field name='shots_per_volley' type='int' />
-    <field name='unknown47' type='boolean' />
   </table>
   <table table_name='prologue_chapters_tables'
          table_version='1' >
@@ -17796,7 +17796,7 @@
     <field name='voiceover_state' type='optstring_ascii' />
     <field name='additional_melee_cp' type='float' />
     <field name='additional_missile_cp' type='float' />
-    <field name='unknown39' type='boolean' />
+    <field name='parent_ability' type='optstring_ascii' />
   </table>
   <table table_name='unit_special_ability_effects_tables'
          table_version='1' >
