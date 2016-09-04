@@ -6033,10 +6033,10 @@
   </table>
   <table table_name='cai_personalities_income_allocations_tables'
          table_version='0' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='int' />
-    <field name='unknown2' type='float' />
-    <field name='unknown3' type='int' />
+    <field name='key' type='string_ascii' />
+    <field name='positive_net_income_survival_rounds' type='int' />
+    <field name='proportion_of_net_income_to_spend' type='float' />
+    <field name='zero_or_negative_net_income_survival_rounds' type='int' />
   </table>
   <table table_name='cai_personalities_random_group_junctions_tables'
          table_version='0' >
@@ -6080,20 +6080,20 @@
   <table table_name='cai_personalities_reliability_policies_tables'
          table_version='5' >
     <field name='key' type='string_ascii' />
-    <field name='unknown1' type='float' />
-    <field name='unknown2' type='optstring_ascii' />
-    <field name='unknown3' type='optstring_ascii' />
-    <field name='unknown4' type='float' />
-    <field name='unknown5' type='float' />
-    <field name='unknown6' type='float' />
-    <field name='unknown7' type='float' />
+    <field name='join_ally_bias' type='float' />
+    <field name='short_description' type='optstring_ascii' />
+    <field name='long_description' type='optstring_ascii' />
+    <field name='no_war_declaration_gift_threshold_min' type='float' />
+    <field name='no_war_declaration_gift_threshold_max' type='float' />
+    <field name='no_war_declaration_gift_bonus' type='float' />
+    <field name='no_raiding_gift_threshold' type='float' />
   </table>
   <table table_name='cai_personalities_religion_change_management_policies_tables'
          table_version='0' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='int' />
-    <field name='unknown2' type='float' />
-    <field name='unknown3' type='int' />
+    <field name='key' type='string_ascii' />
+    <field name='percent_probability_of_religion_change_once_threshold_reached' type='int' />
+    <field name='proportion_over_mean_state_religion_value_for_religion_change_tick' type='float' />
+    <field name='religion_change_ticks_required_to_change' type='int' />
   </table>
   <table table_name='cai_personalities_religious_conversion_policies_tables'
          table_version='0' >
@@ -6391,12 +6391,12 @@
   </table>
   <table table_name='cai_personality_cultural_relations_overrides_tables'
          table_version='1' >
-    <field name='unknown0' type='float' />
-    <field name='unknown1' type='string_ascii' />
-    <field name='unknown2' type='float' />
-    <field name='unknown3' type='float' />
-    <field name='unknown4' type='string_ascii' />
-    <field name='unknown5' type='string_ascii' />
+    <field name='attitude_base' type='float' />
+    <field name='component_id' type='string_ascii' />
+    <field name='negative_attitude_mulitplier' type='float' />
+    <field name='positive_attitude_multiplier' type='float' />
+    <field name='source' type='string_ascii' />
+    <field name='target' type='string_ascii' />
   </table>
   <table table_name='cai_personality_deal_evaluation_component_overrides_tables'
          table_version='0' >
@@ -6508,17 +6508,17 @@
     <field fkey='cai_personality_deal_generation_generators_tables.id' name='generator_key' type='string_ascii' pk='true' />
     <field name='last_stand_priority' type='float' />
     <field name='param1' type='float' />
-    <field name='unknown5' type='float' />
-    <field name='unknown6' type='float' />
-    <field name='unknown7' type='float' />
+    <field name='param2' type='float' />
+    <field name='param3' type='float' />
+    <field name='param4' type='float' />
     <field name='peace_priority' type='float' />
     <field name='tension_priority' type='float' />
     <field name='total_war_priority' type='float' />
     <field name='war_priority' type='float' />
     <field name='failure_timeout' type='int' />
-    <field name='unknown8' type='int' />
-    <field name='unknown9' type='int' />
-    <field name='unknown10' type='float' />
+    <field name='min_payment_cap' type='int' />
+    <field name='max_payment_cap' type='int' />
+    <field name='max_payment_pct' type='float' />
   </table>
   <table table_name='cai_personality_deal_generation_generators_tables'
          table_version='0' >
@@ -6572,13 +6572,13 @@
   </table>
   <table table_name='cai_personality_diplomatic_treaty_values_tables'
          table_version='3' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='defensive_alliance' type='float' />
-    <field name='unknown2' type='float' />
-    <field name='military_alliance' type='float' />
-    <field name='unknown4' type='float' />
-    <field name='unknown5' type='float' />
-    <field name='unknown6' type='string_ascii' />
+    <field name='component_id' type='string_ascii' />
+    <field name='initial_value' type='float' />
+    <field name='value1' type='float' />
+    <field name='turn1' type='float' />
+    <field name='value2' type='float' />
+    <field name='turn2' type='float' />
+    <field name='treaty' type='string_ascii' />
   </table>
   <table table_name='cai_personality_empire_rivalry_components_tables'
          table_version='1' >
@@ -6891,8 +6891,8 @@
   </table>
   <table table_name='cai_task_management_system_task_generator_group_overrides_tables'
          table_version='0' >
-    <field name='unknown0' type='optstring_ascii' />
-    <field name='unknown1' type='string_ascii' />
+    <field name='parent_task_generator_group' type='optstring_ascii' />
+    <field name='task_generator_group' type='string_ascii' />
   </table>
   <table table_name='cai_task_management_system_task_generator_groups_generators_junctions_tables'
          table_version='0' >
@@ -6926,9 +6926,9 @@
   </table>
   <table table_name='cai_variables_tables'
          table_version='0' >
-    <field name='unknown1' type='string_ascii' />
-    <field name='unknown2' type='float' />
-    <field name='unknown3' type='string_ascii' />
+    <field name='key' type='string_ascii' />
+    <field name='value' type='float' />
+    <field name='description' type='string_ascii' />
   </table>
   <table table_name='campaign_ai_character_skill_tree_distribution_junctions_tables'
          table_version='0' >
@@ -9204,13 +9204,13 @@
     <field fkey='cultures_subcultures_tables.subculture' name='subculture' type='optstring_ascii' />
     <field name='for_army' type='boolean' />
     <field name='for_navy' type='boolean' />
-    <field name='unknown7' type='optstring_ascii' />
+    <field name='agent_subtype_key' type='optstring_ascii' />
   </table>
   <table table_name='character_skill_nodes_skill_locks_tables'
          table_version='0' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='string_ascii' />
-    <field name='unknown2' type='int' />
+    <field name='character_skill' type='string_ascii' />
+    <field name='character_skill_node' type='string_ascii' />
+    <field name='level' type='int' />
   </table>
   <table table_name='character_skill_nodes_tables'
          table_version='0' >
@@ -9247,17 +9247,17 @@
   </table>
   <table table_name='character_skill_nodes_tables'
          table_version='5' >
-    <field name='unknown0' type='optstring' />
+    <field name='campaign_key' type='optstring' />
     <field fkey='character_skills_tables.key' name='character_skill_key' type='string_ascii' />
     <field fkey='character_skill_node_sets_tables.key' name='character_skill_node_set_key' type='string_ascii' />
     <field fkey='factions_tables.key' name='faction_key' type='optstring_ascii' />
     <field name='indent' type='float' />
     <field name='key' type='string_ascii' />
     <field name='tier' type='float' />
-    <field name='unknown7' type='optstring_ascii' />
+    <field name='subculture' type='optstring_ascii' />
     <field name='points_on_creation' type='int' />
-    <field name='unknown9' type='int' />
-    <field name='unknown10' type='boolean' />
+    <field name='required_num_parents' type='int' />
+    <field name='visible_in_ui' type='boolean' />
   </table>
   <table table_name='character_skill_utilization_hints_junctions_tables'
          table_version='0' >
@@ -9299,7 +9299,7 @@
     <field name='is_background_skill' type='boolean' />
     <field name='is_female_only_background_skill' type='boolean' />
     <field name='is_male_only_background_skill' type='boolean' />
-    <field name='unknown8' type='float' />
+    <field name='background_weighting' type='float' />
   </table>
   <table table_name='character_skills_to_quest_ancillaries_tables'
          table_version='1' >
@@ -9492,9 +9492,9 @@
   </table>
   <table table_name='confederation_effect_bundles_tables'
          table_version='0' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='string_ascii' />
-    <field name='unknown2' type='int' />
+    <field name='culture' type='string_ascii' />
+    <field name='effect_bundle' type='string_ascii' />
+    <field name='turns' type='int' />
   </table>
   <table table_name='culture_campaign_destruction_composite_scene_junctions_tables'
          table_version='0' >
@@ -17268,12 +17268,12 @@
     <field name='supercedes_ability' type='boolean' />
     <field name='requires_effect_enabling' type='boolean' />
     <field name='icon-name' type='string_ascii' />
-    <field name='upgrade-replacement' type='optstring_ascii' />
+    <field name='overpower_option' type='optstring_ascii' />
     <field name='type' type='string_ascii' />
-    <field name='video_previews' type='optstring_ascii' />
+    <field name='video' type='optstring_ascii' />
     <field name='uniqueness' type='string_ascii' />
-    <field name='unknown8' type='boolean' />
-    <field name='unknown9' type='boolean' />
+    <field name='is_unit_upgrade' type='boolean' />
+    <field name='is_hidden_in_ui' type='boolean' />
   </table>
   <table table_name='unit_abilities_to_additional_ui_effects_juncs_tables'
          table_version='0' >
