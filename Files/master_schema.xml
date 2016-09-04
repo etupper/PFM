@@ -12709,7 +12709,7 @@
     <field name='can_siege' type='boolean' />
     <field name='audio_voiceover_culture_override' type='string_ascii' />
   </table>
-  <table table_name='main_units_tables'
+    <table table_name='main_units_tables'
          table_version='29' >
     <field name='additional_building_requirement' type='optstring_ascii' />
     <field name='campaign_cap' type='int' />
@@ -12754,7 +12754,7 @@
     <field name='missile_cp' type='float' />
     <field name='can_siege' type='boolean' />
     <field name='audio_voiceover_culture_override' type='string_ascii' />
-    <field name='unknown43' type='boolean' />
+    <field name='restrict_xp_gain_in_campaign' type='boolean' />
   </table>
   <table table_name='melee_weapons_tables'
          table_version='6' >
@@ -15159,7 +15159,7 @@
     <field name='can_roll' type='boolean' />
     <field name='shots_per_volley' type='int' />
   </table>
-  <table table_name='projectiles_tables'
+    <table table_name='projectiles_tables'
          table_version='39' >
     <field name='key' type='string_ascii' pk='true' />
     <field name='category' type='string_ascii' />
@@ -15207,7 +15207,7 @@
     <field name='is_beam_launch_burst' type='boolean' />
     <field name='expire_on_impact' type='boolean' />
     <field name='can_roll' type='boolean' />
-    <field name='restrict_xp_gain_in_campaign' type='boolean' />
+    <field name='trail_always_on' type='boolean' />
     <field name='shots_per_volley' type='int' />
   </table>
   <table table_name='prologue_chapters_tables'
