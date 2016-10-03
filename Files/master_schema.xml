@@ -1075,14 +1075,14 @@
   </table>
   <table table_name='ancillaries_included_agent_subtypes_tables'
          table_version='0' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='string_ascii' />
+    <field name='agent_subtype' type='string_ascii' />
+    <field name='ancillary' type='string_ascii' />
   </table>
   <table table_name='ancillaries_required_skills_tables'
          table_version='1' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='string_ascii' />
-    <field name='unknown2' type='int' />
+    <field name='ancillary' type='string_ascii' />
+    <field name='required_skill' type='string_ascii' />
+    <field name='skill_level' type='int' />
   </table>
   <table table_name='ancillaries_subcategories_tables'
          table_version='0' >
@@ -9096,9 +9096,9 @@
   </table>
   <table table_name='character_skill_level_to_ancillaries_junctions_tables'
          table_version='1' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='string_ascii' />
-    <field name='unknown2' type='int' />
+    <field name='granted_ancillary' type='string_ascii' />
+    <field name='skill' type='string_ascii' />
+    <field name='level' type='int' />
   </table>
   <table table_name='character_skill_level_to_effects_junctions_tables'
          table_version='0' >
@@ -15944,8 +15944,8 @@
   </table>
   <table table_name='special_ability_groups_to_units_junctions_tables'
          table_version='0' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='string_ascii' />
+    <field name='ability_group' type='string_ascii' />
+    <field name='unit' type='string_ascii' />
   </table>
   <table table_name='special_ability_invalid_usage_flags_tables'
          table_version='0' >
@@ -20667,9 +20667,9 @@
   </table>
   <table table_name='units_custom_battle_mounts_tables'
          table_version='1' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='string_ascii' />
-    <field name='unknown2' type='string_ascii' />
+    <field name='base_unit' type='string_ascii' />
+    <field name='icon_name' type='string_ascii' />
+    <field name='mounted_unit' type='string_ascii' />
   </table>
   <table table_name='units_custom_battle_permissions_tables'
          table_version='4' >
@@ -20686,9 +20686,9 @@
     <field fkey='main_units_tables.unit' name='unit' type='string_ascii' pk='true' />
     <field name='siege_unit_attacker' type='boolean' />
     <field name='siege_unit_defender' type='boolean' />
-    <field name='unknown5' type='optstring_ascii' />
-    <field name='unknown6' type='optstring_ascii' />
-    <field name='unknown7' type='optstring_ascii' />
+    <field name='general_portrait' type='optstring_ascii' />
+    <field name='general_uniform' type='optstring_ascii' />
+    <field name='set_piece_character' type='optstring_ascii' />
   </table>
   <table table_name='units_tables'
          table_version='0' >
@@ -21082,12 +21082,12 @@
   <table table_name='variants_tables'
          table_version='5' >
     <field name='variant_name' type='string_ascii' pk='true' />
-    <field name='unknown1' type='optstring_ascii' />
-    <field name='unknown2' type='optstring_ascii' />
-    <field name='unknown3' type='optstring_ascii' />
-    <field name='unknown4' type='float' />
-    <field name='unknown5' type='float' />
-    <field name='unknown6' type='float' />
+    <field name='tech_folder' type='optstring_ascii' />
+    <field name='variant_file_name' type='optstring_ascii' />
+    <field name='low_poly_filename' type='optstring_ascii' />
+    <field name='mount_scale' type='float' />
+    <field name='scale' type='float' />
+    <field name='scale_variation' type='float' />
   </table>
   <table table_name='victory_conditions_tables'
          table_version='0' >
