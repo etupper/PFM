@@ -5328,8 +5328,8 @@
     <field name='unknown22' type='boolean' />
     <field name='unknown23' type='boolean' />
     <field name='unknown24' type='boolean' />
+    <field name='unknown25' type='boolean' />
     <field name='development_point_cost' type='int' />
-    <field name='unknown26' type='boolean' />
     <field name='can_be_damaged' type='boolean' />
     <field name='primary_slot_building_building_level_requirement' type='int' />
     <field name='audio_building_type' type='optstring_ascii' />
