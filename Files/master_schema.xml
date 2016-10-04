@@ -16957,10 +16957,10 @@
   </table>
   <table table_name='ui_colours_tables'
          table_version='0' >
-    <field name='unknown0' type='int' />
-    <field name='unknown1' type='int' />
-    <field name='unknown2' type='string_ascii' />
-    <field name='unknown3' type='int' />
+    <field name='blue' type='int' />
+    <field name='green' type='int' />
+    <field name='key' type='string_ascii' />
+    <field name='red' type='int' />
   </table>
   <table table_name='ui_effects_tables'
          table_version='1' >
@@ -16975,25 +16975,25 @@
   </table>
   <table table_name='ui_tagged_images_tables'
          table_version='0' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='string_ascii' />
+    <field name='key' type='string_ascii' />
+    <field name='image_path' type='string_ascii' />
   </table>
   <table table_name='ui_text_replacements_tables'
          table_version='0' >
-    <field name='unknown0' type='string_ascii' />
+    <field name='key' type='string_ascii' />
   </table>
   <table table_name='ui_tooltip_components_tables'
          table_version='2' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='optstring_ascii' />
-    <field name='unknown2' type='string_ascii' />
-    <field name='unknown3' type='optstring_ascii' />
-    <field name='unknown4' type='boolean' />
+    <field name='child_id' type='string_ascii' />
+    <field name='icon_path' type='optstring_ascii' />
+    <field name='ui_tooltip' type='string_ascii' />
+    <field name='state_name' type='optstring_ascii' />
+    <field name='is_visible' type='boolean' />
   </table>
   <table table_name='ui_tooltips_tables'
          table_version='0' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='string_ascii' />
+    <field name='key' type='string_ascii' />
+    <field name='layout_name' type='string_ascii' />
   </table>
   <table table_name='ui_unit_bullet_point_enums_tables'
          table_version='2' >
@@ -17003,23 +17003,23 @@
   </table>
   <table table_name='ui_unit_bullet_point_enums_tables'
          table_version='3' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='string_ascii' />
-    <field name='unknown2' type='int' />
+    <field name='key' type='string_ascii' />
+    <field name='state' type='string_ascii' />
+    <field name='sort_order' type='int' />
   </table>
   <table table_name='ui_unit_bullet_point_unit_overrides_tables'
          table_version='0' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='string_ascii' />
+    <field name='bullet_point' type='string_ascii' />
+    <field name='unit_key' type='string_ascii' />
   </table>
-  <table table_name='ui_unit_bullet_points_generations_tables'
+ <table table_name='ui_unit_bullet_points_generations_tables'
          table_version='0' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='optstring_ascii' />
-    <field name='unknown2' type='optstring_ascii' />
-    <field name='unknown3' type='string_ascii' />
-    <field name='unknown4' type='string_ascii' />
-    <field name='unknown5' type='float' />
+    <field name='bullet_point_enum' type='string_ascii' />
+    <field name='unknown1' type='boolean' />
+    <field name='text_override' type='optstring_ascii' />
+    <field name='unit_class' type='string_ascii' />
+    <field name='unit_stat' type='string_ascii' />
+    <field name='unit_stat_threshold' type='float' />
   </table>
   <table table_name='ui_unit_bullet_points_generations_tables'
          table_version='2' >
@@ -17036,6 +17036,13 @@
     <field name='unknown1' type='string_ascii' />
     <field name='unknown2' type='int' />
   </table>
+  <table table_name='ui_unit_group_parents_tables'
+         table_version='1' >
+    <field name='unknown0' type='string_ascii' />
+    <field name='unknown1' type='string_ascii' />
+    <field name='unknown2' type='int' />
+    <field name='unknown3' type='int' />
+  </table>
   <table table_name='ui_unit_groupings_tables'
          table_version='1' >
     <field name='unknown0' type='string_ascii' />
@@ -17044,9 +17051,9 @@
   </table>
   <table table_name='ui_unit_groupings_tables'
          table_version='1' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='string_ascii' />
-    <field name='unknown2' type='string_ascii' />
+    <field name='icon' type='string_ascii' />
+    <field name='key' type='string_ascii' />
+    <field name='parent_group' type='string_ascii' />
   </table>
   <table table_name='ui_unit_stat_to_classes_tables'
          table_version='0' >
@@ -17062,6 +17069,14 @@
     <field fkey='ui_unit_stats_filters_tables.key' name='filter' type='string_ascii' pk='true' />
   </table>
   <table table_name='ui_unit_stat_to_classes_tables'
+         table_version='4' >
+    <field fkey='ui_unit_stats_tables.key' name='stat_key' type='string_ascii' pk='true' />
+    <field fkey='unit_class_tables.key' name='unit_class' type='string_ascii' pk='true' />
+    <field name='list_order' type='int' />
+    <field fkey='ui_unit_stats_filters_tables.key' name='filter' type='string_ascii' pk='true' />
+    <field name='base_value' type='float' />
+  </table>
+  <table table_name='ui_unit_stat_to_classes_tables'
          table_version='5' >
     <field fkey='ui_unit_stats_tables.key' name='stat_key' type='string_ascii' pk='true' />
     <field fkey='unit_class_tables.key' name='unit_class' type='string_ascii' pk='true' />
@@ -17071,9 +17086,9 @@
   </table>
   <table table_name='ui_unit_stat_to_unit_castes_tables'
          table_version='0' >
-    <field name='unknown0' type='int' />
-    <field name='unknown1' type='string_ascii' />
-    <field name='unknown2' type='string_ascii' />
+    <field name='max_value_override' type='int' />
+    <field name='stat' type='string_ascii' />
+    <field name='unit_caste' type='string_ascii' />
   </table>
   <table table_name='ui_unit_stats_filters_tables'
          table_version='0' >
@@ -17106,11 +17121,11 @@
   <table table_name='ui_unit_stats_tables'
          table_version='9' >
     <field name='key' type='string_ascii' pk='true' />
-    <field name='unknown1' type='int' />
-    <field name='unknown2' type='boolean' />
-    <field name='unknown3' type='int' />
-    <field name='unknown4' type='string_ascii' />
-    <field name='unknown5' type='string_ascii' />
+    <field name='max_value' type='int' />
+    <field name='campaign_only' type='boolean' />
+    <field name='sort_order' type='int' />
+    <field name='localisation' type='string_ascii' />
+    <field name='icon' type='string_ascii' />
   </table>
   <table table_name='ui_unit_statuses_tables'
          table_version='0' >
