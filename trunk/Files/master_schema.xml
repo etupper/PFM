@@ -9133,8 +9133,8 @@
   </table>
   <table table_name='character_skill_node_ancillary_locks_tables'
          table_version='0' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='string_ascii' />
+    <field name='ancillary_lock' type='string_ascii' />
+    <field name='character_skill_node' type='string_ascii' />
   </table>
   <table table_name='character_skill_node_link_types_tables'
          table_version='0' >
@@ -16434,18 +16434,18 @@
     <field name='key' type='string_ascii' pk='true' />
     <field fkey='building_levels_tables.level_name' name='building_level' type='string_ascii' />
     <field name='position_index' type='int' />
-    <field name='unknown3' type='string_ascii' />
-    <field name='unknown4' type='int' />
-    <field name='unknown5' type='int' />
-    <field name='unknown6' type='int' />
-    <field name='unknown7' type='int' />
-    <field name='unknown8' type='boolean' />
-    <field name='unknown9' type='boolean' />
-    <field name='unknown10' type='string_ascii' />
-    <field name='unknown11' type='int' />
-    <field name='unknown12' type='boolean' />
-    <field name='unknown13' type='boolean' />
-    <field name='unknown14' type='boolean' />
+    <field name='icon_name' type='string_ascii' />
+    <field name='military_prestige' type='int' />
+    <field name='naval_prestige' type='int' />
+    <field name='econimic_prestige' type='int' />
+    <field name='enlightenment_prestige' type='int' />
+    <field name='mp_available_early' type='boolean' />
+    <field name='mp_available_late' type='boolean' />
+    <field name='info_pic' type='string_ascii' />
+    <field name='unique_id' type='int' />
+    <field name='is_civil' type='boolean' />
+    <field name='is_engineering' type='boolean' />
+    <field name='is_military' type='boolean' />
   </table>
   <table table_name='technology_categories_tables'
          table_version='0' >
@@ -16522,8 +16522,8 @@
     <field fkey='technology_nodes_tables.key' name='parent_key' type='string_ascii' pk='true' />
     <field name='parent_link_position' type='int' />
     <field name='child_link_position' type='int' />
-    <field name='unknown5' type='float' />
-    <field name='unknown6' type='float' />
+    <field name='parent_link_position_offset' type='float' />
+    <field name='child_link_position_offset' type='float' />
   </table>
   <table table_name='technology_node_sets_tables'
          table_version='0' >
