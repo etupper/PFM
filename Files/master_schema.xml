@@ -3746,6 +3746,66 @@
     <field name='unknown31' type='optstring_ascii' />
     <field name='unknown32' type='optstring_ascii' />
   </table>
+  <table table_name='battle_skeletons_tables'
+         table_version='15' >
+    <field name='head_node' type='optstring_ascii' />
+    <field name='hips_node' type='optstring_ascii' />
+    <field name='leftarm_node' type='optstring_ascii' />
+    <field name='leftfoot_node' type='optstring_ascii' />
+    <field name='lefthand_node' type='optstring_ascii' />
+    <field name='leftleg_node' type='optstring_ascii' />
+    <field name='leftshoulder_node' type='optstring_ascii' />
+    <field name='leftupleg_node' type='optstring_ascii' />
+    <field name='leftwheel_node' type='optstring_ascii' />
+    <field name='name' type='string_ascii' />
+    <field name='neck_node' type='optstring_ascii' />
+    <field name='rightarm_node' type='optstring_ascii' />
+    <field name='rightfoot_node' type='optstring_ascii' />
+    <field name='righthand_node' type='optstring_ascii' />
+    <field name='rightleg_node' type='optstring_ascii' />
+    <field name='rightshoulder_node' type='optstring_ascii' />
+    <field name='rightupleg_node' type='optstring_ascii' />
+    <field name='rightwheel_node' type='optstring_ascii' />
+    <field name='root' type='string_ascii' />
+    <field name='scale' type='float' />
+    <field name='scale_deviation' type='float' />
+    <field name='spine_node' type='optstring_ascii' />
+    <field name='weapon1_node' type='optstring_ascii' />
+    <field name='weapon2_node' type='optstring_ascii' />
+    <field name='weapon3_node' type='optstring_ascii' />
+    <field name='weapon4_node' type='optstring_ascii' />
+    <field name='weapon5_node' type='optstring_ascii' />
+    <field name='leftfinger_node' type='optstring_ascii' />
+    <field name='rightfinger_node' type='optstring_ascii' />
+    <field name='lefttoe_node' type='optstring_ascii' />
+    <field name='righttoe_node' type='optstring_ascii' />
+    <field name='category_man' type='boolean' />
+    <field name='category_mount' type='boolean' />
+    <field name='category_engine' type='boolean' />
+    <field name='weapon6_node' type='optstring_ascii' />
+    <field name='category_animal' type='boolean' />
+    <field name='category_fauna' type='boolean' />
+    <field name='cinematic' type='boolean' />
+    <field fkey='battle_skeletons_locomotion_enums.key' name='locomotion' type='string_ascii' />
+    <field name='leftwingbase_node' type='optstring_ascii' />
+    <field name='rightwingbase_node' type='optstring_ascii' />
+    <field name='head_tracking_angle' type='float' />
+    <field name='back_node' type='optstring_ascii' />
+    <field name='front_left_upper_leg_node' type='optstring_ascii' />
+    <field name='front_right_upper_leg_node' type='optstring_ascii' />
+    <field name='front_lefttoe_node' type='optstring_ascii' />
+    <field name='front_righttoe_node' type='optstring_ascii' />
+    <field name='rear_left_upper_leg_node' type='optstring_ascii' />
+    <field name='rear_right_upper_leg_node' type='optstring_ascii' />
+    <field name='rear_lefttoe_node' type='optstring_ascii' />
+    <field name='rear_righttoe_node' type='optstring_ascii' />
+    <field name='footstep_nodes' type='optstring_ascii' />
+    <field name='footstep_detection_height' type='float' />
+    <field name='articulation_node' type='optstring_ascii' />
+    <field name='flying_pivot_node' type='optstring_ascii' />
+    <field name='filter_projectiles_node' type='optstring_ascii' />
+    <field name='torso_splice_node' type='optstring_ascii' />
+  </table>
   <table table_name='battle_sky_types_tables'
          table_version='0' >
     <field name='key' type='string' pk='true' />
@@ -4994,6 +5054,18 @@
     <field name='description' type='optstring_ascii' />
     <field name='icon' type='optstring_ascii' />
     <field fkey='cultures_subcultures_tables.subculture' name='subculture' type='optstring_ascii' pk='true' />
+    <field name='faction' type='optstring_ascii' />
+    <field name='disables' type='boolean' />
+    <field name='flavour' type='optstring_ascii' />
+    <field name='display_tooltip' type='boolean' />
+  </table>
+  <table table_name='building_culture_variants_tables'
+         table_version='4' >
+    <field fkey='building_levels_tables.level_name' name='building' type='string_ascii' pk='true' />
+    <field fkey='cultures_tables.key' name='culture' type='optstring_ascii' pk='true' />
+    <field fkey='battlefield_buildings_tables.key' name='battlefield_building' type='optstring_ascii' />
+    <field fkey='warscape_rigid_tables.key' name='artpiece' type='optstring_ascii' />
+    <field fkey='warscape_animated_tables.key' name='artpiece_animated' type='optstring_ascii' />
     <field name='faction' type='optstring_ascii' />
     <field name='disables' type='boolean' />
     <field name='flavour' type='optstring_ascii' />
@@ -9933,15 +10005,15 @@
   </table>
   <table table_name='dilemmas_tables'
          table_version='5' >
-    <field name='unknown0' type='boolean' />
-    <field name='unknown1' type='string_ascii' />
-    <field name='unknown2' type='string_ascii' />
-    <field name='unknown3' type='string_ascii' />
-    <field name='unknown4' type='string_ascii' />
-    <field name='unknown5' type='boolean' />
-    <field name='unknown6' type='optstring_ascii' />
-    <field name='unknown7' type='optstring_ascii' />
-    <field name='unknown8' type='optstring_ascii' />
+    <field name='generate' type='boolean' />
+    <field name='key' type='string_ascii' pk='true' />
+    <field name='localised_description' type='string_ascii' />
+    <field name='localised_title' type='string_ascii' />
+    <field name='ui_image' type='string_ascii' />
+    <field name='prioritized' type='boolean' />
+    <field name='event_category' type='optstring_ascii' />
+    <field name='sound_popup_override' type='optstring_ascii' />
+    <field name='sound_click_override' type='optstring_ascii' />
   </table>
   <table table_name='diplomacy_attitudes_tables'
          table_version='0' >
