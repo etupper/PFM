@@ -698,9 +698,9 @@
     <field name='auto_generate' type='boolean' />
     <field name='is_caster' type='boolean' />
     <field name='small_icon' type='optstring_ascii' />
-    <field fkey ='main_units.unit' name='main_unit' type='optstring_ascii' />
-    <field fkey ='audio_vo_actor_groups.name' name='audio_voiceover_actor_group' type ='string_ascii' />
-	<field name='show_in_ui' type='boolean' />
+    <field fkey='main_units.unit' name='main_unit' type='optstring_ascii' />
+    <field fkey='audio_vo_actor_groups.name' name='audio_voiceover_actor_group' type='string_ascii' />
+    <field name='show_in_ui' type='boolean' />
   </table>
   <table table_name='agent_to_agent_abilities_tables'
          table_version='0' >
@@ -4009,7 +4009,7 @@
     <field name='height_off_ground' type='float' />
     <field name='delay' type='float' />
     <field name='num_vortexs' type='int' />
-	<field name='composite_scene_blood' type='optstring_ascii' />
+    <field name='composite_scene_blood' type='optstring_ascii' />
   </table>
   <table table_name='battle_weather_effects_tables'
          table_version='1' >
@@ -4994,16 +4994,16 @@
     <field name='description' type='optstring_ascii' />
     <field name='icon' type='optstring_ascii' />
     <field fkey='cultures_subcultures_tables.subculture' name='subculture' type='optstring_ascii' pk='true' />
-	<field name='faction' type='optstring_ascii' />
-	<field name='disables' type='boolean' />
+    <field name='faction' type='optstring_ascii' />
+    <field name='disables' type='boolean' />
     <field name='flavour' type='optstring_ascii' />
     <field name='display_tooltip' type='boolean' />
   </table>
-  <table table_name='building_culture_variants_tables' 
+  <table table_name='building_culture_variants_tables'
          table_version='5' >
     <field fkey='building_levels_tables.level_name' name='building' type='string_ascii' pk='true' />
     <field fkey='cultures_tables.key' name='culture' type='optstring_ascii' />
-            <field name='name' type='optstring_ascii' />
+    <field name='name' type='optstring_ascii' />
     <field name='description' type='optstring_ascii' />
     <field name='icon' type='optstring_ascii' />
     <field fkey='cultures_subcultures_tables.subculture' name='subculture' type='optstring_ascii' pk='true' />
@@ -9931,6 +9931,18 @@
     <field name='unknown5' type='optstring_ascii' />
     <field name='unknown6' type='optstring_ascii' />
   </table>
+  <table table_name='dilemmas_tables'
+         table_version='5' >
+    <field name='unknown0' type='boolean' />
+    <field name='unknown1' type='string_ascii' />
+    <field name='unknown2' type='string_ascii' />
+    <field name='unknown3' type='string_ascii' />
+    <field name='unknown4' type='string_ascii' />
+    <field name='unknown5' type='boolean' />
+    <field name='unknown6' type='optstring_ascii' />
+    <field name='unknown7' type='optstring_ascii' />
+    <field name='unknown8' type='optstring_ascii' />
+  </table>
   <table table_name='diplomacy_attitudes_tables'
          table_version='0' >
     <field name='attitude' type='string' pk='true' />
@@ -11993,6 +12005,11 @@
     <field name='unknown0' type='string_ascii' />
     <field name='unknown1' type='string_ascii' />
   </table>
+  <table table_name='frontend_factions_tables'
+         table_version='2' >
+    <field name='unknown0' type='string_ascii' />
+    <field name='unknown1' type='string_ascii' />
+  </table>
   <table table_name='game_area_enums_tables'
          table_version='0' >
     <field name='key' type='string_ascii' pk='true' />
@@ -12844,7 +12861,7 @@
     <field name='can_siege' type='boolean' />
     <field name='audio_voiceover_culture_override' type='string_ascii' />
   </table>
-    <table table_name='main_units_tables'
+  <table table_name='main_units_tables'
          table_version='29' >
     <field name='additional_building_requirement' type='optstring_ascii' />
     <field name='campaign_cap' type='int' />
@@ -12936,7 +12953,7 @@
     <field name='can_siege' type='boolean' />
     <field name='audio_voiceover_culture_override' type='string_ascii' />
     <field name='restrict_xp_gain_in_campaign' type='boolean' />
-	<field name='audio_voiceover_actor_group' type='string_ascii' />
+    <field name='audio_voiceover_actor_group' type='string_ascii' />
   </table>
   <table table_name='melee_weapons_tables'
          table_version='6' >
@@ -15341,7 +15358,7 @@
     <field name='can_roll' type='boolean' />
     <field name='shots_per_volley' type='int' />
   </table>
-    <table table_name='projectiles_tables'
+  <table table_name='projectiles_tables'
          table_version='39' >
     <field name='key' type='string_ascii' pk='true' />
     <field name='category' type='string_ascii' />
@@ -17194,7 +17211,7 @@
     <field name='bullet_point' type='string_ascii' />
     <field name='unit_key' type='string_ascii' />
   </table>
- <table table_name='ui_unit_bullet_points_generations_tables'
+  <table table_name='ui_unit_bullet_points_generations_tables'
          table_version='0' >
     <field name='bullet_point_enum' type='string_ascii' />
     <field name='unknown1' type='boolean' />
@@ -17227,15 +17244,15 @@
   </table>
   <table table_name='ui_unit_groupings_tables'
          table_version='1' >
-    <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='string_ascii' />
-    <field name='unknown2' type='int' />
-  </table>
-  <table table_name='ui_unit_groupings_tables'
-         table_version='1' >
     <field name='icon' type='string_ascii' />
     <field name='key' type='string_ascii' />
     <field name='parent_group' type='string_ascii' />
+  </table>
+  <table table_name='ui_unit_groupings_tables'
+         table_version='1' >
+    <field name='unknown0' type='string_ascii' />
+    <field name='unknown1' type='string_ascii' />
+    <field name='unknown2' type='int' />
   </table>
   <table table_name='ui_unit_stat_to_classes_tables'
          table_version='0' >
