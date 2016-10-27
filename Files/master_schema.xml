@@ -16556,9 +16556,9 @@
     <field fkey='taxes_keys_tables.tax_lookup' name='tax_name' type='string_ascii' pk='true' />
     <field fkey='effects_tables.effect' name='effect' type='string_ascii' pk='true' />
     <field fkey='campaign_effect_scopes_tables.key' name='effect_scope' type='string_ascii' />
-    <field name='ai_only' type='boolean' pk='true' />
-    <field name='ai_only5' type='boolean' pk='true' />
-    <field name='ai_only6' type='boolean' pk='true' />
+    <field name='unknown3' type='optstring_ascii' />
+    <field name='unknown4' type='optstring_ascii' />
+    <field name='ai_only' type='boolean' />
     <field name='value' type='float' />
   </table>
   <table table_name='taxes_effects_jct_tables'
