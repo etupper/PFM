@@ -5168,7 +5168,7 @@
     <field fkey='warscape_animated_tables.key' name='artpiece_animated' type='optstring_ascii' />
     <field name='description' type='optstring_ascii' />
     <field name='icon' type='optstring_ascii' />
-    <field name='subculture' type='optstring_ascii' />
+    <field fkey='cultures_subcultures_tables.subculture' name='subculture' type='optstring_ascii' pk='true' />
 	<field name='faction' type='optstring_ascii' />
 	<field name='disables' type='boolean' />
     <field name='flavour' type='optstring_ascii' />
