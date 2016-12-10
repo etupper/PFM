@@ -700,7 +700,7 @@
     <field name='small_icon' type='optstring_ascii' />
     <field fkey='main_units.unit' name='main_unit' type='optstring_ascii' />
     <field fkey='audio_vo_actor_groups.name' name='audio_voiceover_actor_group' type='string_ascii' />
-    <field name='show_in_ui' type='boolean' />
+	<field name='show_in_ui' type='boolean' />
   </table>
   <table table_name='agent_to_agent_abilities_tables'
          table_version='0' >
@@ -4096,7 +4096,7 @@
     <field name='height_off_ground' type='float' />
     <field name='delay' type='float' />
     <field name='num_vortexs' type='int' />
-    <field name='composite_scene_blood' type='optstring_ascii' />
+	<field name='composite_scene_blood' type='optstring_ascii' />
   </table>
   <table table_name='battle_weather_effects_tables'
          table_version='1' >
@@ -5168,9 +5168,9 @@
     <field fkey='warscape_animated_tables.key' name='artpiece_animated' type='optstring_ascii' />
     <field name='description' type='optstring_ascii' />
     <field name='icon' type='optstring_ascii' />
-    <field fkey='cultures_subcultures_tables.subculture' name='subculture' type='optstring_ascii' pk='true' />
-    <field name='faction' type='optstring_ascii' />
-    <field name='disables' type='boolean' />
+    <field name='subculture' type='optstring_ascii' />
+	<field name='faction' type='optstring_ascii' />
+	<field name='disables' type='boolean' />
     <field name='flavour' type='optstring_ascii' />
     <field name='display_tooltip' type='boolean' />
   </table>
@@ -5599,7 +5599,7 @@
     <field name='primary_slot_building_building_level_requirement' type='int' />
     <field name='audio_building_type' type='optstring_ascii' />
     <field name='visible_in_ui' type='boolean' />
-    <field name='unknown31' type='int' />
+    <field name='food_cost' type='int' />
   </table>
   <table table_name='building_requirement_group_junctions_tables'
          table_version='0' >
@@ -13154,7 +13154,7 @@
     <field name='can_siege' type='boolean' />
     <field name='audio_voiceover_culture_override' type='string_ascii' />
   </table>
-  <table table_name='main_units_tables'
+    <table table_name='main_units_tables'
          table_version='29' >
     <field name='additional_building_requirement' type='optstring_ascii' />
     <field name='campaign_cap' type='int' />
@@ -13246,7 +13246,57 @@
     <field name='can_siege' type='boolean' />
     <field name='audio_voiceover_culture_override' type='string_ascii' />
     <field name='restrict_xp_gain_in_campaign' type='boolean' />
-    <field name='audio_voiceover_actor_group' type='string_ascii' />
+	<field name='audio_voiceover_actor_group' type='string_ascii' />
+  </table>
+  <table table_name='main_units_tables'
+         table_version='32' >
+    <field name='additional_building_requirement' type='optstring_ascii' />
+    <field name='campaign_cap' type='int' />
+    <field fkey='unit_castes_tables.caste' name='caste' type='string_ascii' />
+    <field name='create_time' type='int' />
+    <field name='is_naval' type='boolean' />
+    <field fkey='land_units_tables.key' name='land_unit' type='string_ascii' />
+    <field name='num_men' type='int' />
+    <field name='multiplayer_cap' type='int' />
+    <field name='multiplayer_cost' type='int' />
+    <field fkey='naval_units_tables.key' name='naval_unit' type='optstring_ascii' />
+    <field name='num_ships' type='int' />
+    <field name='min_men_per_ship' type='int' />
+    <field name='max_men_per_ship' type='int' />
+    <field name='prestige' type='int' />
+    <field name='recruitment_cost' type='int' />
+    <field name='recruitment_movie' type='optstring_ascii' />
+    <field name='religion_requirement' type='optstring_ascii' />
+    <field name='unit' type='string_ascii' pk='true' />
+    <field name='upkeep_cost' type='int' />
+    <field fkey='unit_weights_tables.key' name='weight' type='optstring_ascii' />
+    <field name='resource_requirement' type='optstring_ascii' />
+    <field name='world_leader_only' type='boolean' />
+    <field name='can_trade' type='boolean' />
+    <field name='special_edition_mask' type='int' />
+    <field name='unique_index' type='int' />
+    <field name='unknown25' type='int' />
+    <field name='in_encyclopedia' type='boolean' />
+    <field name='region_unit_resource_requirement' type='optstring_ascii' />
+    <field name='audio_voiceover_culture' type='string_ascii' />
+    <field name='ui_unit_group_land' type='string_ascii' />
+    <field name='ui_unit_group_naval' type='string_ascii' />
+    <field name='tier' type='int' />
+    <field name='is_high_threat' type='boolean' />
+    <field name='porthole_camera' type='string_ascii' />
+    <field name='mount' type='optstring_ascii' />
+    <field name='use_hitpoints_in_campaign' type='boolean' />
+    <field name='unit_scaling' type='boolean' />
+    <field name='prthole_composite_scene' type='optstring_ascii' />
+    <field name='melee_cp' type='float' />
+    <field name='missile_cp' type='float' />
+    <field name='can_siege' type='boolean' />
+    <field name='audio_voiceover_culture_override' type='string_ascii' />
+    <field name='restrict_xp_gain_in_campaign' type='boolean' />
+	<field name='audio_voiceover_actor_group' type='string_ascii' />
+    <field name='food' type='int' />
+    <field name='spoken_vo' type='boolean' />
+    <field name='monster' type='boolean' />
   </table>
   <table table_name='main_units_tables'
          table_version='33' >
@@ -15714,7 +15764,7 @@
     <field name='can_roll' type='boolean' />
     <field name='shots_per_volley' type='int' />
   </table>
-  <table table_name='projectiles_tables'
+    <table table_name='projectiles_tables'
          table_version='39' >
     <field name='key' type='string_ascii' pk='true' />
     <field name='category' type='string_ascii' />
@@ -17159,9 +17209,9 @@
     <field fkey='technologies_tables.key' name='technology_key' type='string_ascii' />
     <field fkey='technology_node_sets_tables.key' name='technology_node_set' type='string_ascii' />
     <field name='tier' type='int' />
-    <field name='unknown7' type='int' />
-    <field name='unknown8' type='int' />
-    <field name='unknown9' type='int' />
+    <field name='research_points_required' type='int' />
+    <field name='cost_per_round' type='int' />
+    <field name='food_cost' type='int' />
   </table>
   <table table_name='technology_required_building_levels_junctions_tables'
          table_version='0' >
@@ -17580,7 +17630,7 @@
     <field name='bullet_point' type='string_ascii' />
     <field name='unit_key' type='string_ascii' />
   </table>
-  <table table_name='ui_unit_bullet_points_generations_tables'
+ <table table_name='ui_unit_bullet_points_generations_tables'
          table_version='0' >
     <field name='bullet_point_enum' type='string_ascii' />
     <field name='unknown1' type='boolean' />
