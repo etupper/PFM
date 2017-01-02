@@ -6882,7 +6882,8 @@
     <field name='unknown2' type='string_ascii' />
     <field name='unknown3' type='string_ascii' />
     <field name='unknown4' type='optstring_ascii' />
-    <field name='unknown5' type='string_ascii' />
+    <field name='unknown5' type='optstring_ascii' />
+    <field name='unknown6' type='optstring_ascii' />
   </table>
   <table table_name='cai_personality_groups_tables'
          table_version='0' >
