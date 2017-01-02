@@ -97,7 +97,7 @@ start WinRAR.exe a "Pack File Manager.zip" "*dll" "*exe" "*exe.config" "master_s
 set /p current_xml_version=&lt;xmlversion
 set schema_file=schema_%25current_xml_version%25.zip
 start WinRAR.exe a "%25schema_file%25" "master_schema.xml" "maxVersions_*.xml" "xmlversion"
-copy %25schema_file%25 "$(SolutionDir)\Files\update"</PostBuildEvent>
+copy %25schema_file%25 "$(SolutionDir)Files\update"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
