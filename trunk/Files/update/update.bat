@@ -7,7 +7,7 @@ set current_file=schema_%schema_version%.zip
 set updated_file=schema_%updated_version%.zip
 
 copy ..\master_schema.xml .
-echo %updated_version% > xmlversion
+echo %updated_version%> xmlversion
 start /wait WinRAR.exe x "%current_file%" "maxVersions_*.xml"
 start /wait WinRAR.exe a "%updated_file%" "master_schema.xml" "maxVersions_*.xml" "xmlversion"
 del master_schema.xml maxVersions_*.xml
