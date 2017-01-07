@@ -6556,12 +6556,12 @@
     <field fkey='cai_agent_distribution_profiles_tables.key' name='agent_distribution_profile_key' type='string_ascii' />
     <field fkey='cai_agent_recruitment_profiles_tables.key' name='agent_recruitment_profile_key' type='string_ascii' />
     <field fkey='cai_personalities_budget_policies_tables.key' name='budget_policy_key' type='string_ascii' />
-    <field name='character_skill_tree_manager_key' type='string_ascii' />
-    <field name='key' type='string_ascii' pk='true' />
+    <field name='key' type='string_ascii' />
     <field fkey='cai_military_aggressiveness_policies_tables.key' name='military_aggressiveness_policy' type='string_ascii' />
     <field fkey='cai_military_behaviour_policies_tables.key' name='military_behaviour_policy' type='string_ascii' />
     <field fkey='cai_personalities_reliability_policies_tables.key' name='reliability_policy_key' type='string_ascii' />
     <field fkey='cai_personalities_religious_conversion_policies_tables.key' name='religious_conversion_policy' type='string_ascii' />
+    <field name='unknown8' type='string_ascii' />
     <field name='unknown9' type='optstring_ascii' />
     <field name='unknown10' type='string_ascii' />
     <field name='unknown11' type='string_ascii' />
