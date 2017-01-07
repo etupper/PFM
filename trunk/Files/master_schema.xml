@@ -6556,28 +6556,28 @@
     <field fkey='cai_agent_distribution_profiles_tables.key' name='agent_distribution_profile_key' type='string_ascii' />
     <field fkey='cai_agent_recruitment_profiles_tables.key' name='agent_recruitment_profile_key' type='string_ascii' />
     <field fkey='cai_personalities_budget_policies_tables.key' name='budget_policy_key' type='string_ascii' />
-    <field name='key' type='string_ascii' />
+    <field name='key' type='string_ascii' pk='true' />
     <field fkey='cai_military_aggressiveness_policies_tables.key' name='military_aggressiveness_policy' type='string_ascii' />
-    <field fkey='cai_military_behaviour_policies_tables.key' name='military_behaviour_policy' type='string_ascii' />
+    <field fkey='cai_military_behaviour_policies_tables.key' name='military_behavior_policy' type='string_ascii' />
     <field fkey='cai_personalities_reliability_policies_tables.key' name='reliability_policy_key' type='string_ascii' />
     <field fkey='cai_personalities_religious_conversion_policies_tables.key' name='religious_conversion_policy' type='string_ascii' />
-    <field name='unknown8' type='string_ascii' />
-    <field name='unknown9' type='optstring_ascii' />
-    <field name='unknown10' type='string_ascii' />
-    <field name='unknown11' type='string_ascii' />
-    <field name='unknown12' type='string_ascii' />
-    <field name='unknown13' type='string_ascii' />
-    <field name='unknown14' type='string_ascii' />
-    <field name='unknown15' type='string_ascii' />
-    <field name='unknown16' type='string_ascii' />
-    <field name='unknown17' type='string_ascii' />
-    <field name='unknown18' type='string_ascii' />
-    <field name='unknown19' type='string_ascii' />
-    <field name='unknown20' type='string_ascii' />
-    <field name='unknown21' type='string_ascii' />
-    <field name='unknown22' type='string_ascii' />
-    <field name='unknown23' type='string_ascii' />
-    <field name='unknown24' type='string_ascii' />
+    <field name='allowed_for_random_selection' type='string_ascii' />
+    <field name='diplomatic_component' type='optstring_ascii' />
+    <field name='strategic_component' type='string_ascii' />
+    <field name='cultural_component' type='string_ascii' />
+    <field name='deal_evaluation_component' type='string_ascii' />
+    <field name='deal_generation_component' type='string_ascii' />
+    <field name='construction_system_policy' type='string_ascii' />
+    <field name='task_management_system_task_generation_profile' type='string_ascii' />
+    <field name='negotiation_component' type='string_ascii' />
+    <field name='income_allocation_policy' type='string_ascii' />
+    <field name='occupation_decision_component' type='string_ascii' />
+    <field name='religious_component' type='string_ascii' />
+    <field name='empire_rivalry_component' type='string_ascii' />
+    <field name='religion_chanage_management_policy' type='string_ascii' />
+    <field name='tresspassing_component' type='string_ascii' />
+    <field name='agent_embed_profile' type='string_ascii' />
+    <field name='character_skill_selection_policy' type='string_ascii' />
   </table>
   <table table_name='cai_personalities_task_management_system_task_generator_profiles_tables'
          table_version='0' >
