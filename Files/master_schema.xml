@@ -1067,14 +1067,14 @@
   <table table_name='aide_de_camp_speeches_tables'
          table_version='8' >
     <field name='unknown0' type='string_ascii' />
-    <field name='unknown1' type='string_ascii' />
+    <field name='unknown1' type='int' />
     <field name='unknown2' type='boolean' />
-    <field name='unknown3' type='boolean' />
+    <field name='unknown3' type='float' />
     <field name='unknown4' type='boolean' />
-    <field name='unknown5' type='float' />
-    <field name='unknown6' type='optstring_ascii' />
-    <field name='unknown7' type='string_ascii' />
-    <field name='unknown8' type='string_ascii' />
+    <field name='unknown5' type='boolean' />
+    <field name='unknown6' type='string_ascii' />
+    <field name='unknown7' type='int' />
+    <field name='unknown8' type='boolean' />
   </table>
   <table table_name='ancillaries_categories_faction_junctions_tables'
          table_version='0' >
@@ -1731,31 +1731,6 @@
     <field name='unknown10' type='optstring_ascii' />
     <field name='unknown11' type='optstring_ascii' />
     <field name='unknown12' type='string_ascii' />
-    <field name='unknown13' type='int' />
-    <field name='unknown17' type='boolean' />
-    <field name='unknown18' type='boolean' />
-    <field name='unknown19' type='boolean' />
-    <field name='unknown20' type='optstring_ascii' />
-    <field name='unknown21' type='boolean' />
-    <field name='unknown22' type='float' />
-    <field name='unknown23' type='boolean' />
-    <field name='unknown24' type='boolean' />
-  </table>
-  <table table_name='audio_entity_types_tables'
-         table_version='17' >
-    <field name='unknown0' type='optstring_ascii' />
-    <field name='unknown1' type='optstring_ascii' />
-    <field name='unknown2' type='optstring_ascii' />
-    <field name='unknown3' type='optstring_ascii' />
-    <field name='unknown4' type='optstring_ascii' />
-    <field name='unknown5' type='string_ascii' />
-    <field name='unknown6' type='optstring_ascii' />
-    <field name='unknown7' type='optstring_ascii' />
-    <field name='unknown8' type='optstring_ascii' />
-    <field name='unknown9' type='string_ascii' />
-    <field name='unknown10' type='optstring_ascii' />
-    <field name='unknown11' type='optstring_ascii' />
-    <field name='unknown12' type='string_ascii' />
     <field name='unknown13' type='optstring_ascii' />
     <field name='unknown14' type='optstring_ascii' />
     <field name='unknown15' type='optstring_ascii' />
@@ -1766,7 +1741,7 @@
     <field name='unknown20' type='optstring_ascii' />
     <field name='unknown21' type='optstring_ascii' />
     <field name='unknown22' type='float' />
-    <field name='unknown23' type='boolean' />
+    <field name='unknown23' type='optstring_ascii' />
     <field name='unknown24' type='boolean' />
   </table>
   <table table_name='audio_explosions_tables'
@@ -2013,27 +1988,30 @@
     <field name='unknown6' type='optstring_ascii' />
     <field name='unknown7' type='optstring_ascii' />
     <field name='unknown8' type='optstring_ascii' />
-    <field name='unknown9' type='boolean' />
-    <field name='unknown10' type='int' />
-    <field name='unknown11' type='int' />
-    <field name='unknown12' type='int' />
-    <field name='unknown13' type='boolean' />
-    <field name='unknown14' type='boolean' />
+    <field name='unknown9' type='optstring_ascii' />
+    <field name='unknown10' type='optstring_ascii' />
+    <field name='unknown11' type='boolean' />
+    <field name='unknown12' type='boolean' />
+    <field name='unknown13' type='int' />
+    <field name='unknown14' type='float' />
     <field name='unknown15' type='boolean' />
-    <field name='unknown16' type='int' />
-    <field name='unknown17' type='int' />
-    <field name='unknown18' type='boolean' />
+    <field name='unknown16' type='boolean' />
+    <field name='unknown17' type='float' />
+    <field name='unknown18' type='float' />
     <field name='unknown19' type='boolean' />
     <field name='unknown20' type='boolean' />
     <field name='unknown21' type='boolean' />
-    <field name='unknown22' type='int' />
+    <field name='unknown22' type='boolean' />
     <field name='unknown23' type='boolean' />
     <field name='unknown24' type='boolean' />
-    <field name='unknown25' type='boolean' />
-    <field name='unknown26' type='int' />
+    <field name='unknown25' type='int' />
+    <field name='unknown26' type='boolean' />
     <field name='unknown27' type='boolean' />
     <field name='unknown28' type='boolean' />
-    <field name='unknown29' type='boolean' />
+    <field name='unknown29' type='int' />
+    <field name='unknown30' type='boolean' />
+    <field name='unknown31' type='boolean' />
+    <field name='unknown32' type='boolean' />
   </table>
   <table table_name='audio_missile_weapon_types_tables'
          table_version='4' >
@@ -8957,6 +8935,12 @@
     <field name='icon_name' type='string_ascii' />
     <field name='key' type='string_ascii' pk='true' />
   </table>
+  <table table_name='capture_point_types_tables'
+         table_version='1' >
+    <field name='icon_name' type='string_ascii' />
+    <field name='key' type='string_ascii' pk='true' />
+    <field name='unknown2' type='int' />
+  </table>
   <table table_name='cdir_army_template_ratios_tables'
          table_version='0' >
     <field name='unknown' type='int' />
@@ -12292,6 +12276,21 @@
     <field name='unknown3' type='string_ascii' />
     <field name='unknown4' type='string_ascii' />
     <field name='unknown5' type='boolean' />
+    <field name='unknown6' type='string_ascii' />
+    <field name='unknown7' type='string_ascii' />
+    <field name='unknown8' type='optstring_ascii' />
+    <field name='unknown9' type='float' />
+    <field name='unknown10' type='float' />
+    <field name='unknown11' type='string_ascii' />
+  </table>
+  <table table_name='frontend_faction_leaders_tables'
+         table_version='16' >
+    <field name='unknown0' type='string_ascii' />
+    <field name='unknown1' type='int' />
+    <field name='unknown2' type='int' />
+    <field name='unknown3' type='string_ascii' />
+    <field name='unknown4' type='string_ascii' />
+    <field name='unknown5' type='optstring_ascii' />
     <field name='unknown6' type='string_ascii' />
     <field name='unknown7' type='string_ascii' />
     <field name='unknown8' type='optstring_ascii' />
@@ -16152,6 +16151,13 @@
     <field name='unknown1' type='string_ascii' />
     <field name='unknown2' type='string_ascii' />
   </table>
+  <table table_name='religious_rebellions_tables'
+         table_version='2' >
+    <field name='unknown0' type='float' />
+    <field name='unknown1' type='string_ascii' />
+    <field name='unknown2' type='string_ascii' />
+    <field name='unknown3' type='string_ascii' />
+  </table>
   <table table_name='resource_effects_tables'
          table_version='0' >
     <field fkey='effects_tables.effect' name='effect_key' type='string_ascii' pk='true' />
@@ -16371,6 +16377,13 @@
     <field fkey='models_naval_tables.key' name='model' type='string_ascii' />
     <field fkey='unit_spacings_tables.key' name='spacing' type='string_ascii' />
   </table>
+  <table table_name='ship_dbs_tables'
+         table_version='1' >
+    <field fkey='battle_entities_tables.key' name='entity' type='string_ascii' />
+    <field name='key' type='string_ascii' pk='true' />
+    <field name='unknown2' type='boolean' />
+    <field name='unknown3' type='boolean' />
+  </table>
   <table table_name='ship_names_tables'
          table_version='0' >
     <field name='key' type='string' />
@@ -16543,6 +16556,19 @@
     <field name='unknown7' type='int' />
     <field name='unknown8' type='string_ascii' />
     <field name='unknown9' type='boolean' />
+  </table>
+  <table table_name='special_ability_groups_tables'
+         table_version='6' >
+    <field name='ability_group' type='string_ascii' pk='true' />
+    <field name='icon_path' type='string_ascii' />
+    <field name='unknown2' type='int' />
+    <field name='unknown3' type='int' />
+    <field name='unknown4' type='boolean' />
+    <field name='unknown5' type='int' />
+    <field name='unknown6' type='int' />
+    <field name='unknown7' type='int' />
+    <field name='unknown8' type='string_ascii' />
+    <field name='unknown9' type='optstring_ascii' />
   </table>
   <table table_name='special_ability_groups_to_factions_junctions_tables'
          table_version='0' >
@@ -17498,6 +17524,10 @@
          table_version='0' >
     <field name='trait' type='string_ascii' pk='true' />
     <field name='applicable_to' type='string_ascii' />
+  </table>
+  <table table_name='trait_info_tables'
+         table_version='1' >
+    <field name='trait' type='string_ascii' pk='true' />
   </table>
   <table table_name='trait_level_effects_tables'
          table_version='0' >
