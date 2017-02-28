@@ -702,6 +702,17 @@
     <field fkey='audio_vo_actor_groups.name' name='audio_voiceover_actor_group' type='string_ascii' />
     <field name='show_in_ui' type='boolean' />
   </table>
+  <table table_name='agent_subtypes_tables'
+         table_version='13' >
+    <field name='key' type='string_ascii' />
+    <field name='auto_generate' type='boolean' />
+    <field name='is_caster' type='boolean' />
+    <field name='small_icon' type='optstring_ascii' />
+    <field fkey='main_units.unit' name='main_unit' type='optstring_ascii' />
+    <field fkey='audio_vo_actor_groups.name' name='audio_voiceover_actor_group' type='string_ascii' />
+    <field name='show_in_ui' type='boolean' />
+    <field name='unknown7' type='boolean' />
+  </table>
   <table table_name='agent_to_agent_abilities_tables'
          table_version='0' >
     <field fkey='agents_tables.key' name='agent' type='string' pk='true' />
@@ -5224,6 +5235,11 @@
     <field name='unknown3' type='float' />
     <field fkey='armed_citizenry_unit_groups_tables.unit_group' name='unit_group' type='string_ascii' />
   </table>
+  <table table_name='building_level_required_buildings_tables'
+         table_version='0' >
+    <field name='unknown0' type='string_ascii' />
+    <field name='unknown1' type='string_ascii' />
+  </table>
   <table table_name='building_level_required_technology_junctions_tables'
          table_version='0' >
     <field fkey='building_levels_tables.level_name' name='building_level_key' type='string' pk='true' />
@@ -6721,6 +6737,31 @@
     <field name='tension_balance_factor' type='float' />
     <field name='peace_balance_factor' type='float' />
     <field name='treachery_value' type='float' />
+  </table>
+  <table table_name='cai_personality_deal_evaluation_deal_component_values_tables'
+         table_version='4' >
+    <field name='best_friends_value' type='float' />
+    <field name='bitter_enemies_value' type='float' />
+    <field fkey='cai_personality_deal_evaluation_deal_component_names_tables.id' name='deal_component' type='string_ascii' pk='true' />
+    <field name='friendly_value' type='float' />
+    <field name='neutral_value' type='float' />
+    <field fkey='cai_personality_deal_evaluation_components_tables.id' name='personality_component' type='string_ascii' pk='true' />
+    <field name='total_war_balance_factor' type='float' />
+    <field name='last_stand_balance_factor' type='float' />
+    <field name='unfriendly_value' type='float' />
+    <field name='very_friendly_value' type='float' />
+    <field name='very_unfriendly_value' type='float' />
+    <field name='war_balance_factor' type='float' />
+    <field name='tension_balance_factor' type='float' />
+    <field name='peace_balance_factor' type='float' />
+    <field name='treachery_value' type='float' />
+    <field name='unknown15' type='float' />
+    <field name='unknown16' type='float' />
+    <field name='unknown17' type='float' />
+    <field name='unknown18' type='float' />
+    <field name='unknown19' type='float' />
+    <field name='unknown20' type='float' />
+    <field name='unknown21' type='float' />
   </table>
   <table table_name='cai_personality_deal_generation_component_overrides_tables'
          table_version='0' >
