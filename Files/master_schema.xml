@@ -8037,6 +8037,12 @@
     <field name='unknown1' type='string_ascii' />
     <field name='unknown2' type='string_ascii' />
   </table>
+  <table table_name='campaign_group_food_unique_agent_charges_tables'
+         table_version='0' >
+    <field name='unknown0' type='string_ascii' />
+    <field name='unknown1' type='int' />
+    <field name='unknown2' type='string_ascii' />
+  </table>
   <table table_name='campaign_group_member_criteria_action_results_tables'
          table_version='0' >
     <field name='unknown0' type='string_ascii' />
@@ -8141,6 +8147,12 @@
     <field name='unknown1' type='string_ascii' />
     <field name='unknown2' type='string_ascii' />
     <field name='unknown3' type='string_ascii' />
+  </table>
+  <table table_name='campaign_group_unique_agents_tables'
+         table_version='0' >
+    <field name='unknown0' type='int' />
+    <field name='unknown1' type='string_ascii' />
+    <field name='unknown2' type='string_ascii' />
   </table>
   <table table_name='campaign_groups_tables'
          table_version='0' >
@@ -17913,6 +17925,27 @@
     <field name='standard_bearer_filename' type='optstring' />
     <field name='musician_filename' type='optstring' />
     <field fkey='imposter_sharing_enums_tables.key' name='imposter_sharing' type='optstring' />
+  </table>
+  <table table_name='unique_agent_component_junctions_tables'
+         table_version='1' >
+    <field name='unknown0' type='string_ascii' />
+    <field name='unknown1' type='string_ascii' />
+    <field name='unknown2' type='int' />
+  </table>
+  <table table_name='unique_agent_spawn_vfx_junctions_tables'
+         table_version='0' >
+    <field name='unknown0' type='string_ascii' />
+    <field name='unknown1' type='string_ascii' />
+  </table>
+  <table table_name='unique_agents_tables'
+         table_version='2' >
+    <field name='unknown0' type='string_ascii' />
+    <field name='unknown1' type='string_ascii' />
+    <field name='unknown2' type='string_ascii' />
+    <field name='unknown3' type='string_ascii' />
+    <field name='unknown4' type='string_ascii' />
+    <field name='unknown5' type='string_ascii' />
+    <field name='unknown6' type='string_ascii' />
   </table>
   <table table_name='unit_abilities_additional_ui_effects_tables'
          table_version='2' >
