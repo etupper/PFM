@@ -5731,7 +5731,7 @@
     <field name='unknown2' type='int' />
     <field name='unknown3' type='int' />
     <field name='unknown4' type='int' />
-    <field name='unknown5' type='boolean' />
+    <field name='faction' type='optstring_ascii' />
     <field name='unknown6' type='boolean' />
   </table>
   <table table_name='building_upgrades_junction_tables'
